@@ -43,7 +43,7 @@ lon_end   = -30
 fig = plt.figure() 
 font_size = 10
 
-my_map = Basemap(llcrnrlon=lon_start, llcrnrlat=lat_start, urcrnrlon=lon_end, urcrnrlat=lat_end, resolution='c')	
+my_map = Basemap(llcrnrlon=lon_start, llcrnrlat=lat_start, urcrnrlon=lon_end, urcrnrlat=lat_end, resolution='l')	
 my_map.drawparallels(np.arange(lat_start, lat_end, 8.), labels=[1,0,0,0], fontsize=font_size, linewidth=0.4, color='black')
 my_map.drawmeridians(np.arange(lon_start, lon_end, 10.), labels=[0,0,0,1], fontsize=font_size, linewidth=0.4, color='black')                  
 my_map.readshapefile('/home/mda_silv/github_projects/shp/shp_america_sul/america_sul', 'america_sul', drawbounds=True, color='black', linewidth=1.)
@@ -58,13 +58,19 @@ cbar.set_label('Topography (meters)', fontsize=font_size, fontweight='bold')
 
 plt.text(-36, 8, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
 
-a1,b1 = (-79.67558,-34.43281)
-a2,b2 = (-79.67558,-11.05942)
-a3,b3 = (-36.76505,-11.05942)
-a4,b4 = (-36.76505,-34.43281)
-poly1 = Polygon([(a1,b1),(a2,b2),(a3,b3),(a4,b4)], facecolor='none', edgecolor='black', linewidth=1.)
-plt.gca().add_patch(poly1)
+lo1 = -79.67558
+lo2 = -35.76505
+la1 = -34.43281
+la2 = -11.05942
 
+#l1
+my_map.drawgreatcircle(lo1, la1, lo1, la2,linewidth=2,color='r')
+#l2
+my_map.drawgreatcircle(lo1, la2, lo2, la2,linewidth=2,color='r')
+#l3
+my_map.drawgreatcircle(lo2, la2, lo2, la1,linewidth=2,color='r')
+#l4
+my_map.drawgreatcircle(lo2, la1, lo1, la1,linewidth=2,color='r') 
 
 # Path out to save figure
 path_out = '/home/mda_silv/figs/sam_3km'
