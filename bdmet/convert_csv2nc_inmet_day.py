@@ -11,14 +11,15 @@ import pandas as pd
 
 from netCDF4 import Dataset
 
-idx=1
-if idx == 1:
+idx=2
+
+if idx == 2:
 	nc_var = 'pre'
 	unit_var = 'mm'
-	name_var = 'Daily total of precipitation'
+	name_var = 'Hourly total of precipitation'
 	std_var = 'precipitation'
 
-elif idx == 6:
+elif idx == 7:
 	nc_var = 'tmp'
 	unit_var = 'C'
 	name_var = 'Daily mean of air temperature'
@@ -29,35 +30,37 @@ else:
 	name_var = 'Daily mean of wind speed'
 	std_var = 'wind'
 
-path = '/home/nice/Documentos/FPS_SESA/database/obs/inmet/BDMET/daily'
+path_in = '/afs/ictp.it/home/m/mda_silv/Documents/BDMET/csv/hourly'
+path_out = '/afs/ictp.it/home/m/mda_silv/Documents/BDMET/nc/hourly_nc'
 
 # create date list
-dt = pd.date_range('2018-01-01','2021-12-31', freq='D').strftime('%Y-%m-%d').tolist()
-	
+dt = pd.date_range('2018-01-01','2022-01-01', freq='H')
+dt = dt[:-1]
+
 for station in range(1, 2):
 																																																						
 	print('Reading inmet station:', station)
 	# Reading smn station
-	data = pd.read_csv(os.path.join('{0}'.format(path), 'dados_A001_D_2018-01-01_2021-12-31.csv'), skiprows=9, encoding='ISO-8859-1', decimal=',', delimiter=';')
-	data = data.iloc[:, idx]
-	data_values = data.replace(-999., np.nan)
-	data_values = np.array(data_values, dtype=float)
-
+	data = pd.read_csv(os.path.join('{0}'.format(path_in), 'dados_A001_H_2018-01-01_2021-12-31.csv'), skiprows=9, encoding='ISO-8859-1', decimal=',', delimiter=';')
+	data_i = data.iloc[:, idx]
+	data_ii = data_i.replace(-999., np.nan)
+	data_values = np.array(data_ii, dtype=float)
+			
 	data_dates  = []
 	for i in range(len(dt)):
 			
 		data_dates.append('{0}'.format(dt[i]))
 		print('Date organized:', data_dates[i], data_values[i])
 		
-	nc_output = '{0}/{1}_A001_D_2018-01-01_2021-12-31.nc'.format(path, nc_var)
+	nc_output = '{0}/{1}_A001_H_2018-01-01_2021-12-31.nc'.format(path_out, nc_var)
 
 	# create netcdf
 	ds = Dataset(nc_output, mode='w', format='NETCDF4_CLASSIC')
 
 	ds.Conventions 	= 'CF-1.6'
-	ds.title 		= 'Weather stations.'
-	ds.institution 	= 'INMET.'
-	ds.source 		= 'Automatic weather station.'
+	ds.title 		= 'Automatic Weather stations.'
+	ds.institution 	= 'Instituto Nacional de Meteorologia, INMET.'
+	ds.source 		= 'INMET Meteorological Database.'
 	ds.history 		= 'Rewrote via python script.'
 	ds.references 	= 'https://bdmep.inmet.gov.br/.'
 	ds.comment 		= 'This script convert .csv to .nc of weather station'
@@ -67,7 +70,7 @@ for station in range(1, 2):
 	time 				= ds.createVariable('time', float, ('time'))
 	time.axis 			= 'L'
 	time.calendar 		= 'standard'
-	time.units			= 'days since {}'.format(data_dates[0])
+	time.units			= 'Hours since {}'.format(data_dates[0])
 	time[:]				= range(len(data_dates))
 
 	var 				= ds.createVariable(nc_var,  float, ('time'))
