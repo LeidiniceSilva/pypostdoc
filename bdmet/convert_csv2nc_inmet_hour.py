@@ -10,38 +10,41 @@ import numpy as np
 import pandas as pd
 
 from netCDF4 import Dataset
+from dict_inmet_stations import inmet
 
-idx=2
+idx=2 # 2, 7, 8 and 21
 
 if idx == 2:
 	nc_var = 'pre'
 	unit_var = 'mm'
 	name_var = 'Hourly total of precipitation'
 	std_var = 'precipitation'
-
 elif idx == 7:
+	nc_var = 'rad'
+	unit_var = 'cal.cm­**2.mm­**1'
+	name_var = 'Hourly mean of solar radiation'
+	std_var = 'temperature'
+elif idx == 8:
 	nc_var = 'tmp'
 	unit_var = 'C'
-	name_var = 'Daily mean of air temperature'
+	name_var = 'Hourly mean of air temperature'
 	std_var = 'temperature'
 else:
 	nc_var = 'uv'
-	unit_var = 'm s**-1'
-	name_var = 'Daily mean of wind speed'
+	unit_var = 'm.s**-1'
+	name_var = 'Hourly mean of wind speed'
 	std_var = 'wind'
 
-path_in = '/afs/ictp.it/home/m/mda_silv/Documents/BDMET/csv/hourly'
-path_out = '/afs/ictp.it/home/m/mda_silv/Documents/BDMET/nc/hourly_nc'
-
+path = '/afs/ictp.it/home/m/mda_silv/Documents/ICTP/database/obs/bdmet'
 # create date list
 dt = pd.date_range('2018-01-01','2022-01-01', freq='H')
 dt = dt[:-1]
 
-for station in range(1, 2):
+for station in range(0, 581):
 																																																						
-	print('Reading inmet station:', station)
+	print('Reading inmet station:', station+1, inmet[station+1][0])
 	# Reading smn station
-	data = pd.read_csv(os.path.join('{0}'.format(path_in), 'dados_A001_H_2018-01-01_2021-12-31.csv'), skiprows=9, encoding='ISO-8859-1', decimal=',', delimiter=';')
+	data = pd.read_csv(os.path.join('{0}/csv/hourly/'.format(path), 'dados_{0}_H_2018-01-01_2021-12-31.csv'.format(inmet[station+1][0])), skiprows=9, encoding='ISO-8859-1', decimal=',', delimiter=';')
 	data_i = data.iloc[:, idx]
 	data_ii = data_i.replace(-999., np.nan)
 	data_values = np.array(data_ii, dtype=float)
@@ -52,7 +55,7 @@ for station in range(1, 2):
 		data_dates.append('{0}'.format(dt[i]))
 		print('Date organized:', data_dates[i], data_values[i])
 		
-	nc_output = '{0}/{1}_A001_H_2018-01-01_2021-12-31.nc'.format(path_out, nc_var)
+	nc_output = '{0}/nc/hourly/{1}/{1}_{2}_H_2018-01-01_2021-12-31.nc'.format(path, nc_var, inmet[station+1][0])
 
 	# create netcdf
 	ds = Dataset(nc_output, mode='w', format='NETCDF4_CLASSIC')
@@ -84,5 +87,7 @@ for station in range(1, 2):
 	
 	if os.path.exists(nc_output): 
 		print('Done -->', nc_output)
+	
+	exit()
 
 exit()
