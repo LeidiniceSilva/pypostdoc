@@ -21,7 +21,7 @@ if idx == 2:
 	std_var = 'precipitation'
 elif idx == 7:
 	nc_var = 'rad'
-	unit_var = 'cal.cm­**2.mm­**1'
+	unit_var = 'kJ.m**-2'
 	name_var = 'Hourly mean of solar radiation'
 	std_var = 'temperature'
 elif idx == 8:
@@ -87,7 +87,4 @@ for station in range(0, 581):
 	
 	if os.path.exists(nc_output): 
 		print('Done -->', nc_output)
-	
-	exit()
-
 exit()
