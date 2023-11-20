@@ -22,7 +22,7 @@ def import_rcm(param):
 	arq = xr.open_dataset('/afs/ictp.it/home/m/mda_silv/Downloads/' + '{0}_SAM-3km_STS.2018010100_lonlat.nc'.format(param))
 	data = arq[param]
 	time = data.sel(time=slice('2018-01-01','2018-01-31'))
-	var = time.groupby('time.month').mean('time')
+	var = time.groupby('time.year').mean('time')
 	lat = var.lat
 	lon = var.lon
 	mean = var.values*86400
