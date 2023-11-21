@@ -12,7 +12,7 @@ import pandas as pd
 from netCDF4 import Dataset
 from dict_inmet_stations import inmet
 
-path = '/scratch/mda_silv/Documents/ICTP/database/obs/bdmet'
+path = '/afs/ictp.it/home/m/mda_silv/Documents/ICTP/database/obs/bdmet'
 
 # choose variable: 2, 7, 8 and 21
 idx=2 
