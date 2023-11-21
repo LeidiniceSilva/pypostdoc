@@ -12,7 +12,10 @@ import pandas as pd
 from netCDF4 import Dataset
 from dict_inmet_stations import inmet
 
-idx=2 # 2, 7, 8 and 21
+path = '/scratch/mda_silv/Documents/ICTP/database/obs/bdmet'
+
+# choose variable: 2, 7, 8 and 21
+idx=2 
 
 if idx == 2:
 	nc_var = 'pre'
@@ -35,12 +38,11 @@ else:
 	name_var = 'Hourly mean of wind speed'
 	std_var = 'wind'
 
-path = '/afs/ictp.it/home/m/mda_silv/Documents/ICTP/database/obs/bdmet'
 # create date list
 dt = pd.date_range('2018-01-01','2022-01-01', freq='H')
 dt = dt[:-1]
 
-for station in range(0, 581):
+for station in range(0, 567):
 																																																						
 	print('Reading inmet station:', station+1, inmet[station+1][0])
 	# Reading smn station
