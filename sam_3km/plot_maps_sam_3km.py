@@ -2,13 +2,12 @@
 
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
-__date__        = "Nov 16, 2023"
+__date__        = "Nov 20, 2023"
 __description__ = "This script plot climatology maps"
 
 import os
 import netCDF4
 import numpy as np
-import xarray as xr
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
@@ -19,7 +18,7 @@ from mpl_toolkits.basemap import Basemap
 path = '/afs/ictp.it/home/m/mda_silv/Documents'
 
 
-def import_cru(param):
+def import_ref(param):
 
 	arq   = '{0}/ICTP/database/obs/cru/{1}_SAM-3km_cru_ts4.07_mon_2018-2021_lonlat.nc'.format(path, param)
 	data  = netCDF4.Dataset(arq)
@@ -34,7 +33,7 @@ def import_cru(param):
 	
 def import_rcm(param):
 
-	arq   = '{0}/ICTP/database/rcm/sam_3km/{1}_SAM-3km_mon_2018_lonlat.nc'.format(path, param)
+	arq   = '{0}/ICTP/database/rcm/sam_3km/{1}_SAM-3km_RegCM5_mon_2018-2021_lonlat.nc'.format(path, param)
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -61,13 +60,35 @@ def basemap(lat, lon):
 
 
 # Import model and obs database 
-var_cru = 'pre'
-var_rcm = 'pr'
+var_rcm = 'clt'
 
-lat, lon, clim_cru = import_cru(var_cru)
+if var_rcm == 'pr':
+	var_ref = 'pre'
+elif var_rcm == 'tas':
+	var_ref = 'tmp'
+elif var_rcm == 'tasmax':
+	var_ref = 'tmx'
+elif var_rcm == 'tasmin':
+	var_ref = 'tmn'
+elif var_rcm == 'clt':
+	var_ref = 'cld'
+elif var_rcm == 'cl':
+	var_ref = 'cl'
+elif var_rcm == 'clw':
+	var_ref = 'clw'
+elif var_rcm == 'cli':
+	var_ref = 'cli'
+elif var_rcm == 'hus':
+	var_ref = 'q'
+elif var_rcm == 'ua':
+	var_ref = 'u'
+else:
+	var_ref = 'v'
+	
 lat, lon, clim_rcm = import_rcm(var_rcm)
+lat, lon, clim_ref = import_ref(var_ref)
 
-bias_rcm_cru = clim_rcm - clim_cru
+bias_rcm_ref = clim_rcm - clim_ref
 
 # Plot figure   
 fig = plt.figure(figsize=(10, 4))
@@ -79,12 +100,12 @@ if var_rcm == 'pr':
 	color0 = cm.Blues
 	levs1 = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6]
 	color1 = cm.BrBG
-elif var_rcm == 'ctl':
+elif var_rcm == 'clt':
 	legend = 'Bias of total cloud cover (%)'
 	levs0 = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-	color0 = cm.Reds
+	color0 = cm.Greys
 	levs1 = [-50, -40, -30, -20, -10, -5, 0, 5, 10, 20, 30, 40, 50]
-	color1 = cm.bwr
+	color1 = cm.RdGy
 elif var_rcm == 'tas':
 	legend = 'Bias of air temperature (°C)'
 	levs0 = [10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34]
@@ -106,7 +127,7 @@ else:
 
 ax = fig.add_subplot(1, 3, 1)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, clim_cru, levels=levs0, latlon=True, cmap=color0, extend='max') 
+plt_map = map.contourf(xx, yy, clim_ref, levels=levs0, latlon=True, cmap=color0, extend='max') 
 plt.title(u'(a) CRU', loc='left', fontsize=font_size, fontweight='bold')
 plt.ylabel(u'Latitude', labelpad=25, fontsize=font_size, fontweight='bold')
 plt.xlabel(u'Longitude', labelpad=15, fontsize=font_size, fontweight='bold')
@@ -121,7 +142,7 @@ cbar.ax.tick_params(labelsize=font_size)
 
 ax = fig.add_subplot(1, 3, 3)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, bias_rcm_cru, levels=levs1, latlon=True, cmap=color1, extend='both') 
+plt_map = map.contourf(xx, yy, bias_rcm_ref, levels=levs1, latlon=True, cmap=color1, extend='both') 
 plt.title(u'(c) Reg-3km - CRU', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel(u'Longitude', labelpad=15, fontsize=font_size, fontweight='bold')
 cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.96, 0.3, 0.015, 0.4]))
@@ -134,4 +155,3 @@ name_out = 'pyplt_maps_{0}_SAM-3km_RegCM5_cru_ts4.07_2018-2021.png'.format(var_r
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
-
