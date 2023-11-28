@@ -15,7 +15,7 @@ from dict_inmet_stations import inmet
 path = '/marconi/home/userexternal/mdasilva/REF/bdmet'
 
 # choose variable: 2, 7, 8 and 21
-idx=7 
+idx=2 
 
 if idx == 2:
 	nc_var = 'pre'
@@ -88,7 +88,7 @@ for station in range(1, 567):
 		continue
 	if station == 444:
 		continue
-	if station == 456:
+	if station == 453:
 		continue
 	if station == 457:
 		continue
