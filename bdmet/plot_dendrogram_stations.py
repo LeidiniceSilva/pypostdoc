@@ -15,7 +15,7 @@ from dict_inmet_stations import inmet
 from sklearn.cluster import AgglomerativeClustering
 from scipy.cluster.hierarchy import linkage, dendrogram
 
-path='/marconi/home/userexternal/mdasilva'
+path='/afs/ictp.it/home/m/mda_silv/Documents/BDMET'
 
 
 def import_inmet():
@@ -27,11 +27,27 @@ def import_inmet():
 	# Select lat and lon 
 	for station in range(1, 567):
 
+		if station == 2:
+			continue
 		if station == 15:
+			continue
+		if station == 19:
 			continue
 		if station == 23:
 			continue
+		if station == 35:
+			continue
 		if station == 47:
+			continue
+		if station == 59:
+			continue
+		if station == 64:
+			continue
+		if station == 93:
+			continue
+		if station == 96:
+			continue
+		if station == 100:
 			continue
 		if station == 105:
 			continue
@@ -45,17 +61,39 @@ def import_inmet():
 			continue
 		if station == 149:
 			continue
+		if station == 152:
+			continue
+		if station == 155:
+			continue
 		if station == 158:
 			continue
 		if station == 174:
 			continue
 		if station == 183:
 			continue
+		if station == 210:
+			continue
+		if station == 212:
+			continue
+		if station == 240:
+			continue
+		if station == 248:
+			continue
+		if station == 253:
+			continue
+		if station == 303:
+			continue
+		if station == 305:
+			continue
+		if station == 308:
+			continue
 		if station == 335:
 			continue
 		if station == 343:
 			continue
 		if station == 359:
+			continue
+		if station == 393:
 			continue
 		if station == 398:
 			continue
@@ -68,6 +106,8 @@ def import_inmet():
 		if station == 422:
 			continue
 		if station == 426:
+			continue
+		if station == 427:
 			continue
 		if station == 444:
 			continue
@@ -85,6 +125,8 @@ def import_inmet():
 			continue
 		if station == 505:
 			continue
+		if station == 514:
+			continue
 		if station == 529:
 			continue
 		if station == 566:
@@ -95,7 +137,7 @@ def import_inmet():
 				
 		print('Reading weather station:', station, inmet[station][0])
 		# Reading inmet 
-		d_i = xr.open_dataset('{0}/OBS/BDMET/nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
+		d_i = xr.open_dataset('{0}/database/nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
 		d_i = d_i.pre.sel(time=slice('2018-01-01','2021-12-31'))
 		d_i = d_i.groupby('time.month').mean('time')
 		values_i = d_i.values
@@ -136,10 +178,9 @@ dendrogram(z, leaf_rotation=90., leaf_font_size=10., color_threshold=3800)
 plt.title('Dendrogram', fontsize=20) 
 plt.xlabel('Weather stations (INMET+SMN)', fontsize=20) 
 plt.ylabel('Euclidean distances', fontsize=20) 
-# ~ plt.yticks(np.arange(0, 10, 1), fontsize=20)
 
 # Path out to save figure
-path_out = '{0}/figs/bdmet'.format(path)
+path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_dendrogram_stations.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
