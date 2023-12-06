@@ -2,8 +2,8 @@
 
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
-__date__        = "Nov 20, 2023"
-__description__ = "This script plot climatology maps"
+__date__        = "Dec 04, 2023"
+__description__ = "This script plot bias maps"
 
 import os
 import netCDF4
@@ -15,72 +15,6 @@ from matplotlib.path import Path
 from matplotlib.patches import PathPatch
 from mpl_toolkits.basemap import Basemap
 
-path = '/marconi/home/userexternal/mdasilva'
-
-arq   = '/marconi/home/userexternal/mdasilva/pr_201801-201807avg_mmd_lonlat.nc'
-data  = netCDF4.Dataset(arq)
-var   = data.variables['pr'][:] 
-lat   = data.variables['lat'][:]
-lon   = data.variables['lon'][:]
-value = var[:][:,:,:]
-
-# Import model and obs database 
-var_rcm = 'pr'
-
-# Plot figure   
-fig = plt.figure(figsize=(10, 4))
-font_size = 8
-
-map = Basemap(projection='cyl', llcrnrlon=-80., llcrnrlat=-38., urcrnrlon=-34.,urcrnrlat=-8., resolution='c')
-map.drawmeridians(np.arange(-80., -34., 6.), size=8, labels=[0,0,0,1], linewidth=0.4, color='black')
-map.drawparallels(np.arange(-38., -8., 6.), size=8, labels=[1,0,0,0], linewidth=0.4, color='black')
-map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black')
-	
-lons, lats = np.meshgrid(lon, lat)
-xx, yy = map(lons,lats)
-	
-legend = 'Bias of  precipitation (mm d⁻¹)'
-levs0 = [0, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12]
-color0 = cm.Blues
-levs1 = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6]
-color1 = cm.BrBG
-
-plt_map = map.contourf(xx, yy, value[0], levels=levs0, latlon=True, cmap=color0, extend='max') 
-plt.title(u'(b) Reg-3km', loc='left', fontsize=font_size, fontweight='bold')
-plt.xlabel(u'Longitude', labelpad=15, fontsize=font_size, fontweight='bold')
-cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.78, 0.3, 0.015, 0.4]))
-cbar.ax.tick_params(labelsize=font_size)
-
-plt.show()
-exit()
-
-
-
-def import_ref(param):
-
-	arq   = '{0}/ICTP/database/obs/cru/{1}_SAM-3km_cru_ts4.07_mon_2018-2021_lonlat.nc'.format(path, param)
-	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param][:] 
-	lat   = data.variables['lat'][:]
-	lon   = data.variables['lon'][:]
-	value = var[:][:,:,:]
-	mean = np.nanmean(value, axis=0)
-	
-	return lat, lon, mean
-	
-	
-def import_rcm(param):
-
-	arq   = '{0}/ICTP/database/rcm/sam_3km/{1}_SAM-3km_RegCM5_mon_2018-2021_lonlat.nc'.format(path, param)
-	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param][:] 
-	lat   = data.variables['lat'][:]
-	lon   = data.variables['lon'][:]
-	value = var[:][:,:,:]
-	mean = np.nanmean(value, axis=0)
-		
-	return lat, lon, mean
-	
 	
 def basemap(lat, lon):
 	
