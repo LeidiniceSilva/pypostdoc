@@ -14,11 +14,8 @@ import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch
 from mpl_toolkits.basemap import Basemap
-from import_dataset_situ import import_obs_situ
 
-path='/marconi/home/userexternal/mdasilva/github_projects'
-
-
+	
 def basemap(lat, lon):
 	
 	map = Basemap(projection='cyl', llcrnrlon=-80., llcrnrlat=-38., urcrnrlon=-34.,urcrnrlat=-8., resolution='c')
@@ -29,50 +26,44 @@ def basemap(lat, lon):
 	xx, yy = map(lons,lats)
 
 	# Import shapefile 	
-	map.readshapefile('{0}/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black')
+	map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black')
 	
 	return map, xx, yy
 
 
 # Import model and obs database 
-var_rcm = 'pr'
+var_rcm = 'clt'
 
 if var_rcm == 'pr':
-	var_obs = 'pre'
+	var_ref = 'pre'
 elif var_rcm == 'tas':
-	var_obs = 'tmp'
+	var_ref = 'tmp'
 elif var_rcm == 'tasmax':
-	var_obs = 'tmx'
+	var_ref = 'tmx'
 elif var_rcm == 'tasmin':
-	var_obs = 'tmn'
+	var_ref = 'tmn'
 elif var_rcm == 'clt':
-	var_obs = 'cld'
+	var_ref = 'cld'
+elif var_rcm == 'cl':
+	var_ref = 'cl'
+elif var_rcm == 'clw':
+	var_ref = 'clw'
+elif var_rcm == 'cli':
+	var_ref = 'cli'
+elif var_rcm == 'hus':
+	var_ref = 'q'
+elif var_rcm == 'ua':
+	var_ref = 'u'
 else:
 	var_ref = 'v'
 	
-lat_inmet, lon_inmet, situ_inmet = import_obs_situ(var_obs)
+lat, lon, clim_rcm = import_rcm(var_rcm)
+lat, lon, clim_ref = import_ref(var_ref)
 
-print(lat_inmet)
-print()
-print(lon_inmet)
-print()
-print(situ_inmet)
-
-exit()
-
-obs_situ_reg = import_rcm_situ(var_obs)
-
-
-
-
-
-bias_reg_inmet = obs_situ_reg - obs_situ_inmet
-print(bias_reg_inmet)
-exit()
-
+bias_rcm_ref = clim_rcm - clim_ref
 
 # Plot figure   
-fig = plt.figure(figsize=(10, 8))
+fig = plt.figure(figsize=(10, 4))
 font_size = 8
 
 if var_rcm == 'pr':
