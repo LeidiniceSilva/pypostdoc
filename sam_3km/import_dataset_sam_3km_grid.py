@@ -12,7 +12,7 @@ import numpy as np
 path = '/marconi/home/userexternal/mdasilva/user/mdasilva/sam_3km/postproc/'
 
 	
-def import_obs(param, dataset):
+def import_obs_srf(param, dataset):
 
 	arq = xr.open_dataset('{0}'.fotmat(path) + '{0}_SAM-3km_{1}_mon_2018-2021_lonlat.nc'.format(param, dataset))
 	data = arq[param]
@@ -24,7 +24,7 @@ def import_obs(param, dataset):
 	return var, lat, lon
 	
 		
-def import_rcm(param, dataset):
+def import_rcm_srf(param, dataset):
 
 	arq = xr.open_dataset('{0}'.fotmat(path) + '{0}_SAM-3km_{1}_mon_2018-2021_lonlat.nc'.format(param, dataset))
 	data = arq[param]
