@@ -1,0 +1,137 @@
+# -*- coding:utf-8 -*-
+
+__author__      = "Leidinice Silva"
+__email__       = "leidinicesilva@gmail.com"
+__date__        = "Nov 16, 2023"
+__description__ = "This script plot altimetry of inmet stations "
+
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+
+from dict_inmet_stations import inmet
+from matplotlib.patches import Polygon
+from mpl_toolkits.basemap import Basemap
+
+path = '/afs/ictp.it/home/m/mda_silv/Documents'
+
+# Select lat and lon 
+ix = []		  
+iy = []
+iz = []
+
+for i in range(1, 567):
+	
+	if i == 15:
+		continue
+	if i == 23:
+		continue
+	if i == 47:
+		continue
+	if i == 105:
+		continue
+	if i == 112:
+		continue
+	if i == 117:
+		continue
+	if i == 124:
+		continue
+	if i == 137:
+		continue
+	if i == 149:
+		continue
+	if i == 158:
+		continue
+	if i == 174:
+		continue
+	if i == 183:
+		continue
+	if i == 335:
+		continue
+	if i == 343:
+		continue
+	if i == 359:
+		continue
+	if i == 398:
+		continue
+	if i == 399:
+		continue
+	if i == 413:
+		continue
+	if i == 417:
+		continue
+	if i == 422:
+		continue
+	if i == 426:
+		continue
+	if i == 444:
+		continue
+	if i == 456:
+		continue
+	if i == 457:
+		continue
+	if i == 458:
+		continue
+	if i == 479:
+		continue
+	if i == 490:
+		continue
+	if i == 495:
+		continue
+	if i == 505:
+		continue
+	if i == 529:
+		continue
+	if i == 566:
+		continue
+	if inmet[i][2] >= -11.25235:
+		continue
+		
+	iy.append(inmet[i][2])
+	ix.append(inmet[i][3])
+	iz.append(inmet[i][4])
+		
+# Plot figure
+fig = plt.figure()
+
+ax = fig.add_subplot(1, 2, 1)
+my_map = Basemap(projection='cyl', llcrnrlon=-85., llcrnrlat=-60., urcrnrlon=-30.,urcrnrlat=15., resolution='c')
+my_map.drawmeridians(np.arange(-85.,-30.,10.), labels=[0,0,0,1], linewidth=0.5, color='black')
+my_map.drawparallels(np.arange(-60.,15.,10.), labels=[1,0,0,0], linewidth=0.5, color='black') 
+my_map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black', linewidth=.5)
+
+ln=my_map.plot(ix, iy, 'o', color='blue', label='INMET', markersize=2)
+plt.xlabel(u'Longitude', labelpad=20, fontsize=10, fontweight='bold')
+plt.ylabel(u'Latitude', labelpad=30, fontsize=10, fontweight='bold')
+plt.text(-36, -57, u'\u25B2 \nN', fontsize=10, fontweight='bold')
+plt.legend(loc=1, fontsize=10)
+
+# SESA
+a1,b1 = (-78,-35)
+a2,b2 = (-78,-11)
+a3,b3 = (-35,-11)
+a4,b4 = (-35,-35)
+poly1 = Polygon([(a1,b1),(a2,b2),(a3,b3),(a4,b4)], facecolor='none', edgecolor='red', linewidth=1.)
+plt.gca().add_patch(poly1)
+
+ax = fig.add_subplot(1, 2, 2)
+my_map = Basemap(projection='cyl', llcrnrlon=-85., llcrnrlat=-60., urcrnrlon=-30.,urcrnrlat=15., resolution='c')
+my_map.drawmeridians(np.arange(-85.,-30.,10.), labels=[0,0,0,1], linewidth=0.5, color='black')
+my_map.drawparallels(np.arange(-60.,15.,10.), labels=[1,0,0,0], linewidth=0.5, color='black') 
+my_map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black', linewidth=.5)
+
+sc=my_map.scatter(ix, iy, 4, iz, label='INMET', cmap='jet', marker='o')
+plt.xlabel(u'Longitude', labelpad=20, fontsize=10, fontweight='bold')
+plt.text(-36, -57, u'\u25B2 \nN', fontsize=10, fontweight='bold')
+plt.legend(loc=1, fontsize=10)
+cbar=plt.colorbar(sc, cax=fig.add_axes([0.91, 0.25, 0.015, 0.50]), extend='max')
+cbar.set_label('Altimetry (meters)', fontsize=10, fontweight='bold')
+cbar.ax.tick_params(labelsize=10)
+
+# Path out to save figure
+path_out = '{0}/BDMET/figs'.format(path)
+name_out = 'pyplt_maps_stations_sesa.png'
+plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
+plt.show()
+exit()
+

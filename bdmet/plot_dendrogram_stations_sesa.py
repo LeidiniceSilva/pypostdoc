@@ -131,6 +131,8 @@ def import_inmet():
 			continue
 		if station == 566:
 			continue
+		if inmet[station][2] >= -11.25235:
+			continue
 		
 		iy.append(inmet[station][2])
 		ix.append(inmet[station][3])
@@ -181,7 +183,7 @@ plt.ylabel('Euclidean distances', fontsize=20)
 
 # Path out to save figure
 path_out = '{0}/figs'.format(path)
-name_out = 'pyplt_dendrogram_stations.png'
+name_out = 'pyplt_dendrogram_stations_sesa.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
