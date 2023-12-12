@@ -3,10 +3,9 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Nov 20, 2023"
-__description__ = "This script plot weather stations timeseries"
+__description__ = "This script plot weather station timeseries"
 
 import os
-import math
 import numpy as np
 import xarray as xr
 import pandas as pd
@@ -131,23 +130,23 @@ for station in range(1, 567):
 	print('Reading weather station:', station, name)
 	d_i = xr.open_dataset('{0}/database/nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))	
 	d_i = d_i.pre.sel(time=slice('2018-01-01','2021-12-31'))	
-	d_i = d_i.groupby('time.month').mean('time')
-	d_i = d_i.values*24
+	d_i = d_i.groupby('time.hour').mean('time')
+	d_i = d_i.values
 	
 	# Plot figure
 	fig = plt.figure()
-	time = np.arange(0.5, 12 + 0.5)
+	time = np.arange(0.5, 24 + 0.5)
 
 	ax = fig.add_subplot(1, 1, 1)
 	plt.plot(time, d_i, linewidth=1, color='blue')
 	plt.title(u'{0} lat: {1} lon: {2}'.format(name, yy, xx), fontweight='bold')
 	plt.xlabel(u'2018-01-01 - 2021-12-31', fontweight='bold')
-	plt.ylabel(u'Precipitation (mm d⁻¹)', fontweight='bold')
-	plt.ylim(0, 20)
+	plt.ylabel(u'Precipitation (mm h⁻¹)', fontweight='bold')
+	plt.ylim(0, 5)
 	plt.grid()
 					
 	# Path out to save figure
-	path_out = '{0}/figs/ts_v2'.format(path)
+	path_out = '{0}/figs/ts_dc'.format(path)
 	name_out = 'pyplt_ts_pr_inmet_{0}_2018-2021.png'.format(name)
 	plt.savefig(os.path.join(path_out, name_out), dpi=100, bbox_inches='tight')
 	plt.close('all')

@@ -6,7 +6,6 @@ __date__        = "Nov 20, 2023"
 __description__ = "This script plot weather station timeseries"
 
 import os
-import math
 import numpy as np
 import xarray as xr
 import pandas as pd
@@ -123,33 +122,27 @@ for station in range(1, 567):
 		continue
 	if station == 566:
 		continue
-	if inmet[station][2] >= -11.25235:
-		continue
-			
+		
 	yy = inmet[station][2]
 	xx = inmet[station][3]
 	name = inmet[station][0]
 
 	print('Reading weather station:', station, name)
-	d_i = xr.open_dataset('{0}/database/nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
+	d_i = xr.open_dataset('{0}/database/nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))	
 	d_i = d_i.pre.sel(time=slice('2018-01-01','2021-12-31'))	
-	d_i = d_i.values
+	d_i = d_i.groupby('time.month').mean('time')
+	d_i = d_i.values*24
 	
 	# Plot figure
 	fig = plt.figure()
-	
-	ts = pd.date_range(start="20180101", end="20220101", freq="H")
-	ts_h = pd.Series(data=d_i, index=ts[:-1])
-	
-	x = sum(math.isnan(x) for x in d_i)
-	percent_missing = x * 100 / len(d_i)
+	time = np.arange(0.5, 12 + 0.5)
 
 	ax = fig.add_subplot(1, 1, 1)
-	plt.plot(ts_h, linewidth=1, color='blue')
-	plt.title(u'{0} NaN={1}% \n lat: {2} lon: {3}'.format(name, round(percent_missing), yy, xx), fontweight='bold')
-	plt.xlabel(u'2018-01-01 00h - 2021-12-31 23h', fontweight='bold')
-	plt.ylabel(u'Precipitation (mm h⁻¹)', fontweight='bold')
-	plt.ylim(0, 200)
+	plt.plot(time, d_i, linewidth=1, color='blue')
+	plt.title(u'{0} lat: {1} lon: {2}'.format(name, yy, xx), fontweight='bold')
+	plt.xlabel(u'2018-01-01 - 2021-12-31', fontweight='bold')
+	plt.ylabel(u'Precipitation (mm d⁻¹)', fontweight='bold')
+	plt.ylim(0, 20)
 	plt.grid()
 					
 	# Path out to save figure
@@ -159,3 +152,4 @@ for station in range(1, 567):
 	plt.close('all')
 	plt.cla()
 exit()
+

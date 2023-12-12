@@ -15,74 +15,18 @@ from mpl_toolkits.basemap import Basemap
 
 path = '/afs/ictp.it/home/m/mda_silv/Documents'
 
+skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
+149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
+303,305,306,308,319,334,335,341,343,359,362,364,384,393,396,398,399,400,402,413,416,417,422,423,426,427,
+443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]
+
 # Select lat and lon 
 ix = []		  
 iy = []
 iz = []
 
 for i in range(1, 567):
-	
-	if i == 15:
-		continue
-	if i == 23:
-		continue
-	if i == 47:
-		continue
-	if i == 105:
-		continue
-	if i == 112:
-		continue
-	if i == 117:
-		continue
-	if i == 124:
-		continue
-	if i == 137:
-		continue
-	if i == 149:
-		continue
-	if i == 158:
-		continue
-	if i == 174:
-		continue
-	if i == 183:
-		continue
-	if i == 335:
-		continue
-	if i == 343:
-		continue
-	if i == 359:
-		continue
-	if i == 398:
-		continue
-	if i == 399:
-		continue
-	if i == 413:
-		continue
-	if i == 417:
-		continue
-	if i == 422:
-		continue
-	if i == 426:
-		continue
-	if i == 444:
-		continue
-	if i == 456:
-		continue
-	if i == 457:
-		continue
-	if i == 458:
-		continue
-	if i == 479:
-		continue
-	if i == 490:
-		continue
-	if i == 495:
-		continue
-	if i == 505:
-		continue
-	if i == 529:
-		continue
-	if i == 566:
+	if i in skip_list:
 		continue
 	if inmet[i][2] >= -11.25235:
 		continue
@@ -120,10 +64,9 @@ my_map.drawmeridians(np.arange(-85.,-30.,10.), labels=[0,0,0,1], linewidth=0.5, 
 my_map.drawparallels(np.arange(-60.,15.,10.), labels=[1,0,0,0], linewidth=0.5, color='black') 
 my_map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black', linewidth=.5)
 
-sc=my_map.scatter(ix, iy, 4, iz, label='INMET', cmap='jet', marker='o')
+sc=my_map.scatter(ix, iy, 4, iz, cmap='jet', marker='o')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=10, fontweight='bold')
 plt.text(-36, -57, u'\u25B2 \nN', fontsize=10, fontweight='bold')
-plt.legend(loc=1, fontsize=10)
 cbar=plt.colorbar(sc, cax=fig.add_axes([0.91, 0.25, 0.015, 0.50]), extend='max')
 cbar.set_label('Altimetry (meters)', fontsize=10, fontweight='bold')
 cbar.ax.tick_params(labelsize=10)

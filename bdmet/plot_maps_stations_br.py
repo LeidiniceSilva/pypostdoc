@@ -13,7 +13,7 @@ from dict_inmet_stations import inmet
 from matplotlib.patches import Polygon
 from mpl_toolkits.basemap import Basemap
 
-path = '/marconi/home/userexternal/mdasilva'
+path = '/afs/ictp.it/home/m/mda_silv/Documents'
 
 # Select lat and lon 
 ix = []		  
@@ -21,70 +21,6 @@ iy = []
 iz = []
 
 for i in range(1, 567):
-
-	if i == 15:
-		continue
-	if i == 23:
-		continue
-	if i == 47:
-		continue
-	if i == 105:
-		continue
-	if i == 112:
-		continue
-	if i == 117:
-		continue
-	if i == 124:
-		continue
-	if i == 137:
-		continue
-	if i == 149:
-		continue
-	if i == 158:
-		continue
-	if i == 174:
-		continue
-	if i == 183:
-		continue
-	if i == 335:
-		continue
-	if i == 343:
-		continue
-	if i == 359:
-		continue
-	if i == 398:
-		continue
-	if i == 399:
-		continue
-	if i == 413:
-		continue
-	if i == 417:
-		continue
-	if i == 422:
-		continue
-	if i == 426:
-		continue
-	if i == 444:
-		continue
-	if i == 456:
-		continue
-	if i == 457:
-		continue
-	if i == 458:
-		continue
-	if i == 479:
-		continue
-	if i == 490:
-		continue
-	if i == 495:
-		continue
-	if i == 505:
-		continue
-	if i == 529:
-		continue
-	if i == 566:
-		continue
-		
 	iy.append(inmet[i][2])
 	ix.append(inmet[i][3])
 	iz.append(inmet[i][4])
@@ -99,6 +35,7 @@ my_map.drawparallels(np.arange(-60.,15.,10.), labels=[1,0,0,0], linewidth=0.5, c
 my_map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black', linewidth=.5)
 
 ln=my_map.plot(ix, iy, 'o', color='blue', label='INMET', markersize=2)
+plt.title('(a)', loc='left', fontsize=10, fontweight='bold')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=10, fontweight='bold')
 plt.ylabel(u'Latitude', labelpad=30, fontsize=10, fontweight='bold')
 plt.text(-36, -57, u'\u25B2 \nN', fontsize=10, fontweight='bold')
@@ -119,6 +56,7 @@ my_map.drawparallels(np.arange(-60.,15.,10.), labels=[1,0,0,0], linewidth=0.5, c
 my_map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black', linewidth=.5)
 
 sc=my_map.scatter(ix, iy, 4, iz, label='INMET', cmap='jet', marker='o')
+plt.title('(b)', loc='left', fontsize=10, fontweight='bold')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=10, fontweight='bold')
 plt.text(-36, -57, u'\u25B2 \nN', fontsize=10, fontweight='bold')
 plt.legend(loc=1, fontsize=10)
@@ -127,8 +65,8 @@ cbar.set_label('Altimetry (meters)', fontsize=10, fontweight='bold')
 cbar.ax.tick_params(labelsize=10)
 
 # Path out to save figure
-path_out = '{0}/figs/bdmet'.format(path)
-name_out = 'pyplt_maps_stations_v2.png'
+path_out = '{0}/BDMET/figs'.format(path)
+name_out = 'pyplt_maps_stations_br.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
