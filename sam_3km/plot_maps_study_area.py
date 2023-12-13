@@ -19,7 +19,7 @@ from mpl_toolkits.basemap import Basemap, cm
 
     
 # Specify directories 
-dirnc = '/home/mda_silv/scratch/sam_3km/input'
+dirnc = '/marconi/home/userexternal/mdasilva/user/mdasilva/sam_3km/input'
 domname = 'SAM-3km'
 
 # RegCM file
@@ -47,8 +47,8 @@ font_size = 10
 my_map = Basemap(llcrnrlon=lon_start, llcrnrlat=lat_start, urcrnrlon=lon_end, urcrnrlat=lat_end, resolution='c')	
 my_map.drawparallels(np.arange(lat_start, lat_end, 10.), labels=[1,0,0,0], fontsize=font_size, linewidth=0.4, color='black')
 my_map.drawmeridians(np.arange(lon_start, lon_end, 10.), labels=[0,0,0,1], fontsize=font_size, linewidth=0.4, color='black')                  
-my_map.readshapefile('/home/mda_silv/github_projects/shp/shp_america_sul/america_sul', 'america_sul', drawbounds=True, color='black', linewidth=.5)
-my_map.readshapefile('/home/mda_silv/github_projects/shp/lim_unid_fed/lim_unid_fed', 'lim_unid_fed', drawbounds=True, color='black', linewidth=.5)
+my_map.readshapefile('/marconi/home/userexternal/mdasilva/github_projects/shp/shp_america_sul/america_sul', 'america_sul', drawbounds=True, color='black', linewidth=0.5)
+my_map.readshapefile('/marconi/home/userexternal/mdasilva/github_projects/shp/lim_unid_fed/lim_unid_fed', 'lim_unid_fed', drawbounds=True, color='black', linewidth=0.5)
 	
 x, y = my_map(lon,lat)
 
@@ -62,8 +62,8 @@ cbar.set_label('Topography (meters)', fontsize=font_size, fontweight='bold')
 plt.text(-36, 11, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
 
 # Path out to save figure
-path_out = '/home/mda_silv/figs/sam_3km'
-name_out = 'pyplt_maps_study_area_sam_3km.png'
+path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/sam_3km/figs'
+name_out = 'pyplt_maps_study_area_SAM-3km_RegCM5_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
