@@ -14,7 +14,7 @@ def import_obs_srf(param, domain, dataset):
 
 	arq = xr.open_dataset('{0}'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param, domain, dataset))
 	data = arq[param]
-	time = data.sel(time=slice('2018-01-01','2021-12-31'))
+	time = data.sel(time=slice('2018-01-01','2018-12-31'))
 	mean = time.groupby('time.season').mean(dim='time')
 	lat = mean.lat
 	lon = mean.lon
@@ -27,7 +27,7 @@ def import_rcm_srf(param, domain, dataset):
 
 	arq = xr.open_dataset('{0}'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param, domain, dataset))
 	data = arq[param]
-	time = data.sel(time=slice('2018-01-01','2021-12-31'))
+	time = data.sel(time=slice('2018-01-01','2018-12-31'))
 	mean = time.groupby('time.season').mean(dim='time')
 	lat = mean.lat
 	lon = mean.lon

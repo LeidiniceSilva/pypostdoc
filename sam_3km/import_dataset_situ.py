@@ -29,16 +29,20 @@ def import_obs_situ(param):
 		iy.append(inmet[station][2])
 		ix.append(inmet[station][3])
 
-		arq = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/pre/'.format(path) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
+		arq = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
 		data = arq[param]
-		time = data.sel(time=slice('2018-01-01','2021-12-31'))
+		time = data.sel(time=slice('2018-01-01','2018-12-31'))
 		var = time.groupby('time.season').mean(dim='time')
-		mean_i.append(var.values*24)
-				
+		
+		if param == 'pr':
+			mean_i.append(var.values*24)
+		else:
+			mean_i.append(var.values)
+
 	return iy, ix, mean_i
 	
 	
-def import_rcm_situ(param):
+def import_rcm_situ(param, domain, dataset):
 	
 	iy, ix, mean_i = [], [], []
 	for station in range(1, 567):
@@ -50,9 +54,9 @@ def import_rcm_situ(param):
 		iy.append(inmet[station][2])
 		ix.append(inmet[station][3])
 
-		arq = xr.open_dataset('{0}/user/mdasilva/sam_3km/postproc/'.format(path) + '{0}_SAM-3km_RegCM5_mon_2018-2021_lonlat.nc'.format(param))
+		arq = xr.open_dataset('{0}/user/mdasilva/sam_3km/postproc/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param, domain, dataset))
 		data = arq[param]
-		time = data.sel(time=slice('2018-01-01','2021-12-31'))
+		time = data.sel(time=slice('2018-01-01','2018-12-31'))
 		var = time.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		mean = var.groupby('time.season').mean(dim='time')
 		mean_i.append(mean.values)
