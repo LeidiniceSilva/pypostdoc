@@ -15,7 +15,7 @@ from dict_inmet_stations import inmet
 from sklearn.cluster import AgglomerativeClustering
 from scipy.cluster.hierarchy import linkage, dendrogram
 
-path='/afs/ictp.it/home/m/mda_silv/Documents/BDMET'
+path='/marconi/home/userexternal/mdasilva/OBS/BDMET'
 
 
 def import_inmet():
@@ -26,7 +26,7 @@ def import_inmet():
 
 	# Select lat and lon 
 	for station in range(1, 567):
-
+	
 		if station == 2:
 			continue
 		if station == 15:
@@ -139,7 +139,7 @@ def import_inmet():
 		# Reading inmet 
 		d_i = xr.open_dataset('{0}/database/nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
 		d_i = d_i.pre.sel(time=slice('2018-01-01','2021-12-31'))
-		d_i = d_i.groupby('time.month').mean('time')
+		d_i = d_i.groupby('time.hour').mean('time')
 		values_i = d_i.values
 		clim_i.append(values_i*24)
 			
@@ -181,7 +181,7 @@ plt.ylabel('Euclidean distances', fontsize=20)
 
 # Path out to save figure
 path_out = '{0}/figs'.format(path)
-name_out = 'pyplt_dendrogram_stations_br.png'
+name_out = 'pyplt_dendrogram_stations_br_dc.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

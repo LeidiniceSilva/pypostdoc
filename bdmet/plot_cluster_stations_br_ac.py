@@ -311,7 +311,7 @@ ax.tick_params(axis='both', which='major', labelsize=10)
 
 # Path out to save figure
 path_out = '{0}/figs'.format(path)
-name_out = 'pyplt_cluster_analysis.png'
+name_out = 'pyplt_cluster_analysis_ac.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

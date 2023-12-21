@@ -14,11 +14,6 @@ from dict_inmet_stations import inmet
 
 path = '/marconi/home/userexternal/mdasilva/OBS/BDMET/database'
 
-skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
-149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
-303,305,306,308,319,334,335,341,343,359,362,364,384,393,396,398,399,400,402,413,416,417,422,423,426,427,
-443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]
-
 # choose variable: 2, 7, 8 and 21
 idx=2
 
@@ -48,11 +43,111 @@ dt = pd.date_range('2018-01-01','2022-01-01', freq='H')
 dt = dt[:-1]
 
 for station in range(1, 567):
-	if station in skip_list:
+	if station == 2:
 		continue
-	if inmet[station][2] >= -11.25235:
+	if station == 15:
 		continue
-														
+	if station == 19:
+		continue
+	if station == 23:
+		continue
+	if station == 35:
+		continue
+	if station == 47:
+		continue
+	if station == 59:
+		continue
+	if station == 64:
+		continue
+	if station == 93:
+		continue
+	if station == 96:
+		continue
+	if station == 100:
+		continue
+	if station == 105:
+		continue
+	if station == 112:
+		continue
+	if station == 117:
+		continue
+	if station == 124:
+		continue
+	if station == 137:
+		continue
+	if station == 149:
+		continue
+	if station == 152:
+		continue
+	if station == 155:
+		continue
+	if station == 158:
+		continue
+	if station == 174:
+		continue
+	if station == 183:
+		continue
+	if station == 210:
+		continue
+	if station == 212:
+		continue
+	if station == 240:
+		continue
+	if station == 248:
+		continue
+	if station == 253:
+		continue
+	if station == 303:
+		continue
+	if station == 305:
+		continue
+	if station == 308:
+		continue
+	if station == 335:
+		continue
+	if station == 343:
+		continue
+	if station == 359:
+		continue
+	if station == 393:
+		continue
+	if station == 398:
+		continue
+	if station == 399:
+		continue
+	if station == 413:
+		continue
+	if station == 417:
+		continue
+	if station == 422:
+		continue
+	if station == 426:
+		continue
+	if station == 427:
+		continue
+	if station == 444:
+		continue
+	if station == 453:
+		continue
+	if station == 457:
+		continue
+	if station == 458:
+		continue
+	if station == 479:
+		continue
+	if station == 490:
+		continue
+	if station == 495:
+		continue
+	if station == 505:
+		continue
+	if station == 514:
+		continue
+	if station == 529:
+		continue
+	if station == 566:
+		continue
+													
 	print('Reading inmet station:', station, inmet[station][0])
 	# Reading smn station
 	data = pd.read_csv(os.path.join('{0}/csv/hourly/'.format(path), 'dados_{0}_H_2018-01-01_2021-12-31.csv'.format(inmet[station][0])), skiprows=9, encoding='ISO-8859-1', decimal=',', delimiter=';')
