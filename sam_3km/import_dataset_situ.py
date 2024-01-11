@@ -9,6 +9,8 @@ import xarray as xr
 
 from dict_inmet_stations import inmet
 
+date_start, date_end = '2018-01-01','2021-12-31'
+
 path = '/marconi/home/userexternal/mdasilva'
 
 skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
@@ -31,10 +33,10 @@ def import_obs_situ(param):
 
 		arq = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
 		data = arq[param]
-		time = data.sel(time=slice('2018-01-01','2018-12-31'))
+		time = data.sel(time=slice(date_start, date_end))
 		var = time.groupby('time.season').mean(dim='time')
 		
-		if param == 'pr':
+		if param == 'pre':
 			mean_i.append(var.values*24)
 		else:
 			mean_i.append(var.values)
@@ -54,13 +56,22 @@ def import_rcm_situ(param, domain, dataset):
 		iy.append(inmet[station][2])
 		ix.append(inmet[station][3])
 
-		arq = xr.open_dataset('{0}/user/mdasilva/sam_3km/postproc/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param, domain, dataset))
+		arq = xr.open_dataset('{0}/user/mdasilva/sam_3km/post/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param, domain, dataset))
 		data = arq[param]
-		time = data.sel(time=slice('2018-01-01','2018-12-31'))
+		time = data.sel(time=slice(date_start, date_end))
 		var = time.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		mean = var.groupby('time.season').mean(dim='time')
 		mean_i.append(mean.values)
 				
 	return iy, ix, mean_i
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	

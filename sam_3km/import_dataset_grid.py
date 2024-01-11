@@ -7,14 +7,16 @@ __description__ = "This script import grid datasets"
 
 import xarray as xr
 
-path = '/marconi/home/userexternal/mdasilva/user/mdasilva/sam_3km/postproc/'
+date_start, date_end = '2018-01-01','2021-12-31'
+
+path = '/marconi/home/userexternal/mdasilva/user/mdasilva/sam_3km/post/'
 
 	
 def import_obs_srf(param, domain, dataset):
 
 	arq = xr.open_dataset('{0}'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param, domain, dataset))
 	data = arq[param]
-	time = data.sel(time=slice('2018-01-01','2018-12-31'))
+	time = data.sel(time=slice(date_start, date_end))
 	mean = time.groupby('time.season').mean(dim='time')
 	lat = mean.lat
 	lon = mean.lon
@@ -27,7 +29,7 @@ def import_rcm_srf(param, domain, dataset):
 
 	arq = xr.open_dataset('{0}'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param, domain, dataset))
 	data = arq[param]
-	time = data.sel(time=slice('2018-01-01','2018-12-31'))
+	time = data.sel(time=slice(date_start, date_end))
 	mean = time.groupby('time.season').mean(dim='time')
 	lat = mean.lat
 	lon = mean.lon

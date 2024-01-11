@@ -317,7 +317,6 @@ def compute_mbe_grid(model, obs):
 	mbe_ii = model[1] - obs[1]
 	mbe_iii = model[2] - obs[2]
 	mbe_iv = model[3] - obs[3]
-	
-	return mbe_i, mbe_ii, mbe_iii, mbe_iv	
-	
+
+	return mbe_i, mbe_ii, mbe_iii, mbe_iv
 	

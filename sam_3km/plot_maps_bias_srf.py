@@ -20,8 +20,8 @@ path='/marconi/home/userexternal/mdasilva'
 domain = 'SAM-3km'
 
 var = 'clt'
-	
-# Import model and obs database 
+
+# Import model and obs dataset 
 if var == 'pr':
 	dict_var = {'pr': ['pre', 'pre', 'precip', 'sat_gauge_precip', 'tp']}
 
@@ -66,6 +66,16 @@ elif var == 'tasmax':
 	mbe_djf_regcm_cpc, mbe_mam_regcm_cpc, mbe_jja_regcm_cpc, mbe_son_regcm_cpc = compute_mbe_grid(regcm, cpc)
 	mbe_djf_regcm_era5, mbe_mam_regcm_era5, mbe_jja_regcm_era5, mbe_son_regcm_era5 = compute_mbe_grid(regcm, era5)
 	
+	print(regcm)
+	print()
+	print(cru.shape)
+	print()
+	print(cpc.shape)
+	print()
+	print(np.max(era5))
+	print(np.min(era5))
+	exit()
+	
 elif var == 'tasmin':
 	dict_var = {'tasmin': ['tmn', 'tmin', 'mn2t']}
 
@@ -87,7 +97,6 @@ else:
 	
 	mbe_djf_regcm_cru, mbe_mam_regcm_cru, mbe_jja_regcm_cru, mbe_son_regcm_cru = compute_mbe_grid(regcm, cru)
 	mbe_djf_regcm_era5, mbe_mam_regcm_era5, mbe_jja_regcm_era5, mbe_son_regcm_era5 = compute_mbe_grid(regcm, era5)
-
 
 # Plot figure   
 dict_plot = {
@@ -130,7 +139,7 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.scatter(lon_i, lat_i, 4, mbe_regcm_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
+	plt_map = map.scatter(lon_i, lat_i, 4, mbe_mam_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
 	plt.title(u'(f) RegCM5-INMET MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 7)  
@@ -155,7 +164,7 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 11)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.scatter(lon_i, lat_i, 4, mbe_regcm_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
+	plt_map = map.scatter(lon_i, lat_i, 4, mbe_jja_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
 	plt.title(u'(k) RegCM5-INMET JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 12)  
@@ -187,25 +196,21 @@ if var == 'pr':
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(q) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
-	plt.xlabel(u'Longitude', labelpad=10, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 18)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_regcm_cpc, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(r) RegCM5-CPC SON', loc='left', fontsize=font_size, fontweight='bold')
-	plt.xlabel(u'Longitude', labelpad=10, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 19)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_regcm_gpcp, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(s) RegCM5-GPCP SON', loc='left', fontsize=font_size, fontweight='bold')
-	plt.xlabel(u'Longitude', labelpad=10, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 20)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(t) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
-	plt.xlabel(u'Longitude', labelpad=10, fontsize=font_size, fontweight='bold')
 
 elif var == 'tas':
 	fig = plt.figure(figsize=(8, 8))
