@@ -39,6 +39,20 @@ def compute_r2(model, obs):
 
 	return r2
 
+
+def compute_mbe(model, obs):
+
+	"""
+	The input list must have the same length
+	:Param model: Numpy array with model data
+	:Param obs: Numpy array with obs data
+	:Return: Mean Bias Error
+	"""
+	
+	mbe = model - obs
+
+	return mbe
+	
     
 def compute_mae(model, obs):
 
@@ -67,21 +81,7 @@ def compute_rmse(model, obs):
     
 	return rmse
     
-     
-def compute_mbe(model, obs):
-
-	"""
-	The input arrays must have the same dimensions
-	:Param model: Numpy array with model data
-	:Param obs: Numpy array with obs data
-	:Return: Mean Bias Error
-	"""
-	
-	mbe = np.nanmean(np.array(model) - np.array(obs))
-	
-	return mbe
-
-
+  
 def compute_pbias(model, obs):
 
     	"""
@@ -283,40 +283,3 @@ def compute_anomaly(model, fcst):
     	std_anomaly = (fcst - p1)/p2
     
     	return anomaly, std_anomaly
-     
-
-def compute_mbe_situ(model, obs):
-	
-	"""
-	The input list must have the same length
-	:Param model: Numpy array with model data
-	:Param obs: Numpy array with obs data
-	:Return: Mean Bias Error
-	"""
-	
-	mbe_i, mbe_ii, mbe_iii, mbe_iv = [], [], [], []
-	for i in range(0, 298):
-		mbe_i.append(model[i][0] - obs[i][0])
-		mbe_ii.append(model[i][1] - obs[i][1])
-		mbe_iii.append(model[i][2] - obs[i][2])
-		mbe_iv.append(model[i][3] - obs[i][3])
-	
-	return mbe_i, mbe_ii, mbe_iii, mbe_iv
-	
-	
-def compute_mbe_grid(model, obs):
-
-	"""
-	The input list must have the same length
-	:Param model: Numpy array with model data
-	:Param obs: Numpy array with obs data
-	:Return: Mean Bias Error
-	"""
-	
-	mbe_i = model[0] - obs[0]
-	mbe_ii = model[1] - obs[1]
-	mbe_iii = model[2] - obs[2]
-	mbe_iv = model[3] - obs[3]
-
-	return mbe_i, mbe_ii, mbe_iii, mbe_iv
-	

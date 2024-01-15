@@ -19,55 +19,38 @@ skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107
 443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]
 	
 	
-def import_obs_situ(param):
+def import_situ(param_i, param_ii, domain, dataset):
 	
-	iy, ix, mean_i = [], [], []
+	yy, xx = [], []
+	mean_i, mean_ii = [], []
+	
 	for station in range(1, 567):
 		if station in skip_list:
 			continue
 		if inmet[station][2] >= -11.25235:
 			continue
 
-		iy.append(inmet[station][2])
-		ix.append(inmet[station][3])
+		yy.append(inmet[station][2])
+		xx.append(inmet[station][3])
 
-		arq = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
-		data = arq[param]
-		time = data.sel(time=slice(date_start, date_end))
-		var = time.groupby('time.season').mean(dim='time')
+		arq_i  = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/{1}/'.format(path, param_i) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param_i, inmet[station][0]))
+		data_i = arq_i[param_i]
+		time_i = data_i.sel(time=slice(date_start, date_end))
+		var_i  = time_i.groupby('time.season').mean(dim='time')
 		
-		if param == 'pre':
-			mean_i.append(var.values*24)
+		if param_i == 'pre':
+			mean_i.append(var_i.values*24)
 		else:
-			mean_i.append(var.values)
+			mean_i.append(var_i.values)
 
-	return iy, ix, mean_i
-	
-	
-def import_rcm_situ(param, domain, dataset):
-	
-	iy, ix, mean_i = [], [], []
-	for station in range(1, 567):
-		if station in skip_list:
-			continue
-		if inmet[station][2] >= -11.25235:
-			continue
-
-		iy.append(inmet[station][2])
-		ix.append(inmet[station][3])
-
-		arq = xr.open_dataset('{0}/user/mdasilva/sam_3km/post/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param, domain, dataset))
-		data = arq[param]
-		time = data.sel(time=slice(date_start, date_end))
-		var = time.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
-		mean = var.groupby('time.season').mean(dim='time')
-		mean_i.append(mean.values)
-				
-	return iy, ix, mean_i
-	
-	
-	
-	
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/sam_3km/post/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param_ii, domain, dataset))
+		data_ii = arq_ii[param_ii]
+		data_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_ii = data_ii.sel(time=slice(date_start, date_end))
+		var_ii  = time_ii.groupby('time.season').mean(dim='time')
+		mean_ii.append(var_ii.values)
+		
+	return yy, xx, mean_i, mean_ii
 	
 	
 	
