@@ -19,7 +19,7 @@ path='/marconi/home/userexternal/mdasilva'
 
 domain = 'SAM-3km'
 
-var = 'tasmax'
+var = 'tas'
 
 # Import model and obs dataset 
 if var == 'pr':
@@ -94,124 +94,114 @@ elif var == 'tas':
 	lat, lon, cru_jja = import_grid(dict_var[var][1], domain, 'CRU', 'JJA')
 	lat, lon, cru_son = import_grid(dict_var[var][1], domain, 'CRU', 'SON')
 
-	lat, lon, cpc_djf = import_grid(dict_var[var][2], domain, 'CPC', 'DJF')
-	lat, lon, cpc_mam = import_grid(dict_var[var][2], domain, 'CPC', 'MAM')
-	lat, lon, cpc_jja = import_grid(dict_var[var][2], domain, 'CPC', 'JJA')
-	lat, lon, cpc_son = import_grid(dict_var[var][2], domain, 'CPC', 'SON')
-
-	lat, lon, era5_djf = import_grid(dict_var[var][4], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][4], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][4], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][4], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_grid(dict_var[var][2], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_grid(dict_var[var][2], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_grid(dict_var[var][2], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_grid(dict_var[var][2], domain, 'ERA5', 'SON')
 
 	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
 	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
 	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
 	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
 	
-	mbe_djf_regcm_cru = compute_mbe(regcm_djf, cru_djf)
-	mbe_mam_regcm_cru = compute_mbe(regcm_mam, cru_mam)
-	mbe_jja_regcm_cru = compute_mbe(regcm_jja, cru_jja)
-	mbe_son_regcm_cru = compute_mbe(regcm_son, cru_son)	
-
-	mbe_djf_regcm_cpc = compute_mbe(regcm_djf, cpc_djf)
-	mbe_mam_regcm_cpc = compute_mbe(regcm_mam, cpc_mam)
-	mbe_jja_regcm_cpc = compute_mbe(regcm_jja, cpc_jja)
-	mbe_son_regcm_cpc = compute_mbe(regcm_son, cpc_son)	
+	mbe_djf_regcm_cru = compute_mbe(regcm_djf[0], cru_djf)
+	mbe_mam_regcm_cru = compute_mbe(regcm_mam[0], cru_mam)
+	mbe_jja_regcm_cru = compute_mbe(regcm_jja[0], cru_jja)
+	mbe_son_regcm_cru = compute_mbe(regcm_son[0], cru_son)	
 		
-	mbe_djf_regcm_era5 = compute_mbe(regcm_djf, era5_djf)
-	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
-	mbe_jja_regcm_era5 = compute_mbe(regcm_jja, era5_jja)
-	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)
+	mbe_djf_regcm_era5 = compute_mbe(regcm_djf[0], era5_djf)
+	mbe_mam_regcm_era5 = compute_mbe(regcm_mam[0], era5_mam)
+	mbe_jja_regcm_era5 = compute_mbe(regcm_jja[0], era5_jja)
+	mbe_son_regcm_era5 = compute_mbe(regcm_son[0], era5_son)
 	
 elif var == 'tasmax':
 	dict_var = {'tasmax': ['tmx', 'tmax', 'mx2t']}
 	
-	lat, lon, cru_djf = import_grid(dict_var[var][1], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][1], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][1], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][1], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, cpc_djf = import_grid(dict_var[var][2], domain, 'CPC', 'DJF')
-	lat, lon, cpc_mam = import_grid(dict_var[var][2], domain, 'CPC', 'MAM')
-	lat, lon, cpc_jja = import_grid(dict_var[var][2], domain, 'CPC', 'JJA')
-	lat, lon, cpc_son = import_grid(dict_var[var][2], domain, 'CPC', 'SON')
+	lat, lon, cpc_djf = import_grid(dict_var[var][1], domain, 'CPC', 'DJF')
+	lat, lon, cpc_mam = import_grid(dict_var[var][1], domain, 'CPC', 'MAM')
+	lat, lon, cpc_jja = import_grid(dict_var[var][1], domain, 'CPC', 'JJA')
+	lat, lon, cpc_son = import_grid(dict_var[var][1], domain, 'CPC', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][4], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][4], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][4], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][4], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_grid(dict_var[var][2], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_grid(dict_var[var][2], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_grid(dict_var[var][2], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_grid(dict_var[var][2], domain, 'ERA5', 'SON')
 
 	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
 	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
 	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
 	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
 	
-	mbe_djf_regcm_cru = compute_mbe(regcm_djf, cru_djf)
-	mbe_mam_regcm_cru = compute_mbe(regcm_mam, cru_mam)
-	mbe_jja_regcm_cru = compute_mbe(regcm_jja, cru_jja)
-	mbe_son_regcm_cru = compute_mbe(regcm_son, cru_son)	
+	mbe_djf_regcm_cru = compute_mbe(regcm_djf[0], cru_djf)
+	mbe_mam_regcm_cru = compute_mbe(regcm_mam[0], cru_mam)
+	mbe_jja_regcm_cru = compute_mbe(regcm_jja[0], cru_jja)
+	mbe_son_regcm_cru = compute_mbe(regcm_son[0], cru_son)	
 
-	mbe_djf_regcm_cpc = compute_mbe(regcm_djf, cpc_djf)
-	mbe_mam_regcm_cpc = compute_mbe(regcm_mam, cpc_mam)
-	mbe_jja_regcm_cpc = compute_mbe(regcm_jja, cpc_jja)
-	mbe_son_regcm_cpc = compute_mbe(regcm_son, cpc_son)	
+	mbe_djf_regcm_cpc = compute_mbe(regcm_djf[0], cpc_djf)
+	mbe_mam_regcm_cpc = compute_mbe(regcm_mam[0], cpc_mam)
+	mbe_jja_regcm_cpc = compute_mbe(regcm_jja[0], cpc_jja)
+	mbe_son_regcm_cpc = compute_mbe(regcm_son[0], cpc_son)	
 		
-	mbe_djf_regcm_era5 = compute_mbe(regcm_djf, era5_djf)
-	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
-	mbe_jja_regcm_era5 = compute_mbe(regcm_jja, era5_jja)
-	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)	
-	
+	mbe_djf_regcm_era5 = compute_mbe(regcm_djf[0], era5_djf)
+	mbe_mam_regcm_era5 = compute_mbe(regcm_mam[0], era5_mam)
+	mbe_jja_regcm_era5 = compute_mbe(regcm_jja[0], era5_jja)
+	mbe_son_regcm_era5 = compute_mbe(regcm_son[0], era5_son)
+
 elif var == 'tasmin':
 	dict_var = {'tasmin': ['tmn', 'tmin', 'mn2t']}
 
-	lat, lon, cru_djf = import_grid(dict_var[var][1], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][1], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][1], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][1], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, cpc_djf = import_grid(dict_var[var][2], domain, 'CPC', 'DJF')
-	lat, lon, cpc_mam = import_grid(dict_var[var][2], domain, 'CPC', 'MAM')
-	lat, lon, cpc_jja = import_grid(dict_var[var][2], domain, 'CPC', 'JJA')
-	lat, lon, cpc_son = import_grid(dict_var[var][2], domain, 'CPC', 'SON')
+	lat, lon, cpc_djf = import_grid(dict_var[var][1], domain, 'CPC', 'DJF')
+	lat, lon, cpc_mam = import_grid(dict_var[var][1], domain, 'CPC', 'MAM')
+	lat, lon, cpc_jja = import_grid(dict_var[var][1], domain, 'CPC', 'JJA')
+	lat, lon, cpc_son = import_grid(dict_var[var][1], domain, 'CPC', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][4], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][4], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][4], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][4], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_grid(dict_var[var][2], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_grid(dict_var[var][2], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_grid(dict_var[var][2], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_grid(dict_var[var][2], domain, 'ERA5', 'SON')
 
 	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
 	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
 	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
 	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
 	
-	mbe_djf_regcm_cru = compute_mbe(regcm_djf, cru_djf)
-	mbe_mam_regcm_cru = compute_mbe(regcm_mam, cru_mam)
-	mbe_jja_regcm_cru = compute_mbe(regcm_jja, cru_jja)
-	mbe_son_regcm_cru = compute_mbe(regcm_son, cru_son)	
+	mbe_djf_regcm_cru = compute_mbe(regcm_djf[0], cru_djf)
+	mbe_mam_regcm_cru = compute_mbe(regcm_mam[0], cru_mam)
+	mbe_jja_regcm_cru = compute_mbe(regcm_jja[0], cru_jja)
+	mbe_son_regcm_cru = compute_mbe(regcm_son[0], cru_son)	
 
-	mbe_djf_regcm_cpc = compute_mbe(regcm_djf, cpc_djf)
-	mbe_mam_regcm_cpc = compute_mbe(regcm_mam, cpc_mam)
-	mbe_jja_regcm_cpc = compute_mbe(regcm_jja, cpc_jja)
-	mbe_son_regcm_cpc = compute_mbe(regcm_son, cpc_son)	
+	mbe_djf_regcm_cpc = compute_mbe(regcm_djf[0], cpc_djf)
+	mbe_mam_regcm_cpc = compute_mbe(regcm_mam[0], cpc_mam)
+	mbe_jja_regcm_cpc = compute_mbe(regcm_jja[0], cpc_jja)
+	mbe_son_regcm_cpc = compute_mbe(regcm_son[0], cpc_son)	
 		
-	mbe_djf_regcm_era5 = compute_mbe(regcm_djf, era5_djf)
-	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
-	mbe_jja_regcm_era5 = compute_mbe(regcm_jja, era5_jja)
-	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)
+	mbe_djf_regcm_era5 = compute_mbe(regcm_djf[0], era5_djf)
+	mbe_mam_regcm_era5 = compute_mbe(regcm_mam[0], era5_mam)
+	mbe_jja_regcm_era5 = compute_mbe(regcm_jja[0], era5_jja)
+	mbe_son_regcm_era5 = compute_mbe(regcm_son[0], era5_son)
 
 else:
 	dict_var = {'clt': ['cld', 'tcc']}
 
-	lat, lon, cru_djf = import_grid(dict_var[var][1], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][1], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][1], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][1], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][4], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][4], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][4], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][4], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_grid(dict_var[var][1], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_grid(dict_var[var][1], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_grid(dict_var[var][1], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_grid(dict_var[var][1], domain, 'ERA5', 'SON')
 
 	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
 	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
@@ -536,42 +526,42 @@ else:
 
 	ax = fig.add_subplot(4, 2, 1)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(a) RegCM5-CRU DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(b) RegCM5-ERA5 DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(c) RegCM5-CRU MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 4)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(d) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 5)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(e) RegCM5-CRU JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(f) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 7)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(g) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(h) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 
 # Set colobar
