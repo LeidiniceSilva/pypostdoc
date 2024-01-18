@@ -209,11 +209,14 @@ def compute_kge(obs, model):
 	"""
 
 	p1 = np.corrcoef(obs, model)[0][1]
-	p2 = np.nanmean(model) / np.nanmean(obs)
-	p3 = np.nanstd(model, ddof=0) / np.nanmean(model) * 100 
-	p4 = np.nanstd(obs, ddof=0) / np.nanmean(obs) * 100 
-	p5 = p3/p4
-	kge = 1 - np.sqrt((1 - p1)**2 + (1 - p2)**2 + (1 - p5)**2)
+	p2 = np.nanmean(obs)
+	p3 = np.nanmean(model)
+	p4 = np.nanstd(obs, ddof=0)
+	p5 = np.nanstd(model, ddof=0)
+	p6 = p3/p2
+	p7 = p5/p4
+	p8 = np.sqrt((p1 -1)**2 + (p6 -1)**2 + (p7 -1)**2)
+	kge = 1 - p8
 
 	return kge
 	
@@ -283,3 +286,20 @@ def compute_anomaly(model, fcst):
     	std_anomaly = (fcst - p1)/p2
     
     	return anomaly, std_anomaly
+
+
+def compute_wind_speed(data_u, data_v):
+
+	"""
+	The input arrays must have the same dimensions
+	:Param model: Numpy array with model data
+	:Param obs: Numpy array with obs data
+	:Return: Wind speed from the u and v components
+	"""
+	
+	p1 = np.square(data_u)
+	p2 = np.square(data_v)
+	p3 = p1 + p2
+	ws = np.sqrt(p3)
+	
+	return ws

@@ -6,21 +6,85 @@ __date__        = "Dec 04, 2023"
 __description__ = "This script plot bias maps"
 
 import os
+import netCDF4
 import numpy as np
+import xarray as xr
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-from import_dataset_situ import import_situ
-from import_dataset_grid import import_grid
+from dict_inmet_stations import inmet
+from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
-from import_basemap import basemap
 
-path='/marconi/home/userexternal/mdasilva'
-
+var = 'pr'
 domain = 'SAM-3km'
+path = '/marconi/home/userexternal/mdasilva'
 
-var = 'tas'
+skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
+149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
+303,305,306,308,319,334,335,341,343,359,362,364,384,393,396,398,399,400,402,413,416,417,422,423,426,427,
+443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]
+	
+	
+def import_situ(param_i, param_ii, domain, dataset):
+	
+	yy, xx = [], []
+	mean_i, mean_ii = [], []
+	
+	for station in range(1, 567):
+		if station in skip_list:
+			continue
+		if inmet[station][2] >= -11.25235:
+			continue
 
+		yy.append(inmet[station][2])
+		xx.append(inmet[station][3])
+
+		arq_i  = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/{1}/'.format(path, param_i) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param_i, inmet[station][0]))
+		data_i = arq_i[param_i]
+		time_i = data_i.sel(time=slice('2018-01-01','2021-12-31'))
+		var_i  = time_i.groupby('time.season').mean(dim='time')
+		
+		if param_i == 'pre':
+			mean_i.append(var_i.values*24)
+		else:
+			mean_i.append(var_i.values)
+
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/sam_3km/post/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param_ii, domain, dataset))
+		data_ii = arq_ii[param_ii]
+		data_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_ii = data_ii.sel(time=slice('2018-01-01','2021-12-31'))
+		var_ii  = time_ii.groupby('time.season').mean(dim='time')
+		mean_ii.append(var_ii.values)
+		
+	return yy, xx, mean_i, mean_ii
+	
+	
+def import_grid(param, domain, dataset, season):
+
+	arq   = '{0}/user/mdasilva/sam_3km/post/{1}_{2}_{3}_{4}_2018-2021_lonlat.nc'.format(path, param, domain, dataset, season)	
+	data  = netCDF4.Dataset(arq)
+	var   = data.variables[param][:] 
+	lat   = data.variables['lat'][:]
+	lon   = data.variables['lon'][:]
+	mean = var[:][:,:,:]
+	
+	return lat, lon, mean
+
+
+def basemap(lat, lon):
+	
+	map = Basemap(projection='cyl', llcrnrlon=-80., llcrnrlat=-38., urcrnrlon=-34.,urcrnrlat=-8., resolution='c')
+	map.drawmeridians(np.arange(-80., -34., 12.), size=6, labels=[0,0,0,1], linewidth=0.4, color='black')
+	map.drawparallels(np.arange(-38., -8., 6.), size=6, labels=[1,0,0,0], linewidth=0.4, color='black')
+	map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black')
+	
+	lons, lats = np.meshgrid(lon, lat)
+	xx, yy = map(lons,lats)
+	
+	return map, xx, yy
+	
+	
 # Import model and obs dataset 
 if var == 'pr':
 	dict_var = {'pr': ['pre', 'pre', 'precip', 'sat_gauge_precip', 'tp']}
@@ -127,11 +191,6 @@ elif var == 'tasmax':
 	lat, lon, cpc_jja = import_grid(dict_var[var][1], domain, 'CPC', 'JJA')
 	lat, lon, cpc_son = import_grid(dict_var[var][1], domain, 'CPC', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][2], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][2], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][2], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][2], domain, 'ERA5', 'SON')
-
 	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
 	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
 	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
@@ -146,11 +205,6 @@ elif var == 'tasmax':
 	mbe_mam_regcm_cpc = compute_mbe(regcm_mam[0], cpc_mam)
 	mbe_jja_regcm_cpc = compute_mbe(regcm_jja[0], cpc_jja)
 	mbe_son_regcm_cpc = compute_mbe(regcm_son[0], cpc_son)	
-		
-	mbe_djf_regcm_era5 = compute_mbe(regcm_djf[0], era5_djf)
-	mbe_mam_regcm_era5 = compute_mbe(regcm_mam[0], era5_mam)
-	mbe_jja_regcm_era5 = compute_mbe(regcm_jja[0], era5_jja)
-	mbe_son_regcm_era5 = compute_mbe(regcm_son[0], era5_son)
 
 elif var == 'tasmin':
 	dict_var = {'tasmin': ['tmn', 'tmin', 'mn2t']}
@@ -165,11 +219,6 @@ elif var == 'tasmin':
 	lat, lon, cpc_jja = import_grid(dict_var[var][1], domain, 'CPC', 'JJA')
 	lat, lon, cpc_son = import_grid(dict_var[var][1], domain, 'CPC', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][2], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][2], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][2], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][2], domain, 'ERA5', 'SON')
-
 	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
 	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
 	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
@@ -184,11 +233,6 @@ elif var == 'tasmin':
 	mbe_mam_regcm_cpc = compute_mbe(regcm_mam[0], cpc_mam)
 	mbe_jja_regcm_cpc = compute_mbe(regcm_jja[0], cpc_jja)
 	mbe_son_regcm_cpc = compute_mbe(regcm_son[0], cpc_son)	
-		
-	mbe_djf_regcm_era5 = compute_mbe(regcm_djf[0], era5_djf)
-	mbe_mam_regcm_era5 = compute_mbe(regcm_mam[0], era5_mam)
-	mbe_jja_regcm_era5 = compute_mbe(regcm_jja[0], era5_jja)
-	mbe_son_regcm_era5 = compute_mbe(regcm_son[0], era5_son)
 
 else:
 	dict_var = {'clt': ['cld', 'tcc']}
@@ -396,131 +440,91 @@ elif var == 'tas':
 	plt.title(u'(l) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 
 elif var == 'tasmax':
-	fig = plt.figure(figsize=(8, 8))
+	fig = plt.figure(figsize=(6, 8))
 
-	ax = fig.add_subplot(4, 3, 1)  
+	ax = fig.add_subplot(4, 2, 1)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(a) RegCM5-CRU DJF', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 2)  
+	ax = fig.add_subplot(4, 2, 2)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(b) RegCM5-CPC DJF', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 3)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(c) RegCM5-ERA5 DJF', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 3, 4)  
+	ax = fig.add_subplot(4, 2, 3)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(d) RegCM5-CRU MAM', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(c) RegCM5-CRU MAM', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 5)  
+	ax = fig.add_subplot(4, 2, 4)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(e) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(d) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 6)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(f) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 3, 7)  
+	ax = fig.add_subplot(4, 2, 5)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(g) RegCM5-CRU JJA', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(e) RegCM5-CRU JJA', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 8)  
+	ax = fig.add_subplot(4, 2, 6)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(h) RegCM5-CPC JJA', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(f) RegCM5-CPC JJA', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 9)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(i) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 3, 10)  
+	ax = fig.add_subplot(4, 2, 7)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(j) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(g) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 11)  
+	ax = fig.add_subplot(4, 2, 8)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(k) RegCM5-CPC SON', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 3, 12)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(l) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(h) RegCM5-CPC SON', loc='left', fontsize=font_size, fontweight='bold')
 
 elif var == 'tasmin':
-	fig = plt.figure(figsize=(8, 8))
-
-	ax = fig.add_subplot(4, 3, 1)  
+	fig = plt.figure(figsize=(6, 8))
+	
+	ax = fig.add_subplot(4, 2, 1)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(a) RegCM5-CRU DJF', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 2)  
+	ax = fig.add_subplot(4, 2, 2)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(b) RegCM5-CPC DJF', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 3)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(c) RegCM5-ERA5 DJF', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 3, 4)  
+	ax = fig.add_subplot(4, 2, 3)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(d) RegCM5-CRU MAM', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(c) RegCM5-CRU MAM', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 5)  
+	ax = fig.add_subplot(4, 2, 4)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(e) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(d) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 6)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(f) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 3, 7)  
+	ax = fig.add_subplot(4, 2, 5)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(g) RegCM5-CRU JJA', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(e) RegCM5-CRU JJA', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 8)  
+	ax = fig.add_subplot(4, 2, 6)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(h) RegCM5-CPC JJA', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(f) RegCM5-CPC JJA', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 9)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(i) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 3, 10)  
+	ax = fig.add_subplot(4, 2, 7)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(j) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(g) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(4, 3, 11)  
+	ax = fig.add_subplot(4, 2, 8)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(k) RegCM5-CPC SON', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 3, 12)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-	plt.title(u'(l) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
-
+	plt.title(u'(h) RegCM5-CPC SON', loc='left', fontsize=font_size, fontweight='bold')
+	
 else:
 	fig = plt.figure(figsize=(6, 8))
 
