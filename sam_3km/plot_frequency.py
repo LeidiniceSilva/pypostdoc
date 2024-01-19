@@ -63,8 +63,8 @@ else:
 	filter_regcm = round_regcm[round_regcm > 0.]
 
 	# Compute frequency
-	x_freq_cpc, freq_cpc = np.unique(filter_cpc, return_counts=True)
-	x_freq_regcm, freq_regcm = np.unique(filter_regcm, return_counts=True)
+	x_freq_cpc, freq_cpc = np.unique(cpc, return_counts=True)
+	x_freq_regcm, freq_regcm = np.unique(regcm, return_counts=True)
 
 # Plot figure
 fig = plt.figure()
