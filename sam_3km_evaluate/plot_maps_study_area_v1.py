@@ -63,7 +63,7 @@ plt.text(-36, 11, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='
 
 # Path out to save figure
 path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/sam_3km/figs'
-name_out = 'pyplt_maps_study_area_SAM-3km_RegCM5_2018-2021.png'
+name_out = 'pyplt_maps_study_area_SAM-3km_RegCM5_2018-2021_v1.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

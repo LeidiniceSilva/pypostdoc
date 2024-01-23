@@ -19,18 +19,18 @@ from mpl_toolkits.basemap import Basemap, cm
 
     
 # Specify directories 
-dirnc = '/marconi/home/userexternal/mdasilva/user/mdasilva/sam_3km/input'
-domname = 'SAM-3km'
+dirnc = '/marconi_work/ICT23_ESP/fraffael/REGCM5/output-py/pbl1/output/CSAM-4/ICTP/ECMWF-ERA5/evaluation/r1i1p1f1/ICTP-RegCM5/v0/fixed/orog'
+domname = 'orog_CSAM-4'
 
 # RegCM file
 if len(sys.argv) > 1:
     RCMf = nc(sys.argv[1], mode='r')
 else:
-    RCMf = nc(os.path.join(dirnc,domname+'_DOMAIN000.nc'), mode='r')
+    RCMf = nc(os.path.join(dirnc,domname+'_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5_v0_fixed_2018010100-2018020100.nc'), mode='r')
     
-lat  = RCMf.variables['xlat'][:,:]
-lon  = RCMf.variables['xlon'][:,:]
-topo = RCMf.variables['topo'][:,:]
+lat  = RCMf.variables['lat'][:,:]
+lon  = RCMf.variables['lon'][:,:]
+topo = RCMf.variables['orog'][:,:]
 lonc = RCMf.longitude_of_projection_origin
 latc = RCMf.latitude_of_projection_origin
 RCMf.close()
@@ -56,19 +56,16 @@ llevels = (0, 25, 50, 100, 200, 300, 400, 500, 1000, 1500, 2000, 2500, 3000)
 im = my_map.contourf(x, y, topo, llevels, cmap=plt.cm.terrain, extend='max')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=font_size, fontweight='bold')
 plt.ylabel(u'Latitude', labelpad=30, fontsize=font_size, fontweight='bold')
-plt.text(-56, -44, u'CSAM', color='black', fontsize=font_size, fontweight='bold')
 plt.text(-56, -39, u'SESA', color='red', fontsize=font_size, fontweight='bold')
 plt.text(-36, 11, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
 cbar = fig.colorbar(im, drawedges=True, fraction=0.030, pad=0.04, aspect=20)
 cbar.set_label('Topography (meters)', fontsize=font_size, fontweight='bold')
 
 # CSAM
-a1,b1 = (-70,-40)
-a2,b2 = (-70,-15)
-a3,b3 = (-45,-15)
-a4,b4 = (-45,-40)
-poly1 = Polygon([(a1,b1),(a2,b2),(a3,b3),(a4,b4)], facecolor='none', edgecolor='black', linewidth=1.)
-plt.gca().add_patch(poly1)
+my_map.drawgreatcircle(-78.4, -34.5, -75.0, -11.2, alpha=.6, linewidth=4, color='gray')
+my_map.drawgreatcircle(-75.0, -11.0, -38.0, -11.0, alpha=.6, linewidth=4, color='gray')
+my_map.drawgreatcircle(-35.0, -34.5, -38.0, -11.2, alpha=.6, linewidth=4, color='gray')
+my_map.drawgreatcircle(-78.4, -34.4, -36.0, -34.4, alpha=.6, linewidth=4, color='gray') 
 
 # SESA
 c1,d1 = (-65,-35)
@@ -80,7 +77,7 @@ plt.gca().add_patch(poly2)
 
 # Path out to save figure
 path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/sam_3km/figs'
-name_out = 'pyplt_maps_study_area_SAM-3km_RegCM5_2018-2021_v2.png'
+name_out = 'pyplt_maps_study_area_SAM-3km_RegCM5_2018-2021_v3.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
