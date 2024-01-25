@@ -22,7 +22,7 @@ path='/marconi/home/userexternal/mdasilva'
 
 def import_grid(param, level, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/sam_3km/post/{1}_{2}_{3}_{4}_{5}_2018-2021_lonlat.nc'.format(path, param, level, domain, dataset, season)	
+	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/{1}_{2}_{3}_{4}_{5}_2018-2021_lonlat.nc'.format(path, param, level, domain, dataset, season)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -171,7 +171,7 @@ plt_map = map.contourf(xx, yy, mbe_son_regcm_era5_q[0], levels=dict_plot['q'][1]
 plt.title(u'(l) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 	
 # Path out to save figure
-path_out = '{0}/user/mdasilva/sam_3km/figs'.format(path)
+path_out = '{0}/user/mdasilva/SAM-3km/figs'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_SAM-3km_RegCM5_2018-2021.png'.format(var, level)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

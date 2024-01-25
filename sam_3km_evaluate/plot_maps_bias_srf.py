@@ -16,7 +16,7 @@ from dict_inmet_stations import inmet
 from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
 
-var = 'pr'
+var = 'rsnl'
 domain = 'SAM-3km'
 path = '/marconi/home/userexternal/mdasilva'
 
@@ -50,7 +50,7 @@ def import_situ(param_i, param_ii, domain, dataset):
 		else:
 			mean_i.append(var_i.values)
 
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/sam_3km/post/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param_ii, domain, dataset))
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param_ii, domain, dataset))
 		data_ii = arq_ii[param_ii]
 		data_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('2018-01-01','2021-12-31'))
@@ -62,7 +62,7 @@ def import_situ(param_i, param_ii, domain, dataset):
 	
 def import_grid(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/sam_3km/post/{1}_{2}_{3}_{4}_2018-2021_lonlat.nc'.format(path, param, domain, dataset, season)	
+	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/{1}_{2}_{3}_{4}_2018-2021_lonlat.nc'.format(path, param, domain, dataset, season)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -85,10 +85,17 @@ def basemap(lat, lon):
 	return map, xx, yy
 	
 	
-# Import model and obs dataset 
-if var == 'pr':
-	dict_var = {'pr': ['pre', 'pre', 'precip', 'sat_gauge_precip', 'tp']}
+# Import model and obs dataset
+dict_var = {
+'pr': ['pre', 'pre', 'precip', 'sat_gauge_precip', 'tp'],
+'tas': ['tmp', 'tmp', 't2m'],
+'tasmax': ['tmx', 'tmax', 'mx2t'],
+'tasmin': ['tmn', 'tmin', 'mn2t'],
+'clt': ['cld', 'tcc'],
+'rsnl': ['msnlwrf'],
+}
 
+if var == 'pr':
 	lat_i, lon_i, inmet_i, regcm_i = import_situ(dict_var[var][0], var, domain, 'RegCM5')
 	mbe_djf_regcm_inmet, mbe_mam_regcm_inmet, mbe_jja_regcm_inmet, mbe_son_regcm_inmet = [], [], [], []
 	for i in range(0, 298):
@@ -143,8 +150,6 @@ if var == 'pr':
 	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)		
 
 elif var == 'tas':
-	dict_var = {'tas': ['tmp', 'tmp', 't2m']}
-
 	lat_i, lon_i, inmet_i, regcm_i = import_situ(dict_var[var][0], var, domain, 'RegCM5')
 	mbe_djf_regcm_inmet, mbe_mam_regcm_inmet, mbe_jja_regcm_inmet, mbe_son_regcm_inmet = [], [], [], []
 	for i in range(0, 298):
@@ -179,8 +184,6 @@ elif var == 'tas':
 	mbe_son_regcm_era5 = compute_mbe(regcm_son[0], era5_son)
 	
 elif var == 'tasmax':
-	dict_var = {'tasmax': ['tmx', 'tmax', 'mx2t']}
-	
 	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
 	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
 	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
@@ -207,8 +210,6 @@ elif var == 'tasmax':
 	mbe_son_regcm_cpc = compute_mbe(regcm_son[0], cpc_son)	
 
 elif var == 'tasmin':
-	dict_var = {'tasmin': ['tmn', 'tmin', 'mn2t']}
-
 	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
 	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
 	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
@@ -233,10 +234,8 @@ elif var == 'tasmin':
 	mbe_mam_regcm_cpc = compute_mbe(regcm_mam[0], cpc_mam)
 	mbe_jja_regcm_cpc = compute_mbe(regcm_jja[0], cpc_jja)
 	mbe_son_regcm_cpc = compute_mbe(regcm_son[0], cpc_son)	
-
-else:
-	dict_var = {'clt': ['cld', 'tcc']}
-
+	
+elif var == 'clt':
 	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
 	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
 	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
@@ -261,6 +260,22 @@ else:
 	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
 	mbe_jja_regcm_era5 = compute_mbe(regcm_jja, era5_jja)
 	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)
+	
+else:
+	lat, lon, era5_djf = import_grid(dict_var[var][0], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_grid(dict_var[var][0], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_grid(dict_var[var][0], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_grid(dict_var[var][0], domain, 'ERA5', 'SON')
+
+	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+		
+	mbe_djf_regcm_era5 = compute_mbe(regcm_djf, era5_djf)
+	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
+	mbe_jja_regcm_era5 = compute_mbe(regcm_jja, era5_jja)
+	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)
 
 # Plot figure   
 dict_plot = {
@@ -268,7 +283,8 @@ dict_plot = {
 'tas': ['Bias of air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmax': ['Bias of maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmin': ['Bias of minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
-'clt': ['Bias of total cloud cover (%)', np.arange(-60, 70, 10), cm.RdGy]
+'clt': ['Bias of total cloud cover (%)', np.arange(-60, 70, 10), cm.RdGy],
+'rsnl': ['Bias of surface net upward longwave flux (W mm$^-2$)', np.arange(-60, 65, 5), cm.coolwarm]
 }
 
 font_size = 8
@@ -524,10 +540,10 @@ elif var == 'tasmin':
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(h) RegCM5-CPC SON', loc='left', fontsize=font_size, fontweight='bold')
-	
-else:
-	fig = plt.figure(figsize=(6, 8))
 
+elif var == 'clt':
+	fig = plt.figure(figsize=(6, 8))
+	
 	ax = fig.add_subplot(4, 2, 1)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
@@ -568,13 +584,43 @@ else:
 	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
 	plt.title(u'(h) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 
-# Set colobar
-cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.94, 0.3, 0.015, 0.4]))
-cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
-cbar.ax.tick_params(labelsize=font_size)
+else:
+	fig = plt.figure(figsize=(4, 8))
+
+	ax = fig.add_subplot(4, 1, 1)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt.title(u'(a) RegCM5-ERA5 DJF', loc='left', fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 1, 2)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt.title(u'(b) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 1, 3)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt.title(u'(c) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 1, 4)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt.title(u'(d) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
+
+
+if var == 'rsnl':
+	# Set colobar
+	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.84, 0.3, 0.03, 0.4]))
+	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
+	cbar.ax.tick_params(labelsize=font_size)
+else:
+	# Set colobar
+	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.94, 0.3, 0.015, 0.4]))
+	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
+	cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/user/mdasilva/sam_3km/figs'.format(path)
+path_out = '{0}/user/mdasilva/SAM-3km/figs'.format(path)
 name_out = 'pyplt_maps_bias_{0}_SAM-3km_RegCM5_2018-2021.png'.format(var)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
