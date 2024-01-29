@@ -12,7 +12,7 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
 var = 'pr'
-domain = 'SAM-3km'
+domain = 'zz-3km'
 path = '/marconi/home/userexternal/mdasilva'
 
 
