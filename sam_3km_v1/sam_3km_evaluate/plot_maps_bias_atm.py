@@ -12,11 +12,10 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
 from mpl_toolkits.basemap import Basemap
-from import_climate_tools import compute_mbe
 
 var = 'quv'
 domain = 'SAM-3km'
-level = '200hPa'
+level = '850hPa'
 path='/marconi/home/userexternal/mdasilva'
 
 
@@ -27,7 +26,7 @@ def import_grid(param, level, domain, dataset, season):
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][:,0,:,:]
+	mean = var[:][0,0,:,:]
 	
 	return lat, lon, mean
 
@@ -54,10 +53,10 @@ lat, lon, u_regcm_djf = import_grid('ua', level, domain, 'RegCM5', 'DJF')
 lat, lon, u_regcm_mam = import_grid('ua', level, domain, 'RegCM5', 'MAM')
 lat, lon, u_regcm_jja = import_grid('ua', level, domain, 'RegCM5', 'JJA')
 lat, lon, u_regcm_son = import_grid('ua', level, domain, 'RegCM5', 'SON')
-mbe_djf_regcm_era5_u = compute_mbe(u_regcm_djf[0], u_era5_djf[0])
-mbe_mam_regcm_era5_u = compute_mbe(u_regcm_mam[0], u_era5_mam[0])
-mbe_jja_regcm_era5_u = compute_mbe(u_regcm_jja[0], u_era5_jja[0])
-mbe_son_regcm_era5_u = compute_mbe(u_regcm_son[0], u_era5_son[0])	
+mbe_djf_regcm_era5_u = u_regcm_djf - u_era5_djf
+mbe_mam_regcm_era5_u = u_regcm_mam - u_era5_mam
+mbe_jja_regcm_era5_u = u_regcm_jja - u_era5_jja
+mbe_son_regcm_era5_u = u_regcm_son - u_era5_son	
 	
 lat, lon, v_era5_djf = import_grid('v', level, domain, 'ERA5', 'DJF')
 lat, lon, v_era5_mam = import_grid('v', level, domain, 'ERA5', 'MAM')
@@ -67,10 +66,10 @@ lat, lon, v_regcm_djf = import_grid('va', level, domain, 'RegCM5', 'DJF')
 lat, lon, v_regcm_mam = import_grid('va', level, domain, 'RegCM5', 'MAM')
 lat, lon, v_regcm_jja = import_grid('va', level, domain, 'RegCM5', 'JJA')
 lat, lon, v_regcm_son = import_grid('va', level, domain, 'RegCM5', 'SON')
-mbe_djf_regcm_era5_v = compute_mbe(v_regcm_djf[0], v_era5_djf[0])
-mbe_mam_regcm_era5_v = compute_mbe(v_regcm_mam[0], v_era5_mam[0])
-mbe_jja_regcm_era5_v = compute_mbe(v_regcm_jja[0], v_era5_jja[0])
-mbe_son_regcm_era5_v = compute_mbe(v_regcm_son[0], v_era5_son[0])	
+mbe_djf_regcm_era5_v = v_regcm_djf - v_era5_djf
+mbe_mam_regcm_era5_v = v_regcm_mam - v_era5_mam
+mbe_jja_regcm_era5_v = v_regcm_jja - v_era5_jja
+mbe_son_regcm_era5_v = v_regcm_son - v_era5_son	
 
 lat, lon, q_era5_djf = import_grid('q', level, domain, 'ERA5', 'DJF')
 lat, lon, q_era5_mam = import_grid('q', level, domain, 'ERA5', 'MAM')
@@ -80,28 +79,35 @@ lat, lon, q_regcm_djf = import_grid('hus', level, domain, 'RegCM5', 'DJF')
 lat, lon, q_regcm_mam = import_grid('hus', level, domain, 'RegCM5', 'MAM')
 lat, lon, q_regcm_jja = import_grid('hus', level, domain, 'RegCM5', 'JJA')
 lat, lon, q_regcm_son = import_grid('hus', level, domain, 'RegCM5', 'SON')
-mbe_djf_regcm_era5_q = compute_mbe(q_regcm_djf[0], q_era5_djf[0])
-mbe_mam_regcm_era5_q = compute_mbe(q_regcm_mam[0], q_era5_mam[0])
-mbe_jja_regcm_era5_q = compute_mbe(q_regcm_jja[0], q_era5_jja[0])
-mbe_son_regcm_era5_q = compute_mbe(q_regcm_son[0], q_era5_son[0])
+mbe_djf_regcm_era5_q = q_regcm_djf - q_era5_djf
+mbe_mam_regcm_era5_q = q_regcm_mam - q_era5_mam
+mbe_jja_regcm_era5_q = q_regcm_jja - q_era5_jja
+mbe_son_regcm_era5_q = q_regcm_son - q_era5_son
 
 # Plot figure 
-mulc = 1000
-lev1 = np.arange(-16, 18, 2)
-lev2 = np.arange(-16, 18, 2)
-lev3 = np.arange(-0.06, 0.07, 0.01)  
-#lev3 = np.arange(-0.8, 0.9, 0.1)  
-#lev3 = np.arange(-0.8, 0.9, 0.1)  
-
-dict_plot = {
-'u': [u'Bias of zonal wind {0} (m s$^-$$^1$)'.format(level), lev1, cm.RdBu_r],
-'v': [u'Bias of meridional wind {0} (m s$^-$$^1$)'.format(level), lev2, cm.RdBu_r],
-'q': [u'Bias of specific humidity {0} (10e$^-$$^3$kg kg$^-$$^1$)'.format(level), lev3, cm.BrBG]
-}
-
-font_size = 8
 fig = plt.figure(figsize=(8, 8))
+font_size = 8
+mulc = 1000
 
+if level == '200hPa':
+	dict_plot = {
+	'u': [u'Bias of zonal wind {0} (m s$^-$$^1$)'.format(level), (-20, -15, -10, -5, -3, -1, 1, 3, 5, 10, 15, 20), cm.RdBu_r],
+	'v': [u'Bias of meridional wind {0} (m s$^-$$^1$)'.format(level), (-25, -20, -15, -10, -5, -1, 1, 5, 10, 15, 20, 25), cm.RdBu_r],
+	'q': [u'Bias of specific humidity {0} (10e$^-$$^3$kg kg$^-$$^1$)'.format(level), (-0.07, -0.05, -0.03, -0.02, -0.01, 0.01, 0.02, 0.03, 0.05, 0.07), cm.BrBG]
+	}
+elif level == '500hPa':
+	dict_plot = {
+	'u': [u'Bias of zonal wind {0} (m s$^-$$^1$)'.format(level), (-15, -10, -5, -3, -2, -1, 1, 2, 3, 5, 10, 15), cm.RdBu_r],
+	'v': [u'Bias of meridional wind {0} (m s$^-$$^1$)'.format(level), (-20, -15, -10, -5, -2, -1, 1, 2, 5, 10, 15, 20), cm.RdBu_r],
+	'q': [u'Bias of specific humidity {0} (10e$^-$$^3$kg kg$^-$$^1$)'.format(level), (-1, -0.9, -0.8, -0.6, -0.4, -0.2, 0.2, 0.4, 0.6, 0.8, 0.9, 1), cm.BrBG]
+	}
+else:
+	dict_plot = {
+	'u': [u'Bias of zonal wind {0} (m s$^-$$^1$)'.format(level), (-12, -8, -6, -4, -2, -1, 1, 2, 4, 6, 8, 12), cm.RdBu_r],
+	'v': [u'Bias of meridional wind {0} (m s$^-$$^1$)'.format(level), (-12, -8, -6, -4, -2, -1, 1, 2, 4, 6, 8, 12), cm.RdBu_r],
+	'q': [u'Bias of specific humidity {0} (10e$^-$$^3$kg kg$^-$$^1$)'.format(level), (-8, -6, -4, -3, -2, -1, 1, 2, 3, 4, 6, 8), cm.BrBG]
+	}
+	
 ax = fig.add_subplot(4, 3, 1)  
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5_u, levels=dict_plot['u'][1], cmap=dict_plot['u'][2], extend='both') 
