@@ -279,12 +279,12 @@ else:
 
 # Plot figure   
 dict_plot = {
-'pr': ['Bias of  precipitation (mm d⁻¹)', np.arange(-10, 11, 1), cm.BrBG],
+'pr': ['Bias of  precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.BrBG],
 'tas': ['Bias of air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmax': ['Bias of maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmin': ['Bias of minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'clt': ['Bias of total cloud cover (%)', np.arange(-60, 70, 10), cm.RdGy],
-'rsnl': ['Bias of surface net upward longwave flux (W mm$^-2$)', np.arange(-60, 65, 5), cm.coolwarm]
+'rsnl': ['Bias of surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.coolwarm]
 }
 
 font_size = 8

@@ -516,7 +516,6 @@ if var == 'rsnl':
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 else:
-
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.94, 0.3, 0.015, 0.4]))
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
