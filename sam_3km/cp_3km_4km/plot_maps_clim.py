@@ -6,6 +6,7 @@ __date__        = "Dec 04, 2023"
 __description__ = "This script plot bias maps"
 
 import os
+import cmocean
 import netCDF4
 import numpy as np
 import matplotlib.cm as cm
@@ -13,7 +14,7 @@ import matplotlib.pyplot as plt
 
 from mpl_toolkits.basemap import Basemap
 
-var = 'tas'
+var = 'pr'
 dt = '2018-2021'
 path = '/marconi/home/userexternal/mdasilva'
 
@@ -39,7 +40,7 @@ def basemap(lat, lon):
 	
 	lons, lats = np.meshgrid(lon, lat)
 	xx, yy = map(lons,lats)
-	
+
 	return map, xx, yy
 	
 	
@@ -142,8 +143,8 @@ else:
 dict_plot = {
 'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 17, 1), cm.rainbow],
 'tas': ['Air temperature (°C)', np.arange(0, 34, 2), cm.jet],
-'tasmax': ['Maximum air temperature (°C)', np.arange(0, 34, 2), cm.jet],
-'tasmin': ['Minimum air temperature (°C)', np.arange(0, 34, 2), cm.jet]
+'tasmax': ['Maximum air temperature (°C)', np.arange(6, 40, 2), cm.jet],
+'tasmin': ['Minimum air temperature (°C)', np.arange(-4, 30, 2), cm.jet]
 }
 
 font_size = 8
@@ -252,7 +253,7 @@ if var == 'pr':
 	plt.title(u'(t) CP-4km SON', loc='left', fontsize=font_size, fontweight='bold')
 
 elif var == 'tas':
-	fig = plt.figure(figsize=(8, 8))
+	fig = plt.figure(figsize=(8, 6))
 
 	ax = fig.add_subplot(4, 4, 1)  
 	map, xx, yy = basemap(lat, lon)
@@ -335,7 +336,7 @@ elif var == 'tas':
 	plt.title(u'(p) CP-4km SON', loc='left', fontsize=font_size, fontweight='bold')
 
 else:
-	fig = plt.figure(figsize=(6, 8))
+	fig = plt.figure(figsize=(8, 6))
 	
 	ax = fig.add_subplot(4, 4, 1)  
 	map, xx, yy = basemap(lat, lon)

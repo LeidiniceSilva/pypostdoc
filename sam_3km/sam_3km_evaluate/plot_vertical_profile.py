@@ -12,7 +12,7 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
 var = 'clw'
-domain = 'SESA'
+domain = 'SESA-3km'
 path='/marconi/home/userexternal/mdasilva'
 
 
