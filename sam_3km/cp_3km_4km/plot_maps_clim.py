@@ -14,8 +14,9 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
 from mpl_toolkits.basemap import Basemap
+from mpl_toolkits.basemap import maskoceans
 
-var = 'tasmin'
+var = 'pr'
 dt = '2018-2021'
 path = '/marconi/home/userexternal/mdasilva'
 
@@ -33,7 +34,7 @@ def import_grid(param, domain, dataset, season, dt):
 
 
 def basemap(lat, lon):
-	
+
 	map = Basemap(projection='cyl', llcrnrlon=-76., llcrnrlat=-35., urcrnrlon=-38.,urcrnrlat=-12., resolution='c')
 	map.drawmeridians(np.arange(-76., -38., 10.), size=6, labels=[0,0,0,1], linewidth=0.4, color='black')
 	map.drawparallels(np.arange(-35., -12., 5.), size=6, labels=[1,0,0,0], linewidth=0.4, color='black')
@@ -41,7 +42,7 @@ def basemap(lat, lon):
 	
 	lons, lats = np.meshgrid(lon, lat)
 	xx, yy = map(lons,lats)
-
+	
 	return map, xx, yy
 	
 	
@@ -253,6 +254,7 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 20)  
 	map, xx, yy = basemap(lat, lon)
+	#cp_4km_son = maskoceans(xx, yy, cp_4km_son)
 	plt_map = map.contourf(xx, yy, cp_4km_son, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
 	plt.title(u'(t) CP-4km SON', loc='left', fontsize=font_size, fontweight='bold')
 
