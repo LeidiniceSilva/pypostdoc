@@ -9,12 +9,13 @@ import os
 import cmocean
 import netCDF4
 import numpy as np
+import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
 from mpl_toolkits.basemap import Basemap
 
-var = 'pr'
+var = 'tasmin'
 dt = '2018-2021'
 path = '/marconi/home/userexternal/mdasilva'
 
@@ -139,9 +140,12 @@ else:
 	cp_4km_jja = cp_4km_jja
 	cp_4km_son = cp_4km_son
 	
-# Plot figure   
+# Plot figure
+color = ["#ffffffff", "#d7f0fcff", "#ade0f7ff", "#86c4ebff", "#60a5d6ff", "#4794b3ff", "#49a67cff", "#55b848ff", 
+"#9ecf51ff", "#ebe359ff", "#f7be4aff", "#f58433ff", "#ed5a28ff", "#de3728ff", "#cc1f27ff", "#b01a1fff", "#911419ff"]
+
 dict_plot = {
-'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 17, 1), cm.rainbow],
+'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 18, 1), matplotlib.colors.ListedColormap(color)],
 'tas': ['Air temperature (°C)', np.arange(0, 34, 2), cm.jet],
 'tasmax': ['Maximum air temperature (°C)', np.arange(6, 40, 2), cm.jet],
 'tasmin': ['Minimum air temperature (°C)', np.arange(-4, 30, 2), cm.jet]
@@ -425,7 +429,7 @@ cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cp_3km-4km'.format(path)
-name_out = 'pyplt_maps_clim_{0}_CP_RegCM5_{1}.png'.format(var, dt)
+name_out = 'pyplt_maps_clim_{0}_CP-RegCM5_SAM-3km_{1}.png'.format(var, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

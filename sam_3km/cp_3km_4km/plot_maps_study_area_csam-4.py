@@ -76,8 +76,8 @@ poly2 = Polygon([(c1,d1),(c2,d2),(c3,d3),(c4,d4)], facecolor='none', edgecolor='
 plt.gca().add_patch(poly2)
 
 # Path out to save figure
-path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/sam_3km/figs'
-name_out = 'pyplt_maps_study_area_CSAM-4_RegCM5_2018-2021.png'
+path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/figs/cp_3km-4km'
+name_out = 'pyplt_maps_study_area_CP-RegCM5_CSAM-4_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
