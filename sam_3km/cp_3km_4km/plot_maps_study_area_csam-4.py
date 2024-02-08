@@ -49,11 +49,9 @@ my_map.drawparallels(np.arange(lat_start, lat_end, 10.), labels=[1,0,0,0], fonts
 my_map.drawmeridians(np.arange(lon_start, lon_end, 10.), labels=[0,0,0,1], fontsize=font_size, linewidth=0.4, color='black')                  
 my_map.readshapefile('/marconi/home/userexternal/mdasilva/github_projects/shp/shp_america_sul/america_sul', 'america_sul', drawbounds=True, color='black', linewidth=0.5)
 my_map.readshapefile('/marconi/home/userexternal/mdasilva/github_projects/shp/lim_unid_fed/lim_unid_fed', 'lim_unid_fed', drawbounds=True, color='black', linewidth=0.5)
-	
 x, y = my_map(lon,lat)
-
-llevels = (0, 25, 50, 100, 200, 300, 400, 500, 1000, 1500, 2000, 2500, 3000)
-im = my_map.contourf(x, y, topo, llevels, cmap=plt.cm.terrain, extend='max')
+ 
+im = my_map.contourf(x, y, topo, np.arange(0, 3000, 50), cmap=plt.cm.terrain, extend='max')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=font_size, fontweight='bold')
 plt.ylabel(u'Latitude', labelpad=30, fontsize=font_size, fontweight='bold')
 plt.text(-56, -39, u'SESA', color='red', fontsize=font_size, fontweight='bold')
@@ -62,10 +60,10 @@ cbar = fig.colorbar(im, drawedges=True, fraction=0.030, pad=0.04, aspect=20)
 cbar.set_label('Topography (meters)', fontsize=font_size, fontweight='bold')
 
 # CSAM
-my_map.drawgreatcircle(-78.4, -34.5, -75.0, -11.2, alpha=.6, linewidth=4, color='gray')
-my_map.drawgreatcircle(-75.0, -11.0, -38.0, -11.0, alpha=.6, linewidth=4, color='gray')
-my_map.drawgreatcircle(-35.0, -34.5, -38.0, -11.2, alpha=.6, linewidth=4, color='gray')
-my_map.drawgreatcircle(-78.4, -34.4, -36.0, -34.4, alpha=.6, linewidth=4, color='gray') 
+# my_map.drawgreatcircle(-78.4, -34.5, -75.0, -11.2, alpha=.6, linewidth=4, color='gray')
+# my_map.drawgreatcircle(-75.0, -11.0, -38.0, -11.0, alpha=.6, linewidth=4, color='gray')
+# my_map.drawgreatcircle(-35.0, -34.5, -38.0, -11.2, alpha=.6, linewidth=4, color='gray')
+# my_map.drawgreatcircle(-78.4, -34.4, -36.0, -34.4, alpha=.6, linewidth=4, color='gray') 
 
 # SESA
 c1,d1 = (-65,-35)
