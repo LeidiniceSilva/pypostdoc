@@ -13,30 +13,52 @@ import matplotlib.pyplot as plt
 
 from import_climate_tools import compute_pdf
 
-var = 'tas'
+var = 'pr'
 domain = 'SESA-3km'
+dt = '2018-2021'  
 path = '/marconi/home/userexternal/mdasilva'
 
 
-def import_grid(param, domain, dataset, season):
+def import_obs(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v1/post_evaluate/{1}_{2}_{3}_{4}_2018-2021_lonlat.nc'.format(path, param, domain, dataset, season)
+	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/obs/{1}_{2}_{3}_{4}_2018-2021_lonlat.nc'.format(path, param, domain, dataset, season)
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:]
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
 	value = var[:][:,:,:]
-	mean  = np.nanmean(np.nanmean(value, axis=1), axis=1)
-	
-	return mean
 
+	one_d_list = []
+	for i in range(len(value)):
+		for j in range(len(value[i])):
+			for k in range(len(value[i][j])):
+				one_d_list.append(value[i][j][k])
+	return value
+
+
+def import_cp_3km(param, domain, dataset, season):
+
+	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/{1}_{2}_{3}_{4}_2018-2021_lonlat.nc'.format(path, param, domain, dataset, season)
+	data  = netCDF4.Dataset(arq)
+	var   = data.variables[param][:]
+	lat   = data.variables['lat'][:]
+	lon   = data.variables['lon'][:]
+	value = var[:][0:30,:,:]
+
+	one_d_list = []
+	for i in range(len(value)):
+		for j in range(len(value[i])):
+			for k in range(len(value[i][j])):
+				one_d_list.append(value[i][j][k])
+	
+	return value	
 
 # Import model and obs dataset
 if var == 'pr':
 	dict_var = {'pr': ['pre', 'pre', 'precip', 'sat_gauge_precip', 'tp']}
 
-	cpc = import_grid(dict_var[var][2], domain, 'CPC', 'day')
-	regcm = import_grid(var, domain, 'RegCM5', 'day')
+	cpc = import_obs(dict_var[var][2], domain, 'CPC', 'day')
+	regcm = import_cp_3km(var, domain, 'RegCM5', 'day')
 	
 	# Round values
 	round_cpc = np.round(cpc, 0)
@@ -52,11 +74,11 @@ if var == 'pr':
 else:
 	dict_var = {'tas': ['tmax', 'tmin']}
 
-	cpc_tmax = import_grid(dict_var[var][0], domain, 'CPC', 'mon')
-	cpc_tmin = import_grid(dict_var[var][1], domain, 'CPC', 'mon')
+	cpc_tmax = import_obs(dict_var[var][0], domain, 'CPC', 'mon')
+	cpc_tmin = import_obs(dict_var[var][1], domain, 'CPC', 'mon')
 	cpc = (cpc_tmax+cpc_tmin)/2
 
-	regcm = import_grid(var, domain, 'RegCM5', 'mon')
+	regcm = import_cp_3km(var, domain, 'RegCM5', 'mon')
 	regcm = np.nanmean(regcm, axis=1)
 	
 	# import pdf function
@@ -87,8 +109,8 @@ else:
 	plt.legend(loc=1, ncol=1)
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km_v1/figs/evaluate'.format(path)
-name_out = 'pyplt_frequency_{0}_SAM-3km_RegCM5_2018-2021.png'.format(var)
+path_out = '{0}/user/mdasilva/SAM-3km/figs/evaluate'.format(path)
+name_out = 'pyplt_frequency_{0}_CP-RegCM5_{1}_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

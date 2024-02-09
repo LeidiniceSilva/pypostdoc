@@ -14,14 +14,27 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
 
-var = 'rsnl'
+var = 'tas'
 domain = 'SAM-3km'
+dt = '2018-2018'
 path = '/marconi/home/userexternal/mdasilva'
 
-	
-def import_grid(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v1/post_evaluate/{1}_{2}_{3}_{4}_2018-2021_lonlat.nc'.format(path, param, domain, dataset, season)	
+def import_obs(param, domain, dataset, season):
+
+	arq   = '{0}/user/mdasilva/SAM-3km_v1/post/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	data  = netCDF4.Dataset(arq)
+	var   = data.variables[param][:] 
+	lat   = data.variables['lat'][:]
+	lon   = data.variables['lon'][:]
+	mean = var[:][:,:,:]
+	
+	return lat, lon, mean
+	
+		
+def import_cp_3km(param, domain, dataset, season):
+
+	arq   = '{0}/user/mdasilva/SAM-3km_v2/post/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -55,30 +68,30 @@ dict_var = {
 }
 
 if var == 'pr':
-	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_obs(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_obs(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_obs(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_obs(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, cpc_djf = import_grid(dict_var[var][1], domain, 'CPC', 'DJF')
-	lat, lon, cpc_mam = import_grid(dict_var[var][1], domain, 'CPC', 'MAM')
-	lat, lon, cpc_jja = import_grid(dict_var[var][1], domain, 'CPC', 'JJA')
-	lat, lon, cpc_son = import_grid(dict_var[var][1], domain, 'CPC', 'SON')
+	lat, lon, cpc_djf = import_obs(dict_var[var][1], domain, 'CPC', 'DJF')
+	lat, lon, cpc_mam = import_obs(dict_var[var][1], domain, 'CPC', 'MAM')
+	lat, lon, cpc_jja = import_obs(dict_var[var][1], domain, 'CPC', 'JJA')
+	lat, lon, cpc_son = import_obs(dict_var[var][1], domain, 'CPC', 'SON')
 
-	lat, lon, gpcp_djf = import_grid(dict_var[var][2], domain, 'GPCP', 'DJF')
-	lat, lon, gpcp_mam = import_grid(dict_var[var][2], domain, 'GPCP', 'MAM')
-	lat, lon, gpcp_jja = import_grid(dict_var[var][2], domain, 'GPCP', 'JJA')
-	lat, lon, gpcp_son = import_grid(dict_var[var][2], domain, 'GPCP', 'SON')
+	lat, lon, gpcp_djf = import_obs(dict_var[var][2], domain, 'GPCP', 'DJF')
+	lat, lon, gpcp_mam = import_obs(dict_var[var][2], domain, 'GPCP', 'MAM')
+	lat, lon, gpcp_jja = import_obs(dict_var[var][2], domain, 'GPCP', 'JJA')
+	lat, lon, gpcp_son = import_obs(dict_var[var][2], domain, 'GPCP', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][3], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][3], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][3], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][3], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_obs(dict_var[var][3], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs(dict_var[var][3], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs(dict_var[var][3], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs(dict_var[var][3], domain, 'ERA5', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_cp_3km(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_cp_3km(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_cp_3km(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_cp_3km(var, domain, 'RegCM5', 'SON')
 	
 	mbe_djf_regcm_cru = compute_mbe(regcm_djf, cru_djf)
 	mbe_mam_regcm_cru = compute_mbe(regcm_mam, cru_mam)
@@ -101,20 +114,20 @@ if var == 'pr':
 	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)		
 
 elif var == 'tas':	
-	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_obs(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_obs(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_obs(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_obs(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][1], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][1], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][1], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][1], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_obs(dict_var[var][1], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs(dict_var[var][1], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs(dict_var[var][1], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs(dict_var[var][1], domain, 'ERA5', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_cp_3km(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_cp_3km(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_cp_3km(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_cp_3km(var, domain, 'RegCM5', 'SON')
 	
 	mbe_djf_regcm_cru = compute_mbe(regcm_djf[0], cru_djf)
 	mbe_mam_regcm_cru = compute_mbe(regcm_mam[0], cru_mam)
@@ -127,20 +140,20 @@ elif var == 'tas':
 	mbe_son_regcm_era5 = compute_mbe(regcm_son[0], era5_son)
 	
 elif var == 'tasmax':
-	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_obs(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_obs(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_obs(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_obs(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, cpc_djf = import_grid(dict_var[var][1], domain, 'CPC', 'DJF')
-	lat, lon, cpc_mam = import_grid(dict_var[var][1], domain, 'CPC', 'MAM')
-	lat, lon, cpc_jja = import_grid(dict_var[var][1], domain, 'CPC', 'JJA')
-	lat, lon, cpc_son = import_grid(dict_var[var][1], domain, 'CPC', 'SON')
+	lat, lon, cpc_djf = import_obs(dict_var[var][1], domain, 'CPC', 'DJF')
+	lat, lon, cpc_mam = import_obs(dict_var[var][1], domain, 'CPC', 'MAM')
+	lat, lon, cpc_jja = import_obs(dict_var[var][1], domain, 'CPC', 'JJA')
+	lat, lon, cpc_son = import_obs(dict_var[var][1], domain, 'CPC', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_cp_3km(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_cp_3km(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_cp_3km(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_cp_3km(var, domain, 'RegCM5', 'SON')
 	
 	mbe_djf_regcm_cru = compute_mbe(regcm_djf[0], cru_djf)
 	mbe_mam_regcm_cru = compute_mbe(regcm_mam[0], cru_mam)
@@ -153,20 +166,20 @@ elif var == 'tasmax':
 	mbe_son_regcm_cpc = compute_mbe(regcm_son[0], cpc_son)	
 
 elif var == 'tasmin':
-	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_obs(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_obs(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_obs(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_obs(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, cpc_djf = import_grid(dict_var[var][1], domain, 'CPC', 'DJF')
-	lat, lon, cpc_mam = import_grid(dict_var[var][1], domain, 'CPC', 'MAM')
-	lat, lon, cpc_jja = import_grid(dict_var[var][1], domain, 'CPC', 'JJA')
-	lat, lon, cpc_son = import_grid(dict_var[var][1], domain, 'CPC', 'SON')
+	lat, lon, cpc_djf = import_obs(dict_var[var][1], domain, 'CPC', 'DJF')
+	lat, lon, cpc_mam = import_obs(dict_var[var][1], domain, 'CPC', 'MAM')
+	lat, lon, cpc_jja = import_obs(dict_var[var][1], domain, 'CPC', 'JJA')
+	lat, lon, cpc_son = import_obs(dict_var[var][1], domain, 'CPC', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_cp_3km(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_cp_3km(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_cp_3km(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_cp_3km(var, domain, 'RegCM5', 'SON')
 	
 	mbe_djf_regcm_cru = compute_mbe(regcm_djf[0], cru_djf)
 	mbe_mam_regcm_cru = compute_mbe(regcm_mam[0], cru_mam)
@@ -179,20 +192,20 @@ elif var == 'tasmin':
 	mbe_son_regcm_cpc = compute_mbe(regcm_son[0], cpc_son)	
 	
 elif var == 'clt':
-	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_obs(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_obs(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_obs(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_obs(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][1], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][1], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][1], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][1], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_obs(dict_var[var][1], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs(dict_var[var][1], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs(dict_var[var][1], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs(dict_var[var][1], domain, 'ERA5', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_cp_3km(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_cp_3km(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_cp_3km(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_cp_3km(var, domain, 'RegCM5', 'SON')
 	
 	mbe_djf_regcm_cru = compute_mbe(regcm_djf, cru_djf)
 	mbe_mam_regcm_cru = compute_mbe(regcm_mam, cru_mam)
@@ -205,15 +218,15 @@ elif var == 'clt':
 	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)
 	
 else:
-	lat, lon, era5_djf = import_grid(dict_var[var][0], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][0], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][0], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][0], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_obs(dict_var[var][0], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs(dict_var[var][0], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs(dict_var[var][0], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs(dict_var[var][0], domain, 'ERA5', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_cp_3km(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_cp_3km(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_cp_3km(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_cp_3km(var, domain, 'RegCM5', 'SON')
 		
 	mbe_djf_regcm_era5 = compute_mbe(regcm_djf, era5_djf)
 	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
@@ -521,8 +534,8 @@ else:
 	cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km_v1/figs/evaluate'.format(path)
-name_out = 'pyplt_maps_bias_{0}_SAM-3km_RegCM5_2018-2021_v2.png'.format(var)
+path_out = '{0}/user/mdasilva/SAM-3km_v2/figs'.format(path)
+name_out = 'pyplt_maps_bias_{0}_CP-RegCM5_{1}_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
