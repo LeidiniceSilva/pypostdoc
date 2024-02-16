@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Jan 02, 2024"
-__description__ = "This script plot study area"
+__description__ = "This script plot cyclone tracking"
 
 import os
 import numpy as np
@@ -39,8 +39,8 @@ plt.legend(loc=1, ncol=1, fontsize=font_size)
 plt.grid(linestyle=':', color='gray', linewidth=1)
 
 # Path out to save figure
-path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/cyclone/figs'
-name_out = 'pyplt_maps_tracking_cyclone_{0}.png'.format(dt)
+path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km-cyclone/figs'
+name_out = 'pyplt_maps_tracking_cyclone_era5_{0}.png'.format(dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
