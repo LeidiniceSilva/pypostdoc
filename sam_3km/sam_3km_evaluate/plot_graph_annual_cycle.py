@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Dec 04, 2023"
-__description__ = "This script plot bias maps"
+__description__ = "This script plot annual cycle"
 
 import os
 import netCDF4
@@ -91,7 +91,7 @@ else:
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km_v1/figs/evaluate'.format(path)
-name_out = 'pyplt_annual_cycle_{0}_SESA-3km_RegCM5_2018-2021.png'.format(var)
+name_out = 'pyplt_annual_cycle_{0}_{1}_RegCM5_2018-2021.png'.format(var, domain)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
