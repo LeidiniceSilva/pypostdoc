@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-var = 'pr'
+var = 'tas'
 domain = 'SESA-3km'
 path = '/marconi/home/userexternal/mdasilva'
 
@@ -46,12 +46,12 @@ def import_cp_3km(param, domain, dataset, period):
 	
 # Import model and obs dataset
 if var == 'pr':
-	dict_var = {'pr': ['pre', 'precip', 'sat_gauge_precip', 'tp']}
-	cp_3km = import_cp_3km(var, domain, 'RegCM5', 'dc')
-
+	dict_var = {'pr': ['tp']}
 else:
 	dict_var = {'tas': ['t2m']}
-	cp_3km = import_cp_3km(var, domain, 'RegCM5', 'dc')
+
+obs = import_obs(dict_var[var][0], domain, 'ERA5', 'dc')
+cp_3km = import_cp_3km(var, domain, 'RegCM5', 'dc')
 	
 # Plot figure
 fig = plt.figure()
@@ -59,32 +59,34 @@ time = np.arange(0.5, 24 + 0.5)
 font_size = 8
 
 if var == 'pr':
-	plt1 = plt.plot(time, cp_3km)
+	plt1 = plt.plot(time, obs, time, cp_3km)
 	plt.title(u'a) SESA', loc='left', fontweight='bold', fontsize=8)
-	l1 = plt1
-	plt.setp(l1, linewidth=1., linestyle='-', markersize=3, marker='o', markerfacecolor='white', color='red')
-	plt.ylim(0, 8)
+	l1, l2 = plt1
+	plt.setp(l1, linewidth=1., linestyle='-', markersize=3, marker='o', markerfacecolor='white', color='black')
+	plt.setp(l2, linewidth=1., linestyle='-', markersize=3, marker='o', markerfacecolor='white', color='red')
+	plt.ylim(0, 0.2)
 	plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-	plt.yticks(np.arange(0, 9, 1), fontsize=font_size)
+	plt.yticks(np.arange(0, 0.21, 0.01), fontsize=font_size)
 	plt.xlabel('Hours', fontsize=font_size, fontweight='bold')
-	plt.ylabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
+	plt.ylabel('Precipitation (mm hr$^-$$^1$)', fontsize=font_size, fontweight='bold')
 	plt.grid(linestyle='--')
-	plt.legend(plt1, ['RegCM5'], fontsize=font_size, ncol=1, loc=1, shadow=True)
+	plt.legend(plt1, ['ERA5', 'RegCM5'], fontsize=font_size, ncol=1, loc=1, shadow=True)
 else:
-	plt1 = plt.plot(time, cp_3km)
+	plt1 = plt.plot(time, obs, time, cp_3km)
 	plt.title(u'a) SESA', loc='left', fontweight='bold', fontsize=8)
-	l1 = plt1
-	plt.setp(l1, linewidth=1., linestyle='-', markersize=3, marker='o', markerfacecolor='white', color='red')
+	l1, l2 = plt1
+	plt.setp(l1, linewidth=1., linestyle='-', markersize=3, marker='o', markerfacecolor='white', color='black')
+	plt.setp(l2, linewidth=1., linestyle='-', markersize=3, marker='o', markerfacecolor='white', color='red')
 	plt.ylim(8, 30)
 	plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
 	plt.yticks(np.arange(8, 32, 2), fontsize=font_size)
 	plt.xlabel('Hours', fontsize=font_size, fontweight='bold')
 	plt.ylabel('Temperature (°C)', fontsize=font_size, fontweight='bold')
 	plt.grid(linestyle='--')
-	plt.legend(plt1, ['RegCM5'], fontsize=font_size, ncol=1, loc=1, shadow=True)
-
+	plt.legend(plt1, ['ERA5', 'RegCM5'], fontsize=font_size, ncol=1, loc=1, shadow=True)
+	
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km_v1/figs/evaluate'.format(path)
+path_out = '{0}/user/mdasilva/SAM-3km/figs/evaluate'.format(path)
 name_out = 'pyplt_diurnal_cycle_{0}_{1}_RegCM5_2018-2021.png'.format(var, domain)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
