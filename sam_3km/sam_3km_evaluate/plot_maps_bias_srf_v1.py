@@ -294,7 +294,7 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 1)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.scatter(lon_i, lat_i, 4, mbe_djf_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
+	plt_map = map.scatter(lon_i, lat_i, 4, mbe_djf_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=0, vmax=18) 
 	plt.title(u'(a) RegCM5-INMET DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 2)  
