@@ -171,25 +171,25 @@ mbe_reg_ictp_3km_cru = compute_mbe(reg_ictp_3km, cru)
 mbe_reg_ictp_4km_cru = compute_mbe(reg_ictp_4km, cru)	
 mbe_reg_usp_cru = compute_mbe(reg_usp, cru)	
 mbe_wrf_ncar_cru = compute_mbe(wrf_ncar, cru)	
-mbe_wrf_ucan_cru = compute_mbe(wrf_ncar, cru)	
+mbe_wrf_ucan_cru = compute_mbe(wrf_ucan, cru)	
 
 mbe_reg_ictp_3km_cpc = compute_mbe(reg_ictp_3km, cpc)	
 mbe_reg_ictp_4km_cpc = compute_mbe(reg_ictp_4km, cpc)	
 mbe_reg_usp_cpc = compute_mbe(reg_usp, cpc)	
 mbe_wrf_ncar_cpc = compute_mbe(wrf_ncar, cpc)	
-mbe_wrf_ucan_cpc = compute_mbe(wrf_ncar, cpc)	
+mbe_wrf_ucan_cpc = compute_mbe(wrf_ucan, cpc)	
 
 mbe_reg_ictp_3km_gpcp = compute_mbe(reg_ictp_3km, gpcp)	
 mbe_reg_ictp_4km_gpcp = compute_mbe(reg_ictp_4km, gpcp)	
 mbe_reg_usp_gpcp = compute_mbe(reg_usp, gpcp)	
 mbe_wrf_ncar_gpcp = compute_mbe(wrf_ncar, gpcp)	
-mbe_wrf_ucan_gpcp = compute_mbe(wrf_ncar, gpcp)	
+mbe_wrf_ucan_gpcp = compute_mbe(wrf_ucan, gpcp)	
 
 mbe_reg_ictp_3km_era5 = compute_mbe(reg_ictp_3km, era5)	
 mbe_reg_ictp_4km_era5 = compute_mbe(reg_ictp_4km, era5)	
 mbe_reg_usp_era5 = compute_mbe(reg_usp, era5)	
 mbe_wrf_ncar_era5 = compute_mbe(wrf_ncar, era5)  
-mbe_wrf_ucan_era5 = compute_mbe(wrf_ncar, era5)	
+mbe_wrf_ucan_era5 = compute_mbe(wrf_ucan, era5)	
 
 # Plot figure
 dict_plot = {'pr': ['Bias of precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.BrBG]}
