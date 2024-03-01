@@ -90,13 +90,8 @@ def import_sam_3km(param, domain, dataset):
 dict_var = {'pr': ['pre', 'precip', 'sat_gauge_precip', 'tp']}
 
 inmet_ = import_ws(dict_var[var][0])
-
-cru = import_obs(dict_var[var][0], 'SAM-3km', 'CRU')
-cpc = import_obs(dict_var[var][1], 'SAM-3km', 'CPC')
-gpcp = import_obs(dict_var[var][2], 'SAM-3km', 'GPCP')
-era5 = import_obs(dict_var[var][3], 'SAM-3km', 'ERA5')
-
-regcm = import_sam_3km(var, 'SAM-3km', 'RegCM5')
+era5   = import_obs(dict_var[var][3], 'SAM-3km', 'ERA5')
+regcm  = import_sam_3km(var, 'SAM-3km', 'RegCM5')
 		
 list_hc = [2, 3, 2, 3, 2, 2, 3, 0, 1, 3, 2, 3, 3, 4, 1, 2, 3, 1, 0, 3, 0, 0, 3, 3, 2, 2, 2, 2, 3, 1, 1, 0, 
 1, 2, 3, 3, 1, 1, 2, 2, 0, 0, 3, 1, 3, 3, 0, 0, 2, 3, 0, 2, 3, 2, 2, 0, 0, 2, 3, 4, 2, 3, 2, 1, 3, 0, 0, 1, 
@@ -122,135 +117,96 @@ for count, idx in enumerate(list_hc):
 		count_v.append(count)
 		
 inmet_i, inmet_ii,  inmet_iii,  inmet_iv,  inmet_v  = [], [], [], [], []
-cru_i,   cru_ii,    cru_iii,    cru_iv,    cru_v    = [], [], [], [], []
-cpc_i,   cpc_ii,    cpc_iii,    cpc_iv,    cpc_v    = [], [], [], [], []
-gpcp_i,  gpcp_ii,   gpcp_iii,   gpcp_iv,   gpcp_v   = [], [], [], [], []
 era5_i,  era5_ii,   era5_iii,   era5_iv,   era5_v   = [], [], [], [], []
 regcm_i, regcm_ii,  regcm_iii,  regcm_iv,  regcm_v  = [], [], [], [], []
 
 for c_i in count_i:
 	inmet_i.append(inmet_[c_i])
-	cru_i.append(cru[c_i])
-	cpc_i.append(cpc[c_i])
-	gpcp_i.append(gpcp[c_i])
 	era5_i.append(era5[c_i])
 	regcm_i.append(regcm[c_i])
 
 for c_ii in count_ii:
 	inmet_ii.append(inmet_[c_ii])
-	cru_ii.append(cru[c_ii])
-	cpc_ii.append(cpc[c_ii])
-	gpcp_ii.append(gpcp[c_ii])
 	era5_ii.append(era5[c_ii])
 	regcm_ii.append(regcm[c_ii])
 	
 for c_iii in count_iii:
 	inmet_iii.append(inmet_[c_iii])
-	cru_iii.append(cru[c_iii])
-	cpc_iii.append(cpc[c_iii])
-	gpcp_iii.append(gpcp[c_iii])
 	era5_iii.append(era5[c_iii])
 	regcm_iii.append(regcm[c_iii])
 	
 for c_iv in count_iv:
 	inmet_iv.append(inmet_[c_iv])
-	cru_iv.append(cru[c_iv])
-	cpc_iv.append(cpc[c_iv])
-	gpcp_iv.append(gpcp[c_iv])
 	era5_iv.append(era5[c_iv])
 	regcm_iv.append(regcm[c_iv])
 	
 for c_v in count_v:
 	inmet_v.append(inmet_[c_v])
-	cru_v.append(cru[c_v])
-	cpc_v.append(cpc[c_v])
-	gpcp_v.append(gpcp[c_v])
 	era5_v.append(era5[c_v])
 	regcm_v.append(regcm[c_v])
 	
 inmet_c_i = np.nanmean(inmet_i, axis=0)
-cru_c_i   = np.nanmean(cru_i, axis=0)
-cpc_c_i   = np.nanmean(cpc_i, axis=0)
-gpcp_c_i  = np.nanmean(gpcp_i, axis=0)
 era5_c_i  = np.nanmean(era5_i, axis=0)
 regcm_c_i = np.nanmean(regcm_i, axis=0)
 
 inmet_c_ii = np.nanmean(inmet_ii, axis=0)
-cru_c_ii   = np.nanmean(cru_ii, axis=0)
-cpc_c_ii   = np.nanmean(cpc_ii, axis=0)
-gpcp_c_ii  = np.nanmean(gpcp_ii, axis=0)
 era5_c_ii  = np.nanmean(era5_ii, axis=0)
 regcm_c_ii = np.nanmean(regcm_ii, axis=0)
 
 inmet_c_iii = np.nanmean(inmet_iii, axis=0)
-cru_c_iii   = np.nanmean(cru_iii, axis=0)
-cpc_c_iii   = np.nanmean(cpc_iii, axis=0)
-gpcp_c_iii  = np.nanmean(gpcp_iii, axis=0)
 era5_c_iii  = np.nanmean(era5_iii, axis=0)
 regcm_c_iii = np.nanmean(regcm_iii, axis=0)
 
 inmet_c_iv = np.nanmean(inmet_iv, axis=0)
-cru_c_iv   = np.nanmean(cru_iv, axis=0)
-cpc_c_iv   = np.nanmean(cpc_iv, axis=0)
-gpcp_c_iv  = np.nanmean(gpcp_iv, axis=0)
 era5_c_iv  = np.nanmean(era5_iv, axis=0)
 regcm_c_iv = np.nanmean(regcm_iv, axis=0)
 
 inmet_c_v = np.nanmean(inmet_v, axis=0)
-cru_c_v   = np.nanmean(cru_v, axis=0)
-cpc_c_v   = np.nanmean(cpc_v, axis=0)
-gpcp_c_v  = np.nanmean(gpcp_v, axis=0)
 era5_c_v  = np.nanmean(era5_v, axis=0)
 regcm_c_v = np.nanmean(regcm_v, axis=0)
 
+inmet_c_ii_iv = np.nanmean([inmet_c_ii, inmet_c_iii, inmet_c_iv], axis=0)
+era5_c_ii_iv  = np.nanmean([era5_c_ii,  era5_c_iii,  era5_c_iv], axis=0)
+regcm_c_ii_iv = np.nanmean([regcm_c_ii, regcm_c_iii, regcm_c_iv], axis=0)
+
 # Plot figure
-fig = plt.figure()
-time = np.arange(0.5, 12 + 0.5)
+fig = plt.figure(figsize=(6, 9))
+time = np.arange(0.5, 24 + 0.5)
 font_size = 8
 
 ax = fig.add_subplot(3, 1, 1)
 plt.plot(time, inmet_c_i, linewidth=1.5, color='red',   label = 'INMET')
-plt.plot(time, cru_c_i,   linewidth=1.5, color='blue', label = 'CRU')
-plt.plot(time, cpc_c_i,   linewidth=1.5, color='green', label = 'Reg5-Holt')
-plt.plot(time, gpcp_c_i,  linewidth=1.5, color='yellow', label = '')
 plt.plot(time, era5_c_i,  linewidth=1.5, color='black', label = 'ERA5')
 plt.plot(time, regcm_c_i, linewidth=1.5, linestyle='--', markersize=2, marker='o', markerfacecolor='white', color='red', label = 'RegCM5-3km')
 plt.title('(a) Cluster I', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylim(0, 12)
-plt.yticks(np.arange(0, 13, 1), fontsize=font_size)
-plt.xticks(time, ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), fontsize=font_size)
-plt.legend(loc=1, ncol=1, fontsize=font_size, shadow=True)
+plt.ylim(0, 0.3)
+plt.yticks(np.arange(0, 0.33, 0.03), fontsize=font_size)
+plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
+plt.legend(loc=1, ncol=3, fontsize=font_size, shadow=True)
 
 ax = fig.add_subplot(3, 1, 2)
 plt.plot(time, inmet_c_ii, linewidth=1.5, color='red',   label = 'INMET')
-plt.plot(time, cru_c_ii,   linewidth=1.5, color='blue', label = 'CRU')
-plt.plot(time, cpc_c_ii,   linewidth=1.5, color='green', label = 'Reg5-Holt')
-plt.plot(time, gpcp_c_ii,  linewidth=1.5, color='yellow', label = '')
 plt.plot(time, era5_c_ii,  linewidth=1.5, color='black', label = 'ERA5')
-plt.plot(time, regcm_c_ii, linewidth=1.5, linestyle='--', markersize=2, marker='o', markerfacecolor='white', color='red', label = 'RegCM5-3km')
+plt.plot(time, regcm_c_ii, linewidth=1.5, linestyle='--', markersize=2, marker='o', markerfacecolor='white', color='red', label='RegCM5-3km')
 plt.title('(b) Cluster II-III-IV', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylabel('Precipitation (d$^-$$^1$)', fontsize=8, fontweight='bold')
-plt.ylim(0, 12)
-plt.yticks(np.arange(0, 13, 1), fontsize=font_size)
-plt.xticks(time, ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), fontsize=font_size)
+plt.ylabel('Precipitation (mm h$^-$$^1$)', fontsize=8, fontweight='bold')
+plt.ylim(0, 0.4)
+plt.yticks(np.arange(0, 0.44, 0.04), fontsize=font_size)
+plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
 
 ax = fig.add_subplot(3, 1, 3)
 plt.plot(time, inmet_c_v, linewidth=1.5, color='red',   label = 'INMET')
-plt.plot(time, cru_c_v,   linewidth=1.5, color='blue', label = 'CRU')
-plt.plot(time, cpc_c_v,   linewidth=1.5, color='green', label = 'Reg5-Holt')
-plt.plot(time, gpcp_c_v,  linewidth=1.5, color='yellow', label = '')
 plt.plot(time, era5_c_v,  linewidth=1.5, color='black', label = 'ERA5')
-plt.plot(time, regcm_c_v, linewidth=1.5, linestyle='--', markersize=2, marker='o', markerfacecolor='white', color='red', label = 'RegCM5-3km')
-plt.xlabel('Months', fontsize=font_size, fontweight='bold')
+plt.plot(time, regcm_c_v, linewidth=1.5, linestyle='--', markersize=2, marker='o', markerfacecolor='white', color='red', label='RegCM5-3km')
+plt.xlabel('Time (hrs)', fontsize=font_size, fontweight='bold')
 plt.title('(c) Cluster V', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylim(0, 12)
-plt.yticks(np.arange(0, 13, 1), fontsize=font_size)
-plt.xticks(time, ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), fontsize=font_size)
-plt.legend(loc=1, ncol=1, fontsize=font_size, shadow=True)
+plt.ylim(0, 0.2)
+plt.yticks(np.arange(0, 0.22, 0.02), fontsize=font_size)
+plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cp_3km-4km'.format(path)
-name_out = 'pyplt_graph_annual_cycle_{0}_SAM-3km_RegCM5_{1}.png'.format(var, dt)
+name_out = 'pyplt_graph_diurnal_cycle_{0}_SAM-3km_RegCM5_{1}.png'.format(var, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

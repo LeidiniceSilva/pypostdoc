@@ -133,7 +133,7 @@ if freq == 'hourly':
 	ax = fig.add_subplot(1, 5, 3)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_reg_usp_era5[0], levels=np.arange(-5, 5.5, 0.5), cmap=cm.BrBG, extend='both') 
-	plt.title(u'(c) RegCM4 - CPC', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(c) RegCM4 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(1, 5, 4)  
 	map, xx, yy = basemap(lat, lon)
