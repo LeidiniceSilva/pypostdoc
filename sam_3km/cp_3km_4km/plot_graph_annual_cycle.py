@@ -226,6 +226,7 @@ plt.title('(a) Cluster I', loc='left', fontsize=font_size, fontweight='bold')
 plt.ylim(0, 10)
 plt.yticks(np.arange(0, 11, 1), fontsize=font_size)
 plt.xticks(time, ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), fontsize=font_size)
+plt.grid(linestyle='--')
 plt.legend(loc=1, ncol=3, fontsize=font_size, shadow=True)
 
 ax = fig.add_subplot(3, 1, 2)
@@ -240,6 +241,7 @@ plt.ylabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold'
 plt.ylim(0, 12)
 plt.yticks(np.arange(0, 13, 1), fontsize=font_size)
 plt.xticks(time, ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), fontsize=font_size)
+plt.grid(linestyle='--')
 
 ax = fig.add_subplot(3, 1, 3)
 plt.plot(time, inmet_c_v, linewidth=1., color='red',    label = 'INMET')
@@ -253,6 +255,7 @@ plt.xlabel('Months', fontsize=font_size, fontweight='bold')
 plt.ylim(0, 8)
 plt.yticks(np.arange(0, 9, 1), fontsize=font_size)
 plt.xticks(time, ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), fontsize=font_size)
+plt.grid(linestyle='--')
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cp_3km-4km'.format(path)

@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Dec 04, 2023"
-__description__ = "This script plot diurnal cycle"
+__description__ = "This script plot annual cycle"
 
 import os
 import netCDF4
@@ -38,8 +38,8 @@ def import_ws(param):
 		arq  = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
 		data = arq[param]
 		time = data.sel(time=slice('2018-06-01','2021-05-31'))
-		var  = time.groupby('time.hour').mean('time')
-		mean.append(var.values)
+		var  = time.values*24
+		mean.append(var)
 										
 	return mean
 	
@@ -55,7 +55,7 @@ def import_obs(param, domain, dataset):
 		if inmet[station][2] >= -11.25235:
 			continue
 
-		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + '{0}_{1}_{2}_diurnal_cycle_{3}_lonlat.nc'.format(param, domain, dataset, dt))
+		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + '{0}_{1}_{2}_day_{3}_lonlat.nc'.format(param, domain, dataset, dt))
 		data   = arq[param]
 		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		time   = latlon.sel(time=slice('2018-06-01','2021-05-31'))
@@ -76,7 +76,7 @@ def import_sam_3km(param, domain, dataset):
 		if inmet[station][2] >= -11.25235:
 			continue
 
-		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_{1}_{2}_diurnal_cycle_{3}_lonlat.nc'.format(param, domain, dataset, dt))
+		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_{1}_{2}_day_{3}_lonlat.nc'.format(param, domain, dataset, dt))
 		data   = arq[param]
 		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		time   = latlon.sel(time=slice('2018-06-01','2021-05-31'))
@@ -90,8 +90,8 @@ def import_sam_3km(param, domain, dataset):
 dict_var = {'pr': ['pre', 'precip', 'sat_gauge_precip', 'tp']}
 
 inmet_ = import_ws(dict_var[var][0])
-era5   = import_obs(dict_var[var][3], 'SAM-3km', 'ERA5')
-regcm  = import_sam_3km(var, 'SAM-3km', 'RegCM5')
+era5 = import_obs(dict_var[var][3], 'SAM-3km', 'ERA5')
+regcm = import_sam_3km(var, 'SAM-3km', 'RegCM5')
 		
 list_hc = [2, 3, 2, 3, 2, 2, 3, 0, 1, 3, 2, 3, 3, 4, 1, 2, 3, 1, 0, 3, 0, 0, 3, 3, 2, 2, 2, 2, 3, 1, 1, 0, 
 1, 2, 3, 3, 1, 1, 2, 2, 0, 0, 3, 1, 3, 3, 0, 0, 2, 3, 0, 2, 3, 2, 2, 0, 0, 2, 3, 4, 2, 3, 2, 1, 3, 0, 0, 1, 
@@ -144,72 +144,125 @@ for c_v in count_v:
 	inmet_v.append(inmet_[c_v])
 	era5_v.append(era5[c_v])
 	regcm_v.append(regcm[c_v])
-	
-inmet_c_i = np.nanmean(inmet_i, axis=0)
-era5_c_i  = np.nanmean(era5_i, axis=0)
-regcm_c_i = np.nanmean(regcm_i, axis=0)
 
-inmet_c_ii = np.nanmean(inmet_ii, axis=0)
-era5_c_ii  = np.nanmean(era5_ii, axis=0)
-regcm_c_ii = np.nanmean(regcm_ii, axis=0)
+inmet_i = np.array(inmet_i)
+inmet_c_i = inmet_i.flatten()
 
-inmet_c_iii = np.nanmean(inmet_iii, axis=0)
-era5_c_iii  = np.nanmean(era5_iii, axis=0)
-regcm_c_iii = np.nanmean(regcm_iii, axis=0)
+era5_i = np.array(era5_i)
+era5_c_i = era5_i.flatten()
 
-inmet_c_iv = np.nanmean(inmet_iv, axis=0)
-era5_c_iv  = np.nanmean(era5_iv, axis=0)
-regcm_c_iv = np.nanmean(regcm_iv, axis=0)
+regcm_i = np.array(regcm_i)
+regcm_c_i = regcm_i.flatten()
 
-inmet_c_v = np.nanmean(inmet_v, axis=0)
-era5_c_v  = np.nanmean(era5_v, axis=0)
-regcm_c_v = np.nanmean(regcm_v, axis=0)
+inmet_ii = np.array(inmet_ii)
+inmet_ii = inmet_ii.flatten()
 
-inmet_c_ii_iv = np.nanmean([inmet_c_ii, inmet_c_iii, inmet_c_iv], axis=0)
-era5_c_ii_iv  = np.nanmean([era5_c_ii,  era5_c_iii,  era5_c_iv], axis=0)
-regcm_c_ii_iv = np.nanmean([regcm_c_ii, regcm_c_iii, regcm_c_iv], axis=0)
+era5_ii = np.array(era5_ii)
+era5_ii = era5_ii.flatten()
+
+regcm_ii = np.array(regcm_ii)
+regcm_ii = regcm_ii.flatten()
+
+inmet_iii = np.array(inmet_iii)
+inmet_iii = inmet_iii.flatten()
+
+era5_iii = np.array(era5_iii)
+era5_iii = era5_iii.flatten()
+
+regcm_iii = np.array(regcm_iii)
+regcm_iii = regcm_iii.flatten()
+
+inmet_iv = np.array(inmet_iv)
+inmet_iv = inmet_iv.flatten()
+
+era5_iv = np.array(era5_iv)
+era5_iv = era5_iv.flatten()
+
+regcm_iv = np.array(regcm_iv)
+regcm_iv = regcm_iv.flatten()
+
+inmet_v = np.array(inmet_v)
+inmet_c_v = inmet_v.flatten()
+
+era5_v = np.array(era5_v)
+era5_c_v = era5_v.flatten()
+
+regcm_v = np.array(regcm_v)
+regcm_c_v = regcm_v.flatten()
+
+inmet_c_ii_iv = np.nanmean([inmet_ii, inmet_iii, inmet_iv], axis=0)
+era5_c_ii_iv  = np.nanmean([era5_ii,  era5_iii,  era5_iv], axis=0)
+regcm_c_ii_iv = np.nanmean([regcm_ii, regcm_iii, regcm_iv], axis=0)
+
+# Round values to each cluster
+round_inmet_c_i = np.round(inmet_c_i,0)
+round_era5_c_i  = np.round(era5_c_i,0)
+round_regcm_c_i = np.round(regcm_c_i,0)
+
+round_inmet_c_ii_iv = np.round(inmet_c_ii_iv,0)
+round_era5_c_ii_iv  = np.round(era5_c_ii_iv,0)
+round_regcm_c_ii_iv = np.round(regcm_c_ii_iv,0)
+
+round_inmet_c_v = np.round(inmet_c_v,0)
+round_era5_c_v  = np.round(era5_c_v,0)
+round_regcm_c_v = np.round(regcm_c_v,0)
+
+# Filter 0 mm/day
+filter_inmet_c_i = round_inmet_c_i[round_inmet_c_i > 0.]
+filter_era5_c_i  = round_era5_c_i[round_era5_c_i > 0.]
+filter_regcm_c_i = round_regcm_c_i[round_regcm_c_i > 0.]
+
+filter_inmet_c_ii_iv = round_inmet_c_ii_iv[round_inmet_c_ii_iv > 0.]
+filter_era5_c_ii_iv  = round_era5_c_ii_iv[round_era5_c_ii_iv > 0.]
+filter_regcm_c_ii_iv = round_regcm_c_ii_iv[round_regcm_c_ii_iv > 0.]
+
+filter_inmet_c_v = round_inmet_c_ii_iv[round_inmet_c_v > 0.]
+filter_era5_c_v  = round_era5_c_ii_iv[round_era5_c_v > 0.]
+filter_regcm_c_v = round_regcm_c_ii_iv[round_regcm_c_v > 0.]
+
+# Compute frequency
+x_pdf_inmet_c_i, pdf_inmet_c_i = np.unique(filter_inmet_c_i, return_counts=True) 
+x_pdf_era5_c_i,  pdf_era5_c_i  = np.unique(filter_era5_c_i, return_counts=True) 
+x_pdf_regcm_c_i, pdf_regcm_c_i = np.unique(filter_regcm_c_i, return_counts=True) 
+
+x_pdf_inmet_c_ii_iv, pdf_inmet_c_ii_iv = np.unique(filter_inmet_c_ii_iv, return_counts=True) 
+x_pdf_era5_c_ii_iv,  pdf_era5_c_ii_iv  = np.unique(filter_era5_c_ii_iv, return_counts=True) 
+x_pdf_regcm_c_ii_iv, pdf_regcm_c_ii_iv = np.unique(filter_regcm_c_ii_iv, return_counts=True) 
+
+x_pdf_inmet_c_v, pdf_inmet_c_v = np.unique(filter_inmet_c_v, return_counts=True) 
+x_pdf_era5_c_v,  pdf_era5_c_v  = np.unique(filter_era5_c_v, return_counts=True) 
+x_pdf_regcm_c_v, pdf_regcm_c_v = np.unique(filter_regcm_c_v, return_counts=True) 
 
 # Plot figure
 fig = plt.figure(figsize=(6, 9))
-time = np.arange(0.5, 24 + 0.5)
+time = np.arange(0.5, 12 + 0.5)
 font_size = 8
 
-ax = fig.add_subplot(3, 1, 1)
-plt.plot(time, inmet_c_i, linewidth=1.5, color='red',   label = 'INMET')
-plt.plot(time, era5_c_i,  linewidth=1.5, color='black', label = 'ERA5')
-plt.plot(time, regcm_c_i, linewidth=1.5, linestyle='--', markersize=2, marker='o', markerfacecolor='white', color='red', label = 'RegCM5-3km')
+ax = fig.add_subplot(3, 1, 1)  
+plt.plot(x_pdf_inmet_c_i, pdf_inmet_c_i, marker='.', markersize=4, mfc='red',   mec='red',   linestyle='None', label='INMET')
+plt.plot(x_pdf_era5_c_i,  pdf_era5_c_i,  marker='.', markersize=4, mfc='black', mec='black', linestyle='None', label='ERA5')
+plt.plot(x_pdf_regcm_c_i, pdf_regcm_c_i, marker='.', markersize=4, mfc='white', mec='red',   linestyle='None', label='RegCM5-3km')
 plt.title('(a) Cluster I', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylim(0, 0.3)
-plt.yticks(np.arange(0, 0.33, 0.03), fontsize=font_size)
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(linestyle='--')
+plt.yscale('log')
 plt.legend(loc=1, ncol=3, fontsize=font_size, shadow=True)
 
-ax = fig.add_subplot(3, 1, 2)
-plt.plot(time, inmet_c_ii, linewidth=1.5, color='red',   label = 'INMET')
-plt.plot(time, era5_c_ii,  linewidth=1.5, color='black', label = 'ERA5')
-plt.plot(time, regcm_c_ii, linewidth=1.5, linestyle='--', markersize=2, marker='o', markerfacecolor='white', color='red', label='RegCM5-3km')
+ax = fig.add_subplot(3, 1, 2)  
+plt.plot(x_pdf_inmet_c_ii_iv, pdf_inmet_c_ii_iv, marker='.', markersize=4, mfc='red',   mec='red',   linestyle='None', label='INMET')
+plt.plot(x_pdf_era5_c_ii_iv,  pdf_era5_c_ii_iv,  marker='.', markersize=4, mfc='black', mec='black', linestyle='None', label='ERA5')
+plt.plot(x_pdf_regcm_c_ii_iv, pdf_regcm_c_ii_iv, marker='.', markersize=4, mfc='white', mec='red',   linestyle='None', label='RegCM5-3km')
 plt.title('(b) Cluster II-III-IV', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylabel('Precipitation (mm h$^-$$^1$)', fontsize=8, fontweight='bold')
-plt.ylim(0, 0.4)
-plt.yticks(np.arange(0, 0.44, 0.04), fontsize=font_size)
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(linestyle='--')
+plt.yscale('log')
 
-ax = fig.add_subplot(3, 1, 3)
-plt.plot(time, inmet_c_v, linewidth=1.5, color='red',   label = 'INMET')
-plt.plot(time, era5_c_v,  linewidth=1.5, color='black', label = 'ERA5')
-plt.plot(time, regcm_c_v, linewidth=1.5, linestyle='--', markersize=2, marker='o', markerfacecolor='white', color='red', label='RegCM5-3km')
-plt.xlabel('Time (hrs)', fontsize=font_size, fontweight='bold')
+ax = fig.add_subplot(3, 1, 3)  
+plt.plot(x_pdf_inmet_c_v, pdf_inmet_c_v, marker='.', markersize=4, mfc='red',   mec='red',   linestyle='None', label='INMET')
+plt.plot(x_pdf_era5_c_v,  pdf_era5_c_v,  marker='.', markersize=4, mfc='black', mec='black', linestyle='None', label='ERA5')
+plt.plot(x_pdf_regcm_c_v, pdf_regcm_c_v, marker='.', markersize=4, mfc='white', mec='red',   linestyle='None', label='RegCM5-3km')
 plt.title('(c) Cluster V', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylim(0, 0.2)
-plt.yticks(np.arange(0, 0.22, 0.02), fontsize=font_size)
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(linestyle='--')
+plt.yscale('log')
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cp_3km-4km'.format(path)
-name_out = 'pyplt_graph_diurnal_cycle_{0}_SAM-3km_RegCM5_{1}.png'.format(var, dt)
+name_out = 'pyplt_graph_pdf_{0}_SAM-3km_RegCM5_{1}.png'.format(var, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
