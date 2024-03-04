@@ -16,7 +16,7 @@ from dict_inmet_stations import inmet
 from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
 
-var = 'rsnl'
+var = 'pr'
 domain = 'SAM-3km'
 path = '/marconi/home/userexternal/mdasilva'
 
@@ -50,7 +50,7 @@ def import_situ(param_i, param_ii, domain, dataset):
 		else:
 			mean_i.append(var_i.values)
 
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param_ii, domain, dataset))
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param_ii, domain, dataset))
 		data_ii = arq_ii[param_ii]
 		data_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('2018-01-01','2021-12-31'))
@@ -62,7 +62,7 @@ def import_situ(param_i, param_ii, domain, dataset):
 	
 def import_grid(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/{1}_{2}_{3}_{4}_2018-2021_lonlat.nc'.format(path, param, domain, dataset, season)	
+	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/{1}_{2}_{3}_{4}_2018-2021_lonlat.nc'.format(path, param, domain, dataset, season)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -100,8 +100,8 @@ if var == 'pr':
 	mbe_djf_regcm_inmet, mbe_mam_regcm_inmet, mbe_jja_regcm_inmet, mbe_son_regcm_inmet = [], [], [], []
 	for i in range(0, 298):
 		mbe_djf_regcm_inmet.append(compute_mbe(regcm_i[i][0], inmet_i[i][0]))
-		mbe_mam_regcm_inmet.append(compute_mbe(regcm_i[i][1], inmet_i[i][1]))
-		mbe_jja_regcm_inmet.append(compute_mbe(regcm_i[i][2], inmet_i[i][2]))
+		mbe_mam_regcm_inmet.append(compute_mbe(regcm_i[i][2], inmet_i[i][2]))
+		mbe_jja_regcm_inmet.append(compute_mbe(regcm_i[i][1], inmet_i[i][1]))
 		mbe_son_regcm_inmet.append(compute_mbe(regcm_i[i][3], inmet_i[i][3]))
 	
 	lat, lon, cru_djf = import_grid(dict_var[var][1], domain, 'CRU', 'DJF')
@@ -154,8 +154,8 @@ elif var == 'tas':
 	mbe_djf_regcm_inmet, mbe_mam_regcm_inmet, mbe_jja_regcm_inmet, mbe_son_regcm_inmet = [], [], [], []
 	for i in range(0, 298):
 		mbe_djf_regcm_inmet.append(compute_mbe(regcm_i[i][0], inmet_i[i][0]))
-		mbe_mam_regcm_inmet.append(compute_mbe(regcm_i[i][1], inmet_i[i][1]))
-		mbe_jja_regcm_inmet.append(compute_mbe(regcm_i[i][2], inmet_i[i][2]))
+		mbe_mam_regcm_inmet.append(compute_mbe(regcm_i[i][2], inmet_i[i][2]))
+		mbe_jja_regcm_inmet.append(compute_mbe(regcm_i[i][1], inmet_i[i][1]))
 		mbe_son_regcm_inmet.append(compute_mbe(regcm_i[i][3], inmet_i[i][3]))
 		
 	lat, lon, cru_djf = import_grid(dict_var[var][1], domain, 'CRU', 'DJF')
@@ -294,7 +294,7 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 1)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.scatter(lon_i, lat_i, 4, mbe_djf_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=0, vmax=18) 
+	plt_map = map.scatter(lon_i, lat_i, 4, mbe_djf_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
 	plt.title(u'(a) RegCM5-INMET DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 2)  
@@ -620,7 +620,7 @@ else:
 	cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km/figs'.format(path)
+path_out = '{0}/user/mdasilva/SAM-3km/figs/evaluate'.format(path)
 name_out = 'pyplt_maps_bias_{0}_SAM-3km_RegCM5_2018-2021.png'.format(var)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

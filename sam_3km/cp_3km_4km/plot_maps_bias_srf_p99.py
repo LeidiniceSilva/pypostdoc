@@ -19,7 +19,6 @@ freq = 'hourly'
 domain = 'SAM-3km'
 path = '/marconi/home/userexternal/mdasilva'
 
-
 if freq == 'hourly':
 	dt = '1hr_2018-2021'
 else:
