@@ -17,7 +17,6 @@ from matplotlib.patches import Polygon
 from matplotlib.patches import PathPatch
 from mpl_toolkits.basemap import Basemap, cm
 
-    
 # Specify directories 
 dirnc = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/input'
 domname = 'SAM-3km'
@@ -35,6 +34,8 @@ lonc = RCMf.longitude_of_projection_origin
 latc = RCMf.latitude_of_projection_origin
 RCMf.close()
 
+topo = topo[30:-30, 30:-30]
+
 lat_start = -58
 lat_end   = 18
 lon_start = -90
@@ -44,14 +45,30 @@ lon_end   = -30
 fig = plt.figure() 
 font_size = 10
 
+# Creating mask of the border
+border_mask = np.full((783, 1231), np.nan)
+border_mask[:29, :] = 1
+border_mask[-29:, :] = 1
+border_mask[:, :29] = 1
+border_mask[:, -29:] = 1
+
 my_map = Basemap(llcrnrlon=lon_start, llcrnrlat=lat_start, urcrnrlon=lon_end, urcrnrlat=lat_end, resolution='c')	
 my_map.drawparallels(np.arange(lat_start, lat_end, 10.), labels=[1,1,1,1], fontsize=font_size, linewidth=0.4, color='black')
 my_map.drawmeridians(np.arange(lon_start, lon_end, 10.), labels=[1,1,1,1], fontsize=font_size, linewidth=0.4, color='black')                  
 my_map.readshapefile('/marconi/home/userexternal/mdasilva/github_projects/shp/shp_america_sul/america_sul', 'america_sul', drawbounds=True, color='black', linewidth=0.5)
 my_map.readshapefile('/marconi/home/userexternal/mdasilva/github_projects/shp/lim_unid_fed/lim_unid_fed', 'lim_unid_fed', drawbounds=True, color='black', linewidth=0.5)
-	
-x, y = my_map(lon,lat)
-im = my_map.contourf(x, y, topo, np.arange(0, 3050, 50), cmap=plt.cm.terrain, extend='max')
+
+# Plot the topography
+xx, yy = my_map(lon,lat)
+
+x_mod = xx[30:-30,30:-30]
+y_mod = yy[30:-30,30:-30]
+
+# Mask the border points with gray color
+#masked_topo_array = np.ma.masked_array(topo.copy(), mask=border_mask)
+cs_gray = my_map.contourf(xx, yy, border_mask, cmap='gray', levels=[0, 1])
+
+im = my_map.contourf(x_mod, y_mod, topo, np.arange(0, 3050, 50), cmap=plt.cm.terrain, extend='max')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=font_size, fontweight='bold')
 plt.ylabel(u'Latitude', labelpad=30, fontsize=font_size, fontweight='bold')
 plt.text(-56, -39, u'SESA', color='red', fontsize=font_size, fontweight='bold')
