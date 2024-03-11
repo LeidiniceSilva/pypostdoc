@@ -18,7 +18,9 @@ from matplotlib.patches import PathPatch
 from mpl_toolkits.basemap import Basemap, cm
 
 # Specify directories 
-dirnc = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/input'
+#dirnc = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/input'
+dirnc = '/marconi/home/userexternal/mdasilva/user/mdasilva/test/input'
+
 domname = 'SAM-3km'
 
 # RegCM file
@@ -101,7 +103,8 @@ cbar = fig.colorbar(im, cax=fig.add_axes([0.82, 0.2, 0.026, 0.6]), drawedges=Tru
 cbar.set_label('Topography (meters)', fontsize=font_size, fontweight='bold')
 
 # Path out to save figure
-path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/figs/evaluate'
+#path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/figs/evaluate'
+path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/test/figs'
 name_out = 'pyplt_maps_study_area_SAM-3km_RegCM5_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
