@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 
 from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.basemap import maskoceans
+from import_climate_tools import compute_mbe
 
 var = 'pr'
 domain = 'EUR-11'
@@ -98,93 +99,110 @@ lat, lon, wsm5_mam = import_rcm(var, 'wsm5-Europe', 'MAM')
 lat, lon, wsm5_jja = import_rcm(var, 'wsm5-Europe', 'JJA')
 lat, lon, wsm5_son = import_rcm(var, 'wsm5-Europe', 'SON')
 
+mbe_djf_noto_eobs = compute_mbe(noto_djf, eobs_djf)
+mbe_mam_noto_eobs = compute_mbe(noto_mam, eobs_mam)
+mbe_jja_noto_eobs = compute_mbe(noto_jja, eobs_jja)
+mbe_son_noto_eobs = compute_mbe(noto_son, eobs_son)
+
+mbe_djf_wdm7_eobs = compute_mbe(wdm7_djf, eobs_djf)
+mbe_mam_wdm7_eobs = compute_mbe(wdm7_mam, eobs_mam)
+mbe_jja_wdm7_eobs = compute_mbe(wdm7_jja, eobs_jja)
+mbe_son_wdm7_eobs = compute_mbe(wdm7_son, eobs_son)
+
+mbe_djf_wsm7_eobs = compute_mbe(wsm7_djf, eobs_djf)
+mbe_mam_wsm7_eobs = compute_mbe(wsm7_mam, eobs_mam)
+mbe_jja_wsm7_eobs = compute_mbe(wsm7_jja, eobs_jja)
+mbe_son_wsm7_eobs = compute_mbe(wsm7_son, eobs_son)
+
+mbe_djf_wsm5_eobs = compute_mbe(wsm5_djf, eobs_djf)
+mbe_mam_wsm5_eobs = compute_mbe(wsm5_mam, eobs_mam)
+mbe_jja_wsm5_eobs = compute_mbe(wsm5_jja, eobs_jja)
+mbe_son_wsm5_eobs = compute_mbe(wsm5_son, eobs_son)
 
 # Plot figure
-color = ['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
-dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 18, 1), matplotlib.colors.ListedColormap(color)]}
+fig = plt.figure(figsize=(10, 6))
+dict_plot = {'pr': ['Bias of precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.BrBG]}
 font_size = 8
 	
-fig = plt.figure(figsize=(8, 8))
-
-ax = fig.add_subplot(4, 5, 1)  
+ax = fig.add_subplot(4, 4, 1)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, noto_djf, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(b) NoTo DJF', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_djf_noto_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(a) NoTo-EOBS DJF', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 2)  
+ax = fig.add_subplot(4, 4, 2)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wdm7_djf, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(c) WDM7 DJF', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_djf_wdm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(b) WDM7-EOBS DJF', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 3)  
+ax = fig.add_subplot(4, 4, 3)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wsm7_djf, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(d) WSM7 DJF', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_djf_wsm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(c) WSM7-EOBS DJF', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 4)  
+ax = fig.add_subplot(4, 4, 4)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wsm5_djf, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(e) WSM5 DJF', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_djf_wsm5_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(d) WSM5-EOBS DJF', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 5)  
+ax = fig.add_subplot(4, 4, 5)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, noto_mam, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(g) NoTo MAM', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_mam_noto_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(e) NoTo-EOBS MAM', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 6)  
+ax = fig.add_subplot(4, 4, 6)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wdm7_mam, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(h) WDM7 MAM', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_mam_wdm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(f) WDM7-EOBS MAM', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 7)  
+ax = fig.add_subplot(4, 4, 7)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wsm7_mam, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(i) WSM7 MAM', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_mam_wsm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(g) WSM7-EOBS MAM', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 8)  
+ax = fig.add_subplot(4, 4, 8)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wsm5_mam, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(j) WSM5 MAM', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_mam_wsm5_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(h) WSM5-EOBS MAM', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 9)  
+ax = fig.add_subplot(4, 4, 9)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, noto_jja, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(l) NoTo JJA', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_jja_noto_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(i) NoTo-EOBS JJA', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 10)  
+ax = fig.add_subplot(4, 4, 10)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wdm7_jja, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(m) WDM7 JJA', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_jja_wdm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(j) WDM7-EOBS JJA', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 11)  
+ax = fig.add_subplot(4, 4, 11)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wsm7_jja, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(n) WSM7 JJA', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_jja_wsm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(k) WSM7-EOBS JJA', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 12)  
+ax = fig.add_subplot(4, 4, 12)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wsm5_jja, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(o) WSM5 JJA', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_jja_wsm5_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(l) WSM5-EOBS JJA', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 13)  
+ax = fig.add_subplot(4, 4, 13)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, noto_son, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(q) NoTo SON', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_son_noto_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(m) NoTo SON', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 14)  
+ax = fig.add_subplot(4, 4, 14)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wdm7_son, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(r) WDM7 SON', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_son_wdm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(n) WDM7 SON', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 16)  
+ax = fig.add_subplot(4, 4, 15)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wsm7_son, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(s) WSM7 SON', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_son_wsm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(o) WSM7 SON', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 5, 16)  
+ax = fig.add_subplot(4, 4, 16)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, wsm5_son, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='max') 
-plt.title(u'(t) WSM5 SON', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_son_wsm5_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+plt.title(u'(p) WSM5 SON', loc='left', fontsize=font_size, fontweight='bold')
 
 # Set colobar
 cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.01, 0.4]))
