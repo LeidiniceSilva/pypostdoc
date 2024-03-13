@@ -60,7 +60,7 @@ my_map.readshapefile('/marconi/home/userexternal/mdasilva/github_projects/shp/sh
 # Plot the topography
 xx, yy = my_map(lon,lat)
 
-im = my_map.contourf(xx, yy, topo, np.arange(0, 2900, 50), cmap=plt.cm.terrain, extend='max')
+im = my_map.contourf(xx, yy, topo, np.arange(0, 2900, 50), cmap=plt.cm.terrain, extend='neither')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=font_size, fontweight='bold')
 plt.ylabel(u'Latitude', labelpad=30, fontsize=font_size, fontweight='bold')
 plt.text(-36, 16, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
