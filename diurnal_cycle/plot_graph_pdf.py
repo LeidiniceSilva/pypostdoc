@@ -16,13 +16,13 @@ from dict_smn_stations import smn
 path = '/marconi/home/userexternal/mdasilva'
 
 var = 'pr'
-freq = 'day'
+freq = '1hr'
 
-if freq == 'hourly':
-	dt = 'day_2018-2021'
+if freq == '1hr':
+	dt = '1hr_20180101-20211231'
 	legend = '(mm h$^-$$^1$)'
 else:
-	dt = '1hr_2018-2021'
+	dt = 'day_20180101-20211231'
 	legend = '(mm d$^-$$^1$)'
 
 
@@ -43,44 +43,43 @@ def import_inmet():
 		
 		print('Reading weather station:', i, inmet[i][0])		
 		# reading regcm usp 
-		d_i = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM4/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1-USP-RegCM471_v0_day_20180601-20211231.nc')
+		d_i = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM4/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_USP-RegCM471_v2_{0}.nc'.format(dt))
 		d_i = d_i.pr.sel(time=slice('2018-06-01','2021-05-31'))
 		d_i = d_i.sel(lat=slice(yy-0.04,yy+0.04),lon=slice(xx-0.04,xx+0.04)).mean(('lat','lon'))
 		d_i = d_i.values
-		mean_i.append(d_i*86400)
+		mean_i.append(d_i)
 			
 		# reading regcm ictp pbl 1 
-		d_ii = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM5/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5pbl1_v0_day_20180601-20211231.nc')
+		d_ii = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM5/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5pbl1_v0_{0}.nc'.format(dt))
 		d_ii = d_ii.pr.sel(time=slice('2018-06-01','2021-05-31'))
 		d_ii = d_ii.sel(lat=slice(yy-0.04,yy+0.04),lon=slice(xx-0.04,xx+0.04)).mean(('lat','lon'))
 		d_ii = d_ii.values
-		mean_ii.append(d_ii*86400)
+		mean_ii.append(d_ii)
 		
 		# reading regcm ictp pbl 2
-		d_iii = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM5/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5pbl2_v0_day_20180601-20211231.nc')
+		d_iii = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM5/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5pbl2_v0_{0}.nc'.format(dt))
 		d_iii = d_iii.pr.sel(time=slice('2018-06-01','2021-05-31'))
 		d_iii = d_iii.sel(lat=slice(yy-0.04,yy+0.04),lon=slice(xx-0.04,xx+0.04)).mean(('lat','lon'))
 		d_iii = d_iii.values
-		mean_iii.append(d_iii*86400)
+		mean_iii.append(d_iii)
 						
 		# reading wrf ncar 
-		d_iv = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/WRF-NCAR/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1_NCAR-WRF415_v1_day_20180101-20211231.nc')
+		d_iv = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/WRF-NCAR/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_NCAR-WRF415_v1_{0}.nc'.format(dt))
 		d_iv = d_iv.pr.sel(time=slice('2018-06-01','2021-05-31'))
 		d_iv = d_iv.sel(lat=slice(yy-0.04,yy+0.04),lon=slice(xx-0.04,xx+0.04)).mean(('lat','lon'))
 		d_iv = d_iv.values
-		mean_iv.append(d_iv*86400)
+		mean_iv.append(d_iv)
 			
 		# reading wrf ucan 
-		d_v = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/WRF-UCAN/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_UCAN-WRF433_v1_day_20180601-20210531.nc')
+		d_v = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/WRF-UCAN/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_UCAN-WRF433_v1_{0}.nc'.format(dt))
 		d_v = d_v.pr.sel(time=slice('2018-06-01','2021-05-31'))
 		d_v = d_v.sel(lat=slice(yy-0.04,yy+0.04),lon=slice(xx-0.04,xx+0.04)).mean(('lat','lon'))
 		d_v = d_v.values
-		mean_v.append(d_v*86400)
+		mean_v.append(d_v)
 		
 		# Reading inmet 
 		d_vi = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[i][0]))
 		d_vi = d_vi.pre.sel(time=slice('2018-06-01','2021-05-31'))
-		d_vi = d_vi.resample(time='1D').sum()
 		d_vi = d_vi.values
 		mean_vi.append(d_vi)
 				
@@ -102,46 +101,45 @@ def import_smn():
 		yy=smn[i][1]
 		xx=smn[i][2]
 		
-		print('Reading weather station:', i, smn_i[i][0])	
+		print('Reading weather station:', i, smn[i][0])	
 		# reading regcm usp 
-		d_i = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM4/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1-USP-RegCM471_v0_day_20180601-20211231.nc')
+		d_i = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM4/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_USP-RegCM471_v2_{0}.nc'.format(dt))
 		d_i = d_i.pr.sel(time=slice('2018-06-01','2021-05-31'))
 		d_i = d_i.sel(lat=slice(yy-0.04,yy+0.04),lon=slice(xx-0.04,xx+0.04)).mean(('lat','lon'))
 		d_i = d_i.values
-		mean_i.append(d_i*86400)
+		mean_i.append(d_i)
 			
 		# reading regcm ictp pbl 1 
-		d_ii = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM5/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5pbl1_v0_day_20180601-20211231.nc')
+		d_ii = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM5/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5pbl1_v0_{0}.nc'.format(dt))
 		d_ii = d_ii.pr.sel(time=slice('2018-06-01','2021-05-31'))
 		d_ii = d_ii.sel(lat=slice(yy-0.04,yy+0.04),lon=slice(xx-0.04,xx+0.04)).mean(('lat','lon'))
 		d_ii = d_ii.values
-		mean_ii.append(d_ii*86400)
+		mean_ii.append(d_ii)
 		
 		# reading regcm ictp pbl 2
-		d_iii = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM5/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5pbl2_v0_day_20180601-20211231.nc')
+		d_iii = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/RegCM5/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5pbl2_v0_{0}.nc'.format(dt))
 		d_iii = d_iii.pr.sel(time=slice('2018-06-01','2021-05-31'))
 		d_iii = d_iii.sel(lat=slice(yy-0.04,yy+0.04),lon=slice(xx-0.04,xx+0.04)).mean(('lat','lon'))
 		d_iii = d_iii.values
-		mean_iii.append(d_iii*86400)
+		mean_iii.append(d_iii)
 						
 		# reading wrf ncar 
-		d_iv = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/WRF-NCAR/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1_NCAR-WRF415_v1_day_20180101-20211231.nc')
+		d_iv = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/WRF-NCAR/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_NCAR-WRF415_v1_{0}.nc'.format(dt))
 		d_iv = d_iv.pr.sel(time=slice('2018-06-01','2021-05-31'))
 		d_iv = d_iv.sel(lat=slice(yy-0.04,yy+0.04),lon=slice(xx-0.04,xx+0.04)).mean(('lat','lon'))
 		d_iv = d_iv.values
-		mean_iv.append(d_iv*86400)
+		mean_iv.append(d_iv)
 			
 		# reading wrf ucan 
-		d_v = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/WRF-UCAN/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_UCAN-WRF433_v1_day_20180601-20210531.nc')
+		d_v = xr.open_dataset('{0}/user/mdasilva/CSAM-4i/WRF-UCAN/'.format(path) + 'pr_CSAM-4i_ECMWF-ERA5_evaluation_r1i1p1f1_UCAN-WRF433_v1_{0}.nc'.format(dt))
 		d_v = d_v.pr.sel(time=slice('2018-06-01','2021-05-31'))
 		d_v = d_v.sel(lat=slice(yy-0.04,yy+0.04),lon=slice(xx-0.04,xx+0.04)).mean(('lat','lon'))
 		d_v = d_v.values
-		mean_v.append(d_v*86400)
+		mean_v.append(d_v)
 						
 		# Reading smn 
-		d_vi = xr.open_dataset('{0}/OBS/SMN/smn_nc/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(smn_i[i][0]))
+		d_vi = xr.open_dataset('{0}/OBS/SMN/smn_nc/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(smn[i][0]))
 		d_vi = d_vi.pre.sel(time=slice('2018-06-01','2021-05-31'))
-		d_vi = d_vi.resample(time='1D').sum()
 		d_vi = d_vi.values
 		mean_vi.append(d_vi)
 				
@@ -159,11 +157,11 @@ wrf_ncar    = clim_iv_x  + clim_iv_y
 wrf_ucan    = clim_v_x   + clim_v_y  
 inmet_smn   = clim_vi_x  + clim_vi_y  
 
-list_hc = list_hc = [3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 0, 3, 3, 3, 0, 0, 3, 0, 0, 3,
-3, 3, 3, 0, 0, 3, 0, 3, 3, 0, 3, 3, 3, 0, 0, 3, 0, 0, 3, 0, 0, 3, 0, 0, 3, 3, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 
-3, 2, 0, 0, 2, 3, 0, 3, 2, 0, 2, 0, 2, 0, 2, 2, 2, 2, 2, 2, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 
-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 
-1, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1]
+list_hc = [3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 4, 3, 3, 3, 1, 1, 3, 1, 4, 3,
+3, 3, 3, 1, 4, 3, 1, 3, 3, 4, 3, 3, 3, 1, 4, 3, 1, 1, 3, 1, 4, 3, 4, 1, 3, 3, 3, 4, 1, 2, 4, 1, 1, 1, 1, 1, 
+3, 2, 1, 1, 2, 3, 1, 3, 2, 1, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 
+0, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0]
 
 print(len(reg_usp))
 print(len(reg_ictp_i))
@@ -329,76 +327,41 @@ wrf_ucan_c_v = wrf_ucan_v.flatten()
 inmet_smn_v = np.array(inmet_smn_v)
 inmet_smn_c_v = inmet_smn_v.flatten()
 
-reg_usp_cc_i     = np.nanmean(reg_usp_c_i, axis=0)
-reg_ictp_i_cc_i  = np.nanmean(reg_ictp_i_c_i, axis=0)
-reg_ictp_ii_cc_i = np.nanmean(reg_ictp_ii_c_i, axis=0)
-wrf_ncar_cc_i    = np.nanmean(wrf_ncar_c_i, axis=0)
-wrf_ucan_cc_i    = np.nanmean(wrf_ucan_c_i, axis=0)
-inmet_smn_cc_i   = np.nanmean(inmet_smn_c_i, axis=0)
-
-reg_usp_cc_ii     = np.nanmean(reg_usp_c_ii, axis=0)
-reg_ictp_i_cc_ii  = np.nanmean(reg_ictp_i_c_ii, axis=0)
-reg_ictp_ii_cc_ii = np.nanmean(reg_ictp_ii_c_ii, axis=0)
-wrf_ncar_cc_ii    = np.nanmean(wrf_ncar_c_ii, axis=0)
-wrf_ucan_cc_ii    = np.nanmean(wrf_ucan_c_ii, axis=0)
-inmet_smn_cc_ii   = np.nanmean(inmet_smn_c_ii, axis=0)
-
-reg_usp_cc_iii     = np.nanmean(reg_usp_c_iii, axis=0)
-reg_ictp_i_cc_iii  = np.nanmean(reg_ictp_i_c_iii, axis=0)
-reg_ictp_ii_cc_iii = np.nanmean(reg_ictp_ii_c_iii, axis=0)
-wrf_ncar_cc_iii    = np.nanmean(wrf_ncar_c_iii, axis=0)
-wrf_ucan_cc_iii    = np.nanmean(wrf_ucan_c_iii, axis=0)
-inmet_smn_cc_iii   = np.nanmean(inmet_smn_c_iii, axis=0)
-
-reg_usp_cc_iv     = np.nanmean(reg_usp_c_iv, axis=0)
-reg_ictp_i_cc_iv  = np.nanmean(reg_ictp_i_c_iv, axis=0)
-reg_ictp_ii_cc_iv = np.nanmean(reg_ictp_ii_c_iv, axis=0)
-wrf_ncar_cc_iv    = np.nanmean(wrf_ncar_c_iv, axis=0)
-wrf_ucan_cc_iv    = np.nanmean(wrf_ucan_c_iv, axis=0)
-inmet_smn_cc_iv   = np.nanmean(inmet_smn_c_iv, axis=0)
-
-reg_usp_cc_v     = np.nanmean(reg_usp_c_v, axis=0)
-reg_ictp_i_cc_v  = np.nanmean(reg_ictp_i_c_v, axis=0)
-reg_ictp_ii_cc_v = np.nanmean(reg_ictp_ii_c_v, axis=0)
-wrf_ncar_cc_v    = np.nanmean(wrf_ncar_c_v, axis=0)
-wrf_ucan_cc_v    = np.nanmean(wrf_ucan_c_v, axis=0)
-inmet_smn_cc_v   = np.nanmean(inmet_smn_c_v, axis=0)
-
 # Round values to each cluster
-round_reg_usp_c_i     = np.round(reg_usp_cc_i,0)
-round_reg_ictp_i_c_i  = np.round(reg_ictp_i_cc_i,0)
-round_reg_ictp_ii_c_i = np.round(reg_ictp_ii_cc_i,0)
-round_wrf_ncar_c_i    = np.round(wrf_ncar_cc_i,0)
-round_wrf_ucan_c_i    = np.round(wrf_ucan_cc_i,0)
-round_inmet_smn_c_i   = np.round(inmet_smn_cc_i,0)
+round_reg_usp_c_i     = np.round(reg_usp_c_i,0)
+round_reg_ictp_i_c_i  = np.round(reg_ictp_i_c_i,0)
+round_reg_ictp_ii_c_i = np.round(reg_ictp_ii_c_i,0)
+round_wrf_ncar_c_i    = np.round(wrf_ncar_c_i,0)
+round_wrf_ucan_c_i    = np.round(wrf_ucan_c_i,0)
+round_inmet_smn_c_i   = np.round(inmet_smn_c_i,0)
 
-round_reg_usp_c_ii     = np.round(reg_usp_cc_ii,0)
-round_reg_ictp_i_c_ii  = np.round(reg_ictp_i_cc_ii,0)
-round_reg_ictp_ii_c_ii = np.round(reg_ictp_ii_cc_ii,0)
-round_wrf_ncar_c_ii    = np.round(wrf_ncar_cc_ii,0)
-round_wrf_ucan_c_ii    = np.round(wrf_ucan_cc_ii,0)
-round_inmet_smn_c_ii   = np.round(inmet_smn_cc_ii,0)
+round_reg_usp_c_ii     = np.round(reg_usp_c_ii,0)
+round_reg_ictp_i_c_ii  = np.round(reg_ictp_i_c_ii,0)
+round_reg_ictp_ii_c_ii = np.round(reg_ictp_ii_c_ii,0)
+round_wrf_ncar_c_ii    = np.round(wrf_ncar_c_ii,0)
+round_wrf_ucan_c_ii    = np.round(wrf_ucan_c_ii,0)
+round_inmet_smn_c_ii   = np.round(inmet_smn_c_ii,0)
 
-round_reg_usp_c_iii     = np.round(reg_usp_cc_iii,0)
-round_reg_ictp_i_c_iii  = np.round(reg_ictp_i_cc_iii,0)
-round_reg_ictp_ii_c_iii = np.round(reg_ictp_ii_cc_iii,0)
-round_wrf_ncar_c_iii    = np.round(wrf_ncar_cc_iii,0)
-round_wrf_ucan_c_iii    = np.round(wrf_ucan_cc_iii,0)
-round_inmet_smn_c_iii   = np.round(inmet_smn_cc_iii,0)
+round_reg_usp_c_iii     = np.round(reg_usp_c_iii,0)
+round_reg_ictp_i_c_iii  = np.round(reg_ictp_i_c_iii,0)
+round_reg_ictp_ii_c_iii = np.round(reg_ictp_ii_c_iii,0)
+round_wrf_ncar_c_iii    = np.round(wrf_ncar_c_iii,0)
+round_wrf_ucan_c_iii    = np.round(wrf_ucan_c_iii,0)
+round_inmet_smn_c_iii   = np.round(inmet_smn_c_iii,0)
 
-round_reg_usp_c_iv     = np.round(reg_usp_cc_iv,0)
-round_reg_ictp_i_c_iv  = np.round(reg_ictp_i_cc_iv,0)
-round_reg_ictp_ii_c_iv = np.round(reg_ictp_ii_cc_iv,0)
-round_wrf_ncar_c_iv    = np.round(wrf_ncar_cc_iv,0)
-round_wrf_ucan_c_iv    = np.round(wrf_ucan_cc_iv,0)
-round_inmet_smn_c_iv   = np.round(inmet_smn_cc_iv,0)
+round_reg_usp_c_iv     = np.round(reg_usp_c_iv,0)
+round_reg_ictp_i_c_iv  = np.round(reg_ictp_i_c_iv,0)
+round_reg_ictp_ii_c_iv = np.round(reg_ictp_ii_c_iv,0)
+round_wrf_ncar_c_iv    = np.round(wrf_ncar_c_iv,0)
+round_wrf_ucan_c_iv    = np.round(wrf_ucan_c_iv,0)
+round_inmet_smn_c_iv   = np.round(inmet_smn_c_iv,0)
 
-round_reg_usp_c_v     = np.round(reg_usp_cc_v,0)
-round_reg_ictp_i_c_v  = np.round(reg_ictp_i_cc_v,0)
-round_reg_ictp_ii_c_v = np.round(reg_ictp_ii_cc_v,0)
-round_wrf_ncar_c_v    = np.round(wrf_ncar_cc_v,0)
-round_wrf_ucan_c_v    = np.round(wrf_ucan_cc_v,0)
-round_inmet_smn_c_v   = np.round(inmet_smn_cc_v,0)
+round_reg_usp_c_v     = np.round(reg_usp_c_v,0)
+round_reg_ictp_i_c_v  = np.round(reg_ictp_i_c_v,0)
+round_reg_ictp_ii_c_v = np.round(reg_ictp_ii_c_v,0)
+round_wrf_ncar_c_v    = np.round(wrf_ncar_c_v,0)
+round_wrf_ucan_c_v    = np.round(wrf_ucan_c_v,0)
+round_inmet_smn_c_v   = np.round(inmet_smn_c_v,0)
 
 # Filter 0 mm/day
 filter_reg_usp_c_i     = round_reg_usp_c_i[round_reg_usp_c_i > 0.]
@@ -532,7 +495,7 @@ plt.yscale('log')
 plt.xlabel('Intensity of precipitation {0}'.format(legend), fontsize=font_size, fontweight='bold')
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km/figs/diurnal_cycle'.format(path)
+path_out = '{0}/user/mdasilva/CSAM-4i/figs'.format(path)
 name_out = 'pyplt_graph_pdf_{0}_CSAM-4i_RegCM5_{1}.png'.format(var, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 exit()
