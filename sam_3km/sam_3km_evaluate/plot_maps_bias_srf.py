@@ -18,6 +18,9 @@ from import_climate_tools import compute_mbe
 
 var = 'pr'
 domain = 'SAM-3km'
+idt, fdt = '2018', '2018'
+dt = '{0}-{1}'.format(idt, fdt)
+
 path = '/marconi/home/userexternal/mdasilva'
 
 skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
@@ -42,7 +45,7 @@ def import_situ(param_i, param_ii, domain, dataset):
 
 		arq_i  = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/{1}/'.format(path, param_i) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param_i, inmet[station][0]))
 		data_i = arq_i[param_i]
-		time_i = data_i.sel(time=slice('2018-01-01','2021-12-31'))
+		time_i = data_i.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_i  = time_i.groupby('time.season').mean(dim='time')
 		
 		if param_i == 'pre':
@@ -50,19 +53,19 @@ def import_situ(param_i, param_ii, domain, dataset):
 		else:
 			mean_i.append(var_i.values)
 
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + '{0}_{1}_{2}_mon_2018-2021_lonlat.nc'.format(param_ii, domain, dataset))
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km_v4/post/rcm/'.format(path) + '{0}_{1}_{2}_mon_{3}_lonlat.nc'.format(param_ii, domain, dataset, dt))
 		data_ii = arq_ii[param_ii]
 		data_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
-		time_ii = data_ii.sel(time=slice('2018-01-01','2021-12-31'))
+		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_ii  = time_ii.groupby('time.season').mean(dim='time')
 		mean_ii.append(var_ii.values)
 		
 	return yy, xx, mean_i, mean_ii
 	
 	
-def import_grid(param, domain, dataset, season):
+def import_obs(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/{1}_{2}_{3}_{4}_2018-2021_lonlat.nc'.format(path, param, domain, dataset, season)	
+	arq   = '{0}/user/mdasilva/SAM-3km_v4/post/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -72,6 +75,18 @@ def import_grid(param, domain, dataset, season):
 	return lat, lon, mean
 
 
+def import_rcm(param, domain, dataset, season):
+
+	arq   = '{0}/user/mdasilva/SAM-3km_v4/post/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	data  = netCDF4.Dataset(arq)
+	var   = data.variables[param][:] 
+	lat   = data.variables['lat'][:]
+	lon   = data.variables['lon'][:]
+	mean = var[:][:,:,:]
+	
+	return lat, lon, mean
+	
+	
 def basemap(lat, lon):
 	
 	map = Basemap(projection='cyl', llcrnrlon=-80., llcrnrlat=-38., urcrnrlon=-34.,urcrnrlat=-8., resolution='c')
@@ -104,30 +119,30 @@ if var == 'pr':
 		mbe_jja_regcm_inmet.append(compute_mbe(regcm_i[i][1], inmet_i[i][1]))
 		mbe_son_regcm_inmet.append(compute_mbe(regcm_i[i][3], inmet_i[i][3]))
 	
-	lat, lon, cru_djf = import_grid(dict_var[var][1], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][1], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][1], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][1], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_obs(dict_var[var][1], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_obs(dict_var[var][1], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_obs(dict_var[var][1], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_obs(dict_var[var][1], domain, 'CRU', 'SON')
 
-	lat, lon, cpc_djf = import_grid(dict_var[var][2], domain, 'CPC', 'DJF')
-	lat, lon, cpc_mam = import_grid(dict_var[var][2], domain, 'CPC', 'MAM')
-	lat, lon, cpc_jja = import_grid(dict_var[var][2], domain, 'CPC', 'JJA')
-	lat, lon, cpc_son = import_grid(dict_var[var][2], domain, 'CPC', 'SON')
+	lat, lon, cpc_djf = import_obs(dict_var[var][2], domain, 'CPC', 'DJF')
+	lat, lon, cpc_mam = import_obs(dict_var[var][2], domain, 'CPC', 'MAM')
+	lat, lon, cpc_jja = import_obs(dict_var[var][2], domain, 'CPC', 'JJA')
+	lat, lon, cpc_son = import_obs(dict_var[var][2], domain, 'CPC', 'SON')
 
-	lat, lon, gpcp_djf = import_grid(dict_var[var][3], domain, 'GPCP', 'DJF')
-	lat, lon, gpcp_mam = import_grid(dict_var[var][3], domain, 'GPCP', 'MAM')
-	lat, lon, gpcp_jja = import_grid(dict_var[var][3], domain, 'GPCP', 'JJA')
-	lat, lon, gpcp_son = import_grid(dict_var[var][3], domain, 'GPCP', 'SON')
+	lat, lon, gpcp_djf = import_obs(dict_var[var][3], domain, 'GPCP', 'DJF')
+	lat, lon, gpcp_mam = import_obs(dict_var[var][3], domain, 'GPCP', 'MAM')
+	lat, lon, gpcp_jja = import_obs(dict_var[var][3], domain, 'GPCP', 'JJA')
+	lat, lon, gpcp_son = import_obs(dict_var[var][3], domain, 'GPCP', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][4], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][4], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][4], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][4], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_obs(dict_var[var][4], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs(dict_var[var][4], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs(dict_var[var][4], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs(dict_var[var][4], domain, 'ERA5', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
 	
 	mbe_djf_regcm_cru = compute_mbe(regcm_djf, cru_djf)
 	mbe_mam_regcm_cru = compute_mbe(regcm_mam, cru_mam)
@@ -158,20 +173,20 @@ elif var == 'tas':
 		mbe_jja_regcm_inmet.append(compute_mbe(regcm_i[i][1], inmet_i[i][1]))
 		mbe_son_regcm_inmet.append(compute_mbe(regcm_i[i][3], inmet_i[i][3]))
 		
-	lat, lon, cru_djf = import_grid(dict_var[var][1], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][1], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][1], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][1], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_obs(dict_var[var][1], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_obs(dict_var[var][1], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_obs(dict_var[var][1], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_obs(dict_var[var][1], domain, 'CRU', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][2], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][2], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][2], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][2], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_obs(dict_var[var][2], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs(dict_var[var][2], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs(dict_var[var][2], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs(dict_var[var][2], domain, 'ERA5', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
 	
 	mbe_djf_regcm_cru = compute_mbe(regcm_djf[0], cru_djf)
 	mbe_mam_regcm_cru = compute_mbe(regcm_mam[0], cru_mam)
@@ -184,20 +199,20 @@ elif var == 'tas':
 	mbe_son_regcm_era5 = compute_mbe(regcm_son[0], era5_son)
 	
 elif var == 'tasmax':
-	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_obs(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_obs(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_obs(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_obs(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, cpc_djf = import_grid(dict_var[var][1], domain, 'CPC', 'DJF')
-	lat, lon, cpc_mam = import_grid(dict_var[var][1], domain, 'CPC', 'MAM')
-	lat, lon, cpc_jja = import_grid(dict_var[var][1], domain, 'CPC', 'JJA')
-	lat, lon, cpc_son = import_grid(dict_var[var][1], domain, 'CPC', 'SON')
+	lat, lon, cpc_djf = import_obs(dict_var[var][1], domain, 'CPC', 'DJF')
+	lat, lon, cpc_mam = import_obs(dict_var[var][1], domain, 'CPC', 'MAM')
+	lat, lon, cpc_jja = import_obs(dict_var[var][1], domain, 'CPC', 'JJA')
+	lat, lon, cpc_son = import_obs(dict_var[var][1], domain, 'CPC', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
 	
 	mbe_djf_regcm_cru = compute_mbe(regcm_djf[0], cru_djf)
 	mbe_mam_regcm_cru = compute_mbe(regcm_mam[0], cru_mam)
@@ -210,20 +225,20 @@ elif var == 'tasmax':
 	mbe_son_regcm_cpc = compute_mbe(regcm_son[0], cpc_son)	
 
 elif var == 'tasmin':
-	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_obs(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_obs(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_obs(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_obs(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, cpc_djf = import_grid(dict_var[var][1], domain, 'CPC', 'DJF')
-	lat, lon, cpc_mam = import_grid(dict_var[var][1], domain, 'CPC', 'MAM')
-	lat, lon, cpc_jja = import_grid(dict_var[var][1], domain, 'CPC', 'JJA')
-	lat, lon, cpc_son = import_grid(dict_var[var][1], domain, 'CPC', 'SON')
+	lat, lon, cpc_djf = import_obs(dict_var[var][1], domain, 'CPC', 'DJF')
+	lat, lon, cpc_mam = import_obs(dict_var[var][1], domain, 'CPC', 'MAM')
+	lat, lon, cpc_jja = import_obs(dict_var[var][1], domain, 'CPC', 'JJA')
+	lat, lon, cpc_son = import_obs(dict_var[var][1], domain, 'CPC', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
 	
 	mbe_djf_regcm_cru = compute_mbe(regcm_djf[0], cru_djf)
 	mbe_mam_regcm_cru = compute_mbe(regcm_mam[0], cru_mam)
@@ -236,20 +251,20 @@ elif var == 'tasmin':
 	mbe_son_regcm_cpc = compute_mbe(regcm_son[0], cpc_son)	
 	
 elif var == 'clt':
-	lat, lon, cru_djf = import_grid(dict_var[var][0], domain, 'CRU', 'DJF')
-	lat, lon, cru_mam = import_grid(dict_var[var][0], domain, 'CRU', 'MAM')
-	lat, lon, cru_jja = import_grid(dict_var[var][0], domain, 'CRU', 'JJA')
-	lat, lon, cru_son = import_grid(dict_var[var][0], domain, 'CRU', 'SON')
+	lat, lon, cru_djf = import_obs(dict_var[var][0], domain, 'CRU', 'DJF')
+	lat, lon, cru_mam = import_obs(dict_var[var][0], domain, 'CRU', 'MAM')
+	lat, lon, cru_jja = import_obs(dict_var[var][0], domain, 'CRU', 'JJA')
+	lat, lon, cru_son = import_obs(dict_var[var][0], domain, 'CRU', 'SON')
 
-	lat, lon, era5_djf = import_grid(dict_var[var][1], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][1], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][1], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][1], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_obs(dict_var[var][1], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs(dict_var[var][1], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs(dict_var[var][1], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs(dict_var[var][1], domain, 'ERA5', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
 	
 	mbe_djf_regcm_cru = compute_mbe(regcm_djf, cru_djf)
 	mbe_mam_regcm_cru = compute_mbe(regcm_mam, cru_mam)
@@ -262,15 +277,15 @@ elif var == 'clt':
 	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)
 	
 else:
-	lat, lon, era5_djf = import_grid(dict_var[var][0], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_grid(dict_var[var][0], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_grid(dict_var[var][0], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_grid(dict_var[var][0], domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_obs(dict_var[var][0], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs(dict_var[var][0], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs(dict_var[var][0], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs(dict_var[var][0], domain, 'ERA5', 'SON')
 
-	lat, lon, regcm_djf = import_grid(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_grid(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_grid(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_grid(var, domain, 'RegCM5', 'SON')
+	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
 		
 	mbe_djf_regcm_era5 = compute_mbe(regcm_djf, era5_djf)
 	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
@@ -283,7 +298,7 @@ dict_plot = {
 'tas': ['Bias of air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmax': ['Bias of maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmin': ['Bias of minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
-'clt': ['Bias of total cloud cover (%)', np.arange(-60, 70, 10), cm.RdGy],
+'clt': ['Bias of total cloud cover (%)', np.arange(-70, 80, 10), cm.RdGy],
 'rsnl': ['Bias of surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.coolwarm]
 }
 
@@ -299,22 +314,22 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(b) RegCM5-CRU DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(c) RegCM5-CPC DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 4)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_gpcp[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_gpcp[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(d) RegCM5-GPCP DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 5)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(e) RegCM5-ERA5 DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 6)  
@@ -324,22 +339,22 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 7)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(g) RegCM5-CRU MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(h) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 9)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_gpcp[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_gpcp[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(i) RegCM5-GPCP MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 10)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(j) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 11)  
@@ -349,22 +364,22 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 12)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(l) RegCM5-CRU JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 13)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(m) RegCM5-CPC JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 14)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_gpcp[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_gpcp[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(n) RegCM5-GPCP JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 15)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(o) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 16)  
@@ -374,22 +389,22 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 17)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(q) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 18)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(r) RegCM5-CPC SON', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 19)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_gpcp[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_gpcp[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(s) RegCM5-GPCP SON', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 20)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(t) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 
 elif var == 'tas':
@@ -402,12 +417,12 @@ elif var == 'tas':
 
 	ax = fig.add_subplot(4, 3, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(b) RegCM5-CRU DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(c) RegCM5-ERA5 DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 4)  
@@ -417,12 +432,12 @@ elif var == 'tas':
 
 	ax = fig.add_subplot(4, 3, 5)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(e) RegCM5-CRU MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(f) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 7)  
@@ -432,12 +447,12 @@ elif var == 'tas':
 
 	ax = fig.add_subplot(4, 3, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(h) RegCM5-CRU JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 9)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(i) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 10)  
@@ -447,12 +462,12 @@ elif var == 'tas':
 	
 	ax = fig.add_subplot(4, 3, 11)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(k) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 12)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(l) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 
 elif var == 'tasmax':
@@ -460,42 +475,42 @@ elif var == 'tasmax':
 
 	ax = fig.add_subplot(4, 2, 1)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(a) RegCM5-CRU DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(b) RegCM5-CPC DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(c) RegCM5-CRU MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 4)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(d) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 5)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(e) RegCM5-CRU JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(f) RegCM5-CPC JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 7)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(g) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(h) RegCM5-CPC SON', loc='left', fontsize=font_size, fontweight='bold')
 
 elif var == 'tasmin':
@@ -503,42 +518,42 @@ elif var == 'tasmin':
 	
 	ax = fig.add_subplot(4, 2, 1)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(a) RegCM5-CRU DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(b) RegCM5-CPC DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(c) RegCM5-CRU MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 4)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(d) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 5)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(e) RegCM5-CRU JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(f) RegCM5-CPC JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 7)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(g) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(h) RegCM5-CPC SON', loc='left', fontsize=font_size, fontweight='bold')
 
 elif var == 'clt':
@@ -546,42 +561,42 @@ elif var == 'clt':
 	
 	ax = fig.add_subplot(4, 2, 1)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(a) RegCM5-CRU DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(b) RegCM5-ERA5 DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(c) RegCM5-CRU MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 4)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(d) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 5)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(e) RegCM5-CRU JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(f) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 7)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(g) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(h) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 
 else:
@@ -589,39 +604,37 @@ else:
 
 	ax = fig.add_subplot(4, 1, 1)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(a) RegCM5-ERA5 DJF', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 1, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(b) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 1, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(c) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 1, 4)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
+	plt_map = map.contourf(xx, yy, mbe_son_regcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(d) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 
-
+# Set colobar
 if var == 'rsnl':
-	# Set colobar
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.84, 0.3, 0.03, 0.4]))
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 else:
-	# Set colobar
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.94, 0.3, 0.015, 0.4]))
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km/figs/evaluate'.format(path)
-name_out = 'pyplt_maps_bias_{0}_SAM-3km_RegCM5_2018-2021.png'.format(var)
+path_out = '{0}/user/mdasilva/SAM-3km_v4/figs'.format(path)
+name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

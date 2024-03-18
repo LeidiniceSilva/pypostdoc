@@ -186,7 +186,7 @@ plt.clim(bmin, bmax)
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km_v1/figs/evaluate'.format(path)
-name_out = 'pyplt_maps_bias_{0}_{1}_SAM-3km_RegCM5_2018-2021.png'.format(var, level)
+name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_2018-2021.png'.format(var, level, domain)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
