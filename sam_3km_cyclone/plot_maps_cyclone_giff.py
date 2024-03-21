@@ -32,7 +32,6 @@ else:
 	t1 = pd.to_datetime('2023-07-12 00:00:00')
 	t2 = pd.to_datetime('2023-07-16 21:00:00')
 	
-	
 def import_grid(param, domain, exp, dataset, freq, dt):
 
 	arq   = '{0}/user/mdasilva/SAM-3km-cyclone/post/{1}_{2}_{3}_{4}_{5}_{6}_lonlat.nc'.format(path, param, domain, exp, dataset, freq, dt)	
