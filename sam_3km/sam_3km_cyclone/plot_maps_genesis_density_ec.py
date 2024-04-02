@@ -19,7 +19,7 @@ from scipy import signal, misc
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 font_size = 10
-dataset = 'ERA5'
+dataset = 'RegCM5'
 path = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km'
 
 
@@ -72,8 +72,13 @@ def density_ciclones(df):
 # Import model and obs dataset    
 df = pd.read_csv('{0}/post_cyclone/ECyclone/ECyclone_{1}/genesis_density_{1}.txt'.format(path, dataset), sep=" ")
 df['data'] = pd.to_datetime(df['data'], format='%Y%m%d%H',errors='coerce')
+
+print(df)
+
 df = df[(df['data'].dt.year >= 2018) & (df['data'].dt.year <= 2021)]
 dens = density_ciclones(df)
+
+print(dens)
 
 # Plot figure
 fig, ax = plt.subplots(figsize=(6,4), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -101,7 +106,7 @@ states_provinces = cfeat.NaturalEarthFeature(
 ax.add_feature(states_provinces, edgecolor='0.25')
 ax.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
-ax.set_title('a) {0}'.format(dataset), loc='left', fontsize=font_size, fontweight='bold')
+ax.set_title('b) {0}'.format(dataset), loc='left', fontsize=font_size, fontweight='bold')
 
 cf = ax.contourf(scipy.ndimage.zoom(dens.lon,3),scipy.ndimage.zoom(dens.lat,3),scipy.ndimage.zoom(dens,3).T/4*1e5,colorb,transform=ccrs.PlateCarree(),extend='max',cmap='rainbow')
 cb = plt.colorbar(cf,ticks=colorb,shrink=0.90,pad=0.07)
