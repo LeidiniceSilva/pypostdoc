@@ -73,12 +73,8 @@ def density_ciclones(df):
 df = pd.read_csv('{0}/post_cyclone/ECyclone/ECyclone_{1}/genesis_density_{1}.txt'.format(path, dataset), sep=" ")
 df['data'] = pd.to_datetime(df['data'], format='%Y%m%d%H',errors='coerce')
 
-print(df)
-
 df = df[(df['data'].dt.year >= 2018) & (df['data'].dt.year <= 2021)]
 dens = density_ciclones(df)
-
-print(dens)
 
 # Plot figure
 fig, ax = plt.subplots(figsize=(6,4), subplot_kw={'projection': ccrs.PlateCarree()})
