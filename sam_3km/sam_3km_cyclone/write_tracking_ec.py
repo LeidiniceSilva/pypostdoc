@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Apr 01, 2024"
-__description__ = "This script .txt with cyclone genesis"
+__description__ = "This script write .txt with cyclone tracking"
 
 dataset = 'ERA5'
 path = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/post_cyclone/ECyclone'
@@ -49,14 +49,15 @@ def open_dat_file(dataset):
 	
 		rows_list = []
 		for i, (header, rows) in enumerate(data):
-			rows_list.append(rows[0])
+			rows_list.append(rows)
 	
 		for j  in rows_list:
-			dt_list.append(int(j[0]))
-			lat_list.append(float(j[1]))
-			lon_list.append(float(j[2]))
-			vo_list.append(float(j[3]))
-			pcen_list.append(float(j[4]))
+			for k in j:
+				dt_list.append(int(k[0]))
+				lat_list.append(float(k[1]))
+				lon_list.append(float(k[2]))
+				vo_list.append(float(k[3]))
+				pcen_list.append(float(k[4]))
 	
 	return dt_list, lat_list, lon_list, vo_list, pcen_list
     
@@ -68,7 +69,7 @@ def transpose_list(data):
 
 def write_list_to_dat(data):
 	
-	with open('{0}/ECyclone_{1}/genesis_density_{1}.txt'.format(path, dataset), 'w') as f:
+	with open('{0}/ECyclone_{1}/tracking_density_{1}.txt'.format(path, dataset), 'w') as f:
 		
 		for row in data:
 			# Convert elements to strings and join with tabs
@@ -86,3 +87,5 @@ transposed_data = transpose_list(data)
 # Write transposed data to .dat file
 write_list_to_dat(transposed_data)
 exit()
+			
+	
