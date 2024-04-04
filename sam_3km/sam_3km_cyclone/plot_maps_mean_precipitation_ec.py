@@ -63,7 +63,7 @@ ax = fig.add_subplot(1, 1, 1)
 map, xx, yy = basemap(lat, lon)
 
 plt_map1 = plt.contourf(xx, yy, ws_t1, np.arange(0, 18, 1), cmap='Blues', extend='max')
-cbar = plt.colorbar(plt_map1, ax=ax, pad=0.04, aspect=16, shrink=0.8)
+cbar = plt.colorbar(plt_map1, ax=ax, pad=0.02, aspect=16, shrink=0.8)
 
 plt_map2 = map.contour(xx, yy, psl_t1/100, levels=np.arange(996, 1012, 2), colors='black', linewidths=0.75)
 plt.clabel(plt_map2, inline=1, fontsize=font_size)

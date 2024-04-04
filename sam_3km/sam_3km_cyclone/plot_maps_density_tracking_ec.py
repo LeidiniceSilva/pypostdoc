@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Apr 01, 2024"
-__description__ = "This script plot map of genesis density"
+__description__ = "This script plot map of tracking density"
 
 import os
 import numpy as np
@@ -19,7 +19,7 @@ from scipy import signal, misc
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 font_size = 10
-dataset = 'RegCM5'
+dataset = 'ERA5'
 path = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km'
 
 
@@ -70,7 +70,7 @@ def density_ciclones(df):
 
 
 # Import model and obs dataset    
-df = pd.read_csv('{0}/post_cyclone/ECyclone/ECyclone_{1}/genesis_density_{1}.txt'.format(path, dataset), sep=" ")
+df = pd.read_csv('{0}/post_cyclone/ECyclone/ECyclone_{1}/tracking_density_{1}.txt'.format(path, dataset), sep=" ")
 df['data'] = pd.to_datetime(df['data'], format='%Y%m%d%H',errors='coerce')
 
 df = df[(df['data'].dt.year >= 2018) & (df['data'].dt.year <= 2021)]
@@ -79,11 +79,13 @@ dens = density_ciclones(df)
 # Plot figure
 fig, ax = plt.subplots(figsize=(6,4), subplot_kw={'projection': ccrs.PlateCarree()})
 
-xticks = np.arange(-76,38.5,5)
-yticks = np.arange(-34.5,15,5)
+xticks = np.arange(-76,-38.5,5)
+yticks = np.arange(-34.5,-15,5)
 
-colorb = [.1,.2,.3,.4,.5,.6,.7,.8,.9,1.,1.2,1.4,1.6,1.8,2,2.2,2.4]
-levels = [.1,.2,.3,.4,.5,.6,.7,.8,.9,1.,1.2,1.4,1.6,1.8,2,2.2,2.4]
+colorb = [10,20,30,40,60,80,100,120,140]
+levels = [10,20,30,40,60,80,100,120,140]
+
+#[.1,.2,.3,.4,.5,.6,.7,.8,.9,1.,1.2,1.4,1.6,1.8,2,2.2,2.4]
 
 ax.coastlines()
 ax.set_xticks(xticks, crs=ccrs.PlateCarree())
@@ -104,8 +106,11 @@ ax.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 ax.set_title('b) {0}'.format(dataset), loc='left', fontsize=font_size, fontweight='bold')
 
-cf = ax.contourf(scipy.ndimage.zoom(dens.lon,3),scipy.ndimage.zoom(dens.lat,3),scipy.ndimage.zoom(dens,3).T/4*1e5,colorb,transform=ccrs.PlateCarree(),extend='max',cmap='rainbow')
+cf = ax.contourf(scipy.ndimage.zoom(dens.lon,3),scipy.ndimage.zoom(dens.lat,3),scipy.ndimage.zoom(dens,3).T/4*1e2,colorb,transform=ccrs.PlateCarree(),extend='max',cmap='rainbow')
 cb = plt.colorbar(cf,ticks=colorb,shrink=0.90,pad=0.07)
+
+#cf1 = ax.contour(scipy.ndimage.zoom(dens.lon,3),scipy.ndimage.zoom(dens.lat,3),scipy.ndimage.zoom(dens,3).T/4*1e6,[2.5,5.5,8.5,11.5,14.5],linewidths=1.5, linestyles = '-',colors = 'turquoise')
+#plt.clabel(cf1,[2.5,5.5,8.5,11.5,14.5], colors='red', fmt='%3i', fontsize=font_size)
 
 plt.xticks(visible=True,fontsize=font_size)
 plt.yticks(visible=True,fontsize=font_size)
