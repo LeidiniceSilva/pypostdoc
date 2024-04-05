@@ -112,7 +112,7 @@ plt.yticks(visible=True,fontsize=font_size)
 
 # Path out to save figure
 path_out = '{0}/figs/cyclone'.format(path)
-name_out = 'pyplt_genesis_density_EC_{0}_SAM-3km_2018-2021.png'.format(dataset)
+name_out = 'pyplt_maps_genesis_density_EC_{0}_SAM-3km_2018-2021.png'.format(dataset)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

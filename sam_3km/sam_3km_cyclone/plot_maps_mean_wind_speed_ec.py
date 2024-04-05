@@ -121,19 +121,6 @@ def import_rcm(param):
 	return lat, lon, mean
 	
 	
-def basemap(lat, lon):
-	
-	map = Basemap(projection='cyl', llcrnrlon=-76., llcrnrlat=-34.5, urcrnrlon=-38.5,urcrnrlat=-15., resolution='c')
-	map.drawmeridians(np.arange(-76., -38.5, 5.0), size=font_size, labels=[0,0,0,1], linewidth=0.01, color='gray')
-	map.drawparallels(np.arange(-34.5, -15., 2.5), size=font_size, labels=[1,0,0,0], linewidth=0.01, color='gray')
-	map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', linewidth=1., color='red')
-
-	lons, lats = np.meshgrid(lon, lat)
-	xx, yy = map(lons,lats)
-	
-	return map, xx, yy
-	
-	
 # Import model and obs dataset 
 dt_era5 = open_dat_file('ERA5')
 dt_regcm5 = open_dat_file('RegCM5')

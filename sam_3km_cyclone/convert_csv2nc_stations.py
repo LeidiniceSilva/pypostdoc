@@ -14,21 +14,24 @@ from dict_inmet_stations import inmet
 
 path = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km-cyclone/post/obs/inmet'
 
-# choose variable 2, 4 or 21
-idx=21
+# choose variable 2, 4, 8 or 21
+idx=8
 
 if idx == 2:
 	nc_var = 'pre'
 	unit_var = 'mm'
 	name_var = 'Hourly total of precipitation'
 	std_var = 'precipitation'
-
 elif idx == 4:
 	nc_var = 'psl'
 	unit_var = 'mB'
 	name_var = 'Hourly air pressure at sea level'
 	std_var = 'pressure'
-	
+elif idx == 7:
+	nc_var = 'tmp'
+	unit_var = 'degrees C'
+	name_var = 'Hourly mean of air temperature'
+	std_var = 'temperature'	
 else:
 	nc_var = 'uv'
 	unit_var = 'm.s**-1'
