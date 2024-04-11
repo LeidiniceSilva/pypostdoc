@@ -16,9 +16,9 @@ from dict_inmet_stations import inmet
 from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
 
-var = 'pr'
+var = 'rsnl'
 domain = 'SAM-3km'
-idt, fdt = '2018', '2021'
+idt, fdt = '2018', '2018'
 dt = '{0}-{1}'.format(idt, fdt)
 
 path = '/marconi/home/userexternal/mdasilva'
@@ -43,7 +43,7 @@ def import_situ(param_i, param_ii, domain, dataset):
 		yy.append(inmet[station][2])
 		xx.append(inmet[station][3])
 
-		arq_i  = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/{1}/'.format(path, param_i) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param_i, inmet[station][0]))
+		arq_i  = xr.open_dataset('{0}/OBS/WS-SA/INMET/nc/hourly/{1}/'.format(path, param_i) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param_i, inmet[station][0]))
 		data_i = arq_i[param_i]
 		time_i = data_i.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_i  = time_i.groupby('time.season').mean(dim='time')
@@ -53,7 +53,7 @@ def import_situ(param_i, param_ii, domain, dataset):
 		else:
 			mean_i.append(var_i.values)
 
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km_v4/post/rcm/'.format(path) + '{0}_{1}_{2}_mon_{3}_lonlat.nc'.format(param_ii, domain, dataset, dt))
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km_v5/post/rcm/'.format(path) + '{0}_{1}_{2}_mon_{3}_lonlat.nc'.format(param_ii, domain, dataset, dt))
 		data_ii = arq_ii[param_ii]
 		data_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
@@ -65,7 +65,7 @@ def import_situ(param_i, param_ii, domain, dataset):
 	
 def import_obs(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v4/post/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	arq   = '{0}/user/mdasilva/SAM-3km_v5/post/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -77,7 +77,7 @@ def import_obs(param, domain, dataset, season):
 
 def import_rcm(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v4/post/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	arq   = '{0}/user/mdasilva/SAM-3km_v5/post/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -299,7 +299,7 @@ dict_plot = {
 'tasmax': ['Bias of maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmin': ['Bias of minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'clt': ['Bias of total cloud cover (%)', np.arange(-70, 80, 10), cm.RdGy],
-'rsnl': ['Bias of surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.coolwarm]
+'rsnl': ['Bias of surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r]
 }
 
 font_size = 8
@@ -633,7 +633,7 @@ else:
 	cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km_v4/figs'.format(path)
+path_out = '{0}/user/mdasilva/SAM-3km_v5/figs'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

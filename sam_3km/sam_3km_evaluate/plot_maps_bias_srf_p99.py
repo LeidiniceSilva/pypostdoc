@@ -29,7 +29,7 @@ path = '/marconi/home/userexternal/mdasilva'
 
 def import_obs(param, domain, dataset):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v4/post/obs/p99_{1}_{2}_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
+	arq   = '{0}/user/mdasilva/SAM-3km_v5/post/obs/p99_{1}_{2}_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -41,7 +41,7 @@ def import_obs(param, domain, dataset):
 		
 def import_rcm(param, domain, dataset):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v4/post/rcm/p99_{1}_{2}_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
+	arq   = '{0}/user/mdasilva/SAM-3km_v5/post/rcm/p99_{1}_{2}_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -105,7 +105,7 @@ else:
 	cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km_v4/figs'.format(path)
+path_out = '{0}/user/mdasilva/SAM-3km_v5/figs'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

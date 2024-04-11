@@ -124,7 +124,7 @@ dict_plot = {
 'tasmax': ['Bias of maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmin': ['Bias of minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'clt': ['Bias of total cloud cover (%)', np.arange(-70, 80, 10), cm.RdGy],
-'rsnl': ['Bias of surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.coolwarm]
+'rsnl': ['Bias of surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r]
 }
 	
 ax = fig.add_subplot(3, 3, 1)  

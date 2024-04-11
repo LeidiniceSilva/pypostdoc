@@ -15,13 +15,28 @@ from mpl_toolkits.basemap import Basemap
 
 var = 'uv'
 domain = 'SAM-3km'
-level = '850hPa'
+level = '200hPa'
 path='/marconi/home/userexternal/mdasilva'
 
+idt, fdt = '2018', '2021'
+dt = '{0}-{1}'.format(idt, fdt)
 
-def import_grid(param, level, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v1/post_evaluate/{1}_{2}_{3}_{4}_{5}_2018-2021_lonlat.nc'.format(path, param, level, domain, dataset, season)	
+def import_obs(param, level, domain, dataset, season):
+
+	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/obs/{1}_{2}_{3}_{4}_{5}_{6}_lonlat.nc'.format(path, param, level, domain, dataset, season, dt)	
+	data  = netCDF4.Dataset(arq)
+	var   = data.variables[param][:] 
+	lat   = data.variables['lat'][:]
+	lon   = data.variables['lon'][:]
+	mean = var[:][0,0,:,:]
+	
+	return lat, lon, mean
+	
+
+def import_rcm(param, level, domain, dataset, season):
+
+	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/{1}_{2}_{3}_{4}_{5}_{6}_lonlat.nc'.format(path, param, level, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -45,35 +60,35 @@ def basemap(lat, lon):
 	
 	
 # Import model and obs dataset 
-lat, lon, u_era5_djf = import_grid('u', level, domain, 'ERA5', 'DJF')
-lat, lon, u_era5_mam = import_grid('u', level, domain, 'ERA5', 'MAM')
-lat, lon, u_era5_jja = import_grid('u', level, domain, 'ERA5', 'JJA')
-lat, lon, u_era5_son = import_grid('u', level, domain, 'ERA5', 'SON')
+lat, lon, u_era5_djf = import_obs('u', level, domain, 'ERA5', 'DJF')
+lat, lon, u_era5_mam = import_obs('u', level, domain, 'ERA5', 'MAM')
+lat, lon, u_era5_jja = import_obs('u', level, domain, 'ERA5', 'JJA')
+lat, lon, u_era5_son = import_obs('u', level, domain, 'ERA5', 'SON')
 
-lat, lon, v_era5_djf = import_grid('v', level, domain, 'ERA5', 'DJF')
-lat, lon, v_era5_mam = import_grid('v', level, domain, 'ERA5', 'MAM')
-lat, lon, v_era5_jja = import_grid('v', level, domain, 'ERA5', 'JJA')
-lat, lon, v_era5_son = import_grid('v', level, domain, 'ERA5', 'SON')
+lat, lon, v_era5_djf = import_obs('v', level, domain, 'ERA5', 'DJF')
+lat, lon, v_era5_mam = import_obs('v', level, domain, 'ERA5', 'MAM')
+lat, lon, v_era5_jja = import_obs('v', level, domain, 'ERA5', 'JJA')
+lat, lon, v_era5_son = import_obs('v', level, domain, 'ERA5', 'SON')
 
-lat, lon, u_regcm_djf = import_grid('ua', level, domain, 'RegCM5', 'DJF')
-lat, lon, u_regcm_mam = import_grid('ua', level, domain, 'RegCM5', 'MAM')
-lat, lon, u_regcm_jja = import_grid('ua', level, domain, 'RegCM5', 'JJA')
-lat, lon, u_regcm_son = import_grid('ua', level, domain, 'RegCM5', 'SON')
+lat, lon, u_regcm_djf = import_rcm('ua', level, domain, 'RegCM5', 'DJF')
+lat, lon, u_regcm_mam = import_rcm('ua', level, domain, 'RegCM5', 'MAM')
+lat, lon, u_regcm_jja = import_rcm('ua', level, domain, 'RegCM5', 'JJA')
+lat, lon, u_regcm_son = import_rcm('ua', level, domain, 'RegCM5', 'SON')
 
-lat, lon, v_regcm_djf = import_grid('va', level, domain, 'RegCM5', 'DJF')
-lat, lon, v_regcm_mam = import_grid('va', level, domain, 'RegCM5', 'MAM')
-lat, lon, v_regcm_jja = import_grid('va', level, domain, 'RegCM5', 'JJA')
-lat, lon, v_regcm_son = import_grid('va', level, domain, 'RegCM5', 'SON')
+lat, lon, v_regcm_djf = import_rcm('va', level, domain, 'RegCM5', 'DJF')
+lat, lon, v_regcm_mam = import_rcm('va', level, domain, 'RegCM5', 'MAM')
+lat, lon, v_regcm_jja = import_rcm('va', level, domain, 'RegCM5', 'JJA')
+lat, lon, v_regcm_son = import_rcm('va', level, domain, 'RegCM5', 'SON')
 
-uv_era5_djf = np.sqrt(u_era5_djf*u_era5_djf+v_era5_djf*v_era5_djf)
-uv_era5_mam = np.sqrt(u_era5_mam*u_era5_mam+v_era5_mam*v_era5_mam)
-uv_era5_jja = np.sqrt(u_era5_jja*u_era5_jja+v_era5_jja*v_era5_jja)
-uv_era5_son = np.sqrt(u_era5_son*u_era5_son+v_era5_son*v_era5_son)
+uv_era5_djf = np.sqrt(u_era5_djf**2+v_era5_djf**2)
+uv_era5_mam = np.sqrt(u_era5_mam**2+v_era5_mam**2)
+uv_era5_jja = np.sqrt(u_era5_jja**2+v_era5_jja**2)
+uv_era5_son = np.sqrt(u_era5_son**2+v_era5_son**2)
 
-uv_regcm_djf = np.sqrt(u_regcm_djf*u_regcm_djf+v_regcm_djf*v_regcm_djf)
-uv_regcm_mam = np.sqrt(u_regcm_mam*u_regcm_mam+v_regcm_mam*v_regcm_mam)
-uv_regcm_jja = np.sqrt(u_regcm_jja*u_regcm_jja+v_regcm_jja*v_regcm_jja)
-uv_regcm_son = np.sqrt(u_regcm_son*u_regcm_son+v_regcm_son*v_regcm_son)
+uv_regcm_djf = np.sqrt(u_regcm_djf**2+v_regcm_djf**2)
+uv_regcm_mam = np.sqrt(u_regcm_mam**2+v_regcm_mam**2)
+uv_regcm_jja = np.sqrt(u_regcm_jja**2+v_regcm_jja**2)
+uv_regcm_son = np.sqrt(u_regcm_son**2+v_regcm_son**2)
 
 mbe_u_djf = u_regcm_djf - u_era5_djf
 mbe_u_mam = u_regcm_mam - u_era5_mam
@@ -85,10 +100,10 @@ mbe_v_mam = v_regcm_mam - v_era5_mam
 mbe_v_jja = v_regcm_jja - v_era5_jja
 mbe_v_son = v_regcm_son - v_era5_son
 
-mbe_uv_djf = np.sqrt(mbe_u_djf*mbe_u_djf+mbe_v_djf*mbe_v_djf)
-mbe_uv_mam = np.sqrt(mbe_u_mam*mbe_u_mam+mbe_v_mam*mbe_v_mam)
-mbe_uv_jja = np.sqrt(mbe_u_jja*mbe_u_jja+mbe_v_jja*mbe_v_jja)
-mbe_uv_son = np.sqrt(mbe_u_son*mbe_u_son+mbe_v_son*mbe_v_son)
+mbe_uv_djf = np.sqrt(mbe_u_djf**2+mbe_v_djf**2)
+mbe_uv_mam = np.sqrt(mbe_u_mam**2+mbe_v_mam**2)
+mbe_uv_jja = np.sqrt(mbe_u_jja**2+mbe_v_jja**2)
+mbe_uv_son = np.sqrt(mbe_u_son**2+mbe_v_son**2)
 
 # Plot figure 
 fig = plt.figure(figsize=(8, 8))
@@ -185,8 +200,8 @@ plt.title(u'(l) RegCM5-ERA5', loc='left', fontsize=font_size, fontweight='bold')
 plt.clim(bmin, bmax)
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km_v1/figs/evaluate'.format(path)
-name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_2018-2021.png'.format(var, level, domain)
+path_out = '{0}/user/mdasilva/SAM-3km/figs/evaluate'.format(path)
+name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_{2}.png'.format(var, level, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
