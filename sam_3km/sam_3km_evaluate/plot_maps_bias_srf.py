@@ -18,7 +18,7 @@ from import_climate_tools import compute_mbe
 
 var = 'pr'
 domain = 'SAM-3km'
-idt, fdt = '2018', '2018'
+idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
 
 path = '/marconi/home/userexternal/mdasilva'

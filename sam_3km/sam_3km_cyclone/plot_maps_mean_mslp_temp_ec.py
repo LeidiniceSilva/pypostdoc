@@ -108,7 +108,7 @@ def open_dat_file(dataset):
 
 def import_obs(param):
 
-	arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/obs/postproc/{1}_SAM-25km_ERA5_1hr_20180101-20211201_lonlat.nc'.format(path, param)	
+	arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/obs/era5/{1}_SAM-25km_ERA5_day_2018010100-2021123100_lonlat.nc'.format(path, param)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]	
@@ -125,7 +125,7 @@ def import_rcm(param):
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]	
 	lon   = data.variables['lon'][:]
-	mean = var[:][:,0,:,:]
+	mean = var[:][:,:,:]
 	
 	return lat, lon, mean
 
@@ -133,14 +133,14 @@ def import_rcm(param):
 daily_dates = generate_daily_dates(datetime(2018, 1, 1), datetime(2021, 12, 31))
 
 # Import model and obs dataset 
-dt_era5 = open_dat_file('ERA5')
+dt_era5   = open_dat_file('ERA5')
 dt_regcm5 = open_dat_file('RegCM5')
 
-lat, lon, ua_era5 = import_obs('u')
-lat, lon, va_era5 = import_obs('v')
+lat, lon, psl_era5 = import_obs('msl')
+lat, lon, ta_era5  = import_obs('t')
 
-lat, lon, ua_regcm5 = import_rcm('ua')
-lat, lon, va_regcm5 = import_rcm('va')
+lat, lon, psl_regcm5 = import_obs('msl')
+lat, lon, ta_regcm5  = import_obs('t')
 
 era5_indices = find_indices_in_date_list(dt_era5, daily_dates)
 regcm5_indices = find_indices_in_date_list(dt_regcm5, daily_dates)
@@ -152,30 +152,28 @@ era5_idx_i = find_indices_in_date_list(daily_dates, era5_idx)
 regcm5_idx = remove_duplicates(dt_regcm5)
 regcm5_idx_i = find_indices_in_date_list(daily_dates, regcm5_idx)
 
-ua_era5_i = []
-va_era5_i = []
+psl_era5_i = []
+ta_era5_i = []
 for idx_i in era5_idx_i:
-	ua_era5_i.append(ua_era5[idx_i-1,:,:])
-	va_era5_i.append(va_era5[idx_i-1,:,:])
+	psl_era5_i.append(psl_era5[idx_i-1,:,:])
+	ta_era5_i.append(ta_era5[idx_i-1,:,:])
+	
+psl_era5_ii = np.nanmean(psl_era5_i, axis=0)
+ta_era5_ii  = np.nanmean(ta_era5_i, axis=0)
 
-ua_era5_ii = np.nanmean(ua_era5_i, axis=0)
-va_era5_ii = np.nanmean(va_era5_i, axis=0)
-ws_era5 = np.sqrt(ua_era5_ii**2 + va_era5_ii**2)
-
-ua_regcm5_i = []
-va_regcm5_i = []
+psl_regcm5_i = []
+ta_regcm5_i = []
 for idx_ii in regcm5_idx_i:
-	ua_regcm5_i.append(ua_regcm5[idx_ii-1,:,:])
-	va_regcm5_i.append(va_regcm5[idx_ii-1,:,:])
+	psl_regcm5_i.append(psl_regcm5[idx_ii-1,:,:])
+	ta_regcm5_i.append(ta_regcm5[idx_ii-1,:,:])
 
-ua_regcm5_ii = np.nanmean(ua_regcm5_i, axis=0)
-va_regcm5_ii = np.nanmean(va_regcm5_i, axis=0)
-ws_regcm5 = np.sqrt(ua_regcm5_ii**2 + va_regcm5_ii**2)
+psl_regcm5_ii = np.nanmean(psl_regcm5_i, axis=0)
+ta_regcm5_ii = np.nanmean(ta_regcm5_i, axis=0)
 
 # Plot figure
 fig, (ax1, ax2) = plt.subplots(1,2, figsize=(12, 8), subplot_kw={"projection": ccrs.PlateCarree()})
 
-colorb = np.arange(0,6.5,0.5)
+colorb = np.arange(5,35,3)
 states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 
 ax1.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
@@ -189,9 +187,9 @@ ax1.coastlines()
 ax1.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 ax1.set_title('a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax1.contourf(lon,lat, ws_era5, colorb, transform=ccrs.PlateCarree(), extend='max', cmap='Blues')
-qr = ax1.quiver(lon, lat, ua_era5_ii, va_era5_ii, color='black', transform=ccrs.PlateCarree())
-plt.quiverkey(qr, X=0.9, Y=1.05, U=5, label='5 m/s', labelpos='E', fontproperties={'size': 8})
+ct = ax1.contour(lon, lat, psl_era5_ii/100, colors='black', levels=np.arange(995,1010,1), linewidths=0.5)
+plt.clabel(ct, inline=1, fontsize=font_size)
+cf = ax1.contourf(lon, lat, ta_era5_ii-273.15, colorb, transform=ccrs.PlateCarree(), extend='max', cmap='jet')
 
 ax2.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
 ax2.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -203,14 +201,12 @@ ax2.add_feature(states_provinces, edgecolor='0.25')
 ax2.coastlines()
 ax2.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax2.set_title('b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax2.contourf(lon, lat, ws_regcm5, colorb, transform=ccrs.PlateCarree(), extend='max', cmap='Blues')
+cf = ax2.contourf(lon, lat, ta_era5_ii-273.15, colorb, transform=ccrs.PlateCarree(), extend='max', cmap='jet')
 cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]), ticks=colorb)
-qr = ax2.quiver(lon, lat, ua_regcm5_ii, va_regcm5_ii, color='black', transform=ccrs.PlateCarree())
-plt.quiverkey(qr, X=0.9, Y=1.05, U=5, label='5 m/s', labelpos='E', fontproperties={'size': 8})
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone'.format(path)
-name_out = 'pyplt_maps_wind_speed_EC_ERA5_RegCM5_SAM-3km_2018-2021.png'
+name_out = 'pyplt_maps_mslp_temp_EC_ERA5_RegCM5_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
