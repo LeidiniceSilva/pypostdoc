@@ -39,8 +39,8 @@ def generate_daily_dates(start_date, end_date):
 	dates = []
 	current_date = start_date
 	while current_date <= end_date:
-		dates.append(current_date.strftime('%Y%m%d'))
-		current_date += timedelta(days=1)
+		dates.append(current_date.strftime('%Y%m%d%H'))
+		current_date += timedelta(hours=6)
 	
 	return dates
 
@@ -98,10 +98,11 @@ def open_dat_file(dataset):
 		rows_list = []
 		rows_list_i = []
 		for i, (header, rows) in enumerate(data):
-			rows_list.append(rows[0])
+			if ((str(-20) < rows[0][1] < str(-30)) and (str(-45) < rows[0][2] < str(-55))):
+				rows_list.append(rows[0])
 		
 		for j  in rows_list:
-			dt.append(str(j[0][:-2]))
+			dt.append(str(j[0]))
 	
 	return dt
 
@@ -120,7 +121,7 @@ def import_obs(param):
 
 def import_rcm(param):
 
-	arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/rcm/regcm5/{1}/{1}_SAM-3km_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5_6hr_20180101-20211201_lonlat.nc'.format(path, param)	
+	arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/rcm/postproc/{1}_SAM-3km_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5_6hr_20180101-20211231.nc'.format(path, param)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]	
@@ -175,7 +176,7 @@ ws_regcm5 = np.sqrt(ua_regcm5_ii**2 + va_regcm5_ii**2)
 # Plot figure
 fig, (ax1, ax2) = plt.subplots(1,2, figsize=(12, 8), subplot_kw={"projection": ccrs.PlateCarree()})
 
-colorb = np.arange(0,6.5,0.5)
+colorb = np.arange(0,11,1)
 states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 
 ax1.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
@@ -206,7 +207,6 @@ ax2.set_title('b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 cf = ax2.contourf(lon, lat, ws_regcm5, colorb, transform=ccrs.PlateCarree(), extend='max', cmap='Blues')
 cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]), ticks=colorb)
 qr = ax2.quiver(lon, lat, ua_regcm5_ii, va_regcm5_ii, color='black', transform=ccrs.PlateCarree())
-plt.quiverkey(qr, X=0.9, Y=1.05, U=5, label='5 m/s', labelpos='E', fontproperties={'size': 8})
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone'.format(path)

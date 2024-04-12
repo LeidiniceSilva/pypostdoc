@@ -182,12 +182,12 @@ for station in range(1, 567):
 	time.units	= 'Hours since {}'.format(data_dates[0])
 	time[:]		= range(len(data_dates))
 
-	var 		= ds.createVariable(nc_var,  float, ('time'))
-	var.units 	= unit_var
-	var.long_name 	= name_var
+	var 		  = ds.createVariable(nc_var,  float, ('time'))
+	var.units 	  = unit_var
+	var.long_name 	  = name_var
 	var.standard_name = std_var
 	var.missing_value = -999
-	var[:] 		= data_values[:]
+	var[:] 		  = data_values[:]
 		
 	ds.close()
 	

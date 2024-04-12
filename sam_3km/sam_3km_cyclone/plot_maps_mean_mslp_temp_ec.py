@@ -39,23 +39,21 @@ def generate_daily_dates(start_date, end_date):
 	dates = []
 	current_date = start_date
 	while current_date <= end_date:
-		dates.append(current_date.strftime('%Y%m%d'))
-		current_date += timedelta(days=1)
+		dates.append(current_date.strftime('%Y%m%d%H'))
+		current_date += timedelta(hours=6)
 	
 	return dates
 
 
-def find_indices_in_date_list(date_list, target_dates):
+def find_indices_in_date_list(date_list1, date_list2):
     
-	indices = []
-	for target_date in target_dates:
-		try:
-			index = date_list.index(target_date)
-			indices.append(index)
-		except ValueError:
-			pass  # Date not found in date_list
+	matching_indices = []
+	for date1 in date_list1:
+		for i, date2 in enumerate(date_list2):
+			if date1 == date2:
+				matching_indices.append((date_list1.index(date1)))
 	
-	return indices
+	return matching_indices
 
 
 def read_dat_file(filename):
@@ -98,17 +96,18 @@ def open_dat_file(dataset):
 		rows_list = []
 		rows_list_i = []
 		for i, (header, rows) in enumerate(data):
-			rows_list.append(rows[0])
+			if ((str(-20) < rows[0][1] < str(-30)) and (str(-45) < rows[0][2] < str(-55))):
+				rows_list.append(rows[0])
 		
 		for j  in rows_list:
-			dt.append(str(j[0][:-2]))
+			dt.append(str(j[0]))
 	
 	return dt
 
 
 def import_obs(param):
 
-	arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/obs/era5/{1}_SAM-25km_ERA5_day_2018010100-2021123100_lonlat.nc'.format(path, param)	
+	arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/obs/postproc/{1}_SAM-25km_ERA5_1hr_20180101-20211201.nc'.format(path, param)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]	
@@ -120,7 +119,7 @@ def import_obs(param):
 
 def import_rcm(param):
 
-	arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/rcm/regcm5/{1}/{1}_SAM-3km_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5_6hr_20180101-20211201_lonlat.nc'.format(path, param)	
+	arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/rcm/postproc/{1}_SAM-3km_ECMWF-ERA5_evaluation_r1i1p1f1_ICTP-RegCM5_6hr_20180101-20211231.nc'.format(path, param)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]	
@@ -129,8 +128,9 @@ def import_rcm(param):
 	
 	return lat, lon, mean
 
+
 # Generate list of daily dates from 2018 to 2021
-daily_dates = generate_daily_dates(datetime(2018, 1, 1), datetime(2021, 12, 31))
+daily_dates = generate_daily_dates(datetime(2018, 1, 1, 0), datetime(2021, 12, 31, 23))
 
 # Import model and obs dataset 
 dt_era5   = open_dat_file('ERA5')
@@ -139,11 +139,8 @@ dt_regcm5 = open_dat_file('RegCM5')
 lat, lon, psl_era5 = import_obs('msl')
 lat, lon, ta_era5  = import_obs('t')
 
-lat, lon, psl_regcm5 = import_obs('msl')
-lat, lon, ta_regcm5  = import_obs('t')
-
-era5_indices = find_indices_in_date_list(dt_era5, daily_dates)
-regcm5_indices = find_indices_in_date_list(dt_regcm5, daily_dates)
+lat, lon, psl_regcm5 = import_rcm('psl')
+lat, lon, ta_regcm5  = import_rcm('ta')
 
 # Import indices after tracking
 era5_idx = remove_duplicates(dt_era5)
@@ -163,17 +160,17 @@ ta_era5_ii  = np.nanmean(ta_era5_i, axis=0)
 
 psl_regcm5_i = []
 ta_regcm5_i = []
-for idx_ii in regcm5_idx_i:
-	psl_regcm5_i.append(psl_regcm5[idx_ii-1,:,:])
-	ta_regcm5_i.append(ta_regcm5[idx_ii-1,:,:])
-
+for idx_i in regcm5_idx_i:
+	psl_regcm5_i.append(psl_regcm5[idx_i-1,:,:])
+	ta_regcm5_i.append(ta_regcm5[idx_i-1,:,:])
+	
 psl_regcm5_ii = np.nanmean(psl_regcm5_i, axis=0)
-ta_regcm5_ii = np.nanmean(ta_regcm5_i, axis=0)
+ta_regcm5_ii  = np.nanmean(ta_regcm5_i, axis=0)
 
 # Plot figure
 fig, (ax1, ax2) = plt.subplots(1,2, figsize=(12, 8), subplot_kw={"projection": ccrs.PlateCarree()})
 
-colorb = np.arange(5,35,3)
+colorb = np.arange(-2,32,2)
 states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 
 ax1.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
@@ -187,9 +184,9 @@ ax1.coastlines()
 ax1.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 ax1.set_title('a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-ct = ax1.contour(lon, lat, psl_era5_ii/100, colors='black', levels=np.arange(995,1010,1), linewidths=0.5)
-plt.clabel(ct, inline=1, fontsize=font_size)
-cf = ax1.contourf(lon, lat, ta_era5_ii-273.15, colorb, transform=ccrs.PlateCarree(), extend='max', cmap='jet')
+cf = ax1.contourf(lon, lat, ta_era5_ii-273.15, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='jet')
+ct = ax1.contour(lon, lat, psl_era5_ii/100, colors='black', linewidths=0.65)
+ax1.clabel(ct, inline=1, fontsize=font_size)
 
 ax2.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
 ax2.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -201,8 +198,10 @@ ax2.add_feature(states_provinces, edgecolor='0.25')
 ax2.coastlines()
 ax2.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax2.set_title('b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax2.contourf(lon, lat, ta_era5_ii-273.15, colorb, transform=ccrs.PlateCarree(), extend='max', cmap='jet')
+cf = ax2.contourf(lon, lat, ta_regcm5_ii[0]-273.15, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='jet')
 cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]), ticks=colorb)
+ct = ax2.contour(lon, lat, psl_regcm5_ii/100, colors='black', linewidths=0.65)
+ax1.clabel(ct, inline=1, fontsize=font_size)
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone'.format(path)

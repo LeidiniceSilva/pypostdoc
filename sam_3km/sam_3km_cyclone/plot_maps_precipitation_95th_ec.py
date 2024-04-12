@@ -139,7 +139,7 @@ def import_obs(param):
 
 def import_sat(param):
 
-	arq   = '{0}/OBS/GPM/precipitation_GPM-3BHHR_SAM-10km_day_2018-2021.nc'.format(path)		
+	arq   = '{0}/user/mdasilva/SAM-3km/figs/cyclone/precipitation_GPM-3BHHR_SAM-10km_day_20180101-20211231_lonlat.nc'.format(path)		
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]	
@@ -173,7 +173,7 @@ def import_ws(param, indices):
 		yy.append(inmet[station][2])
 		xx.append(inmet[station][3])
 
-		arq  = xr.open_dataset('{0}/OBS/BDMET/database/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
+		arq  = xr.open_dataset('{0}/OBS/WS-SA/INMET/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
 		data = arq[param]
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
 		var  = time.resample(time='1D').sum()
@@ -217,13 +217,13 @@ lat_, lon_, pr_gpm = import_sat('precipitation')
 gpm_idx_ii = select_days(pr_gpm, era5_idx_i)
 
 # Plot figure
-fig, (ax1, ax2, ax3) = plt.subplots(3,1, figsize=(8, 12), subplot_kw={"projection": ccrs.PlateCarree()})
+fig, (ax1, ax2, ax3) = plt.subplots(1,3, figsize=(14, 6), subplot_kw={"projection": ccrs.PlateCarree()})
 
 color = ['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
 
 states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 
-ax1.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
+ax1.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax1.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
 ax1.xaxis.set_major_formatter(LongitudeFormatter())
 ax1.yaxis.set_major_formatter(LatitudeFormatter())
@@ -232,10 +232,11 @@ ax1.add_feature(cfeat.BORDERS)
 ax1.add_feature(states_provinces, edgecolor='0.25')
 ax1.coastlines()
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
+ax1.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax1.set_title('a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 cf = ax1.contourf(lon, lat, era5_idx_ii, levels=np.arange(0,84,4), transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 
-ax2.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
+ax2.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax2.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
 ax2.xaxis.set_major_formatter(LongitudeFormatter())
 ax2.yaxis.set_major_formatter(LatitudeFormatter())
@@ -243,12 +244,12 @@ ax2.grid(c='k', ls='--', alpha=0.3)
 ax2.add_feature(cfeat.BORDERS)
 ax2.add_feature(states_provinces, edgecolor='0.25')
 ax2.coastlines()
-ax2.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
+ax2.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax2.set_title('b) GPM', loc='left', fontsize=font_size, fontweight='bold')
 cf = ax2.contourf(lon_, lat_, gpm_idx_ii/3, levels=np.arange(0,84,4), transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
-cb = plt.colorbar(cf, cax=fig.add_axes([0.9, 0.3, 0.018, 0.4]))
+cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 
-ax3.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
+ax3.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax3.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
 ax3.xaxis.set_major_formatter(LongitudeFormatter())
 ax3.yaxis.set_major_formatter(LatitudeFormatter())
@@ -257,10 +258,9 @@ ax3.add_feature(cfeat.BORDERS)
 ax3.add_feature(states_provinces, edgecolor='0.25')
 ax3.coastlines()
 ax3.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
-ax3.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 ax3.set_title('c) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 cf = ax3.contourf(lon, lat, regcm5_idx_ii, levels=np.arange(0,84,4), transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
-sc = ax3.scatter(lon_i, lat_i, 10, pr_inmet, cmap=matplotlib.colors.ListedColormap(color), edgecolors='black', marker='o', vmin=0, vmax=80) 
+sc = ax3.scatter(lon_i, lat_i, 12, pr_inmet, cmap=matplotlib.colors.ListedColormap(color), edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=80) 
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone'.format(path)
