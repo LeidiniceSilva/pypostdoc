@@ -167,14 +167,14 @@ def import_sat(param, indices):
 		
 		if station in skip_list:
 			continue
-		if inmet[station][2] >= -11.25235:
+		if inmet[station][2] >= -12:
 			continue
 
 		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_cyclone/obs/gpm/'.format(path) + 'precipitation_GPM-3BHHR_SAM-10km_day_20180101-20211231_lonlat.nc')
 		data   = arq[param]
 		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		time   = latlon.sel(time=slice('2018-01-01','2021-12-31'))
-		var    = time.values
+		var    = time.values/2
 
 		for idx_i in indices:
 			mean.append(var[idx_i])
@@ -195,7 +195,7 @@ def import_rcm(param, indices):
 
 		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + 'pr_SAM-3km_RegCM5_day_2018-2021_lonlat.nc')
 		data   = arq[param]
-		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		latlon = data.sel(lat=slice(inmet[station][2]-0.06,inmet[station][2]+0.06),lon=slice(inmet[station][3]-0.06,inmet[station][3]+0.06)).mean(('lat','lon'))
 		time   = latlon.sel(time=slice('2018-01-01','2021-12-31'))
 		var    = time.values
 
@@ -261,10 +261,12 @@ fig = plt.figure(figsize=(6, 9))
 font_size = 8
 
 ax = fig.add_subplot(3, 1, 1)  
-plt.plot(x_pdf_inmet,  pdf_inmet,  marker='.', markersize=4, mfc='red',   mec='red',   alpha=0.5, linestyle='None', label='INMET')
-plt.plot(x_pdf_era5,   pdf_era5,   marker='.', markersize=4, mfc='black', mec='black', alpha=0.5, linestyle='None', label='ERA5')
-plt.plot(x_pdf_gpm,    pdf_gpm,    marker='.', markersize=4, mfc='blue',  mec='blue',  alpha=0.5, linestyle='None', label='GPM')
-plt.plot(x_pdf_regcm5, pdf_regcm5, marker='.', markersize=4, mfc='blue',  mec='blue',  alpha=0.5, linestyle='None', label='RegCM5')
+plt.plot(x_pdf_inmet,  pdf_inmet,  marker='o', markersize=4, mfc='black', mec='black', alpha=0.75, linestyle='None', label='INMET')
+plt.plot(x_pdf_era5,   pdf_era5,   marker='o', markersize=4, mfc='red',   mec='red',   alpha=0.75, linestyle='None', label='ERA5')
+plt.plot(x_pdf_gpm,    pdf_gpm,    marker='o', markersize=4, mfc='green', mec='green', alpha=0.75, linestyle='None', label='GPM')
+plt.plot(x_pdf_regcm5, pdf_regcm5, marker='o', markersize=4, mfc='blue',  mec='blue',  alpha=0.75, linestyle='None', label='RegCM5')
+plt.xlabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
+plt.ylabel('Frequency (#)', fontsize=font_size, fontweight='bold')
 plt.yscale('log')
 plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 

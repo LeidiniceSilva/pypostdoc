@@ -86,7 +86,7 @@ fig, ax = plt.subplots()
 font_size = 10
 
 plt.hist([era5, regcm5], bins=10, color=['red', 'blue'], alpha=0.75, edgecolor='black', linewidth=1.5, label=['ERA5', 'RegCM5'])
-ax.set_xlabel('Pressure center hPa', fontsize=font_size, fontweight='bold')
+ax.set_xlabel('Central pressure hPa', fontsize=font_size, fontweight='bold')
 ax.set_ylabel('Frequency', fontsize=font_size, fontweight='bold')
 ax.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
 ax.spines[['right', 'top']].set_visible(False)
