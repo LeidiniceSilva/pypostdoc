@@ -27,7 +27,7 @@ path = '/marconi/home/userexternal/mdasilva'
 
 def import_obs(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v5/post/obs/{1}_freq_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, season)	
+	arq   = '{0}/user/mdasilva/SAM-3km_v5/post/obs/{1}_int_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, season)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -39,7 +39,7 @@ def import_obs(param, domain, dataset, season):
 		
 def import_rcm(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v5/post/rcm/{1}_freq_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, season)	
+	arq   = '{0}/user/mdasilva/SAM-3km_v5/post/rcm/{1}_int_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, season)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -97,8 +97,8 @@ mbe_sep = compute_mbe(regcm_sep, obs_sep)
 fig = plt.figure(figsize=(10, 7))   
 font_size = 8
 	
-levs = np.arange(-50, 55, 5)
-legend = 'Frequency (%)'
+levs = np.arange(-25, 28, 3)
+legend = 'Intensity (mm d$^-$$^1$)'
 
 ax = fig.add_subplot(3, 3, 1)
 map, xx, yy = basemap(lat, lon)
@@ -151,6 +151,6 @@ cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km_v5/figs'.format(path)
-name_out = 'pyplt_maps_bias_{0}_freq_{1}_RegCM5_{2}.png'.format(var, domain, dt)
+name_out = 'pyplt_maps_bias_{0}_int_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

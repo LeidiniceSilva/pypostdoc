@@ -29,7 +29,7 @@ def import_obs(param, domain, dataset, season):
 	else:
 		dt = '{0}_{1}-{2}'.format(season, idt, fdt)
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v5/post/obs/{1}_freq_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
+	arq   = '{0}/user/mdasilva/SAM-3km_v6/post/obs/{1}_freq_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -46,7 +46,7 @@ def import_rcm(param, domain, dataset, season):
 	else:
 		dt = '{0}_{1}-{2}'.format(season, idt, fdt)
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v5/post/rcm/{1}_freq_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
+	arq   = '{0}/user/mdasilva/SAM-3km_v6/post/rcm/{1}_freq_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -164,7 +164,7 @@ else:
 	cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km_v5/figs'.format(path)
+path_out = '{0}/user/mdasilva/SAM-3km_v6/figs'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
