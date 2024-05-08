@@ -71,6 +71,9 @@ def select_days(dataset, indices):
 		dataset_i.append(np.squeeze(dataset[idx_i,:,:]))
 	
 	dataset_ii = np.percentile(dataset_i, 95, axis=0)
+	print()
+	exit()
+	
 
 	return dataset_ii
 	
@@ -139,7 +142,7 @@ def import_obs(param):
 
 def import_sat(param):
 
-	arq   = '{0}/user/mdasilva/SAM-3km/figs/cyclone/precipitation_GPM-3BHHR_SAM-10km_day_20180101-20211231_lonlat.nc'.format(path)		
+	arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/obs/gpm/precipitation_GPM-3BHHR_SAM-10km_day_20180101-20211231_lonlat.nc'.format(path)		
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]	

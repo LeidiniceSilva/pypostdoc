@@ -128,10 +128,10 @@ def import_ws(param, indices):
 		data = arq[param]
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
 		var  = time.resample(time='1D').sum()
-		var  = time.values
+		var_ = var.values
 
 		for idx_i in indices:
-			mean.append(var[idx_i])
+			mean.append(var_[idx_i])
 																
 	return mean
 
@@ -167,7 +167,7 @@ def import_sat(param, indices):
 		
 		if station in skip_list:
 			continue
-		if inmet[station][2] >= -12:
+		if inmet[station][2] >= -11.25235:
 			continue
 
 		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_cyclone/obs/gpm/'.format(path) + 'precipitation_GPM-3BHHR_SAM-10km_day_20180101-20211231_lonlat.nc')
@@ -195,7 +195,7 @@ def import_rcm(param, indices):
 
 		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + 'pr_SAM-3km_RegCM5_day_2018-2021_lonlat.nc')
 		data   = arq[param]
-		latlon = data.sel(lat=slice(inmet[station][2]-0.06,inmet[station][2]+0.06),lon=slice(inmet[station][3]-0.06,inmet[station][3]+0.06)).mean(('lat','lon'))
+		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		time   = latlon.sel(time=slice('2018-01-01','2021-12-31'))
 		var    = time.values
 

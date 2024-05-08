@@ -40,14 +40,15 @@ def import_situ(param_i, param_ii, domain):
 		arq_i  = xr.open_dataset('{0}/OBS/WS-SA/INMET/nc/hourly/{1}/'.format(path, param_i) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param_i, inmet[station][0]))
 		data_i = arq_i[param_i]
 		time_i = data_i.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
-		var_i  = time_i.values*24
+		var_i  = time_i.resample(time='1D').sum()
+		var_i  = np.nanmean(var_i.values)
 		mean_i.append(var_i)
 
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_{1}_RegCM5_day_{2}_lonlat.nc'.format(param_ii, domain, dt))
-		data_ii = arq_ii[param_ii]
-		data_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
-		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
-		var_ii  = time_ii.values
+		arq_ii    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_{1}_RegCM5_day_{2}_lonlat.nc'.format(param_ii, domain, dt))
+		data_ii   = arq_ii[param_ii]
+		lonlat_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_ii   = lonlat_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
+		var_ii    = np.nanmean(time_ii.values)
 		mean_ii.append(var_ii)
 				
 	return zz, mean_i, mean_ii
