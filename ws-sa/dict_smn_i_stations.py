@@ -2,7 +2,7 @@
 
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
-__date__        = "Jun 16, 2023"
+__date__        = "Nov 20, 2023"
 __description__ = "Dictionary of the smn automatic station"
 
 """
@@ -19,17 +19,17 @@ Dictionary of the automatic weather station
          1: ['Aguapey',	-28,416682,	-56,542211]       
 """
 
-smn =          {1       :['Aguapey',	           -28.416682,	-56.542211],
-		2	:['Alto_Arapey',	   -27.416682,	-56.224017],
-		3	:['Alto_Cuareim',	   -26.416682,	-55.866233],
-		4	:['Alvear',	           -25.416682,	-56.555522],
-		5	:['Arapey_Chico',	   -24.416682,	-57.455900],
-		6	:['Arapey_Grande',	   -23.416682,	-57.485838],
-		7	:['Arapey_Grande_Ruta_4',  -22.416682,	-57.097101],
-		8	:['Arerunguá',	           -21.416682,	-56.618974],
-		9	:['Artigas',	           -20.416682,	-56.456119],
-		10	:['Baibene',	           -19.416682,	-58.165178],
-		11	:['Baltasar_Brum',	   -18.416682,	-57.325281],
+smn_i =        {1       :['Aguapey',	           -28.416682,	-56.542211],
+		2	:['Alto_Arapey',	   -31.206450,	-56.224017],
+		3	:['Alto_Cuareim',	   -31.061733,	-55.866233],
+		4	:['Alvear',	           -29.112957,	-56.555522],
+		5	:['Arapey_Chico',	   -30.949900,	-57.455900],
+		6	:['Arapey_Grande',	   -30.998200,	-57.485838],
+		7	:['Arapey_Grande_Ruta_4',  -31.231098,	-57.097101],
+		8	:['Arerunguá',	           -31.663054,	-56.618974],
+		9	:['Artigas',	           -30.392535,	-56.456119],
+		10	:['Baibene',	           -29.603600,	-58.165178],
+		11	:['Baltasar_Brum',	   -30.719082,	-57.325281],
 		12	:['Belén',	           -30.787252,	-57.783090],
 		13	:['Bernabé_Rivera',	   -30.299302,	-56.972142],
 		14	:['Bonpland',	           -29.819517,	-57.429814],

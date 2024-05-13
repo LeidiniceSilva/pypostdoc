@@ -12,11 +12,8 @@ import pandas as pd
 from netCDF4 import Dataset
 from dict_inmet_stations import inmet
 
-path = '/marconi/home/userexternal/mdasilva/OBS/BDMET/database'
 
-# choose variable: 2, 7, 8 and 21
-idx=2
-
+idx=2 # choose variable: 2, 7, 8 and 21
 if idx == 2:
 	nc_var = 'pre'
 	unit_var = 'mm'
@@ -37,6 +34,8 @@ else:
 	unit_var = 'm.s**-1'
 	name_var = 'Hourly mean of wind speed'
 	std_var = 'wind'
+
+path = '/marconi/home/userexternal/mdasilva/OBS/WS-SA'
 
 # create date list
 dt = pd.date_range('2018-01-01','2022-01-01', freq='H')
@@ -166,21 +165,21 @@ for station in range(1, 567):
 	# create netcdf
 	ds = Dataset(nc_output, mode='w', format='NETCDF4_CLASSIC')
 
-	ds.Conventions 	= 'CF-1.6'
-	ds.title 	= 'Automatic Weather stations.'
-	ds.institution 	= 'Instituto Nacional de Meteorologia, INMET.'
-	ds.source 	= 'INMET Meteorological Database.'
-	ds.history 	= 'Rewrote via python script.'
-	ds.references 	= 'https://bdmep.inmet.gov.br/.'
-	ds.comment 	= 'This script convert .csv to .nc of weather station'
+	ds.Conventions 	  = 'CF-1.6'
+	ds.title 	  = 'Automatic Weather stations.'
+	ds.institution 	  = 'Instituto Nacional de Meteorologia, INMET.'
+	ds.source 	  = 'INMET Meteorological Database.'
+	ds.history 	  = 'Rewrote via python script.'
+	ds.references 	  = 'https://bdmep.inmet.gov.br/.'
+	ds.comment 	  = 'This script convert .csv to .nc of weather station'
 		
 	ds.createDimension('time', None)
 
-	time 		= ds.createVariable('time', float, ('time'))
-	time.axis 	= 'L'
-	time.calendar 	= 'standard'
-	time.units	= 'Hours since {}'.format(data_dates[0])
-	time[:]		= range(len(data_dates))
+	time 		  = ds.createVariable('time', float, ('time'))
+	time.axis 	  = 'L'
+	time.calendar 	  = 'standard'
+	time.units	  = 'Hours since {}'.format(data_dates[0])
+	time[:]		  = range(len(data_dates))
 
 	var 		  = ds.createVariable(nc_var,  float, ('time'))
 	var.units 	  = unit_var

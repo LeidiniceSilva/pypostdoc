@@ -13,21 +13,17 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
 from dict_inmet_stations import inmet
-from dict_smn_stations import smn
+from dict_smn_i_stations import smn_i
+from dict_smn_ii_stations import smn_ii
 from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
 
 var = 'pr'
 domain = 'SAM-3km'
-idt, fdt = '2018', '2018'
+idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
 
 path = '/marconi/home/userexternal/mdasilva'
-
-skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
-149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
-303,305,306,308,319,334,335,341,343,359,362,364,384,393,396,398,399,400,402,413,416,417,422,423,426,427,
-443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]
 	
 	
 def import_situ_i(param_i, param_ii, domain, dataset):
@@ -35,11 +31,19 @@ def import_situ_i(param_i, param_ii, domain, dataset):
 	yy, xx = [], []
 	mean_i, mean_ii = [], []
 	
+	skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
+	149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
+	303,305,306,308,319,334,335,341,343,359,362,364,384,393,396,398,399,400,402,413,416,417,422,423,426,427,
+	443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]
+	
 	for station in range(1, 567):
+		print(station, inmet[station][1])
+		
 		if station in skip_list:
 			continue
 		if inmet[station][2] >= -11.25235:
 			continue
+			
 		yy.append(inmet[station][2])
 		xx.append(inmet[station][3])
 
@@ -53,7 +57,7 @@ def import_situ_i(param_i, param_ii, domain, dataset):
 		else:
 			mean_i.append(var_i.values)
 
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km_v6/post/rcm/'.format(path) + '{0}_{1}_{2}_mon_{3}_lonlat.nc'.format(param_ii, domain, dataset, dt))
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_{1}_{2}_mon_{3}_lonlat.nc'.format(param_ii, domain, dataset, dt))
 		data_ii = arq_ii[param_ii]
 		data_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
@@ -69,28 +73,62 @@ def import_situ_ii(param_i, param_ii, domain, dataset):
 	mean_i, mean_ii = [], []
 	
 	for station in range(1, 73):
-		yy.append(smn[station][1])
-		xx.append(smn[station][2])
+		print(station, smn_i[station][0])
 
-		arq_i  = xr.open_dataset('{0}/OBS/WS-SA/SMN/nc/'.format(path, param_i) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param_i, smn[station][0]))
+		yy.append(smn_i[station][1])
+		xx.append(smn_i[station][2])
+
+		arq_i  = xr.open_dataset('{0}/OBS/WS-SA/SMN/hourly/nc/'.format(path) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param_i, smn_i[station][0]))
 		data_i = arq_i[param_i]
 		time_i = data_i.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_i  = time_i.groupby('time.season').mean(dim='time')
 		mean_i.append(var_i.values*24)
 
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km_v6/post/rcm/'.format(path) + '{0}_{1}_{2}_mon_{3}_lonlat.nc'.format(param_ii, domain, dataset, dt))
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_{1}_{2}_mon_{3}_lonlat.nc'.format(param_ii, domain, dataset, dt))
 		data_ii = arq_ii[param_ii]
-		data_ii = data_ii.sel(lat=slice(smn[station][1]-0.03,smn[station][1]+0.03),lon=slice(smn[station][2]-0.03,smn[station][2]+0.03)).mean(('lat','lon'))
+		data_ii = data_ii.sel(lat=slice(smn_i[station][1]-0.03,smn_i[station][1]+0.03),lon=slice(smn_i[station][2]-0.03,smn_i[station][2]+0.03)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_ii  = time_ii.groupby('time.season').mean(dim='time')
 		mean_ii.append(var_ii.values)
 		
 	return yy, xx, mean_i, mean_ii
 	
+
+def import_situ_iii(param_i, param_ii, domain, dataset):
+	
+	yy, xx = [], []
+	mean_i, mean_ii = [], []
+
+	skip_list = (86,87,88,89,90,91,95,96,97,98,100,101,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128)	
 		
+	for station in range(1, 129):
+		print(station, smn_ii[station][0])
+
+		if station in skip_list:
+			continue
+													
+		yy.append(smn_ii[station][1])
+		xx.append(smn_ii[station][2])
+
+		arq_i  = xr.open_dataset('{0}/OBS/WS-SA/SMN/daily/nc/{1}/'.format(path, param_i) + '{0}_{1}_D_1979-01-01_2021-12-31.nc'.format(param_i, smn_ii[station][0]))
+		data_i = arq_i[param_i]
+		time_i = data_i.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
+		var_i  = time_i.groupby('time.season').mean(dim='time')
+		mean_i.append(var_i.values)
+
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_{1}_{2}_mon_{3}_lonlat.nc'.format(param_ii, domain, dataset, dt))
+		data_ii = arq_ii[param_ii]
+		data_ii = data_ii.sel(lat=slice(smn_ii[station][1]-0.03,smn_ii[station][1]+0.03),lon=slice(smn_ii[station][2]-0.03,smn_ii[station][2]+0.03)).mean(('lat','lon'))
+		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
+		var_ii  = time_ii.groupby('time.season').mean(dim='time')
+		mean_ii.append(var_ii.values)
+		
+	return yy, xx, mean_i, mean_ii
+	
+			
 def import_obs(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v6/post/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -102,7 +140,7 @@ def import_obs(param, domain, dataset, season):
 
 def import_rcm(param, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km_v6/post/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -136,16 +174,17 @@ dict_var = {
 }
 
 if var == 'pr':
-	lat_i, lon_i, inmet_i, regcm_i = import_situ_i(dict_var[var][0], var, domain, 'RegCM5')
-	lat_ii, lon_ii, smn_ii, regcm_ii = import_situ_ii(dict_var[var][0], var, domain, 'RegCM5')
+	lat_i, lon_i, inmet_v1, regcm_v1 = import_situ_i(dict_var[var][0], var, domain, 'RegCM5')
+	lat_ii, lon_ii, smn_v2, regcm_v2 = import_situ_ii(dict_var[var][0], var, domain, 'RegCM5')
+	lat_iii, lon_iii, smn_v3, regcm_v3 = import_situ_iii(dict_var[var][0], var, domain, 'RegCM5')
 
-	lat_yy = lat_i + lat_ii 
-	lon_xx = lon_i + lon_ii
-	inmet_smn = inmet_i + smn_ii
-	regcm_latlon = regcm_i + regcm_ii
+	lat_yy = lat_i + lat_ii + lat_iii
+	lon_xx = lon_i + lon_ii + lon_iii
+	inmet_smn = inmet_v1 + smn_v2 + smn_v3
+	regcm_latlon = regcm_v1 + regcm_v2 + regcm_v3
 
 	mbe_djf_regcm_inmet_smn, mbe_mam_regcm_inmet_smn, mbe_jja_regcm_inmet_smn, mbe_son_regcm_inmet_smn = [], [], [], []
-	for i in range(0, 370):
+	for i in range(0, len(regcm_latlon)):
 		mbe_djf_regcm_inmet_smn.append(compute_mbe(regcm_latlon[i][0], inmet_smn[i][0]))
 		mbe_mam_regcm_inmet_smn.append(compute_mbe(regcm_latlon[i][2], inmet_smn[i][2]))
 		mbe_jja_regcm_inmet_smn.append(compute_mbe(regcm_latlon[i][1], inmet_smn[i][1]))
@@ -665,7 +704,7 @@ else:
 	cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km_v6/figs'.format(path)
+path_out = '{0}/user/mdasilva/SAM-3km/figs/evaluate'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
