@@ -122,7 +122,7 @@ print()
 z = linkage(df, method='ward', metric='euclidean')
 
 # Agglomerative clustering
-Agg_hc = AgglomerativeClustering(n_clusters=4, affinity='euclidean', linkage='ward')
+Agg_hc = AgglomerativeClustering(n_clusters=5, affinity='euclidean', linkage='ward')
 y_hc = Agg_hc.fit_predict(df)
 print(y_hc)
 print(len(y_hc))
