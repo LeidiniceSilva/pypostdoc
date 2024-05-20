@@ -136,7 +136,7 @@ plt.ylabel('Euclidean distances', fontsize=20)
 
 # Path out to save figure
 path_out = '{0}/figs/figs_v2'.format(path)
-name_out = 'pyplt_dendrogram_stations_sam.png'
+name_out = 'pyplt_dendrogram_stations_sam_v2.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
