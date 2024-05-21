@@ -55,15 +55,15 @@ my_map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.forma
 
 my_map.plot(ix, iy, 'o', color='blue', label='INMET', markersize=2)
 my_map.plot(jx, jy, 'o', color='gray', label='SMN', markersize=2)
-my_map.plot(kx, ky, 'o', color='gray', label='SMN', markersize=2)
+my_map.plot(kx, ky, 'o', color='gray', markersize=2)
 
-plt.title('(a) SAM weather stations', loc='left', fontsize=font_size, fontweight='bold')
+plt.title('(a) CSAM weather stations', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=font_size, fontweight='bold')
 plt.ylabel(u'Latitude', labelpad=30, fontsize=font_size, fontweight='bold')
 plt.text(-36, -57, u'\u25B2 \nN', fontsize=font_size, fontweight='bold')
 plt.legend(loc=1, fontsize=font_size)
 
-# SESA
+# CSAM
 a1,b1 = (-78,-35)
 a2,b2 = (-78,-11)
 a3,b3 = (-35,-11)
@@ -81,12 +81,11 @@ sc = my_map.scatter(ix, iy, 4, iz, cmap='jet', label='INMET', marker='o')
 plt.title('(b)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=font_size, fontweight='bold')
 plt.text(-36, -57, u'\u25B2 \nN', fontsize=font_size, fontweight='bold')
-plt.legend(loc=1, fontsize=10)
 cbar = plt.colorbar(sc, cax=fig.add_axes([0.91, 0.25, 0.015, 0.50]), extend='max')
 cbar.set_label('Altimetry (meters)', fontsize=10, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 
-# SESA
+# CSAM
 a1,b1 = (-78,-35)
 a2,b2 = (-78,-11)
 a3,b3 = (-35,-11)
@@ -95,7 +94,7 @@ poly1 = Polygon([(a1,b1),(a2,b2),(a3,b3),(a4,b4)], facecolor='none', edgecolor='
 plt.gca().add_patch(poly1)
 
 # Path out to save figure
-path_out = '{0}/OBS/WS-SA/figs/figs_v2'.format(path)
+path_out = '{0}/user/mdasilva/WS-SA/figs/figs_v2'.format(path)
 name_out = 'pyplt_maps_stations_sam.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
