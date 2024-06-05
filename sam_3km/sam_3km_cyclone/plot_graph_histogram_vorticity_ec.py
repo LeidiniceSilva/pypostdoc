@@ -56,9 +56,14 @@ def open_dat_file(dataset):
 		data = read_dat_file('{0}/ECyclone_{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 	
 		rows_list = []
-		rows_list_i = []
+		header_list = []
 		for i, (header, rows) in enumerate(data):
 			rows_list.append(rows[0])
+			header_list.append(header[0])
+	
+			
+			print(header_list)
+			exit()
 		
 		for j  in rows_list:
 			vo.append(float(j[3]))
