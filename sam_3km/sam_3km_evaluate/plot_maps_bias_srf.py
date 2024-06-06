@@ -18,7 +18,7 @@ from dict_smn_ii_stations import smn_ii
 from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
 
-var = 'pr'
+var = 'tasmax'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)

@@ -12,7 +12,7 @@ import numpy as np
 
 from datetime import datetime, timedelta
 
-dataset = 'ERA5'
+dataset = 'RegCM5'
 iyr, fyr = 2018, 2021
 path='/marconi/home/userexternal/mdasilva'
 
@@ -47,9 +47,7 @@ def read_dat_file(filename):
 	# Iterate over lines in the file
 	for line in lines:
 		line = line.strip().split()
-		print(line)
-		exit()
-		
+				
 		# If the line contains 6 elements, it's considered a header
 		if len(line) == 6:
 			

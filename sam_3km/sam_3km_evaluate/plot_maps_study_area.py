@@ -18,8 +18,8 @@ from matplotlib.patches import PathPatch
 from mpl_toolkits.basemap import Basemap, cm
 
 # Specify directories 
-#dirnc = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/input'
-dirnc = '/marconi/home/userexternal/mdasilva/user/mdasilva/test/input'
+dirnc = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/input'
+#dirnc = '/marconi/home/userexternal/mdasilva/user/mdasilva/test/input'
 
 domname = 'SAM-3km'
 
@@ -73,39 +73,40 @@ cs_gray = my_map.contourf(xx, yy, border_mask, cmap='gray', levels=[0, 1])
 im = my_map.contourf(x_mod, y_mod, topo, np.arange(0, 3050, 50), cmap=plt.cm.terrain, extend='max')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=font_size, fontweight='bold')
 plt.ylabel(u'Latitude', labelpad=30, fontsize=font_size, fontweight='bold')
-plt.text(-56, -39, u'SESA', color='red', fontsize=font_size, fontweight='bold')
 plt.text(-36, 11, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
+#plt.text(-56, -39, u'SESA', color='red', fontsize=font_size, fontweight='bold')
 
-my_map.plot(-40.3385,-20.3197,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Vitoria
-my_map.plot(-43.9409,-19.9129,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Belo Horizonte
-my_map.plot(-54.6464,-20.4428,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Campo Grande
-my_map.plot(-56.0926,-15.5954,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Goiania
-my_map.plot(-46.6252,-23.5337,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Sao Paulo
-my_map.plot(-43.1729,-22.9068,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Rio de Janeiro
-my_map.plot(-49.2700,-25.4372,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Curitiba
-my_map.plot(-48.5569,-27.5948,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Florianolopis
-my_map.plot(-51.2090,-30.0368,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Porto Alegre
-my_map.plot(-56.1674,-34.8335,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Montevideo
-my_map.plot(-57.5759,-25.2637,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Asuncion
-my_map.plot(-58.4004,-34.6051,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Buenos Aires
-my_map.plot(-68.1193,-16.4897,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # La Paz
-my_map.plot(-70.6693,-33.4489,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Santiago
+#my_map.plot(-40.3385,-20.3197,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Vitoria
+#my_map.plot(-43.9409,-19.9129,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Belo Horizonte
+#my_map.plot(-54.6464,-20.4428,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Campo Grande
+#my_map.plot(-56.0926,-15.5954,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Goiania
+#my_map.plot(-46.6252,-23.5337,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Sao Paulo
+#my_map.plot(-43.1729,-22.9068,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Rio de Janeiro
+#my_map.plot(-49.2700,-25.4372,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Curitiba
+#my_map.plot(-48.5569,-27.5948,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Florianolopis
+#my_map.plot(-51.2090,-30.0368,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Porto Alegre
+#my_map.plot(-56.1674,-34.8335,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Montevideo
+#my_map.plot(-57.5759,-25.2637,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Asuncion
+#my_map.plot(-58.4004,-34.6051,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Buenos Aires
+#my_map.plot(-68.1193,-16.4897,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # La Paz
+#my_map.plot(-70.6693,-33.4489,'o',ms=3,markeredgewidth=0.75,color='white',mec='black') # Santiago
 
 # SESA
-c1,d1 = (-65,-35.5)
-c2,d2 = (-65,-24)
-c3,d3 = (-52,-24)
-c4,d4 = (-52,-35.5)
-poly2 = Polygon([(c1,d1),(c2,d2),(c3,d3),(c4,d4)], facecolor='none', edgecolor='red', linewidth=1.)
-plt.gca().add_patch(poly2)
+#c1,d1 = (-65,-35.5)
+#c2,d2 = (-65,-24)
+#c3,d3 = (-52,-24)
+#c4,d4 = (-52,-35.5)
+#poly2 = Polygon([(c1,d1),(c2,d2),(c3,d3),(c4,d4)], facecolor='none', edgecolor='red', linewidth=1.)
+#plt.gca().add_patch(poly2)
 
 cbar = fig.colorbar(im, cax=fig.add_axes([0.82, 0.2, 0.026, 0.6]), drawedges=True, fraction=0.030, pad=0.04, aspect=20)
 cbar.set_label('Topography (meters)', fontsize=font_size, fontweight='bold')
 
 # Path out to save figure
 #path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/figs/evaluate'
-path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/test/figs'
-name_out = 'pyplt_maps_study_area_SAM-3km_RegCM5_2018-2021.png'
+#path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/test/figs'
+path_out = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/figs/cyclone'
+name_out = 'pyplt_maps_study_area_RegCM5_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

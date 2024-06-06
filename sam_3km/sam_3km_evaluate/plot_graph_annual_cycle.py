@@ -144,7 +144,7 @@ def import_situ_iii():
 		yy=smn_ii[station][1]
 		xx=smn_ii[station][2]
 		
-		arq_i  = xr.open_dataset('{0}/OBS/WS-SA/SMN/daily/nc/{1}/'.format(path, param_i) + 'pre_{0}_D_1979-01-01_2021-12-31.nc'.format(smn_ii[station][0]))
+		arq_i  = xr.open_dataset('{0}/OBS/WS-SA/SMN/daily/nc/pre/'.format(path) + 'pre_{0}_D_1979-01-01_2021-12-31.nc'.format(smn_ii[station][0]))
 		data_i = arq_i['pre']
 		time_i = data_i.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_i  = time_i.groupby('time.month').mean('time')
