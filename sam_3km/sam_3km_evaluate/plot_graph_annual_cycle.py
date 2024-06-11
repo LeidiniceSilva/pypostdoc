@@ -184,14 +184,31 @@ def import_situ_iii():
 
 # Import model and obs dataset
 clim_i_x, clim_ii_x, clim_iii_x, clim_iv_x, clim_v_x = import_situ_i()			
-#clim_i_y, clim_ii_y, clim_iii_y, clim_iv_y, clim_v_y = import_situ_ii()			
-#clim_i_z, clim_ii_z, clim_iii_z, clim_iv_z, clim_v_z = import_situ_iii()			
+clim_i_y, clim_ii_y, clim_iii_y, clim_iv_y, clim_v_y = import_situ_ii()			
+clim_i_z, clim_ii_z, clim_iii_z, clim_iv_z, clim_v_z = import_situ_iii()			
 
 inmet_smn = clim_i_x 
-#cru = clim_ii_x 
-#cpc = clim_iii_x 
-#era5 = clim_iv_x 
-#regcm5 = clim_v_x 
+cru = clim_ii_x 
+cpc = clim_iii_x 
+era5 = clim_iv_x 
+regcm5 = clim_v_x 
+
+inmet_smn_ = clim_i_y + clim_i_z
+cru_ = clim_ii_y + clim_ii_z
+cpc_ = clim_iii_y + clim_iii_z 
+era5_ = clim_iv_y + clim_iv_z 
+regcm5_ = clim_v_y + clim_v_z 
+
+print(inmet_smn_)
+print()
+print(cru_)
+print()
+print(cpc_)
+print()
+print(era5_)
+print()
+print(regcm5_)
+print()
 
 list_hc = [2, 3, 2, 3, 2, 2, 3, 0, 1, 3, 2, 3, 3, 4, 1, 2, 3, 1, 0, 3, 0, 0, 3, 3, 2, 2, 2, 2, 3, 1, 1, 0, 1, 2, 3, 3, 
 1, 1, 2, 2, 0, 0, 3, 1, 3, 3, 0, 0, 2, 3, 0, 2, 3, 2, 2, 0, 0, 2, 3, 4, 2, 3, 2, 1, 3, 0, 0, 1, 3, 4, 3, 2, 2, 3, 1, 0, 
@@ -280,17 +297,34 @@ cpc_c_iv   = np.nanmean(cpc_iv, axis=0)
 era5_c_iv  = np.nanmean(era5_iv, axis=0)
 regcm_c_iv = np.nanmean(regcm_iv, axis=0)
 
+inmet_c_ii_iii_iv = np.nanmean([inmet_c_ii, inmet_c_iii, inmet_c_iv], axis=0)
+cru_c_ii_iii_iv   = np.nanmean([cru_c_ii,   cru_c_iii,   cru_c_iv], axis=0)
+cpc_c_ii_iii_iv   = np.nanmean([cpc_c_ii,   cpc_c_iii,   cpc_c_iv], axis=0)
+era5_c_ii_iii_iv  = np.nanmean([era5_c_ii,  era5_c_iii,  era5_c_iv], axis=0)
+regcm_c_ii_iii_iv = np.nanmean([regcm_c_ii, regcm_c_iii, regcm_c_iv], axis=0)
+
 inmet_c_v = np.nanmean(inmet_v, axis=0)
 cru_c_v   = np.nanmean(cru_v, axis=0)
 cpc_c_v   = np.nanmean(cpc_v, axis=0)
 era5_c_v  = np.nanmean(era5_v, axis=0)
 regcm_c_v = np.nanmean(regcm_v, axis=0)
 
-inmet_c_ii_iii_iv = np.nanmean([inmet_c_ii, inmet_c_iii, inmet_c_iv], axis=0)
-cru_c_ii_iii_iv   = np.nanmean([cru_c_ii,   cru_c_iii,   cru_c_iv], axis=0)
-cpc_c_ii_iii_iv   = np.nanmean([cpc_c_ii,   cpc_c_iii,   cpc_c_iv], axis=0)
-era5_c_ii_iii_iv  = np.nanmean([era5_c_ii,  era5_c_iii,  era5_c_iv], axis=0)
-regcm_c_ii_iii_iv = np.nanmean([regcm_c_ii, regcm_c_iii, regcm_c_iv], axis=0)
+inmet_c_vi = np.nanmean(inmet_smn_, axis=0)
+cru_c_vi   = np.nanmean(cru_, axis=0)
+cpc_c_vi   = np.nanmean(cpc_, axis=0)
+era5_c_vi  = np.nanmean(era5_, axis=0)
+regcm_c_vi = np.nanmean(regcm5_, axis=0)
+
+print(inmet_c_vi)
+print()
+print(cru_c_vi)
+print()
+print(cpc_c_vi)
+print()
+print(era5_c_vi)
+print()
+print(regcm_c_vi)
+print()
 
 # Plot figure
 fig = plt.figure(figsize=(8, 6))
@@ -303,12 +337,13 @@ plt.plot(time, cru_c_i,   linewidth=1., color='red',  markersize=2, markerfaceco
 plt.plot(time, cpc_c_i,   linewidth=1., color='magenta', markersize=2, markerfacecolor='white', marker='*', label='CPC')
 plt.plot(time, era5_c_i,  linewidth=1., color='green', markersize=2, markerfacecolor='white', marker='s', label='ERA5')
 plt.plot(time, regcm_c_i, linewidth=1., color='black',   markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
+plt.ylabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.title('(a) Cluster I', loc='left', fontsize=font_size, fontweight='bold')
 plt.ylim(0, 10)
 plt.yticks(np.arange(0, 11, 1), fontsize=font_size)
 plt.xticks(time, ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), fontsize=font_size)
 plt.grid(linestyle='--')
-plt.legend(loc=1, ncol=3, fontsize=font_size, shadow=True)
+plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
 ax = fig.add_subplot(2, 2, 2)
 plt.plot(time, inmet_c_ii_iii_iv, linewidth=1., color='blue',   markersize=2, markerfacecolor='white', marker='^', label='INMET+SMN')
@@ -317,7 +352,6 @@ plt.plot(time, cpc_c_ii_iii_iv,   linewidth=1., color='magenta', markersize=2, m
 plt.plot(time, era5_c_ii_iii_iv,  linewidth=1., color='green', markersize=2, markerfacecolor='white', marker='s', label='ERA5')
 plt.plot(time, regcm_c_ii_iii_iv, linewidth=1., color='black',  markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
 plt.title('(b) Cluster II-III-IV', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.ylim(0, 12)
 plt.yticks(np.arange(0, 13, 1), fontsize=font_size)
 plt.xticks(time, ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), fontsize=font_size)
@@ -331,17 +365,18 @@ plt.plot(time, era5_c_v,  linewidth=1., color='green', markersize=2, markerfacec
 plt.plot(time, regcm_c_v, linewidth=1., color='black',   markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
 plt.title('(c) Cluster V', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('Months', fontsize=font_size, fontweight='bold')
+plt.ylabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.ylim(0, 8)
 plt.yticks(np.arange(0, 9, 1), fontsize=font_size)
 plt.xticks(time, ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'), fontsize=font_size)
 plt.grid(linestyle='--')
 
 ax = fig.add_subplot(2, 2, 4)
-plt.plot(time, inmet_c_v, linewidth=1., color='blue',   markersize=2, markerfacecolor='white', marker='^', label='INMET+SMN')
-plt.plot(time, cru_c_v,   linewidth=1., color='red',  markersize=2, markerfacecolor='white', marker='+', label='CRU')
-plt.plot(time, cpc_c_v,   linewidth=1., color='magenta', markersize=2, markerfacecolor='white', marker='*', label='CPC')
-plt.plot(time, era5_c_v,  linewidth=1., color='green', markersize=2, markerfacecolor='white', marker='s', label='ERA5')
-plt.plot(time, regcm_c_v, linewidth=1., color='black',   markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
+plt.plot(time, inmet_c_vi, linewidth=1., color='blue',   markersize=2, markerfacecolor='white', marker='^', label='INMET+SMN')
+plt.plot(time, cru_c_vi,   linewidth=1., color='red',  markersize=2, markerfacecolor='white', marker='+', label='CRU')
+plt.plot(time, cpc_c_vi,   linewidth=1., color='magenta', markersize=2, markerfacecolor='white', marker='*', label='CPC')
+plt.plot(time, era5_c_vi,  linewidth=1., color='green', markersize=2, markerfacecolor='white', marker='s', label='ERA5')
+plt.plot(time, regcm_c_vi, linewidth=1., color='black',   markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
 plt.title('(d) Cluster VI', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('Months', fontsize=font_size, fontweight='bold')
 plt.ylim(0, 8)
