@@ -202,9 +202,9 @@ plt.plot(time, era5_c_i,  linewidth=1., color='green', markersize=2, markerfacec
 plt.plot(time, regcm_c_i, linewidth=1., color='black', markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
 plt.ylabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.title('(a) Cluster I', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylim(0, 0.2)
+plt.ylim(0.04, 0.24)
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.yticks(np.arange(0, 0.21, 0.01), fontsize=font_size)
+plt.yticks(np.arange(0.04, 0.25, 0.01), fontsize=font_size)
 plt.grid(linestyle='--')
 plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
@@ -213,9 +213,9 @@ plt.plot(time, inmet_c_ii_iii_iv, linewidth=1., color='blue',  markersize=2, mar
 plt.plot(time, era5_c_ii_iii_iv,  linewidth=1., color='green', markersize=2, markerfacecolor='white', marker='s', label='ERA5')
 plt.plot(time, regcm_c_ii_iii_iv, linewidth=1., color='black', markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
 plt.title('(b) Cluster II-III-IV', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylim(0, 0.2)
+plt.ylim(0.04, 0.24)
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.yticks(np.arange(0, 0.21, 0.01), fontsize=font_size)
+plt.yticks(np.arange(0.04, 0.25, 0.01), fontsize=font_size)
 plt.grid(linestyle='--')
 
 ax = fig.add_subplot(2, 2, 3)
@@ -225,9 +225,9 @@ plt.plot(time, regcm_c_v, linewidth=1., color='black', markersize=2, markerfacec
 plt.title('(c) Cluster V', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('Hours', fontsize=font_size, fontweight='bold')
 plt.ylabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='bold')
-plt.ylim(0, 0.2)
+plt.ylim(0.04, 0.24)
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.yticks(np.arange(0, 0.21, 0.01), fontsize=font_size)
+plt.yticks(np.arange(0.04, 0.25, 0.01), fontsize=font_size)
 plt.grid(linestyle='--')
 
 ax = fig.add_subplot(2, 2, 4)
@@ -236,9 +236,9 @@ plt.plot(time, era5_c_vi,  linewidth=1., color='green', markersize=2, markerface
 plt.plot(time, regcm_c_vi, linewidth=1., color='black', markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
 plt.title('(d) Cluster VI', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('Hours', fontsize=font_size, fontweight='bold')
-plt.ylim(0, 0.2)
+plt.ylim(0.04, 0.24)
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.yticks(np.arange(0, 0.21, 0.01), fontsize=font_size)
+plt.yticks(np.arange(0.04, 0.25, 0.01), fontsize=font_size)
 plt.grid(linestyle='--')
 
 # Path out to save figure
