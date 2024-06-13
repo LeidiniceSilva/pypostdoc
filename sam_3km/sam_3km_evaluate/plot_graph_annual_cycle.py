@@ -315,17 +315,6 @@ cpc_c_vi   = np.nanmean(cpc_, axis=0)
 era5_c_vi  = np.nanmean(era5_, axis=0)
 regcm_c_vi = np.nanmean(regcm5_, axis=0)
 
-print(inmet_c_vi)
-print()
-print(cru_c_vi)
-print()
-print(cpc_c_vi)
-print()
-print(era5_c_vi)
-print()
-print(regcm_c_vi)
-print()
-
 # Plot figure
 fig = plt.figure(figsize=(8, 6))
 time = np.arange(0.5, 12 + 0.5)

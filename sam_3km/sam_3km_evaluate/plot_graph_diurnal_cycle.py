@@ -206,7 +206,7 @@ plt.ylim(0.04, 0.24)
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
 plt.yticks(np.arange(0.04, 0.25, 0.01), fontsize=font_size)
 plt.grid(linestyle='--')
-plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
+plt.legend(loc=4, ncol=2, fontsize=font_size, shadow=True)
 
 ax = fig.add_subplot(2, 2, 2)
 plt.plot(time, inmet_c_ii_iii_iv, linewidth=1., color='blue',  markersize=2, markerfacecolor='white', marker='^', label='INMET+SMN')
