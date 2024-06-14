@@ -23,7 +23,7 @@ path = '/marconi/home/userexternal/mdasilva'
 			
 def import_obs(param, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/obs/obs_v2/{1}_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt) 
+	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/obs/{1}_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt) 
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -68,6 +68,7 @@ lat, lon, mswep_jan = import_obs(dict_var[var][1], 'MSWEP')
 lat, lon, cpc_jan = import_obs(dict_var[var][2], 'CPC')
 lat, lon, wdm7_jan_v1 = import_rcm('wdm7-Europe_v1', var, 'RegCM5')
 lat, lon, wdm7_jan_v2 = import_rcm('wdm7-Europe_v2', var, 'RegCM5')
+lat, lon, wdm7_jan_v3 = import_rcm('wdm7-Europe_v3', var, 'RegCM5')
 
 # Plot figure
 fig = plt.figure(figsize=(10, 4))
@@ -101,6 +102,11 @@ map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, wdm7_jan_v2, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 plt.title(u'(e) WDM7_v2 Jan', loc='left', fontsize=font_size, fontweight='bold')
 
+ax = fig.add_subplot(2, 3, 6)  
+map, xx, yy = basemap(lat, lon)
+plt_map = map.contourf(xx, yy, wdm7_jan_v3, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+plt.title(u'(f) WDM7_v2 Jan', loc='left', fontsize=font_size, fontweight='bold')
+
 # Set colobar
 cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.01, 0.4]))
 cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
@@ -108,7 +114,7 @@ cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
 path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
-name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_WDM7_v1-v2_{2}.png'.format(var, domain, dt)
+name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_WDM7_v1-v2-v3_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

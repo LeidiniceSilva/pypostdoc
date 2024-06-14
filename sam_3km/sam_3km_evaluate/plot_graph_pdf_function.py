@@ -58,12 +58,12 @@ def import_situ_i():
 		var_i  = time_i.resample(time='1D').sum()
 		mean_i.append(var_i.values)
 
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_CPC_{1}_lonlat.nc'.format(domain, dt))
-		data_ii = arq_ii['tp']
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'precip_{0}_CPC_{1}_lonlat.nc'.format(domain, dt))
+		data_ii = arq_ii['precip']
 		data_ii = data_ii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_ii  = time_ii.values
-		mean_ii.append(var_ii.values)
+		mean_ii.append(var_ii)
 			
 		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_{1}_lonlat.nc'.format(domain, dt))
 		data_iii = arq_iii['tp']
@@ -98,12 +98,12 @@ def import_situ_ii():
 		var_i  = time_i.resample(time='1D').sum()
 		mean_i.append(var_i.values)
 		
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_CPC_{1}_lonlat.nc'.format(domain, dt))
-		data_ii = arq_ii['tp']
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'precip_{0}_CPC_{1}_lonlat.nc'.format(domain, dt))
+		data_ii = arq_ii['precip']
 		data_ii = data_ii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_ii  = time_ii.values
-		mean_ii.append(var_ii.values)
+		mean_ii.append(var_ii)
 			
 		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_{1}_lonlat.nc'.format(domain, dt))
 		data_iii = arq_iii['tp']
@@ -144,12 +144,12 @@ def import_situ_iii():
 		var_i  = time_i.values
 		mean_i.append(var_i)
 
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_CPC_{1}_lonlat.nc'.format(domain, dt))
-		data_ii = arq_ii['tp']
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'precip_{0}_CPC_{1}_lonlat.nc'.format(domain, dt))
+		data_ii = arq_ii['precip']
 		data_ii = data_ii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_ii  = time_ii.values
-		mean_ii.append(var_ii.values)
+		mean_ii.append(var_ii)
 			
 		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_{1}_lonlat.nc'.format(domain, dt))
 		data_iii = arq_iii['tp']
@@ -174,14 +174,14 @@ clim_i_y, clim_ii_y, clim_iii_y, clim_iv_y = import_situ_ii()
 clim_i_z, clim_ii_z, clim_iii_z, clim_iv_z = import_situ_iii()			
 
 inmet_smn = clim_i_x 
-cpc = clim_iii_x 
-era5 = clim_iv_x 
-regcm5 = clim_v_x 
+cpc = clim_ii_x 
+era5 = clim_iii_x 
+regcm5 = clim_iv_x 
 
 inmet_smn_ = clim_i_y + clim_i_z
-cpc_ = clim_iii_y + clim_iii_z
-era5_ = clim_iv_y + clim_iv_z
-regcm5_ = clim_v_y + clim_v_z 
+cpc_ = clim_ii_y + clim_ii_z
+era5_ = clim_iii_y + clim_iii_z
+regcm5_ = clim_iv_y + clim_iv_z 
 
 list_hc = [2, 3, 2, 3, 2, 2, 3, 0, 1, 3, 2, 3, 3, 4, 1, 2, 3, 1, 0, 3, 0, 0, 3, 3, 2, 2, 2, 2, 3, 1, 1, 0, 1, 2, 3, 3, 
 1, 1, 2, 2, 0, 0, 3, 1, 3, 3, 0, 0, 2, 3, 0, 2, 3, 2, 2, 0, 0, 2, 3, 4, 2, 3, 2, 1, 3, 0, 0, 1, 3, 4, 3, 2, 2, 3, 1, 0, 
@@ -240,40 +240,64 @@ for c_v in count_v:
 	era5_v.append(era5[c_v])
 	regcm5_v.append(regcm5[c_v])
 
-inmet_c_i = np.array(inmet_i.flatten())
-cpc_c_i = np.array(cpc_i.flatten())
-era5_c_i = np.array(era5_i.flatten())
-regcm5_c_i = np.array(regcm5_i.flatten()) 
+inmet_c_i = inmet_i.flatten()
+inmet_c_i = np.array(inmet_c_i)
+cpc_c_i = cpc_i.flatten()
+cpc_c_i = np.array(cpc_c_i)
+era5_c_i = era5_i.flatten()
+era5_c_i = np.array(era5_c_i)
+regcm5_c_i = regcm5_i.flatten()
+regcm5_c_i = np.array(regcm5_c_i)
 
-inmet_c_ii = np.array(inmet_ii.flatten())
-cpc_c_ii = np.array(cpc_ii.flatten())
-era5_c_ii = np.array(era5_ii.flatten())
-regcm5_c_ii = np.array(regcm5_ii.flatten()) 
+inmet_c_ii = inmet_ii.flatten()
+inmet_c_ii = np.array(inmet_c_ii)
+cpc_c_ii = cpc_ii.flatten()
+cpc_c_ii = np.array(cpc_c_ii)
+era5_c_ii = era5_ii.flatten()
+era5_c_ii = np.array(era5_c_ii)
+regcm5_c_ii = regcm5_ii.flatten()
+regcm5_c_ii = np.array(regcm5_c_ii)
 
-inmet_c_iii = np.array(inmet_iii.flatten())
-cpc_c_iii = np.array(cpc_iii.flatten())
-era5_c_iii = np.array(era5_iii.flatten())
-regcm5_c_iii = np.array(regcm5_iii.flatten()) 
+inmet_c_iii = inmet_iii.flatten()
+inmet_c_iii = np.array(inmet_c_iii)
+cpc_c_iii = cpc_iii.flatten()
+cpc_c_iii = np.array(cpc_c_iii)
+era5_c_iii = era5_iii.flatten()
+era5_c_iii = np.array(era5_c_iii)
+regcm5_c_iii = regcm5_iii.flatten()
+regcm5_c_iii = np.array(regcm5_c_iii)
 
-inmet_c_iv = np.array(inmet_iv.flatten())
-cpc_c_iv = np.array(cpc_iv.flatten())
-era5_c_iv = np.array(era5_iv.flatten())
-regcm5_c_iv = np.array(regcm5_iv.flatten()) 
+inmet_c_iv = inmet_iv.flatten()
+inmet_c_iv = np.array(inmet_c_iv)
+cpc_c_iv = cpc_iv.flatten()
+cpc_c_iv = np.array(cpc_c_iv)
+era5_c_iv = era5_iv.flatten()
+era5_c_iv = np.array(era5_c_iv)
+regcm5_c_iv = regcm5_iv.flatten()
+regcm5_c_iv = np.array(regcm5_c_iv)
 
-inmet_c_v = np.array(inmet_v.flatten())
-cpc_c_v = np.array(cpc_v.flatten())
-era5_c_v = np.array(era5_v.flatten())
-regcm5_c_v = np.array(regcm5_v.flatten()) 
+inmet_c_v = inmet_v.flatten()
+inmet_c_v = np.array(inmet_c_v)
+cpc_c_v = cpc_v.flatten()
+cpc_c_v = np.array(cpc_c_v)
+era5_c_v = era5_v.flatten()
+era5_c_v = np.array(era5_c_v)
+regcm5_c_v = regcm5_v.flatten()
+regcm5_c_v = np.array(regcm5_c_v)
 
 inmet_c_ii_iii_iv = np.nanmean([inmet_c_ii, inmet_c_iii, inmet_c_iv], axis=0)
 cpc_c_ii_iii_iv   = np.nanmean([cpc_c_ii,   cpc_c_iii,   cpc_c_iv], axis=0)
 era5_c_ii_iii_iv  = np.nanmean([era5_c_ii,  era5_c_iii,  era5_c_iv], axis=0)
 regcm_c_ii_iii_iv = np.nanmean([regcm_c_ii, regcm_c_iii, regcm_c_iv], axis=0)
 
-inmet_c_vi = np.array(inmet_smn_.flatten())
-cpc_c_vi = np.array(cpc_.flatten())
-era5_c_vi = np.array(era5_.flatten())
-regcm5_c_vi = np.array(regcm5_.flatten()) 
+inmet_c_vi = inmet_vi.flatten()
+inmet_c_vi = np.array(inmet_c_vi)
+cpc_c_vi = cpc_vi.flatten()
+cpc_c_vi = np.array(cpc_c_vi)
+era5_c_vi = era5_vi.flatten()
+era5_c_vi = np.array(era5_c_vi)
+regcm5_c_vi = regcm5_vi.flatten()
+regcm5_c_vi = np.array(regcm5_c_vi)
 
 print(len(inmet_c_i))
 print()
