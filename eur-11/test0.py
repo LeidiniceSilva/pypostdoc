@@ -16,7 +16,7 @@ from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.basemap import maskoceans
 
 var = 'pr'
-dt = '200001'
+dt = '20000101'
 domain = 'EUR-11'
 path = '/marconi/home/userexternal/mdasilva'
 	
@@ -105,7 +105,7 @@ plt.title(u'(e) WDM7_v2 Jan', loc='left', fontsize=font_size, fontweight='bold')
 ax = fig.add_subplot(2, 3, 6)  
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, wdm7_jan_v3, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(f) WDM7_v2 Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(f) WDM7_v3 Jan', loc='left', fontsize=font_size, fontweight='bold')
 
 # Set colobar
 cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.01, 0.4]))
