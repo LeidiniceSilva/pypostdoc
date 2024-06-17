@@ -41,7 +41,7 @@ def import_situ_i():
 	303,305,306,308,319,334,335,341,343,359,362,364,384,393,396,398,399,400,402,413,416,417,422,423,426,427,
 	443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]
 	
-	for station in range(1, 567):
+	for station in range(1, 567): #567
 		print(station, inmet[station][1])
 		
 		if station in skip_list:
@@ -86,7 +86,7 @@ def import_situ_ii():
 	
 	mean_i, mean_ii, mean_iii, mean_iv = [], [], [], []
 	
-	for station in range(1, 73):
+	for station in range(1, 73): # 73
 		print(station, smn_i[station][0])
 
 		yy=smn_i[station][1]
@@ -129,7 +129,7 @@ def import_situ_iii():
 	skip_list = [86,87,88,89,90,91,95,96,97,98,100,101,103,104,105,106,107,108,109,110,111,112,113,114,115,116,
 	117,118,119,120,121,122,123,124,125,126,127,128]	
 		
-	for station in range(1, 129):
+	for station in range(1, 129): # 129
 		print(station, smn_ii[station][0])
 
 		if station in skip_list:
@@ -182,6 +182,10 @@ inmet_smn_ = clim_i_y + clim_i_z
 cpc_ = clim_ii_y + clim_ii_z
 era5_ = clim_iii_y + clim_iii_z
 regcm5_ = clim_iv_y + clim_iv_z 
+
+print(len(inmet_smn_))
+print()
+print(len(regcm5_))
 
 list_hc = [2, 3, 2, 3, 2, 2, 3, 0, 1, 3, 2, 3, 3, 4, 1, 2, 3, 1, 0, 3, 0, 0, 3, 3, 2, 2, 2, 2, 3, 1, 1, 0, 1, 2, 3, 3, 
 1, 1, 2, 2, 0, 0, 3, 1, 3, 3, 0, 0, 2, 3, 0, 2, 3, 2, 2, 0, 0, 2, 3, 4, 2, 3, 2, 1, 3, 0, 0, 1, 3, 4, 3, 2, 2, 3, 1, 0, 
@@ -240,64 +244,64 @@ for c_v in count_v:
 	era5_v.append(era5[c_v])
 	regcm5_v.append(regcm5[c_v])
 
-inmet_c_i = inmet_i.flatten()
-inmet_c_i = np.array(inmet_c_i)
-cpc_c_i = cpc_i.flatten()
-cpc_c_i = np.array(cpc_c_i)
-era5_c_i = era5_i.flatten()
-era5_c_i = np.array(era5_c_i)
-regcm5_c_i = regcm5_i.flatten()
-regcm5_c_i = np.array(regcm5_c_i)
+inmet_c_i = np.array(inmet_i)
+inmet_c_i = inmet_c_i.flatten()
+cpc_c_i = np.array(cpc_i)
+cpc_c_i = cpc_c_i.flatten()
+era5_c_i = np.array(era5_i)
+era5_c_i = era5_c_i.flatten()
+regcm5_c_i = np.array(regcm5_i)
+regcm5_c_i = regcm5_c_i.flatten()
 
-inmet_c_ii = inmet_ii.flatten()
-inmet_c_ii = np.array(inmet_c_ii)
-cpc_c_ii = cpc_ii.flatten()
-cpc_c_ii = np.array(cpc_c_ii)
-era5_c_ii = era5_ii.flatten()
-era5_c_ii = np.array(era5_c_ii)
-regcm5_c_ii = regcm5_ii.flatten()
-regcm5_c_ii = np.array(regcm5_c_ii)
+inmet_c_ii = np.array(inmet_ii)
+inmet_c_ii = inmet_c_ii.flatten()
+cpc_c_ii = np.array(cpc_ii)
+cpc_c_ii = cpc_c_ii.flatten()
+era5_c_ii = np.array(era5_ii)
+era5_c_ii = era5_c_ii.flatten()
+regcm5_c_ii = np.array(regcm5_ii)
+regcm5_c_ii = regcm5_c_ii.flatten()
 
-inmet_c_iii = inmet_iii.flatten()
-inmet_c_iii = np.array(inmet_c_iii)
-cpc_c_iii = cpc_iii.flatten()
-cpc_c_iii = np.array(cpc_c_iii)
-era5_c_iii = era5_iii.flatten()
-era5_c_iii = np.array(era5_c_iii)
-regcm5_c_iii = regcm5_iii.flatten()
-regcm5_c_iii = np.array(regcm5_c_iii)
+inmet_c_iii = np.array(inmet_ii)
+inmet_c_iii = inmet_c_ii.flatten()
+cpc_c_iii = np.array(cpc_iii)
+cpc_c_iii = cpc_c_iii.flatten()
+era5_c_iii = np.array(era5_iii)
+era5_c_iii = era5_c_iii.flatten()
+regcm5_c_iii = np.array(regcm5_iii)
+regcm5_c_iii = regcm5_c_iii.flatten()
 
-inmet_c_iv = inmet_iv.flatten()
-inmet_c_iv = np.array(inmet_c_iv)
-cpc_c_iv = cpc_iv.flatten()
-cpc_c_iv = np.array(cpc_c_iv)
-era5_c_iv = era5_iv.flatten()
-era5_c_iv = np.array(era5_c_iv)
-regcm5_c_iv = regcm5_iv.flatten()
-regcm5_c_iv = np.array(regcm5_c_iv)
+inmet_c_iv = np.array(inmet_iv)
+inmet_c_iv = inmet_c_iv.flatten()
+cpc_c_iv = np.array(cpc_iv)
+cpc_c_iv = cpc_c_iv.flatten()
+era5_c_iv = np.array(era5_iv)
+era5_c_iv = era5_c_iv.flatten()
+regcm5_c_iv = np.array(regcm5_iv)
+regcm5_c_iv = regcm5_c_iv.flatten()
 
-inmet_c_v = inmet_v.flatten()
-inmet_c_v = np.array(inmet_c_v)
-cpc_c_v = cpc_v.flatten()
-cpc_c_v = np.array(cpc_c_v)
-era5_c_v = era5_v.flatten()
-era5_c_v = np.array(era5_c_v)
-regcm5_c_v = regcm5_v.flatten()
-regcm5_c_v = np.array(regcm5_c_v)
+inmet_c_v = np.array(inmet_v)
+inmet_c_v = inmet_c_v.flatten()
+cpc_c_v = np.array(cpc_v)
+cpc_c_v = cpc_c_v.flatten()
+era5_c_v = np.array(era5_v)
+era5_c_v = era5_c_v.flatten()
+regcm5_c_v = np.array(regcm5_v)
+regcm5_c_v = regcm5_c_v.flatten()
 
 inmet_c_ii_iii_iv = np.nanmean([inmet_c_ii, inmet_c_iii, inmet_c_iv], axis=0)
 cpc_c_ii_iii_iv   = np.nanmean([cpc_c_ii,   cpc_c_iii,   cpc_c_iv], axis=0)
 era5_c_ii_iii_iv  = np.nanmean([era5_c_ii,  era5_c_iii,  era5_c_iv], axis=0)
 regcm_c_ii_iii_iv = np.nanmean([regcm_c_ii, regcm_c_iii, regcm_c_iv], axis=0)
 
-inmet_c_vi = inmet_vi.flatten()
-inmet_c_vi = np.array(inmet_c_vi)
-cpc_c_vi = cpc_vi.flatten()
-cpc_c_vi = np.array(cpc_c_vi)
-era5_c_vi = era5_vi.flatten()
-era5_c_vi = np.array(era5_c_vi)
-regcm5_c_vi = regcm5_vi.flatten()
-regcm5_c_vi = np.array(regcm5_c_vi)
+inmet_c_vi = np.array(inmet_smn_)
+inmet_c_vi = inmet_c_vi.flatten()
+cpc_c_vi = np.array(cpc_)
+cpc_c_vi = cpc_c_vi.flatten()
+era5_c_vi = np.array(era5_)
+era5_c_vi = era5_c_vi.flatten()
+regcm5_c_vi = np.array(regcm5_)
+regcm5_c_vi = regcm5_c_vi.flatten()
 
 print(len(inmet_c_i))
 print()

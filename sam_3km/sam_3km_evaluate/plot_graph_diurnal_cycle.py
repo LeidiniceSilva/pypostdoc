@@ -50,19 +50,19 @@ def import_situ_i():
 		var_i  = time_i.groupby('time.hour').mean('time')
 		mean_i.append(var_i.values)
 		
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_1hr_{1}_lonlat.nc'.format(domain, dt))
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_diurnal_cycle_{1}_lonlat.nc'.format(domain, dt))
 		data_ii = arq_ii['tp']
 		data_ii = data_ii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
-		var_ii  = time_ii.groupby('time.hour').mean('time')
-		mean_ii.append(var_ii.values)
+		var_ii  = time_ii.values
+		mean_ii.append(var_ii)
 		
-		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + 'pr_{0}_RegCM5_1hr_{1}_lonlat.nc'.format(domain, dt))
-		data_iii = arq_iii['pr']
+		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_diurnal_cycle_{1}_lonlat.nc'.format(domain, dt))
+		data_iii = arq_iii['tp']
 		data_iii = data_iii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
 		time_iii = data_iii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
-		var_iii  = time_iii.groupby('time.hour').mean('time')
-		mean_iii.append(var_iii.values)
+		var_iii  = time_iii.values
+		mean_iii.append(var_iii)
 			
 	return mean_i, mean_ii, mean_iii
 	
@@ -83,34 +83,34 @@ def import_situ_ii():
 		var_i  = time_i.groupby('time.hour').mean('time')
 		mean_i.append(var_i.values)
 		
-		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_1hr_{1}_lonlat.nc'.format(domain, dt))
+		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_diurnal_cycle_{1}_lonlat.nc'.format(domain, dt))
 		data_ii = arq_ii['tp']
 		data_ii = data_ii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
-		var_ii  = time_ii.groupby('time.hour').mean('time')
-		mean_ii.append(var_ii.values)
+		var_ii  = time_ii.values
+		mean_ii.append(var_ii)
 		
-		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + 'pr_{0}_RegCM5_1hr_{1}_lonlat.nc'.format(domain, dt))
-		data_iii = arq_iii['pr']
+		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_diurnal_cycle_{1}_lonlat.nc'.format(domain, dt))
+		data_iii = arq_iii['tp']
 		data_iii = data_iii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
 		time_iii = data_iii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
-		var_iii  = time_iii.groupby('time.hour').mean('time')
-		mean_iii.append(var_iii.values)
+		var_iii  = time_iii.values
+		mean_iii.append(var_iii)
 			
 	return mean_i, mean_ii, mean_iii
 	
 
 # Import model and obs dataset
-clim_i_x, clim_iv_x, clim_v_x = import_situ_i()			
-clim_i_y, clim_iv_y, clim_v_y = import_situ_ii()			
+clim_i_x, clim_ii_x, clim_iii_x = import_situ_i()			
+clim_i_y, clim_ii_y, clim_iii_y = import_situ_ii()			
 
 inmet_smn = clim_i_x 
-era5 = clim_iv_x 
-regcm5 = clim_v_x 
+era5 = clim_ii_x 
+regcm5 = clim_iii_x 
 
 inmet_smn_ = clim_i_y
-era5_ = clim_iv_y 
-regcm5_ = clim_v_y 
+era5_ = clim_ii_y 
+regcm5_ = clim_iii_y 
 
 list_hc = [2, 3, 2, 3, 2, 2, 3, 0, 1, 3, 2, 3, 3, 4, 1, 2, 3, 1, 0, 3, 0, 0, 3, 3, 2, 2, 2, 2, 3, 1, 1, 0, 1, 2, 3, 3, 
 1, 1, 2, 2, 0, 0, 3, 1, 3, 3, 0, 0, 2, 3, 0, 2, 3, 2, 2, 0, 0, 2, 3, 4, 2, 3, 2, 1, 3, 0, 0, 1, 3, 4, 3, 2, 2, 3, 1, 0, 
@@ -202,9 +202,9 @@ plt.plot(time, era5_c_i,  linewidth=1., color='green', markersize=2, markerfacec
 plt.plot(time, regcm_c_i, linewidth=1., color='black', markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
 plt.ylabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.title('(a) Cluster I', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylim(0.04, 0.24)
+plt.ylim(0.06, 0.26)
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.yticks(np.arange(0.04, 0.25, 0.01), fontsize=font_size)
+plt.yticks(np.arange(0.06, 0.27, 0.01), fontsize=font_size)
 plt.grid(linestyle='--')
 plt.legend(loc=4, ncol=2, fontsize=font_size, shadow=True)
 
@@ -213,9 +213,9 @@ plt.plot(time, inmet_c_ii_iii_iv, linewidth=1., color='blue',  markersize=2, mar
 plt.plot(time, era5_c_ii_iii_iv,  linewidth=1., color='green', markersize=2, markerfacecolor='white', marker='s', label='ERA5')
 plt.plot(time, regcm_c_ii_iii_iv, linewidth=1., color='black', markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
 plt.title('(b) Cluster II-III-IV', loc='left', fontsize=font_size, fontweight='bold')
-plt.ylim(0.04, 0.24)
+plt.ylim(0.06, 0.26)
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.yticks(np.arange(0.04, 0.25, 0.01), fontsize=font_size)
+plt.yticks(np.arange(0.06, 0.27, 0.01), fontsize=font_size)
 plt.grid(linestyle='--')
 
 ax = fig.add_subplot(2, 2, 3)
@@ -225,9 +225,9 @@ plt.plot(time, regcm_c_v, linewidth=1., color='black', markersize=2, markerfacec
 plt.title('(c) Cluster V', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('Hours', fontsize=font_size, fontweight='bold')
 plt.ylabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='bold')
-plt.ylim(0.04, 0.24)
+plt.ylim(0.06, 0.26)
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.yticks(np.arange(0.04, 0.25, 0.01), fontsize=font_size)
+plt.yticks(np.arange(0.06, 0.27, 0.01), fontsize=font_size)
 plt.grid(linestyle='--')
 
 ax = fig.add_subplot(2, 2, 4)
@@ -236,9 +236,9 @@ plt.plot(time, era5_c_vi,  linewidth=1., color='green', markersize=2, markerface
 plt.plot(time, regcm_c_vi, linewidth=1., color='black', markersize=2, markerfacecolor='white', marker='o', label='RegCM5')
 plt.title('(d) Cluster VI', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('Hours', fontsize=font_size, fontweight='bold')
-plt.ylim(0.04, 0.24)
+plt.ylim(0.06, 0.26)
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.yticks(np.arange(0.04, 0.25, 0.01), fontsize=font_size)
+plt.yticks(np.arange(0.06, 0.27, 0.01), fontsize=font_size)
 plt.grid(linestyle='--')
 
 # Path out to save figure
