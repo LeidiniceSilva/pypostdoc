@@ -57,8 +57,8 @@ def import_situ_i():
 		var_ii  = time_ii.values
 		mean_ii.append(var_ii)
 		
-		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_diurnal_cycle_{1}_lonlat.nc'.format(domain, dt))
-		data_iii = arq_iii['tp']
+		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + 'pr_{0}_RegCM5_diurnal_cycle_{1}_lonlat.nc'.format(domain, dt))
+		data_iii = arq_iii['pr']
 		data_iii = data_iii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
 		time_iii = data_iii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_iii  = time_iii.values
@@ -90,8 +90,8 @@ def import_situ_ii():
 		var_ii  = time_ii.values
 		mean_ii.append(var_ii)
 		
-		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_diurnal_cycle_{1}_lonlat.nc'.format(domain, dt))
-		data_iii = arq_iii['tp']
+		arq_iii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + 'pr_{0}_RegCM5_diurnal_cycle_{1}_lonlat.nc'.format(domain, dt))
+		data_iii = arq_iii['pr']
 		data_iii = data_iii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
 		time_iii = data_iii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_iii  = time_iii.values
