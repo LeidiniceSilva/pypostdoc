@@ -66,10 +66,12 @@ lat, lon, cpc_jan = import_obs('precip', domain, 'CPC')
 lat, lon, wdm7_jan_v1 = import_rcm('wdm7-Europe_v1', 'pr', domain, 'RegCM5')
 lat, lon, wdm7_jan_v2 = import_rcm('wdm7-Europe_v2', 'pr', domain, 'RegCM5')
 lat, lon, wdm7_jan_v3 = import_rcm('wdm7-Europe_v3', 'pr', domain, 'RegCM5')
+lat, lon, wdm7_jan_v4 = import_rcm('wdm7-Europe_v4', 'pr', domain, 'RegCM5')
 
 mbe_wdm7_jan_v1_cpc = compute_mbe(wdm7_jan_v1, cpc_jan)
 mbe_wdm7_jan_v2_cpc = compute_mbe(wdm7_jan_v2, cpc_jan)
 mbe_wdm7_jan_v3_cpc = compute_mbe(wdm7_jan_v3, cpc_jan)
+mbe_wdm7_jan_v4_cpc = compute_mbe(wdm7_jan_v4, cpc_jan)
 
 # Plot figure
 fig = plt.figure()   
@@ -91,7 +93,12 @@ plt.title(u'(b) WDM7_v2 - CPC Jan', loc='left', fontsize=font_size, fontweight='
 ax = fig.add_subplot(2, 2, 3)
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v3_cpc[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-plt.title(u'(3) WDM7_v3 - CPC Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(c) WDM7_v3 - CPC Jan', loc='left', fontsize=font_size, fontweight='bold')
+
+ax = fig.add_subplot(2, 2, 4)
+map, xx, yy = basemap(lat, lon)
+plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v4_cpc[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
+plt.title(u'(d) WDM7_v4 - CPC Jan', loc='left', fontsize=font_size, fontweight='bold')
 
 cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.018, 0.4]))
 cbar.set_label('Intensity (mm d$^-$$^1$)'.format(legend), fontsize=font_size, fontweight='bold')
@@ -99,6 +106,6 @@ cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
-name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_WDM7_v1-v2_{2}.png'.format(var, domain, dt)
+name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_WDM7_v1-v2-v3-v4_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
