@@ -49,13 +49,13 @@ if var == 'cl':
 	regcm5_jan_exp1 = import_rcm(var, 'wdm7-Europe_v1')
 	regcm5_jan_lev1 = regcm5_jan_exp1[0]*100
 	
-	regcm5_jan_exp2 = import_rcm(var, 'wdm7-Europe_v2')
+	regcm5_jan_exp2 = import_rcm(var, 'wdm7-Europe_v3')
 	regcm5_jan_lev2 = regcm5_jan_exp2[0]*100
 
-	regcm5_jan_exp3 = import_rcm(var, 'wdm7-Europe_v3')
+	regcm5_jan_exp3 = import_rcm(var, 'wdm7-Europe_v4')
 	regcm5_jan_lev3 = regcm5_jan_exp3[0]*100
 
-	regcm5_jan_exp4 = import_rcm(var, 'wdm7-Europe_v4')
+	regcm5_jan_exp4 = import_rcm(var, 'wdm7-Europe_v5')
 	regcm5_jan_lev4 = regcm5_jan_exp4[0]*100
 
 elif var == 'cli':
@@ -67,13 +67,13 @@ elif var == 'cli':
 	regcm5_jan_exp1 = import_rcm(var, 'wdm7-Europe_v1')
 	regcm5_jan_lev1 = regcm5_jan_exp1[0]*1000000
 
-	regcm5_jan_exp2 = import_rcm(var, 'wdm7-Europe_v2')
+	regcm5_jan_exp2 = import_rcm(var, 'wdm7-Europe_v3')
 	regcm5_jan_lev2 = regcm5_jan_exp2[0]*1000000
 
-	regcm5_jan_exp3 = import_rcm(var, 'wdm7-Europe_v3')
+	regcm5_jan_exp3 = import_rcm(var, 'wdm7-Europe_v4')
 	regcm5_jan_lev3 = regcm5_jan_exp3[0]*1000000
 	
-	regcm5_jan_exp4 = import_rcm(var, 'wdm7-Europe_v4')
+	regcm5_jan_exp4 = import_rcm(var, 'wdm7-Europe_v5')
 	regcm5_jan_lev4 = regcm5_jan_exp4[0]*1000000
 		
 else:
@@ -85,13 +85,13 @@ else:
 	regcm5_jan_exp1 = import_rcm(var, 'wdm7-Europe_v1')
 	regcm5_jan_lev1 = regcm5_jan_exp1[0]*1000000
 
-	regcm5_jan_exp2 = import_rcm(var, 'wdm7-Europe_v2')
+	regcm5_jan_exp2 = import_rcm(var, 'wdm7-Europe_v3')
 	regcm5_jan_lev2 = regcm5_jan_exp2[0]*1000000
 	
-	regcm5_jan_exp3 = import_rcm(var, 'wdm7-Europe_v3')
+	regcm5_jan_exp3 = import_rcm(var, 'wdm7-Europe_v4')
 	regcm5_jan_lev3 = regcm5_jan_exp3[0]*1000000
 	
-	regcm5_jan_exp4 = import_rcm(var, 'wdm7-Europe_v4')
+	regcm5_jan_exp4 = import_rcm(var, 'wdm7-Europe_v5')
 	regcm5_jan_lev4 = regcm5_jan_exp4[0]*1000000
 
 
@@ -123,7 +123,7 @@ plt.legend(loc=1, ncol=1, fontsize=font_size)
 ax = fig.add_subplot(2, 2, 2)
 ax.plot(era5_jan_lev[::-1], levels_i, color='black', label='ERA5', linewidth=1, linestyle='--')
 plt.plot(regcm5_jan_lev2, levels_ii, color='red', label='RegCM5', linewidth=1)
-plt.title(u'(b) WDM7_v2', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(b) WDM7_v2 (fix bugs)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlim(dict_plot[var][1], dict_plot[var][2])
 plt.ylim(0,1000)
 plt.xticks(dict_plot[var][3], fontsize=font_size)
@@ -134,7 +134,7 @@ plt.gca().invert_yaxis()
 ax = fig.add_subplot(2, 2, 3)
 ax.plot(era5_jan_lev[::-1], levels_i, color='black', label='ERA5', linewidth=1, linestyle='--')
 plt.plot(regcm5_jan_lev3, levels_ii, color='red', label='RegCM5', linewidth=1)
-plt.title(u'(c) WDM7_v3', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(c) WDM7_v3 (more ccn)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel(dict_plot[var][0], fontsize=font_size, fontweight='bold')
 plt.xlim(dict_plot[var][1], dict_plot[var][2])
 plt.ylim(0,1000)
@@ -145,7 +145,7 @@ plt.gca().invert_yaxis()
 ax = fig.add_subplot(2, 2, 4)
 ax.plot(era5_jan_lev[::-1], levels_i, color='black', label='ERA5', linewidth=1, linestyle='--')
 plt.plot(regcm5_jan_lev4, levels_ii, color='red', label='RegCM5', linewidth=1)
-plt.title(u'(d) WDM7_v4', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(d) WDM7_v4 (less ccn)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel(dict_plot[var][0], fontsize=font_size, fontweight='bold')
 plt.xlim(dict_plot[var][1], dict_plot[var][2])
 plt.ylim(0,1000)

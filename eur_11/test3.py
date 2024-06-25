@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
 
-var = 'pr_int'
+var = 'pr_freq'
 domain = 'EUR-11'
 dt = '20000101'
 
@@ -64,12 +64,12 @@ def basemap(lat, lon):
 # Import model and obs dataset
 lat, lon, cpc_jan = import_obs('precip', domain, 'CPC')
 lat, lon, wdm7_jan_v1 = import_rcm('wdm7-Europe_v1', 'pr', domain, 'RegCM5')
-lat, lon, wdm7_jan_v2 = import_rcm('wdm7-Europe_v2', 'pr', domain, 'RegCM5')
-lat, lon, wdm7_jan_v3 = import_rcm('wdm7-Europe_v3', 'pr', domain, 'RegCM5')
-lat, lon, wdm7_jan_v4 = import_rcm('wdm7-Europe_v4', 'pr', domain, 'RegCM5')
+lat, lon, wdm7_jan_v2 = import_rcm('wdm7-Europe_v3', 'pr', domain, 'RegCM5')
+lat, lon, wdm7_jan_v3 = import_rcm('wdm7-Europe_v4', 'pr', domain, 'RegCM5')
+lat, lon, wdm7_jan_v4 = import_rcm('wdm7-Europe_v5', 'pr', domain, 'RegCM5')
 
 mbe_wdm7_jan_v1_cpc = compute_mbe(wdm7_jan_v1, cpc_jan)
-mbe_wdm7_jan_v2_cpc = compute_mbe(wdm7_jan_v2, cpc_jan)
+mbe_wdm7_jan_v2_cpc = compute_mbe(wdm7_jan_v3, cpc_jan)
 mbe_wdm7_jan_v3_cpc = compute_mbe(wdm7_jan_v3, cpc_jan)
 mbe_wdm7_jan_v4_cpc = compute_mbe(wdm7_jan_v4, cpc_jan)
 
@@ -77,8 +77,8 @@ mbe_wdm7_jan_v4_cpc = compute_mbe(wdm7_jan_v4, cpc_jan)
 fig = plt.figure()   
 font_size = 8
 	
-levs = np.arange(-35, 38, 3)
-legend = 'Intensity (mm d$^-$$^1$)'
+levs = np.arange(-50, 55, 5)
+legend = 'Frequency (%)'
 
 ax = fig.add_subplot(2, 2, 1)
 map, xx, yy = basemap(lat, lon)
@@ -88,20 +88,20 @@ plt.title(u'(a) WDM7_v1 - CPC Jan', loc='left', fontsize=font_size, fontweight='
 ax = fig.add_subplot(2, 2, 2)
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v2_cpc[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-plt.title(u'(b) WDM7_v2 - CPC Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(b) WDM7_v2 (fix bugs)- CPC Jan', loc='left', fontsize=font_size, fontweight='bold')
 
 ax = fig.add_subplot(2, 2, 3)
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v3_cpc[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-plt.title(u'(c) WDM7_v3 - CPC Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(c) WDM7_v3 (more ccn) - CPC Jan', loc='left', fontsize=font_size, fontweight='bold')
 
 ax = fig.add_subplot(2, 2, 4)
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v4_cpc[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-plt.title(u'(d) WDM7_v4 - CPC Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(d) WDM7_v4 (less ccn) - CPC Jan', loc='left', fontsize=font_size, fontweight='bold')
 
 cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.018, 0.4]))
-cbar.set_label('Intensity (mm d$^-$$^1$)'.format(legend), fontsize=font_size, fontweight='bold')
+cbar.set_label('Frequency (%)'.format(legend), fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
