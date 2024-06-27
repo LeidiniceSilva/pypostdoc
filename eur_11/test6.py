@@ -50,20 +50,34 @@ def basemap(lat, lon):
 # Import model and obs dataset
 dict_var = {'pr': ['rr', 'precipitation', 'precip', ]}
 
-lat, lon, wdm7_jan_v3 = import_rcm('wdm7-Europe_v4', var, 'RegCM5')
-lat, lon, wdm7_jan_v4 = import_rcm('wdm7-Europe_v5', var, 'RegCM5')
+lat, lon, wdm7_jan_v1 = import_rcm('wdm7-Europe_v1', var, 'RegCM5')
+lat, lon, wdm7_jan_v2 = import_rcm('wdm7-Europe_v2', var, 'RegCM5')
+lat, lon, wdm7_jan_v3 = import_rcm('wdm7-Europe_v3', var, 'RegCM5')
+lat, lon, wdm7_jan_v4 = import_rcm('wdm7-Europe_v4', var, 'RegCM5')
 
-mbe_wdm7_jan_v3_v4 = wdm7_jan_v3 - wdm7_jan_v4
+mbe_wdm7_jan_v4_v1 = wdm7_jan_v4 - wdm7_jan_v1
+mbe_wdm7_jan_v4_v2 = wdm7_jan_v4 - wdm7_jan_v2
+mbe_wdm7_jan_v4_v3 = wdm7_jan_v4 - wdm7_jan_v3
 
 # Plot figure
-fig = plt.figure()
-dict_plot = {'pr': ['Diff of precipitation (mm d$^-$$^1$)', np.arange(-1, 1.1, 0.1), cm.PiYG]}
+fig = plt.figure(figsize=(10, 6))
+dict_plot = {'pr': ['Diff of precipitation (mm d$^-$$^1$)', np.arange(-4, 4.5, 0.5), cm.PiYG]}
 font_size = 8
 
-ax = fig.add_subplot(1, 1, 1)  
+ax = fig.add_subplot(2, 2, 1)  
 map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v3_v4, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(a) WDM7_v3 (more ccn) - WDM7_v4 (less ccn) Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v4_v1, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+plt.title(u'(a) WDM7_v4(less ccn2) - WDM7_v1(ctrl) Jan', loc='left', fontsize=font_size, fontweight='bold')
+
+ax = fig.add_subplot(2, 2, 2)  
+map, xx, yy = basemap(lat, lon)
+plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v4_v2, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+plt.title(u'(a) WDM7_v4(less ccn2) - WDM7_v2(more ccn) Jan', loc='left', fontsize=font_size, fontweight='bold')
+
+ax = fig.add_subplot(2, 2, 3)  
+map, xx, yy = basemap(lat, lon)
+plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v4_v3, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+plt.title(u'(a) WDM7_v4(less ccn2) - WDM7_v3(less ccn) Jan', loc='left', fontsize=font_size, fontweight='bold')
 
 # Set colobar
 cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.01, 0.4]))

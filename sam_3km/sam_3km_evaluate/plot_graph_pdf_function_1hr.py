@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Dec 04, 2023"
-__description__ = "This script plot diurnal cycle"
+__description__ = "This script plot pdf"
 
 import os
 import netCDF4
@@ -27,7 +27,7 @@ path = '/marconi/home/userexternal/mdasilva'
 	
 def import_situ_i():
 
-	mean_i, mean_ii, mean_iii, mean_iv = [], [], [], []
+	mean_i, mean_ii, mean_iii = [], [], []
 
 	skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
 	149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
@@ -53,7 +53,7 @@ def import_situ_i():
 
 		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_{1}_lonlat.nc'.format(domain, dt))
 		data_ii = arq_ii['tp']
-		data_ii = data_ii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
+		data_ii = data_ii.sel(lat=slice(yy-0.25,yy+0.25),lon=slice(xx-0.25,xx+0.25)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_ii  = time_ii.values
 		mean_ii.append(var_ii)
@@ -70,7 +70,7 @@ def import_situ_i():
 
 def import_situ_ii():
 	
-	mean_i, mean_ii, mean_iii, mean_iv = [], [], [], []
+	mean_i, mean_ii, mean_iii = [], [], []
 	
 	for station in range(1, 73): # 73
 		print(station, smn_i[station][0])
@@ -86,7 +86,7 @@ def import_situ_ii():
 		
 		arq_ii  = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_{0}_ERA5_{1}_lonlat.nc'.format(domain, dt))
 		data_ii = arq_ii['tp']
-		data_ii = data_ii.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
+		data_ii = data_ii.sel(lat=slice(yy-0.25,yy+0.25),lon=slice(xx-0.25,xx+0.25)).mean(('lat','lon'))
 		time_ii = data_ii.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_ii  = time_ii.values
 		mean_ii.append(var_ii)
@@ -102,16 +102,16 @@ def import_situ_ii():
 	
 	
 # Import model and obs dataset
-clim_i_x, clim_ii_x, clim_iii_x, clim_iv_x = import_situ_i()			
-clim_i_y, clim_ii_y, clim_iii_y, clim_iv_y = import_situ_ii()			
+clim_i_x, clim_ii_x, clim_iii_x = import_situ_i()			
+clim_i_y, clim_ii_y, clim_iii_y = import_situ_ii()			
 
 inmet_smn = clim_i_x 
-era5      = clim_iii_x 
-regcm5    = clim_iv_x 
+era5      = clim_ii_x 
+regcm5    = clim_iii_x 
 
 inmet_smn_ = clim_i_y 
-era5_      = clim_iii_y
-regcm5_    = clim_iv_y
+era5_      = clim_ii_y
+regcm5_    = clim_iii_y
 
 list_hc = [2, 3, 2, 3, 2, 2, 3, 0, 1, 3, 2, 3, 3, 4, 1, 2, 3, 1, 0, 3, 0, 0, 3, 3, 2, 2, 2, 2, 3, 1, 1, 0, 1, 2, 3, 3, 
 1, 1, 2, 2, 0, 0, 3, 1, 3, 3, 0, 0, 2, 3, 0, 2, 3, 2, 2, 0, 0, 2, 3, 4, 2, 3, 2, 1, 3, 0, 0, 1, 3, 4, 3, 2, 2, 3, 1, 0, 

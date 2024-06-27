@@ -61,15 +61,15 @@ def basemap(lat, lon):
 	
 	
 # Import model and obs dataset
-dict_var = {'pr': ['rr', 'precipitation', 'precip', ]}
+dict_var = {'pr': ['rr', 'precipitation', 'precip']}
 
 lat, lon, eobs_jan = import_obs(dict_var[var][0], 'EOBS')
 lat, lon, mswep_jan = import_obs(dict_var[var][1], 'MSWEP')
 lat, lon, cpc_jan = import_obs(dict_var[var][2], 'CPC')
 lat, lon, wdm7_jan_v1 = import_rcm('wdm7-Europe_v1', var, 'RegCM5')
-lat, lon, wdm7_jan_v2 = import_rcm('wdm7-Europe_v3', var, 'RegCM5')
-lat, lon, wdm7_jan_v3 = import_rcm('wdm7-Europe_v4', var, 'RegCM5')
-lat, lon, wdm7_jan_v4 = import_rcm('wdm7-Europe_v5', var, 'RegCM5')
+lat, lon, wdm7_jan_v2 = import_rcm('wdm7-Europe_v2', var, 'RegCM5')
+lat, lon, wdm7_jan_v3 = import_rcm('wdm7-Europe_v3', var, 'RegCM5')
+lat, lon, wdm7_jan_v4 = import_rcm('wdm7-Europe_v4', var, 'RegCM5')
 
 # Plot figure
 fig = plt.figure(figsize=(10, 6))
@@ -96,22 +96,22 @@ plt.title(u'(c) CPC Jan', loc='left', fontsize=font_size, fontweight='bold')
 ax = fig.add_subplot(3, 3, 4)  
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, wdm7_jan_v1, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(d) WDM7_v1 Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(d) WDM7_v1 (ctrl) Jan', loc='left', fontsize=font_size, fontweight='bold')
 
 ax = fig.add_subplot(3, 3, 5)  
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, wdm7_jan_v2, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(e) WDM7_v2 (fix bugs) Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(e) WDM7_v2 (more ccn) Jan', loc='left', fontsize=font_size, fontweight='bold')
 
 ax = fig.add_subplot(3, 3, 6)  
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, wdm7_jan_v3, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(f) WDM7_v3 (more ccn) Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(f) WDM7_v3 (less ccn) Jan', loc='left', fontsize=font_size, fontweight='bold')
 
 ax = fig.add_subplot(3, 3, 7)  
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, wdm7_jan_v4, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(g) WDM7_v4 (less ccn) Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt.title(u'(g) WDM7_v4 (less ccn 2) Jan', loc='left', fontsize=font_size, fontweight='bold')
 
 # Set colobar
 cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.01, 0.4]))

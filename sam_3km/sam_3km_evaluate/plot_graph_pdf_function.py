@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Dec 04, 2023"
-__description__ = "This script plot diurnal cycle"
+__description__ = "This script plot pdf"
 
 import os
 import netCDF4
