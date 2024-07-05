@@ -107,7 +107,7 @@ def open_dat_file(dataset):
 def import_ws(param, indices):
 	
 	yy, xx, mean = [], [], [] 
-	for station in range(1, 4): # 567	
+	for station in range(1, 567): # 567	
 		if station in skip_list:
 			continue
 		if inmet[station][2] >= -11.25235:
@@ -250,7 +250,7 @@ sc = ax3.scatter(lon_i, lat_i, 12, pr_inmet, cmap=matplotlib.colors.ListedColorm
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone'.format(path)
-name_out = 'pyplt_maps_95th_hourly_precipitation_EC_ERA5_RegCM5_SAM-3km_2018-2021.png'
+name_out = 'pyplt_maps_95th_1hr_precipitation_EC_ERA5_RegCM5_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

@@ -21,7 +21,6 @@ from dict_inmet_stations import inmet
 from datetime import datetime, timedelta
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-font_size = 10
 path='/marconi/home/userexternal/mdasilva'
 
 skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
@@ -30,26 +29,16 @@ skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107
 443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]			
 
 
-def remove_duplicates(date_list):
-	
-	unique_dates = []
-	for date in date_list:
-		if date not in unique_dates:
-			unique_dates.append(date)
-	
-	return unique_dates
-    
-
-def generate_daily_dates(start_date, end_date):
+def generate_hourly_dates(start_date, end_date):
     
 	dates = []
 	current_date = start_date
 	while current_date <= end_date:
-		dates.append(current_date.strftime('%Y%m%d'))
-		current_date += timedelta(days=1)
+		dates.append(current_date.strftime('%Y%m%d%H'))
+		current_date += timedelta(hours=6)
 	
 	return dates
-
+	
 
 def find_indices_in_date_list(date_list, target_dates):
     
@@ -62,8 +51,8 @@ def find_indices_in_date_list(date_list, target_dates):
 			pass  # Date not found in date_list
 	
 	return indices
-	
-	
+
+
 def read_dat_file(filename):
 
 	data = []
@@ -108,8 +97,8 @@ def open_dat_file(dataset):
 		
 		for j  in rows_list:
 			for k in j:
-				dt.append(str(k[0][:-2]))
-
+				dt.append(str(k[0][:]))
+				
 	return dt
 
 
@@ -124,39 +113,16 @@ def import_ws(param, indices):
 		if inmet[station][2] >= -11.25235:
 			continue
 
-		arq  = xr.open_dataset('{0}/OBS/WS-SA/INMET/nc/hourly/{1}/'.format(path, param) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
+		arq  = xr.open_dataset('{0}/user/mdasilva/WS-SA/INMET/nc/hourly/{1}/'.format(path, param) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
 		data = arq[param]
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
-		var  = time.resample(time='1D').sum()
+		var  = time.resample(time='6H').sum()
 		var_ = var.values
 
 		for idx_i in indices:
 			mean.append(var_[idx_i])
 																
 	return mean
-
-
-def import_obs(param, indices):
-
-	mean = []
-	for station in range(1, 567):
-		print(station, inmet[station][0])
-		
-		if station in skip_list:
-			continue
-		if inmet[station][2] >= -11.25235:
-			continue
-
-		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_SAM-3km_ERA5_day_2018-2021_lonlat.nc')
-		data   = arq[param]
-		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
-		time   = latlon.sel(time=slice('2018-01-01','2021-12-31'))
-		var    = time.values
-
-		for idx_i in indices:
-			mean.append(var[idx_i])
-																
-	return mean		
 
 
 def import_sat(param, indices):
@@ -170,16 +136,41 @@ def import_sat(param, indices):
 		if inmet[station][2] >= -11.25235:
 			continue
 
-		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_cyclone/obs/gpm/'.format(path) + 'precipitation_GPM-3BHHR_SAM-10km_day_20180101-20211231_lonlat.nc')
+		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/'.format(path) + 'precipitation_SAM-3km_GPM_1hr_2018-2021_lonlat.nc')
 		data   = arq[param]
-		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		latlon = data.sel(lat=slice(inmet[station][2]-0.1,inmet[station][2]+0.1),lon=slice(inmet[station][3]-0.1,inmet[station][3]+0.1)).mean(('lat','lon'))
 		time   = latlon.sel(time=slice('2018-01-01','2021-12-31'))
-		var    = time.values/2
-
+		var    = time.resample(time='6H').sum()
+		var_   = var.values
+		
 		for idx_i in indices:
-			mean.append(var[idx_i])
+			mean.append(var_[idx_i])
 																
 	return mean	
+	
+	
+def import_obs(param, indices):
+
+	mean = []
+	for station in range(1, 567):
+		print(station, inmet[station][0])
+		
+		if station in skip_list:
+			continue
+		if inmet[station][2] >= -11.25235:
+			continue
+
+		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/'.format(path) + 'tp_SAM-3km_ERA5_1hr_2018-2021_lonlat.nc')
+		data   = arq[param]
+		latlon = data.sel(lat=slice(inmet[station][2]-0.25,inmet[station][2]+0.25),lon=slice(inmet[station][3]-0.25,inmet[station][3]+0.25)).mean(('lat','lon'))
+		time   = latlon.sel(time=slice('2018-01-01','2021-12-31'))
+		var    = time.resample(time='6H').sum()
+		var_   = var.values
+
+		for idx_i in indices:
+			mean.append(var_[idx_i])
+																
+	return mean		
 
 
 def import_rcm(param, indices):
@@ -193,44 +184,38 @@ def import_rcm(param, indices):
 		if inmet[station][2] >= -11.25235:
 			continue
 
-		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + 'pr_SAM-3km_RegCM5_day_2018-2021_lonlat.nc')
+		arq    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + 'pr_SAM-3km_RegCM5_1hr_2018-2021_lonlat.nc')
 		data   = arq[param]
 		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		time   = latlon.sel(time=slice('2018-01-01','2021-12-31'))
-		var    = time.values
+		var    = time.resample(time='6H').sum()
+		var_   = var.values
 
 		for idx_i in indices:
-			mean.append(var[idx_i])
+			mean.append(var_[idx_i])
 													
 	return mean	
 	
 	
-# Generate list of daily dates from 2018 to 2021
-daily_dates = generate_daily_dates(datetime(2018, 1, 1), datetime(2021, 12, 31))
+
+# List of hourly dates 
+hourly_dates = generate_hourly_dates(datetime(2018, 1, 1, 0), datetime(2021, 12, 31, 23))
 
 # Import cyclone tracking date 
 dt_era5 = open_dat_file('ERA5')
 dt_regcm5 = open_dat_file('RegCM5')
 
-# Import indices after tracking
-inmet_idx = remove_duplicates(dt_era5)
-inmet_idx_i = find_indices_in_date_list(daily_dates, inmet_idx)
-
-era5_idx = remove_duplicates(dt_era5)
-era5_idx_i = find_indices_in_date_list(daily_dates, era5_idx)
-
-gpm_idx = remove_duplicates(dt_era5)
-gpm_idx_i = find_indices_in_date_list(daily_dates, gpm_idx)
-
-regcm5_idx = remove_duplicates(dt_regcm5)
-regcm5_idx_i = find_indices_in_date_list(daily_dates, regcm5_idx)
+# List of indices
+idx_era5 = find_indices_in_date_list(hourly_dates, dt_era5)
+idx_regcm = find_indices_in_date_list(hourly_dates, dt_regcm5)
 
 # Import model and obs dataset 
-pr_inmet  = import_ws('pre', inmet_idx_i)
-pr_era5   = import_obs('tp', era5_idx_i)
-pr_gpm    = import_sat('precipitation', gpm_idx_i)
-pr_regcm5 = import_rcm('pr', regcm5_idx_i)
+pr_inmet = import_ws('pre', idx_era5)
+pr_gpm = import_sat('precipitation', idx_era5)
+pr_era5 = import_obs('tp', idx_era5)
+pr_regcm5 = import_rcm('pr', idx_regcm)
 
+# Compute pdf 
 pr_inmet_xr = np.array(pr_inmet)
 pr_inmet_list = pr_inmet_xr.flatten()
 pr_inmet_round = np.round(pr_inmet_list,0)
@@ -256,7 +241,6 @@ pr_regcm5_filter = pr_regcm5_round[pr_regcm5_round > 0.]
 x_pdf_regcm5, pdf_regcm5 = np.unique(pr_regcm5_filter, return_counts=True)
 
 # Plot figure
-
 fig = plt.figure(figsize=(6, 9))
 font_size = 8
 
@@ -265,14 +249,13 @@ plt.plot(x_pdf_inmet,  pdf_inmet,  marker='o', markersize=4, mfc='black', mec='b
 plt.plot(x_pdf_era5,   pdf_era5,   marker='o', markersize=4, mfc='red',   mec='red',   alpha=0.75, linestyle='None', label='ERA5')
 plt.plot(x_pdf_gpm,    pdf_gpm,    marker='o', markersize=4, mfc='green', mec='green', alpha=0.75, linestyle='None', label='GPM')
 plt.plot(x_pdf_regcm5, pdf_regcm5, marker='o', markersize=4, mfc='blue',  mec='blue',  alpha=0.75, linestyle='None', label='RegCM5')
-plt.xlabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
+plt.xlabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.ylabel('Frequency (#)', fontsize=font_size, fontweight='bold')
 plt.yscale('log')
 plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone'.format(path)
-name_out = 'pyplt_graph_pdf_precipitation_EC_ERA5_RegCM5_SAM-3km_2018-2021.png'
+path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone/egu'.format(path)
+name_out = 'pyplt_graph_pdf_1hr_precipitation_EC_ERA5_RegCM5_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()

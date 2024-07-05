@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Apr 01, 2024"
-__description__ = "This script plot map of precipitation"
+__description__ = "This script plot pdf of precipitation"
 
 import os
 import netCDF4
@@ -21,7 +21,6 @@ from dict_inmet_stations import inmet
 from datetime import datetime, timedelta
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-font_size = 10
 path='/marconi/home/userexternal/mdasilva'
 
 skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
@@ -256,11 +255,10 @@ pr_regcm5_filter = pr_regcm5_round[pr_regcm5_round > 0.]
 x_pdf_regcm5, pdf_regcm5 = np.unique(pr_regcm5_filter, return_counts=True)
 
 # Plot figure
-
-fig = plt.figure(figsize=(6, 9))
+fig = plt.figure()
 font_size = 8
 
-ax = fig.add_subplot(3, 1, 1)  
+ax = fig.add_subplot(1, 1, 1)  
 plt.plot(x_pdf_inmet,  pdf_inmet,  marker='o', markersize=4, mfc='black', mec='black', alpha=0.75, linestyle='None', label='INMET')
 plt.plot(x_pdf_era5,   pdf_era5,   marker='o', markersize=4, mfc='red',   mec='red',   alpha=0.75, linestyle='None', label='ERA5')
 plt.plot(x_pdf_gpm,    pdf_gpm,    marker='o', markersize=4, mfc='green', mec='green', alpha=0.75, linestyle='None', label='GPM')
