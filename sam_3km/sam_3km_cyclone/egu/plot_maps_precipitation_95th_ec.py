@@ -24,7 +24,7 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 font_size = 10
 path='/marconi/home/userexternal/mdasilva'
 
-skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
+skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,77,93,100,105,106,107,112,117,124,135,137,139,
 149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
 303,305,306,308,319,334,335,341,343,359,362,364,384,393,396,398,399,400,402,413,416,417,422,423,426,427,
 443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]
@@ -124,6 +124,33 @@ def open_dat_file(dataset):
 
 	return dt
 
+
+def import_ws(param, indices):
+	
+	yy, xx, mean = [], [], [] 
+	for station in range(1, 567):
+		if station in skip_list:
+			continue
+		if inmet[station][2] >= -11.25235:
+			continue
+
+		yy.append(inmet[station][2])
+		xx.append(inmet[station][3])
+
+		arq  = xr.open_dataset('{0}/OBS/WS-SA/INMET/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
+		data = arq[param]
+		time = data.sel(time=slice('2018-01-01','2021-12-31'))
+		var  = time.resample(time='1D').sum()
+		var_ = var.values
+
+		var_i = []
+		for idx_i in indices:
+			var_i.append(var_[idx_i])
+				
+		mean.append(np.percentile(var_i, 95, axis=0))
+		
+	return yy, xx, mean
+	
 	
 def import_obs(param):
 
@@ -160,45 +187,18 @@ def import_rcm(param):
 	mean = var[:][:,:,:]
 	
 	return lat, lon, mean	
-
-
-def import_ws(param, indices):
-	
-	yy, xx, mean = [], [], [] 
-	for station in range(1, 567):
-		if station in skip_list:
-			continue
-		if inmet[station][2] >= -11.25235:
-			continue
-
-		yy.append(inmet[station][2])
-		xx.append(inmet[station][3])
-
-		arq  = xr.open_dataset('{0}/OBS/WS-SA/INMET/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
-		data = arq[param]
-		time = data.sel(time=slice('2018-01-01','2021-12-31'))
-		var  = time.resample(time='1D').sum()
-		var_ = var.values
-
-		var_i = []
-		for idx_i in indices:
-			var_i.append(var_[idx_i])
-				
-		mean.append(np.percentile(var_i, 95, axis=0))
-		
-	return yy, xx, mean
 	
 	
 # Generate list of daily dates from 2018 to 2021
 daily_dates = generate_daily_dates(datetime(2018, 1, 1), datetime(2021, 12, 31))
 
-# Import model and obs dataset 
-lat, lon, pr_era5 = import_obs('tp')
-lat, lon, pr_regcm5 = import_rcm('pr')
-
 # Import cyclone tracking date 
 dt_era5 = open_dat_file('ERA5')
 dt_regcm5 = open_dat_file('RegCM5')
+
+# Import model and obs dataset 
+lat, lon, pr_era5 = import_obs('tp')
+lat, lon, pr_regcm5 = import_rcm('pr')
 
 # Import indices after tracking
 era5_idx = remove_duplicates(dt_era5)
@@ -264,7 +264,7 @@ cf = ax3.contourf(lon, lat, regcm5_idx_ii, levels=np.arange(0,84,4), transform=c
 sc = ax3.scatter(lon_i, lat_i, 12, pr_inmet, cmap=matplotlib.colors.ListedColormap(color), edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=80) 
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone'.format(path)
+path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone/egu'.format(path)
 name_out = 'pyplt_maps_95th_precipitation_EC_ERA5_RegCM5_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

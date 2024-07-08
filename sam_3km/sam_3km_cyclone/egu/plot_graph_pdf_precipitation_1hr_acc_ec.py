@@ -23,7 +23,7 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 path='/marconi/home/userexternal/mdasilva'
 
-skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
+skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,77, 93,100,105,106,107,112,117,124,135,137,139,
 149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
 303,305,306,308,319,334,335,341,343,359,362,364,384,393,396,398,399,400,402,413,416,417,422,423,426,427,
 443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]			
@@ -116,8 +116,8 @@ def import_ws(param, indices):
 		arq  = xr.open_dataset('{0}/user/mdasilva/WS-SA/INMET/nc/hourly/{1}/'.format(path, param) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
 		data = arq[param]
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
-		var  = time.resample(time='6H').sum()
-		var_ = var.values
+		var  = time.values
+		var_ = var[::6]
 
 		for idx_i in indices:
 			mean.append(var_[idx_i])
@@ -140,8 +140,8 @@ def import_sat(param, indices):
 		data   = arq[param]
 		latlon = data.sel(lat=slice(inmet[station][2]-0.1,inmet[station][2]+0.1),lon=slice(inmet[station][3]-0.1,inmet[station][3]+0.1)).mean(('lat','lon'))
 		time   = latlon.sel(time=slice('2018-01-01','2021-12-31'))
-		var    = time.resample(time='6H').sum()
-		var_   = var.values
+		var    = time.values
+		var_   = var[::6]
 		
 		for idx_i in indices:
 			mean.append(var_[idx_i])
@@ -164,8 +164,8 @@ def import_obs(param, indices):
 		data   = arq[param]
 		latlon = data.sel(lat=slice(inmet[station][2]-0.25,inmet[station][2]+0.25),lon=slice(inmet[station][3]-0.25,inmet[station][3]+0.25)).mean(('lat','lon'))
 		time   = latlon.sel(time=slice('2018-01-01','2021-12-31'))
-		var    = time.resample(time='6H').sum()
-		var_   = var.values
+		var    = time.values
+		var_   = var[::6]
 
 		for idx_i in indices:
 			mean.append(var_[idx_i])
@@ -188,8 +188,8 @@ def import_rcm(param, indices):
 		data   = arq[param]
 		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
 		time   = latlon.sel(time=slice('2018-01-01','2021-12-31'))
-		var    = time.resample(time='6H').sum()
-		var_   = var.values
+		var    = time.values
+		var_   = var[::6]
 
 		for idx_i in indices:
 			mean.append(var_[idx_i])
