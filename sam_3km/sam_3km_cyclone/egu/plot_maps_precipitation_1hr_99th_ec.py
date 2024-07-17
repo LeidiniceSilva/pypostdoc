@@ -160,7 +160,7 @@ def import_rcm(param, dataset, indices):
 
 	var_i = []
 	for idx_i in indices:
-		var_i.append(np.squeeze(var_[idx_i,:,:]))
+		var_i.append(np.squeeze(var[idx_i,:,:]))
 	
 	mean = np.percentile(var_i, 99, axis=0)
 
@@ -216,7 +216,7 @@ ax1.coastlines()
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 ax1.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax1.set_title('a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax1.contourf(lon, lat, pr_era5, levels=np.arange(0,20,1), transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+cf = ax1.contourf(lon, lat, pr_era5, levels=np.arange(0,10,0.5), transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 
 ax2.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax2.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -228,7 +228,7 @@ ax2.add_feature(states_provinces, edgecolor='0.25')
 ax2.coastlines()
 ax2.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax2.set_title('b) GPM', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax2.contourf(lon, lat, pr_gpm, levels=np.arange(0,20,1), transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+cf = ax2.contourf(lon, lat, pr_gpm, levels=np.arange(0,10,0.5), transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 
 ax3.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
@@ -241,7 +241,7 @@ ax3.add_feature(states_provinces, edgecolor='0.25')
 ax3.coastlines()
 ax3.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax3.set_title('c) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax3.contourf(lon, lat, pr_regcm5, levels=np.arange(0,20,1), transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+cf = ax3.contourf(lon, lat, pr_regcm5, levels=np.arange(0,10,0.5), transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 sc = ax3.scatter(lon_i, lat_i, 12, pr_inmet, cmap=matplotlib.colors.ListedColormap(color), edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=20) 
 
 # Path out to save figure
