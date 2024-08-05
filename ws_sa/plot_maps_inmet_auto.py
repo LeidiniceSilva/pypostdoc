@@ -9,7 +9,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-from dict_inmet_stations import inmet
+from dict_inmet_auto_stations import inmet_auto
 from dict_smn_i_stations import smn_i
 from dict_smn_ii_stations import smn_ii
 from matplotlib.patches import Polygon
@@ -27,21 +27,9 @@ ix, iy, iz = [], [], []
 for i in range(1, 567):
 	if i in skip_list:
 		continue
-	if inmet[i][2] >= -11.25235:
-		continue
-	iy.append(inmet[i][2])
-	ix.append(inmet[i][3])
-	iz.append(inmet[i][4])
-
-jx, jy, jz = [], [], []
-for j in range(1, 73):
-	jy.append(smn_i[j][1])
-	jx.append(smn_i[j][2])
-
-kx, ky, kz = [], [], []
-for k in range(1, 129):
-	ky.append(smn_ii[k][1])
-	kx.append(smn_ii[k][2])
+	iy.append(inmet_auto[i][2])
+	ix.append(inmet_auto[i][3])
+	iz.append(inmet_auto[i][4])
 					
 # Plot figure
 fig = plt.figure()
@@ -54,10 +42,7 @@ my_map.drawparallels(np.arange(-60.,15.,10.), labels=[1,0,0,0], linewidth=0.5, c
 my_map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black', linewidth=.5)
 
 my_map.plot(ix, iy, 'o', color='blue', label='INMET', markersize=2)
-my_map.plot(jx, jy, 'o', color='gray', label='SMN', markersize=2)
-my_map.plot(kx, ky, 'o', color='gray', markersize=2)
-
-plt.title('(a) CSAM weather stations', loc='left', fontsize=font_size, fontweight='bold')
+plt.title('(a)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel(u'Longitude', labelpad=20, fontsize=font_size, fontweight='bold')
 plt.ylabel(u'Latitude', labelpad=30, fontsize=font_size, fontweight='bold')
 plt.text(-36, -57, u'\u25B2 \nN', fontsize=font_size, fontweight='bold')
@@ -95,7 +80,7 @@ plt.gca().add_patch(poly1)
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/WS-SA/figs/figs_v2'.format(path)
-name_out = 'pyplt_maps_stations_sam.png'
+name_out = 'pyplt_maps_stations_inmet_auto.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
