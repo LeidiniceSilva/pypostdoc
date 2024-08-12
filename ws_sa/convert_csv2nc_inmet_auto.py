@@ -10,146 +10,69 @@ import numpy as np
 import pandas as pd
 
 from netCDF4 import Dataset
-from dict_inmet_stations import inmet
+from dict_inmet_auto_stations import inmet_auto
 
+freq='daily'
+path = '/marconi/home/userexternal/mdasilva/user/mdasilva/WS-SA/INMET'
 
-idx=2 # choose variable: 2, 7, 8 and 21
-if idx == 2:
-	nc_var = 'pre'
-	unit_var = 'mm'
-	name_var = 'Hourly total of precipitation'
-	std_var = 'precipitation'
-elif idx == 7:
-	nc_var = 'rad'
-	unit_var = 'kJ.m**-2'
-	name_var = 'Hourly mean of solar radiation'
-	std_var = 'temperature'
-elif idx == 8:
-	nc_var = 'tmp'
-	unit_var = 'degrees C'
-	name_var = 'Hourly mean of air temperature'
-	std_var = 'temperature'
+skip_list = [2,15,19,23,35,47,59,64,93,96,100,105,112,117,124,137,149,152,
+155,158,174,177,183,210,212,240,248,253,303,305,308,335,343,359,393,398,399,
+413,417,422,426,427,444,453,457,458,479,490,495,505,514,516,529,566]
+
+if freq == 'hourly':	
+	freq_i='H'
+	idx=2 # 2, 7, 8, 10 
+	if idx == 2:
+		nc_var = 'pre'
+		unit_var = 'mm'
+		name_var = 'Hourly total of precipitation'
+		std_var = 'precipitation'
+	elif idx == 7:
+		nc_var = 'rad'
+		unit_var = 'kJ.m**-2'
+		name_var = 'Hourly mean of solar radiation'
+		std_var = 'temperature'
+	elif idx == 8:
+		nc_var = 'tmp'
+		unit_var = 'degrees C'
+		name_var = 'Hourly mean of air temperature'
+		std_var = 'temperature'
+	else:
+		nc_var = 'uv'
+		unit_var = 'm.s**-1'
+		name_var = 'Hourly mean of wind speed'
+		std_var = 'wind'
 else:
-	nc_var = 'uv'
-	unit_var = 'm.s**-1'
-	name_var = 'Hourly mean of wind speed'
-	std_var = 'wind'
+	freq_i='D'
+	idx=10 # 1, 5, 10 
+	if idx == 1:
+		nc_var = 'pre'
+		unit_var = 'mm'
+		name_var = 'Daily total of precipitation'
+		std_var = 'precipitation'
+	elif idx == 5:
+		nc_var = 'tmp'
+		unit_var = 'degrees C'
+		name_var = 'Daily mean of air temperature'
+		std_var = 'temperature'
+	else:
+		nc_var = 'uv'
+		unit_var = 'm.s**-1'
+		name_var = 'Daily mean of wind speed'
+		std_var = 'wind'
 
-path = '/marconi/home/userexternal/mdasilva/OBS/WS-SA'
-
+	
 # create date list
-dt = pd.date_range('2018-01-01','2022-01-01', freq='H')
+dt = pd.date_range('2018-01-01','2022-01-01', freq='{0}'.format(freq_i))
 dt = dt[:-1]
 
 for station in range(1, 567):
-	if station == 2:
+	if station in skip_list:
 		continue
-	if station == 15:
-		continue
-	if station == 19:
-		continue
-	if station == 23:
-		continue
-	if station == 35:
-		continue
-	if station == 47:
-		continue
-	if station == 59:
-		continue
-	if station == 64:
-		continue
-	if station == 93:
-		continue
-	if station == 96:
-		continue
-	if station == 100:
-		continue
-	if station == 105:
-		continue
-	if station == 112:
-		continue
-	if station == 117:
-		continue
-	if station == 124:
-		continue
-	if station == 137:
-		continue
-	if station == 149:
-		continue
-	if station == 152:
-		continue
-	if station == 155:
-		continue
-	if station == 158:
-		continue
-	if station == 174:
-		continue
-	if station == 183:
-		continue
-	if station == 210:
-		continue
-	if station == 212:
-		continue
-	if station == 240:
-		continue
-	if station == 248:
-		continue
-	if station == 253:
-		continue
-	if station == 303:
-		continue
-	if station == 305:
-		continue
-	if station == 308:
-		continue
-	if station == 335:
-		continue
-	if station == 343:
-		continue
-	if station == 359:
-		continue
-	if station == 393:
-		continue
-	if station == 398:
-		continue
-	if station == 399:
-		continue
-	if station == 413:
-		continue
-	if station == 417:
-		continue
-	if station == 422:
-		continue
-	if station == 426:
-		continue
-	if station == 427:
-		continue
-	if station == 444:
-		continue
-	if station == 453:
-		continue
-	if station == 457:
-		continue
-	if station == 458:
-		continue
-	if station == 479:
-		continue
-	if station == 490:
-		continue
-	if station == 495:
-		continue
-	if station == 505:
-		continue
-	if station == 514:
-		continue
-	if station == 529:
-		continue
-	if station == 566:
-		continue
-													
-	print('Reading inmet station:', station, inmet[station][0])
-	# Reading smn station
-	data = pd.read_csv(os.path.join('{0}/csv/hourly/'.format(path), 'dados_{0}_H_2018-01-01_2021-12-31.csv'.format(inmet[station][0])), skiprows=9, encoding='ISO-8859-1', decimal=',', delimiter=';')
+		
+	# Reading inmet station												
+	print('Reading inmet station:', station, inmet_auto[station][0])
+	data = pd.read_csv(os.path.join('{0}/automatic/csv/{1}/'.format(path, freq), 'dados_{0}_{1}_2018-01-01_2021-12-31.csv'.format(inmet_auto[station][0], freq_i)), skiprows=9, encoding='ISO-8859-1', decimal=',', delimiter=';')
 	data_i = data.iloc[:, idx]
 	data_ii = data_i.replace(-999., np.nan)
 	data_values = np.array(data_ii, dtype=float)
@@ -160,7 +83,7 @@ for station in range(1, 567):
 		data_dates.append('{0}'.format(dt[i]))
 		print('Date organized:', data_dates[i], data_values[i])
 		
-	nc_output = '{0}/nc/hourly/{1}/{1}_{2}_H_2018-01-01_2021-12-31.nc'.format(path, nc_var, inmet[station][0])
+	nc_output = '{0}/automatic/nc/{1}/{2}/{2}_{3}_{4}_2018-01-01_2021-12-31.nc'.format(path, freq, nc_var, inmet_auto[station][0], freq_i)
 
 	# create netcdf
 	ds = Dataset(nc_output, mode='w', format='NETCDF4_CLASSIC')

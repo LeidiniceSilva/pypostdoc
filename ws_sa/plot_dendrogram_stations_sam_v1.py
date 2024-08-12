@@ -45,7 +45,7 @@ def import_inmet():
 		d_i = d_i.pre.sel(time=slice('2018-01-01','2021-12-31'))
 		d_i = d_i.groupby('time.month').mean('time')
 		values_i = d_i.values
-		clim_i.append(values_i)
+		clim_i.append(values_i*24)
 			
 	return iy, ix, clim_i
 
