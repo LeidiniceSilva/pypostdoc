@@ -85,7 +85,10 @@ dens_regcm5 = density_ciclones(regcm5_dateset)
 dens_wrf415 = density_ciclones(wrf415_dateset)
 
 # Plot figure
-fig, (ax1, ax2, ax3) = plt.subplots(1,3, figsize=(14, 6), subplot_kw={"projection": ccrs.PlateCarree()})
+fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.PlateCarree()})
+(ax1, ax2), (ax3, ax4) = axes
+fig.delaxes(ax4)
+
 states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 
 colorb = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
@@ -101,11 +104,8 @@ ax1.add_feature(cfeat.BORDERS)
 ax1.add_feature(states_provinces, edgecolor='0.25')
 ax1.coastlines()
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-ax1.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
 cf = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
-plt.xticks(visible=True, fontsize=font_size)
-plt.yticks(visible=True, fontsize=font_size)
 
 ax2.coastlines()
 ax2.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
@@ -120,8 +120,6 @@ ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 cf = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
 cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
-plt.xticks(visible=True, fontsize=font_size)
-plt.yticks(visible=True, fontsize=font_size)
 
 ax3.coastlines()
 ax3.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
@@ -134,9 +132,8 @@ ax3.add_feature(states_provinces, edgecolor='0.25')
 ax3.coastlines()
 ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
+ax3.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
 cf = ax3.contourf(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
-plt.xticks(visible=True, fontsize=font_size)
-plt.yticks(visible=True, fontsize=font_size)
 
 # Path out to save figure
 path_out = '{0}/figs/cyclone/paper'.format(path)
