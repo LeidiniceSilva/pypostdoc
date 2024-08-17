@@ -62,19 +62,6 @@ def find_indices_in_date_list(date_list, target_dates):
 			pass  # Date not found in date_list
 	
 	return indices
-
-
-def select_days(dataset, indices):
-	
-	dataset_i = []
-	for idx_i in indices:
-		dataset_i.append(np.squeeze(dataset[idx_i,:,:]))
-	
-	dataset_95 = np.percentile(dataset_i, 95, axis=0)
-	dataset_99 = np.percentile(dataset_i, 99, axis=0)
-	
-
-	return dataset_95, dataset_99
 		
 	
 def read_dat_file(filename):
@@ -126,33 +113,28 @@ def open_dat_file(dataset):
 	return dt
 
 	
-def import_obs(param, dataset):
-
-	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/obs/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)		
-	
-	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param][:] 
-	lat   = data.variables['lat'][:]	
-	lon   = data.variables['lon'][:]
-	mean = var[:][:,:,:]
-	
-	return lat, lon, mean
-	
-	
-def import_rcm(param, dataset):
+def import_data(param, dataset, indices):
 
 	if dataset == 'RegCM5':
 		arq = '{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)
-	else:
+	elif dataset == 'WRF415':
 		arq = '{0}/user/mdasilva/SAM-3km/post_cyclone/wrf/wrf/{1}/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)
+	else:
+		arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/obs/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)		
 	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]	
 	lon   = data.variables['lon'][:]
 	mean = var[:][:,:,:]
+
+	var_i = []
+	for idx_i in indices:
+		var_i.append(np.squeeze(mean[idx_i,:,:]))
 	
-	return lat, lon, mean	
+	mean_ii = np.sum(var_i, axis=0)
+	
+	return lat, lon, mean_ii	
 
 
 def import_ws(param, indices):
@@ -188,12 +170,6 @@ def import_ws(param, indices):
 # Generate list of daily dates from 2018 to 2021
 daily_dates = generate_daily_dates(datetime(2018, 1, 1), datetime(2021, 12, 31))
 
-# Import model and obs dataset 
-lat, lon, pr_gpm = import_obs('precipitation', 'GPM')
-lat, lon, pr_era5 = import_obs('tp', 'ERA5')
-lat, lon, pr_regcm5 = import_rcm('pr', 'RegCM5')
-lat, lon, pr_wrf415 = import_rcm('PREC_ACC_NC', 'WRF415')
-
 # Import cyclone tracking date 
 dt_era5 = open_dat_file('ERA5')
 dt_regcm5 = open_dat_file('RegCM5')
@@ -207,11 +183,12 @@ era5_idx_i = find_indices_in_date_list(daily_dates, era5_idx)
 regcm5_idx_i = find_indices_in_date_list(daily_dates, regcm5_idx)
 wrf415_idx_i = find_indices_in_date_list(daily_dates, wrf415_idx)
 
-lat_, lon_, inmet_idx_95, inmet_idx_99 = import_ws('pre', era5_idx_i)
-gpm_idx_95, gpm_idx_99 = select_days(pr_gpm, era5_idx_i)
-era5_idx_95, era5_idx_99 = select_days(pr_era5, era5_idx_i)
-regcm5_idx_95, regcm5_idx_99 = select_days(pr_regcm5, regcm5_idx_i)
-wrf415_idx_95, wrf415_idx_99 = select_days(pr_wrf415, wrf415_idx_i)
+# Import model and obs dataset 
+lat_, lon_, inmet_idx_95, inmet_idx_99  = import_ws('precipitation', era5_idx_i)
+lat, lon, gpm_idx_95, gpm_idx_99  = import_data('precipitation', 'GPM', era5_idx_i)
+lat, lon, era5_idx_95, era5_idx_99 = import_data('tp', 'ERA5', era5_idx_i)
+lat, lon, regcm5_idx_95, regcm5_idx_99 = import_data('pr', 'RegCM5', regcm5_idx_i)
+lat, lon, wrf415_idx_95, wrf415_idx_99 = import_data('PREC_ACC_NC', 'WRF415', wrf415_idx_i)
 
 # Plot figure
 fig, axes = plt.subplots(5,2, figsize=(8, 13), subplot_kw={"projection": ccrs.PlateCarree()})
