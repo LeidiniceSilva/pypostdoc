@@ -209,7 +209,7 @@ ax2.axvspan(8, 11, color='k', alpha=0.1)
 
 # Path out to save figure
 path_out = '{0}/figs/cyclone/paper'.format(path)
-name_out = 'pyplt_annual_cycle_features_CP-RCM_SAM-3km_2018-2021.png'
+name_out = 'pyplt_graph_annual_cycle_count_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
