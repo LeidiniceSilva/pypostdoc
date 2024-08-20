@@ -199,6 +199,12 @@ p99_era5 = np.percentile(pr_era5, 99.9)
 p99_regcm5 = np.percentile(pr_regcm5, 99.9)
 p99_wrf415 = np.percentile(pr_wrf415, 99.9)
 
+print(p99_inmet)
+print(p99_gpm)
+print(p99_era5)
+print(p99_regcm5)
+print(p99_wrf415)
+
 # Plot figure
 fig = plt.figure()
 font_size = 8
@@ -211,8 +217,8 @@ plt.plot(x_pdf_regcm5, pdf_regcm5, marker='o', markersize=4, mfc='blue',   mec='
 plt.plot(x_pdf_wrf415, pdf_wrf415, marker='o', markersize=4, mfc='red',    mec='red',    alpha=0.75, linestyle='None', label='WRF415')
 
 plt.axvline(x=p99_inmet, color='green', linestyle='--')
-plt.axvline(x=p99_gpm, color='black', linestyle='--')
-plt.axvline(x=p99_era5, color='violet', linestyle='--')
+plt.axvline(x=p99_gpm, color='violet', linestyle='--')
+plt.axvline(x=p99_era5, color='black', linestyle='--')
 plt.axvline(x=p99_regcm5, color='blue', linestyle='--')
 plt.axvline(x=p99_wrf415, color='red', linestyle='--')
 
@@ -221,11 +227,9 @@ plt.xlabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='bold'
 plt.ylabel('Frequency (#)', fontsize=font_size, fontweight='bold')
 plt.yscale('log')
 plt.grid(axis='y', color='k', linestyle='--', alpha=0.3)
-plt.legend(loc=1, ncol=1, fontsize=font_size, shadow=True)
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone/paper'.format(path)
 name_out = 'pyplt_graph_pdf_precipitation_1hr_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()

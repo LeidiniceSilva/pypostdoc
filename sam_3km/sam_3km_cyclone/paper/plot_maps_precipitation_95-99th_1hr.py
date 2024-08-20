@@ -181,8 +181,6 @@ lat, lon, era5_idx_95, era5_idx_99 = import_data('tp', 'ERA5', era5_idx_i)
 lat, lon, regcm5_idx_95, regcm5_idx_99 = import_data('pr', 'RegCM5', regcm5_idx_i)
 lat, lon, wrf415_idx_95, wrf415_idx_99 = import_data('PREC_ACC_NC', 'WRF415', wrf415_idx_i)
 
-print(wrf415_idx_95.shape)
-
 # Plot figure
 fig, axes = plt.subplots(5,2, figsize=(8, 13), subplot_kw={"projection": ccrs.PlateCarree()})
 (ax1, ax2), (ax3, ax4), (ax5, ax6), (ax7, ax8), (ax9, ax10) = axes

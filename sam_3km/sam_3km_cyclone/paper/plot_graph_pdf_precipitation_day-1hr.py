@@ -35,24 +35,24 @@ def remove_duplicates(date_list):
 
 def generate_hourly_dates(start_date, end_date):
     
-	dates = []
+	dates_hr = []
 	current_date = start_date
 	while current_date <= end_date:
-		dates.append(current_date.strftime('%Y%m%d%H'))
+		dates_hr.append(current_date.strftime('%Y%m%d%H'))
 		current_date += timedelta(hours=6)
 	
-	return dates
+	return dates_hr
 	 
 
 def generate_daily_dates(start_date, end_date):
     
-	dates = []
+	dates_day = []
 	current_date = start_date
 	while current_date <= end_date:
-		dates.append(current_date.strftime('%Y%m%d'))
+		dates_day.append(current_date.strftime('%Y%m%d'))
 		current_date += timedelta(days=1)
 	
-	return dates
+	return dates_day
 
 
 def find_indices_in_date_list(date_list, target_dates):
