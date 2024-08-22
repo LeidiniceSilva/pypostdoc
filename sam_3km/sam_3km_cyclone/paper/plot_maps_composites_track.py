@@ -92,7 +92,7 @@ lat_wrf415_ls = [float(i) for i in lat_wrf415]
 lon_wrf415_ls = [float(i) for i in lon_wrf415]
 
 # Plot figure
-fig, axes = plt.subplots(2,2, figsize=(10, 8), subplot_kw={"projection": ccrs.PlateCarree()})
+fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.PlateCarree()})
 (ax1, ax2), (ax3, ax4) = axes
 fig.delaxes(ax4)
 

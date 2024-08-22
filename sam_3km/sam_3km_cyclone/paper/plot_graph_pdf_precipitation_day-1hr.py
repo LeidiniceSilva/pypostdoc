@@ -132,11 +132,11 @@ def import_data_hr(param, dataset, indices):
 			continue
 		
 		if dataset == 'RegCM5':
-			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_SAM-3km_{1}_6hr_2018-2021_lonlat.nc'.format(param, dataset))
 		elif dataset == 'WRF415':
-			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_cyclone/wrf/wrf/{1}/'.format(path, param) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_cyclone/wrf/wrf/{1}/'.format(path, param) + '{0}_SAM-3km_{1}_6hr_2018-2021_lonlat.nc'.format(param, dataset))
 		else:
-			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + '{0}_SAM-3km_{1}_6hr_2018-2021_lonlat.nc'.format(param, dataset))
 		
 		data   = arq[param]
 		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
@@ -147,10 +147,9 @@ def import_data_hr(param, dataset, indices):
 			time = latlon.sel(time=slice('2018-01-01','2021-12-31'))
 			
 		var = time.values
-		var_ = var[::6]
 
 		for idx_i in indices:
-			mean.append(var_[idx_i])
+			mean.append(var[idx_i])
 																
 	return mean		
 

@@ -97,44 +97,10 @@ def open_dat_file(dataset):
 	return dt
 
 
-def import_data(param, dataset, indices):
+def import_data(indices_i, indices_ii, indices_iii):
 
-	mean = []
-	for station in range(1, 567):
-		print(station, inmet[station][0])
-		
-		if station in skip_list:
-			continue
-		if inmet[station][2] >= -11.25235:
-			continue
-		
-		if dataset == 'RegCM5':
-			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
-		elif dataset == 'WRF415':
-			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_cyclone/wrf/wrf/{1}/'.format(path, param) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
-		else:
-			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
-		
-		data   = arq[param]
-		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
-		
-		if dataset == 'WRF415':
-			time = latlon.sel(XTIME=slice('2018-01-01','2021-12-31'))
-		else:
-			time = latlon.sel(time=slice('2018-01-01','2021-12-31'))
-			
-		var = time.values
-		var_ = var[::6]
-
-		for idx_i in indices:
-			mean.append(var_[idx_i])
-																
-	return mean		
-
-
-def import_ws(param, indices):
-
-	mean = []
+	mean_, mean_i, mean_ii, mean_iii, mean_iv = [], [], [], [], []
+	
 	for station in range(1, 567):
 		print(station, inmet[station][0])
 		
@@ -143,16 +109,48 @@ def import_ws(param, indices):
 		if inmet[station][2] >= -11.25235:
 			continue
 
-		arq  = xr.open_dataset('{0}/user/mdasilva/WS-SA/INMET/automatic/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
-		data = arq[param]
+		arq  = xr.open_dataset('{0}/user/mdasilva/WS-SA/INMET/automatic/nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
+		data = arq['pre']
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
 		var  = time.values
 		var_ = var[::6]
 
-		for idx_i in indices:
-			mean.append(var_[idx_i])
+		arq_i    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'precipitation_SAM-3km_GPM_6hr_2018-2021_lonlat.nc')
+		data_i   = arq_i['precipitation']
+		latlon_i = data_i.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_i   = latlon_i.sel(time=slice('2018-01-01','2021-12-31'))
+		var_i    = time_i.values
+
+		arq_ii    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + 'tp_SAM-3km_ERA5_6hr_2018-2021_lonlat.nc')
+		data_ii   = arq_ii['tp']
+		latlon_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_ii   = latlon_ii.sel(time=slice('2018-01-01','2021-12-31'))
+		var_ii    = time_ii.values
+
+		arq_iii    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + 'pr_SAM-3km_RegCM5_6hr_2018-2021_lonlat.nc')
+		data_iii   = arq_iii['pr']
+		latlon_iii = data_iii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_iii   = latlon_iii.sel(time=slice('2018-01-01','2021-12-31'))
+		var_iii    = time_iii.values
+
+		arq_iv    = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_cyclone/wrf/wrf/PREC_ACC_NC/'.format(path) + 'PREC_ACC_NC_SAM-3km_WRF415_6hr_2018-2021_lonlat.nc')
+		data_iv   = arq_iv['PREC_ACC_NC']
+		latlon_iv = data_iv.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_iv   = latlon_iv.sel(XTIME=slice('2018-01-01','2021-12-31'))
+		var_iv    = time_iv.values
+
+		for idx_i in indices_i:
+			mean_.append(var_[idx_i])
+			mean_i.append(var_i[idx_i])
+			mean_ii.append(var_ii[idx_i])
+
+		for idx_ii in indices_ii:
+			mean_iii.append(var_iii[idx_ii])
+
+		for idx_iii in indices_iii:
+			mean_iv.append(var_iv[idx_iii])
 																
-	return mean
+	return mean_, mean_i, mean_ii, mean_iii, mean_iv		
 
 
 def comp_pdf(timeseries):
@@ -179,11 +177,7 @@ regcm5_idx_i = find_indices_in_date_list(hourly_dates, dt_regcm5)
 wrf415_idx_i = find_indices_in_date_list(hourly_dates, dt_wrf415)
 
 # Import model and obs dataset 
-pr_inmet  = import_ws('pre', era5_idx_i)
-pr_gpm    = import_data('precipitation', 'GPM', era5_idx_i)
-pr_era5   = import_data('tp', 'ERA5', era5_idx_i)
-pr_regcm5 = import_data('pr', 'RegCM5', regcm5_idx_i)
-pr_wrf415 = import_data('PREC_ACC_NC', 'WRF415', wrf415_idx_i)
+pr_inmet, pr_gpm, pr_era5, pr_regcm5, pr_wrf415 = import_data(era5_idx_i, regcm5_idx_i, wrf415_idx_i)
 
 # Import pdf function
 x_pdf_inmet, pdf_inmet = comp_pdf(pr_inmet)
@@ -232,4 +226,5 @@ plt.grid(axis='y', color='k', linestyle='--', alpha=0.3)
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone/paper'.format(path)
 name_out = 'pyplt_graph_pdf_precipitation_1hr_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
+plt.show()
 exit()

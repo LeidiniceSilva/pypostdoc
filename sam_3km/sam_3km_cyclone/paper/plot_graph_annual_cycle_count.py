@@ -182,7 +182,7 @@ ax2.bar(x,       list_lifetime_regcm5_, width, color='blue',  alpha=0.75, edgeco
 ax2.bar(x+width, list_lifetime_wrf415_, width, color='red',   alpha=0.75, edgecolor='black', linewidth=1., label='WRF415')
 ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Months', fontsize=font_size, fontweight='bold')
-ax2.set_ylabel('LIfetime of cyclones', fontsize=font_size, fontweight='bold')
+ax2.set_ylabel('Lifetime of cyclones', fontsize=font_size, fontweight='bold')
 ax2.set_xticks(x)
 ax2.set_xticklabels(labels, fontsize=font_size)
 ax2.set_ylim(0, 10)
