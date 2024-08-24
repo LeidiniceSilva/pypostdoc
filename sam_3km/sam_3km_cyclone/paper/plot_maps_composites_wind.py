@@ -20,6 +20,7 @@ from datetime import datetime
 from datetime import datetime, timedelta
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
+font_size = 10
 path='/marconi/home/userexternal/mdasilva'
 
 
