@@ -92,7 +92,7 @@ def open_dat_file(dataset):
 				rows_list.append(rows[0])
 		
 		for j  in rows_list:
-			dt.append(str(j[0:-2]))
+			dt.append(str(j[0]))
 	
 	return dt
 
@@ -114,7 +114,7 @@ def import_data(param, dataset, indices):
 
 	var_i = []
 	for idx_i in indices:
-		var_i.append(mean[idx_i,:,:])
+		var_i.append(np.squeeze(mean[idx_i,:,:]))
 		
 	return lat, lon, var_i
 	
