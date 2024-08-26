@@ -5,7 +5,6 @@ __email__       = "leidinicesilva@gmail.com"
 __date__        = "Apr 01, 2024"
 __description__ = "This script plot map of windy speed"
 
-
 import os
 import netCDF4
 import datetime
@@ -121,37 +120,46 @@ def import_data(param, dataset, indices):
 
 # Generate list of daily dates from 2018 to 2021
 hourly_dates = generate_hourly_dates(datetime(2018, 1, 1, 0), datetime(2021, 12, 31, 23))
+print("here")
 
 # Import cyclone tracking date 
 dt_era5 = open_dat_file('ERA5')
 dt_regcm5 = open_dat_file('RegCM5')
 dt_wrf415 = open_dat_file('WRF415')
+print("here")
 
 era5_idx_i = find_indices_in_date_list(hourly_dates, dt_era5)
 regcm5_idx_i = find_indices_in_date_list(hourly_dates, dt_regcm5)
 wrf415_idx_i = find_indices_in_date_list(hourly_dates, dt_wrf415)
+print("here")
 
 # Import model and obs dataset 
 lat, lon, era5_u10 = import_data('u10', 'ERA5', era5_idx_i)
 lat, lon, era5_v10 = import_data('v10', 'ERA5', era5_idx_i)
+print("here")
 
 lat, lon, regcm5_uas = import_data('uas', 'RegCM5', regcm5_idx_i)
 lat, lon, regcm5_vas = import_data('vas', 'RegCM5', regcm5_idx_i)
+print("here")
 
 lat, lon, wrf415_U10e = import_data('U10e', 'WRF415', wrf415_idx_i)
 lat, lon, wrf415_V10e = import_data('V10e', 'WRF415', wrf415_idx_i)
+print("here")
 
 era5_u10_i = np.nanmean(era5_u10, axis=0)
 era5_v10_i = np.nanmean(era5_v10, axis=0)
 uv_era5 = np.sqrt(era5_u10_i**2 + era5_v10_i**2)
+print("here")
 
 regcm5_uas_i = np.nanmean(regcm5_uas, axis=0)
 regcm5_vas_i = np.nanmean(regcm5_vas, axis=0)
 uv_regcm5 = np.sqrt(regcm5_uas_i**2 + regcm5_vas_i**2)
+print("here")
 
 wrf415_U10e_i = np.nanmean(wrf415_U10e, axis=0)
 wrf415_V10e_i = np.nanmean(wrf415_V10e, axis=0)
 uv_wrf415 = np.sqrt(wrf415_U10e_i**2 + wrf415_V10e_i**2)
+print("here")
 
 # Plot figure
 fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.PlateCarree()})
@@ -199,7 +207,7 @@ ax3.add_feature(cfeat.BORDERS)
 ax3.add_feature(states_provinces, edgecolor='0.25')
 ax3.coastlines()
 ax3.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
-ax3.set_title('(c) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 cf = ax3.contourf(lon, lat, uv_wrf415, colorb, transform=ccrs.PlateCarree(), extend='max', cmap='Blues')
 cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]), ticks=colorb)
 qr = ax3.quiver(lon, lat, wrf415_U10e_i, wrf415_V10e_i, color='black', transform=ccrs.PlateCarree())
@@ -208,5 +216,4 @@ qr = ax3.quiver(lon, lat, wrf415_U10e_i, wrf415_V10e_i, color='black', transform
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone/paper'.format(path)
 name_out = 'pyplt_maps_wind_speed_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()
