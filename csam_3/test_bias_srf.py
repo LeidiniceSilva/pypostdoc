@@ -302,10 +302,10 @@ dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.Br
 'tas': ['Air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmax': ['Maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmin': ['Minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
-'clt': ['Total cloud cover (%)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
-'cll': ['Low cloud cover (%)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
-'clm': ['Medium cloud cover (%)', np.arange(-0.7, 0.8, 0.10), cm.RdGy],
-'clh': ['High cloud cover (%)', np.arange(-0.7, 0.8, 0.1), cm.RdGy]}
+'clt': ['Total cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
+'cll': ['Low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
+'clm': ['Medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
+'clh': ['High cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy]}
 
 if var == 'pr':
 	fig = plt.figure(figsize=(10, 6))
@@ -605,7 +605,7 @@ elif var == 'clt':
 
 	ax = fig.add_subplot(4, 3, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(c) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 4)  
@@ -621,7 +621,7 @@ elif var == 'clt':
 
 	ax = fig.add_subplot(4, 3, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(f) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 7)  
@@ -637,7 +637,7 @@ elif var == 'clt':
 
 	ax = fig.add_subplot(4, 3, 9)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(i) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 10)  
@@ -656,7 +656,7 @@ elif var == 'clt':
 	
 	ax = fig.add_subplot(4, 3, 12)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcm[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_son_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(l) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.98, 0.3, 0.015, 0.4]))
@@ -674,13 +674,13 @@ else:
 
 	ax = fig.add_subplot(4, 3, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcmi[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_djf_rcmi[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(b) CPM3 (00-09) - CPM3 (18-21)', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0]/100, levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(c) CPM3 - RCM-22', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(c) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 4)  
 	map, xx, yy = basemap(lat, lon)
@@ -690,12 +690,12 @@ else:
 
 	ax = fig.add_subplot(4, 3, 5)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcmi[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_mam_rcmi[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(e) CPM3 (00-09) - CPM3 (18-21)', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(f) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 7)  
@@ -706,12 +706,12 @@ else:
 
 	ax = fig.add_subplot(4, 3, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcmi[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_jja_rcmi[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(h) CPM3 (00-09) - CPM3 (18-21)', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 9)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(i) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 10)  
@@ -725,12 +725,12 @@ else:
 	
 	ax = fig.add_subplot(4, 3, 11)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcmi[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_son_rcmi[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(k) CPM3 (00-09) - CPM3 (18-21)', loc='left', fontsize=font_size, fontweight='bold')
 	
 	ax = fig.add_subplot(4, 3, 12)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcm[0]/100, levels=dict_plot[var][1], cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_son_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(l) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.98, 0.3, 0.015, 0.4]))

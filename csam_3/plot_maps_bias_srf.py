@@ -18,14 +18,14 @@ from dict_smn_ii_stations import smn_ii
 from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
 
-var = 'cll'
+var = 'rsnl'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2009'
 dt = '{0}-{1}'.format(idt, fdt)
 
 path = '/marconi/home/userexternal/mdasilva'
 
-			
+		
 def import_obs(param, dataset, season):
 
 	arq   = '{0}/user/mdasilva/CORDEX/post_evaluate/obs/{1}_{2}_{3}_2000-2009_lonlat.nc'.format(path, param, dataset, season)	
@@ -80,6 +80,8 @@ dict_var = {'pr': ['pre', 'precip', 'hrf', 'pr'],
 'tas': ['tmp', 'tas'],
 'tasmax': ['tmx', 'tmax', 'tasmax'],
 'tasmin': ['tmn', 'tmin', 'tasmin'],
+'rsnl': ['msnlwrf'],
+'rsns': ['msnswrf'],
 'clt': ['cld', 'clt'],
 'cll': ['lcc'],
 'clm': ['mcc'],
@@ -223,6 +225,32 @@ elif var == 'tasmax' or var == 'tasmin':
 	mbe_jja_rcm = compute_mbe(rcm3_jja[0], rcm22_jja[0])
 	mbe_son_rcm = compute_mbe(rcm3_son[0], rcm22_son[0])
 
+elif var == 'rsnl' or var == 'rsns':
+	lat, lon, era5_djf = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'JJA')
+	lat, lon, era5_son = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'SON')
+
+	lat, lon, rcm3_djf = import_rcm(var, 'CSAM-3_RegCM5', 'DJF')
+	lat, lon, rcm3_mam = import_rcm(var, 'CSAM-3_RegCM5', 'MAM')
+	lat, lon, rcm3_jja = import_rcm(var, 'CSAM-3_RegCM5', 'JJA')
+	lat, lon, rcm3_son = import_rcm(var, 'CSAM-3_RegCM5', 'SON')
+
+	lat, lon, rcm22_djf = import_rcm(var, 'SAM-22_RegCM5', 'DJF')
+	lat, lon, rcm22_mam = import_rcm(var, 'SAM-22_RegCM5', 'MAM')
+	lat, lon, rcm22_jja = import_rcm(var, 'SAM-22_RegCM5', 'JJA')
+	lat, lon, rcm22_son = import_rcm(var, 'SAM-22_RegCM5', 'SON')
+				
+	mbe_djf_rcm_era5 = compute_mbe(rcm3_djf, era5_djf)
+	mbe_mam_rcm_era5 = compute_mbe(rcm3_mam, era5_mam)
+	mbe_jja_rcm_era5 = compute_mbe(rcm3_jja, era5_jja)
+	mbe_son_rcm_era5 = compute_mbe(rcm3_son, era5_son)	
+
+	mbe_djf_rcm = compute_mbe(rcm3_djf, rcm22_djf[0])
+	mbe_mam_rcm = compute_mbe(rcm3_mam, rcm22_mam[0])
+	mbe_jja_rcm = compute_mbe(rcm3_jja, rcm22_jja[0])
+	mbe_son_rcm = compute_mbe(rcm3_son, rcm22_son[0])
+	
 elif var == 'clt':
 	lat, lon, cru_djf = import_obs(dict_var[var][0], 'CSAM-3_CRU', 'DJF')
 	lat, lon, cru_mam = import_obs(dict_var[var][0], 'CSAM-3_CRU', 'MAM')
@@ -302,10 +330,12 @@ dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.Br
 'tas': ['Air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmax': ['Maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmin': ['Minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
-'clt': ['Total cloud cover (%)', np.arange(-70, 80, 10), cm.RdGy],
-'cll': ['Low cloud cover (%)', np.arange(-70, 80, 10), cm.RdGy],
-'clm': ['Medium cloud cover (%)', np.arange(-70, 80, 10), cm.RdGy],
-'clh': ['High cloud cover (%)', np.arange(-70, 80, 10), cm.RdGy]}
+'rsnl': ['Surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r]
+'rsns': ['Surface net upward shortwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r]
+'clt': ['Total cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
+'cll': ['Low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
+'clm': ['Medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
+'clh': ['High cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy]}
 
 if var == 'pr':
 	fig = plt.figure(figsize=(10, 6))
@@ -313,101 +343,101 @@ if var == 'pr':
 	ax = fig.add_subplot(4, 5, 1)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(a) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(a) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 2)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(b) CP-RegCM5 - CPC', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(b) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 3)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm_trmm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(c) CP-RegCM5 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(c) CPM3 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 4)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(d) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(d) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 5)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(e) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(e) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 6)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(f) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(f) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 7)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(g) CP-RegCM5 - CPC', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(g) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 8)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_trmm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(h) CP-RegCM5 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(h) CPM3 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 9)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(i) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(i) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 10)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(j) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(j) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 11)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(k) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(k) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 12)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(l) CP-RegCM5 - CPC', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(l) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 13)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm_trmm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(m) CP-RegCM5 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(m) CPM3 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 14)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(n) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(n) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 15)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(o) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(o) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 16)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(p) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(p) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 17)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(q) CP-RegCM5 -CPC', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(q) CPM3 -CPC', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 18)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm_trmm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(r) CP-RegCM5 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(r) CPM3 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 19)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(s) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(s) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.015, 0.4]))
 	cbar.ax.tick_params(labelsize=font_size)
@@ -415,7 +445,7 @@ if var == 'pr':
 	ax = fig.add_subplot(4, 5, 20)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(t) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(t) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.98, 0.3, 0.015, 0.4]))
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
@@ -427,61 +457,61 @@ elif var == 'tas':
 	ax = fig.add_subplot(4, 3, 1)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(a) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(a) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 2)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(b) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(b) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 3)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(c) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(c) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 4)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(d) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(d) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 5)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(e) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(e) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 6)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(f) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(f) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 7)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(g) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(g) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 8)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(h) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(h) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 9)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(i) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(i) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 10)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(j) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(j) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 11)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(k) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(k) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.015, 0.4]))
 	cbar.ax.tick_params(labelsize=font_size)
@@ -489,7 +519,7 @@ elif var == 'tas':
 	ax = fig.add_subplot(4, 3, 12)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(l) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(l) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.98, 0.3, 0.015, 0.4]))
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
@@ -501,81 +531,81 @@ elif var == 'tasmax' or var == 'tasmin':
 	ax = fig.add_subplot(4, 4, 1)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(a) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(a) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 2)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(b) CP-RegCM5 - CPC', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(b) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 3)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(c) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(c) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 4)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(d) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(d) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 5)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(e) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(e) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 6)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(f) CP-RegCM5 - CPC', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(f) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 7)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(g) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(g) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 8)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(h) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(h) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 9)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(i) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(i) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 10)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(j) CP-RegCM5 - CPC', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(j) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 11)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(k) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(k) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 12)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(l) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(l) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 13)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(m) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(m) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 14)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm_cpc[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(n) CP-RegCM5 - CPC', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(n) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 4, 15)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(o) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(o) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.015, 0.4]))
 	cbar.ax.tick_params(labelsize=font_size)
@@ -583,81 +613,135 @@ elif var == 'tasmax' or var == 'tasmin':
 	ax = fig.add_subplot(4, 4, 16)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_son_rcm[0], levels=np.arange(-7, 7.5, 0.5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(p) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(p) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.98, 0.3, 0.015, 0.4]))
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 	
+elif var == 'rsnl' or var == 'rsns':
+	fig = plt.figure(figsize=(4, 2))
+
+	ax = fig.add_subplot(4, 2 1)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(a) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 2, 2)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(b) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 2, 3)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0], levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(c) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 2, 4)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(d) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 2, 5)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(e) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 2, 6)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0], levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(f) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 2, 7)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_son_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(g) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
+
+	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.015, 0.4]))
+	cbar.ax.tick_params(labelsize=font_size)
+	
+	ax = fig.add_subplot(4, 2, 8)  
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_son_rcm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(h) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
+
+	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.98, 0.3, 0.015, 0.4]))
+	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
+	cbar.ax.tick_params(labelsize=font_size)
+
 elif var == 'clt':
 	fig = plt.figure(figsize=(8, 8))
 
 	ax = fig.add_subplot(4, 3, 1)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(a) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm_cru[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(a) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(b) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm_era5[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(b) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(c) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(c) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 4)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(d) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm_cru[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(d) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 5)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(e) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(e) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(f) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(f) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 7)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(g) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm_cru[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(g) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(h) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm_era5[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(h) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 9)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(i) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(i) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 10)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcm_cru[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(j) CP-RegCM5 - CRU', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_son_rcm_cru[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(j) CPM3 - CRU', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 11)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(k) CP-RegCM5 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_son_rcm_era5[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(k) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.015, 0.4]))
 	cbar.ax.tick_params(labelsize=font_size)
 	
 	ax = fig.add_subplot(4, 3, 12)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcm[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(l) CP-RegCM5 - RegCM5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_son_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(l) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.98, 0.3, 0.015, 0.4]))
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
@@ -668,56 +752,56 @@ else:
 
 	ax = fig.add_subplot(4, 3, 1)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(a) RCM-3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm_era5[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(a) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcmi[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(b) RCM-3 (new) - RCM-3 (old)', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_djf_rcmi[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(b) CPM3 (00-09) - CPM3 (18-21)', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(c) RCM-3 - RCM-22', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(c) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 4)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(d) RCM-3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(d) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 5)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcmi[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(e) RCM-3 (new) - RCM-3 (old)', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_mam_rcmi[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(e) CPM3 (00-09) - CPM3 (18-21)', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(f) RCM-3 - RCM-22', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(f) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 7)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(g) RCM-3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm_era5[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(g) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcmi[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(h) RCM-3 (new) - RCM-3 (old)', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_jja_rcmi[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(h) CPM3 (00-09) - CPM3 (18-21)', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 9)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(i) RCM-3 - RCM-22', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(i) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 3, 10)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(j) RCM-3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_son_rcm_era5[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(j) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.015, 0.4]))
@@ -725,13 +809,13 @@ else:
 	
 	ax = fig.add_subplot(4, 3, 11)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcmi[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(k) RCM-3 (new) - RCM-3 (old)', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_son_rcmi[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(k) CPM3 (00-09) - CPM3 (18-21)', loc='left', fontsize=font_size, fontweight='bold')
 	
 	ax = fig.add_subplot(4, 3, 12)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcm[0], levels=np.arange(-35, 40, 5), cmap=cm.PuOr, extend='neither') 
-	plt.title(u'(l) RCM-3 - RCM-22', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_son_rcm[0]/100, levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt.title(u'(l) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.98, 0.3, 0.015, 0.4]))
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
