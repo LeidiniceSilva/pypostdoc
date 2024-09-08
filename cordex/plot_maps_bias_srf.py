@@ -18,7 +18,7 @@ from dict_smn_ii_stations import smn_ii
 from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
 
-var = 'rsnl'
+var = 'rsns'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2009'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -246,10 +246,10 @@ elif var == 'rsnl' or var == 'rsns':
 	mbe_jja_rcm_era5 = compute_mbe(rcm3_jja, era5_jja)
 	mbe_son_rcm_era5 = compute_mbe(rcm3_son, era5_son)	
 
-	mbe_djf_rcm = compute_mbe(rcm3_djf, rcm22_djf[0])
-	mbe_mam_rcm = compute_mbe(rcm3_mam, rcm22_mam[0])
-	mbe_jja_rcm = compute_mbe(rcm3_jja, rcm22_jja[0])
-	mbe_son_rcm = compute_mbe(rcm3_son, rcm22_son[0])
+	mbe_djf_rcm = compute_mbe(rcm3_djf, rcm22_djf)
+	mbe_mam_rcm = compute_mbe(rcm3_mam, rcm22_mam)
+	mbe_jja_rcm = compute_mbe(rcm3_jja, rcm22_jja)
+	mbe_son_rcm = compute_mbe(rcm3_son, rcm22_son)
 	
 elif var == 'clt':
 	lat, lon, cru_djf = import_obs(dict_var[var][0], 'CSAM-3_CRU', 'DJF')
@@ -330,8 +330,8 @@ dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.Br
 'tas': ['Air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmax': ['Maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmin': ['Minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
-'rsnl': ['Surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r]
-'rsns': ['Surface net upward shortwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r]
+'rsnl': ['Surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r],
+'rsns': ['Surface net upward shortwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r],
 'clt': ['Total cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'cll': ['Low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clm': ['Medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
@@ -620,9 +620,9 @@ elif var == 'tasmax' or var == 'tasmin':
 	cbar.ax.tick_params(labelsize=font_size)
 	
 elif var == 'rsnl' or var == 'rsns':
-	fig = plt.figure(figsize=(4, 2))
+	fig = plt.figure(figsize=(6, 8))
 
-	ax = fig.add_subplot(4, 2 1)  
+	ax = fig.add_subplot(4, 2, 1)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_djf_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(a) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
@@ -630,18 +630,18 @@ elif var == 'rsnl' or var == 'rsns':
 
 	ax = fig.add_subplot(4, 2, 2)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm[0], levels=np.arange(-30, 33, 3), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(b) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0], levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	plt.title(u'(c) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 4)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm[0],  levels=np.arange(-30, 33, 3), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(d) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 5)  
@@ -652,7 +652,7 @@ elif var == 'rsnl' or var == 'rsns':
 
 	ax = fig.add_subplot(4, 2, 6)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0], levels=np.arange(-0.35, 0.4, 0.05), cmap=cm.PuOr, extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm[0], levels=np.arange(-30, 33, 3), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(f) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 2, 7)  
@@ -661,12 +661,12 @@ elif var == 'rsnl' or var == 'rsns':
 	plt.title(u'(g) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
 
-	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.015, 0.4]))
+	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 	cbar.ax.tick_params(labelsize=font_size)
 	
 	ax = fig.add_subplot(4, 2, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt_map = map.contourf(xx, yy, mbe_son_rcm[0],  levels=np.arange(-30, 33, 3), cmap=cm.PuOr, extend='neither') 
 	plt.title(u'(h) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
 
 	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.98, 0.3, 0.015, 0.4]))
