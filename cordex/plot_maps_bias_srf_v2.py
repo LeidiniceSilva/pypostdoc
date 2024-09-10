@@ -331,7 +331,7 @@ dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.Br
 'tasmax': ['Maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmin': ['Minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'rsnl': ['Surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r],
-'rsns': ['Surface net upward shortwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r],
+'rsns': ['Surface net downward shortwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r],
 'clt': ['Total cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'cll': ['Low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clm': ['Medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
@@ -822,7 +822,7 @@ else:
 	cbar.ax.tick_params(labelsize=font_size)
 		
 # Path out to save figure
-path_out = '{0}/user/mdasilva/CORDEX/figs'.format(path)
+path_out = '{0}/user/mdasilva/CORDEX/figs/v2'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

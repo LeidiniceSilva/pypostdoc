@@ -16,8 +16,8 @@ from import_climate_tools import compute_mbe
 
 var = 'pr_freq'
 freq = 'daily'
-domain = 'SAM-3km'
-idt, fdt = '2018', '2018'
+domain = 'CSAM-3'
+idt, fdt = '2000', '2009'
 
 path = '/marconi/home/userexternal/mdasilva'
 
