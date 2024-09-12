@@ -52,8 +52,8 @@ def import_rcm(param, domain, dataset):
 
 
 def basemap(lat, lon):
-	
-	map = Basemap(projection='cyl', llcrnrlon=-80., llcrnrlat=-38., urcrnrlon=-34.,urcrnrlat=-8., resolution='c')
+
+	map = Basemap(projection='cyl', llcrnrlon=-80., llcrnrlat=-38., urcrnrlon=-34.,urcrnrlat=-10., resolution='c')
 	map.drawmeridians(np.arange(-80., -34., 12.), size=6, labels=[0,0,0,1], linewidth=0.4, color='black')
 	map.drawparallels(np.arange(-38., -8., 6.), size=6, labels=[1,0,0,0], linewidth=0.4, color='black')
 	map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black')
@@ -71,18 +71,20 @@ if freq == 'hourly':
 	mbe_regcm_era5 = regcm - era5
 else:
 	lat, lon, cpc = import_obs('precip', domain, 'CPC')
+	lat, lon, mswep = import_obs('precipitation', domain, 'MSWEP')
 	lat, lon, trmm = import_obs('hrf', domain, 'TRMM')
 	lat, lon, era5 = import_obs('pr', domain, 'ERA5')
 	lat, lon, regcm = import_rcm('pr', domain, 'RegCM5')
 	mbe_regcm_cpc = regcm - cpc
+	mbe_regcm_mswep = regcm - mswep
 	mbe_regcm_trmm = regcm - trmm
 	mbe_regcm_era5 = regcm - era5
 
 # Plot figure
-fig = plt.figure(figsize=(3, 7))   
 font_size = 8
 	
 if freq == 'hourly':
+	fig = plt.figure(figsize=(4, 8))   
 	levs = np.arange(-5, 5.5, 0.5)
 	legend = 'Hourly p99 (mm h$^-$$^1$)'
 
@@ -91,30 +93,40 @@ if freq == 'hourly':
 	plt_map = map.contourf(xx, yy, mbe_regcm_era5[0], levels=levs, cmap=cm.BrBG, extend='neither') 
 	plt.title(u'(a) RegCM5-ERA5', loc='left', fontsize=font_size, fontweight='bold')
 
-	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.03, 0.4]))
+	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.84, 0.3, 0.03, 0.4]))
 	cbar.set_label('{0}'.format(legend), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 
 else:
+	fig = plt.figure(figsize=(4, 8))   
 	levs = np.arange(-60, 70, 10)
 	legend = 'Daily p99 (mm d$^-$$^1$)'
 
-	ax = fig.add_subplot(3, 1, 1)
+	ax = fig.add_subplot(4, 1, 1)
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_regcm_cpc[0], levels=levs, cmap=cm.BrBG, extend='neither') 
 	plt.title(u'(a) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(3, 1, 2)
+	ax = fig.add_subplot(4, 1, 2)
+	map, xx, yy = basemap(lat, lon)
+	plt_map = map.contourf(xx, yy, mbe_regcm_mswep[0], levels=levs, cmap=cm.BrBG, extend='neither') 
+	plt.title(u'(b) CPM3 - MSWEP', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 1, 3)
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_regcm_trmm[0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(b) CPM3 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(c) CPM3 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
 
-	ax = fig.add_subplot(3, 1, 3)
+	ax = fig.add_subplot(4, 1, 4)
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_regcm_era5[0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(c) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(d) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
 
-	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.03, 0.4]))
+	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.84, 0.3, 0.03, 0.4]))
 	cbar.set_label('{0}'.format(legend), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 
