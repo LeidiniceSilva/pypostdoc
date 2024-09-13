@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 __author__      = "Leidinice Silva"
@@ -18,7 +19,7 @@ from dict_smn_ii_stations import smn_ii
 from mpl_toolkits.basemap import Basemap
 from import_climate_tools import compute_mbe
 
-var = 'clh'
+var = 'evspsblpot'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2009'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -68,6 +69,7 @@ dict_var = {'pr': ['pre', 'precip', 'hrf', 'precipitation', 'pr'],
 'tas': ['tmp', 'tas'],
 'tasmax': ['tmx', 'tmax', 'tasmax'],
 'tasmin': ['tmn', 'tmin', 'tasmin'],
+'evspsblpot': ['pev'],
 'rsnl': ['msnlwrf'],
 'rsns': ['msnswrf'],
 'clt': ['cld', 'clt'],
@@ -193,7 +195,7 @@ elif var == 'tasmax' or var == 'tasmin':
 	mbe_jja_rcm_era5 = compute_mbe(rcm3_jja[0], era5_jja)
 	mbe_son_rcm_era5 = compute_mbe(rcm3_son[0], era5_son)	
 
-elif var == 'rsnl' or var == 'rsns' or var == 'cll' or var == 'clm' or var == 'clh':
+elif var == 'evspsblpot' or var == 'rsnl' or var == 'rsns' or var == 'cll' or var == 'clm' or var == 'clh':
 	lat, lon, era5_djf = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'DJF')
 	lat, lon, era5_mam = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'MAM')
 	lat, lon, era5_jja = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'JJA')
@@ -242,6 +244,7 @@ dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.Br
 'tas': ['Air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmax': ['Maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'tasmin': ['Minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
+'evspsblpot': ['Potential evaporation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.seismic],
 'rsnl': ['Surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r],
 'rsns': ['Surface net downward shortwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r],
 'clt': ['Total cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
@@ -482,7 +485,7 @@ elif var == 'tasmax' or var == 'tasmin':
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 	
-elif var == 'rsnl' or var == 'rsns':
+elif var == 'evspsblpot' or var == 'rsnl' or var == 'rsns':
 	fig = plt.figure(figsize=(4, 8))
 
 	ax = fig.add_subplot(4, 1, 1)  
