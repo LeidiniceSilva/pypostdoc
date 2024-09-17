@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 
 __author__      = "Leidinice Silva"
@@ -17,6 +16,7 @@ from dict_inmet_stations import inmet
 from dict_smn_i_stations import smn_i
 from dict_smn_ii_stations import smn_ii
 from mpl_toolkits.basemap import Basemap
+from mpl_toolkits.basemap import maskoceans
 from import_climate_tools import compute_mbe
 
 var = 'evspsblpot'
@@ -485,7 +485,42 @@ elif var == 'tasmax' or var == 'tasmin':
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 	
-elif var == 'evspsblpot' or var == 'rsnl' or var == 'rsns':
+elif var == 'evspsblpot':
+	fig = plt.figure(figsize=(4, 8))
+
+	ax = fig.add_subplot(4, 1, 1)  
+	map, xx, yy = basemap(lat, lon)
+	mbe_djf_mask = maskoceans(xx, yy, mbe_djf_rcm_era5[0])
+	plt_map = map.contourf(xx, yy, mbe_djf_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+	plt.title(u'(a) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
+	
+	ax = fig.add_subplot(4, 1, 2)  
+	map, xx, yy = basemap(lat, lon)
+	mbe_mam_mask = maskoceans(xx, yy, mbe_mam_rcm_era5[0])
+	plt_map = map.contourf(xx, yy, mbe_mam_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+	plt.title(u'(b) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 1, 3)  
+	map, xx, yy = basemap(lat, lon)
+	mbe_jja_mask = maskoceans(xx, yy, mbe_jja_rcm_era5[0])
+	plt_map = map.contourf(xx, yy, mbe_jja_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+	plt.title(u'(c) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
+
+	ax = fig.add_subplot(4, 1, 4)  
+	map, xx, yy = basemap(lat, lon)
+	mbe_son_mask = maskoceans(xx, yy, mbe_son_rcm_era5[0])
+	plt_map = map.contourf(xx, yy, mbe_son_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+	plt.title(u'(d) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
+
+	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.85, 0.3, 0.015, 0.4]))
+	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
+	cbar.ax.tick_params(labelsize=font_size)
+
+elif var == 'rsnl' or var == 'rsns':
 	fig = plt.figure(figsize=(4, 8))
 
 	ax = fig.add_subplot(4, 1, 1)  
@@ -497,7 +532,7 @@ elif var == 'evspsblpot' or var == 'rsnl' or var == 'rsns':
 	ax = fig.add_subplot(4, 1, 2)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(b) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(b) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 1, 3)  
@@ -579,7 +614,7 @@ else:
 	ax = fig.add_subplot(4, 1, 2)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, mbe_mam_rcm_era5[0]/100, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(b) CPM3 - RCM22', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(b) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 1, 3)  
@@ -599,7 +634,7 @@ else:
 	cbar.ax.tick_params(labelsize=font_size)
 		
 # Path out to save figure
-path_out = '{0}/user/mdasilva/CORDEX/figs/v1'.format(path)
+path_out = '{0}/user/mdasilva/CORDEX/figs'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
