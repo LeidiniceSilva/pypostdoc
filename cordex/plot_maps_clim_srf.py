@@ -69,7 +69,8 @@ dict_var = {'pr': ['pre', 'precip', 'hrf', 'precipitation', 'pr'],
 'tas': ['tmp', 'tas'],
 'tasmax': ['tmx', 'tmax', 'tasmax'],
 'tasmin': ['tmn', 'tmin', 'tasmin'],
-'evspsblpot': ['pev'],
+'evspsblpot': ['mper'],
+'LI': ['lftx'],
 'rsnl': ['msnlwrf'],
 'rsns': ['msnswrf'],
 'clt': ['cld', 'clt'],
@@ -145,7 +146,7 @@ elif var == 'tasmax' or var == 'tasmin':
 	lat, lon, rcm3_jja = import_rcm(var, 'CSAM-3_RegCM5', 'JJA')
 	lat, lon, rcm3_son = import_rcm(var, 'CSAM-3_RegCM5', 'SON')
 
-elif var == 'evspsblpot' or var == 'rsnl' or var == 'rsns' or var == 'cll' or var == 'clm' or var == 'clh':
+elif var == 'LI' or var == 'evspsblpot' or var == 'rsnl' or var == 'rsns' or var == 'cll' or var == 'clm' or var == 'clh':
 	lat, lon, era5_djf = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'DJF')
 	lat, lon, era5_mam = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'MAM')
 	lat, lon, era5_jja = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'JJA')
@@ -179,7 +180,8 @@ dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 17, 1), cm.Blue
 'tas': ['Air temperature (°C)', np.arange(10, 39, 2), cm.Reds],
 'tasmax': ['Maximum air temperature (°C)', np.arange(10, 39, 2), cm.Reds],
 'tasmin': ['Minimum air temperature (°C)', np.arange(10, 39, 2), cm.Reds],
-'evspsblpot': ['Potential evaporation (mm d$^-$$^1$)', np.arange(1, 8.5, 0.5), cm.jet],
+'LI': ['Lifted Index (Kelvin)', np.arange(-100, 100, 10), cm.jet],
+'evspsblpot': ['Potential evaporation (mm d$^-$$^1$)', np.arange(0, 8.5, 0.5), cm.jet],
 'rsnl': ['Surface net upward longwave flux (W mm$^-$$^2$)', np.arange(0, 270, 10), cm.jet],
 'rsns': ['Surface net downward shortwave flux (W mm$^-$$^2$)', np.arange(0, 270, 10), cm.jet],
 'clt': ['Total cloud cover (0-1)', np.arange(0, 1, 0.1), cm.Greys],
@@ -193,7 +195,8 @@ if var == 'evspsblpot':
 
 	ax = fig.add_subplot(4, 2, 1)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_djf[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+	era5_djf_mask = maskoceans(xx, yy, era5_djf[0])
+	plt_map = map.contourf(xx, yy, era5_djf_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
 	plt.title(u'(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
 	
@@ -204,7 +207,8 @@ if var == 'evspsblpot':
 
 	ax = fig.add_subplot(4, 2, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_mam[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+	era5_mam_mask = maskoceans(xx, yy, era5_mam[0])
+	plt_map = map.contourf(xx, yy, era5_mam_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
 	plt.title(u'(c) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 	
@@ -215,7 +219,8 @@ if var == 'evspsblpot':
 
 	ax = fig.add_subplot(4, 2, 5)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_jja[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+	era5_jja_mask = maskoceans(xx, yy, era5_jja[0])
+	plt_map = map.contourf(xx, yy, era5_jja_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
 	plt.title(u'(e) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
 	
@@ -226,7 +231,8 @@ if var == 'evspsblpot':
 
 	ax = fig.add_subplot(4, 2, 7)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_son[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+	era5_son_mask = maskoceans(xx, yy, era5_son[0])
+	plt_map = map.contourf(xx, yy, era5_son_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
 	plt.title(u'(g) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
 	
@@ -245,7 +251,7 @@ else:
 	ax = fig.add_subplot(4, 2, 1)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, era5_djf[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(a) NCEP reanalysis', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
 	
 	ax = fig.add_subplot(4, 2, 2)  
@@ -256,7 +262,7 @@ else:
 	ax = fig.add_subplot(4, 2, 3)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, era5_mam[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(c) ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(c) NCEP reanalysis', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 	
 	ax = fig.add_subplot(4, 2, 4)  
@@ -267,7 +273,7 @@ else:
 	ax = fig.add_subplot(4, 2, 5)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, era5_jja[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(e) ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(e) NCEP reanalysis', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
 	
 	ax = fig.add_subplot(4, 2, 6)  
@@ -278,7 +284,7 @@ else:
 	ax = fig.add_subplot(4, 2, 7)  
 	map, xx, yy = basemap(lat, lon)
 	plt_map = map.contourf(xx, yy, era5_son[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(g) ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	plt.title(u'(g) NCEP reanalysis', loc='left', fontsize=font_size, fontweight='bold')
 	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
 	
 	ax = fig.add_subplot(4, 2, 8)  
