@@ -5,8 +5,8 @@ __email__       = "leidinicesilva@gmail.com"
 __date__        = "Apr 01, 2024"
 __description__ = "This script .txt with cyclone genesis"
 
-dataset = 'WRF415'
-path = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/post_cyclone/ECyclone_v2'
+dataset = 'ERA5'
+path = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/post_cyclone/ECv2'
 
 
 def read_dat_file(filename):
@@ -56,8 +56,10 @@ def open_dat_file(dataset):
 			lat_list.append(float(j[1]))
 			lon_list.append(float(j[2]))
 			vo_list.append(float(j[3]))
+			pcen_list.append(float(j[4]))
+
 	
-	return dt_list, lat_list, lon_list, vo_list
+	return dt_list, lat_list, lon_list, vo_list, pcen_list
 
 	
 def write_list_to_dat(data):
@@ -70,8 +72,8 @@ def write_list_to_dat(data):
 
 
 # Import model and obs dataset
-list_dt, list_lat, list_lon, list_vo = open_dat_file(dataset)
-data = [list_dt, list_lat, list_lon, list_vo]
+list_dt, list_lat, list_lon, list_vo, list_pcen = open_dat_file(dataset)
+data = [list_dt, list_lat, list_lon, list_vo, list_pcen]
 data_ = list(map(list, zip(*data)))
 
 # Write transposed data to .dat file
