@@ -14,17 +14,24 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
 var = 'uv'
-domain = 'SAM-3km'
-level = '200hPa'
+domain = 'CSAM-3'
+level = '200'
 path='/marconi/home/userexternal/mdasilva'
 
-idt, fdt = '2018', '2021'
+idt, fdt = '2000', '2009'
 dt = '{0}-{1}'.format(idt, fdt)
 
 
 def import_obs(param, level, domain, dataset, season):
 
-	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/obs/{1}_{2}_{3}_{4}_{5}_{6}_lonlat.nc'.format(path, param, level, domain, dataset, season, dt)	
+        if param == 'uwnd':
+                param_ = 'u'
+        elif param == 'vwnd':
+                param_ = 'v'
+        else:
+                param_ = 'q'
+
+	arq   = '{0}/user/mdasilva/CORDEX/post_evaluate/obs/{1}_{2}_{3}_{4}_{5}_{6}_lonlat.nc'.format(path, param, level, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -36,12 +43,17 @@ def import_obs(param, level, domain, dataset, season):
 
 def import_rcm(param, level, domain, dataset, season):
 
+        if level =='200':
+                param_ = '{0}200'.format(param)
+        else:
+                param_ = '{0}850'.format(param)
+
 	arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/{1}_{2}_{3}_{4}_{5}_{6}_lonlat.nc'.format(path, param, level, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][0,0,:,:]
+	mean = var[:][0,:,:]
 	
 	return lat, lon, mean
 
