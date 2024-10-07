@@ -15,16 +15,19 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
 var = 'pr'
-dt = '20000101'
+dt = '2000010100'
 domain = 'EUR-11'
 path = '/marconi/home/userexternal/mdasilva'
 
 
 def import_obs(param, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/obs/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt) 
+	if param == 'pr':
+		param_ = 'tp'
+		
+	arq   = '{0}/user/mdasilva/EUR-11/postproc/obs/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt) 
 	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param][:] 
+	var   = data.variables[param_][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
 	mean = var[:][:,:,:]
@@ -32,9 +35,9 @@ def import_obs(param, dataset):
 	return mean
 
 
-def import_rcm(exp, param, dataset):
+def import_rcm(param, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/rcm/{1}/{2}_{3}_FPS_{4}_{5}_lonlat.nc'.format(path, exp, param, domain, dataset, dt)	
+	arq   = '{0}/user/mdasilva/EUR-11/postproc/rcm/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -45,69 +48,62 @@ def import_rcm(exp, param, dataset):
 	
 	
 # Import model and obs dataset
-dict_var = {'pr': ['rr', 'precipitation', 'precip', ]}
+dict_var = {'pr': ['precip', 'rr', 'pr']}
 
-eobs_jan = import_obs(dict_var[var][0], 'EOBS')
-cpc_jan = import_obs(dict_var[var][2], 'CPC')
-wdm7_jan_v1 = import_rcm('wdm7-Europe_v1', var, 'RegCM5')
-wdm7_jan_v2 = import_rcm('wdm7-Europe_v2', var, 'RegCM5')
-wdm7_jan_v3 = import_rcm('wdm7-Europe_v3', var, 'RegCM5')
-wdm7_jan_v4 = import_rcm('wdm7-Europe_v4', var, 'RegCM5')
+era5_jan = import_obs(dict_var[var][2], 'ERA5')
+noto_jan = import_rcm(var, 'NoTo-Europe')
+wsm5_jan = import_rcm(var, 'WSM5-Europe')
+wsm7_jan = import_rcm(var, 'WSM7-Europe')
+wdm7_jan = import_rcm(var, 'WDM7-Europe')
 
 # Convert array in list
-eobs_jan_list = eobs_jan.flatten()
-cpc_jan_list = cpc_jan.flatten()
-wdm7_jan_v1_list = wdm7_jan_v1.flatten()
-wdm7_jan_v2_list = wdm7_jan_v2.flatten()
-wdm7_jan_v3_list = wdm7_jan_v3.flatten()
-wdm7_jan_v4_list = wdm7_jan_v4.flatten()
+era5_jan_list = era5_jan.flatten()
+noto_jan_list = noto_jan.flatten()
+wsm5_jan_list = wsm5_jan.flatten()
+wsm7_jan_list = wsm7_jan.flatten()
+wdm7_jan_list = wdm7_jan.flatten()
 
 # Round values
-eobs_jan_round = np.round(eobs_jan_list,0)
-cpc_jan_round = np.round(cpc_jan_list,0)
-wdm7_jan_v1_round = np.round(wdm7_jan_v1_list,0)
-wdm7_jan_v2_round = np.round(wdm7_jan_v2_list,0)
-wdm7_jan_v3_round = np.round(wdm7_jan_v3_list,0)
-wdm7_jan_v4_round = np.round(wdm7_jan_v4_list,0)
+era5_jan_round = np.round(era5_jan_list,1)
+noto_jan_round = np.round(noto_jan_list,1)
+wsm5_jan_round = np.round(wsm5_jan_list,1)
+wsm7_jan_round = np.round(wsm7_jan_list,1)
+wdm7_jan_round = np.round(wdm7_jan_list,1)
 
 # Filter 0 mm/day
-filter_eobs = eobs_jan_round[eobs_jan_round > 0.]
-filter_cpc = cpc_jan_round[cpc_jan_round > 0.]
-filter_wdm7_v1 = wdm7_jan_v1_round[wdm7_jan_v1_round > 0.]
-filter_wdm7_v2 = wdm7_jan_v2_round[wdm7_jan_v2_round > 0.]
-filter_wdm7_v3 = wdm7_jan_v3_round[wdm7_jan_v3_round > 0.]
-filter_wdm7_v4 = wdm7_jan_v4_round[wdm7_jan_v4_round > 0.]
+era5_jan_filter = era5_jan_round[era5_jan_round > 0.]
+noto_jan_filter = noto_jan_round[noto_jan_round > 0.]
+wsm5_jan_filter = wsm5_jan_round[wsm5_jan_round > 0.]
+wsm7_jan_filter = wsm7_jan_round[wsm7_jan_round > 0.]
+wdm7_jan_filter = wdm7_jan_round[wdm7_jan_round > 0.]
 
 # Compute frequency
-x_pdf_eobs, pdf_eobs = np.unique(filter_eobs, return_counts=True) 
-x_pdf_cpc, pdf_cpc = np.unique(filter_cpc, return_counts=True) 
-x_pdf_wdm7_v1, pdf_wdm7_v1 = np.unique(filter_wdm7_v1, return_counts=True) 
-x_pdf_wdm7_v2, pdf_wdm7_v2 = np.unique(filter_wdm7_v2, return_counts=True) 
-x_pdf_wdm7_v3, pdf_wdm7_v3 = np.unique(filter_wdm7_v3, return_counts=True) 
-x_pdf_wdm7_v4, pdf_wdm7_v4 = np.unique(filter_wdm7_v4, return_counts=True) 
-
+x_pdf_era5, pdf_era5 = np.unique(era5_jan_filter, return_counts=True) 
+x_pdf_noto, pdf_noto = np.unique(noto_jan_filter, return_counts=True) 
+x_pdf_wsm5, pdf_wsm5 = np.unique(wsm5_jan_filter, return_counts=True) 
+x_pdf_wsm7, pdf_wsm7 = np.unique(wsm7_jan_filter, return_counts=True) 
+x_pdf_wdm7, pdf_wdm7 = np.unique(wdm7_jan_filter, return_counts=True) 
 
 # Plot figure
 fig = plt.figure()
-font_size = 8
+font_size = 10
 
 ax = fig.add_subplot(1, 1, 1)  
-plt.plot(x_pdf_eobs, pdf_eobs, marker='o', markersize=4, mfc='red', mec='red', linestyle='None', label='EOB')
-plt.plot(x_pdf_cpc, pdf_cpc, marker='o', markersize=4, mfc='black', mec='black', linestyle='None', label='CPC')
-plt.plot(x_pdf_wdm7_v1, pdf_wdm7_v1, marker='o', markersize=4, mfc='blue', mec='blue', alpha=0.65, linestyle='None', label='WDM7_v1(ctrl)')
-plt.plot(x_pdf_wdm7_v2, pdf_wdm7_v2, marker='o', markersize=4, mfc='orange', mec='orange', alpha=0.65, linestyle='None', label='WDM7_v2(more ccn)')
-plt.plot(x_pdf_wdm7_v3, pdf_wdm7_v3, marker='o', markersize=4, mfc='magenta', mec='magenta', alpha=0.65, linestyle='None', label='WDM7_v3(less ccn)')
-plt.plot(x_pdf_wdm7_v4, pdf_wdm7_v4, marker='o', markersize=4, mfc='green', mec='green', alpha=0.65, linestyle='None', label='WDM7_v4(less ccn2)')
+plt.plot(x_pdf_era5, pdf_era5, marker='o', markersize=3, mfc='black', mec='black', alpha=0.70, linestyle='None', label='ERA5')
+plt.plot(x_pdf_noto, pdf_noto, marker='o', markersize=3, mfc='blue', mec='blue', alpha=0.70, linestyle='None', label='NoTo')
+plt.plot(x_pdf_wsm5, pdf_wsm5, marker='o', markersize=3, mfc='red', mec='red', alpha=0.70, linestyle='None', label='WSM5')
+plt.plot(x_pdf_wsm7, pdf_wsm7, marker='o', markersize=3, mfc='magenta', mec='magenta', alpha=0.70, linestyle='None', label='WSM7')
+plt.plot(x_pdf_wdm7, pdf_wdm7, marker='o', markersize=3, mfc='green', mec='green', alpha=0.70, linestyle='None', label='WDM7')
 
-plt.title('(a)', loc='left', fontsize=font_size, fontweight='bold') 
+plt.title('(b)', loc='left', fontsize=font_size, fontweight='bold') 
 plt.yscale('log')
 plt.ylabel('Frequency (#)', fontsize=font_size, fontweight='bold')
-plt.xlabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
+plt.xlabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
-name_out = 'pyplt_pdf_{0}_{1}_RegCM5_WDM7_{2}.png'.format(var, domain, dt)
+name_out = 'pyplt_pdf_hourly_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

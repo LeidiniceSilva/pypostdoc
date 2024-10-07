@@ -20,73 +20,87 @@ domain = 'EUR-11'
 path = '/marconi/home/userexternal/mdasilva'
 
 
-def import_rcm(exp, param, dataset):
+def import_obs(param, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/rcm/{1}/{2}_{3}_{4}_{5}_lonlat.nc'.format(path, exp, param, domain, dataset, dt)	
+	arq   = '{0}/user/mdasilva/EUR-11/postproc/obs/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt) 
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][0,:,:]
+	mean = var[:][:,:,:]
 
-	return lat, lon, mean
-	
-	
-def basemap(lat, lon):
+	return mean
 
-	lat_start, lat_end, lon_start, lon_end = 15, 75, -45, 65
-	
-	map = Basemap(projection='cyl', llcrnrlon=lon_start, llcrnrlat=lat_start, urcrnrlon=lon_end,urcrnrlat=lat_end, resolution='c')
-	map.drawmeridians(np.arange(lon_start, lon_end, 20.), size=6, labels=[0,0,0,1], linewidth=0.4, color='black')
-	map.drawparallels(np.arange(lat_start, lat_end, 10.), size=6, labels=[1,0,0,0], linewidth=0.4, color='black')
-	map.drawcoastlines(linewidth=0.5, color='black')
-	
-	lons, lats = np.meshgrid(lon, lat)
-	xx, yy = map(lons,lats)
-	
-	return map, xx, yy
+
+def import_rcm(param, dataset):
+
+	arq   = '{0}/user/mdasilva/EUR-11/postproc/rcm/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
+	data  = netCDF4.Dataset(arq)
+	var   = data.variables[param][:] 
+	lat   = data.variables['lat'][:]
+	lon   = data.variables['lon'][:]
+	mean = var[:][:,:,:]
+
+	return mean
 	
 	
 # Import model and obs dataset
-dict_var = {'pr': ['rr', 'precipitation', 'precip', ]}
+dict_var = {'pr': ['precip', 'rr', 'pr']}
 
-lat, lon, wdm7_jan_v1 = import_rcm('wdm7-Europe_v1', var, 'RegCM5')
-lat, lon, wdm7_jan_v2 = import_rcm('wdm7-Europe_v2', var, 'RegCM5')
-lat, lon, wdm7_jan_v3 = import_rcm('wdm7-Europe_v3', var, 'RegCM5')
-lat, lon, wdm7_jan_v4 = import_rcm('wdm7-Europe_v4', var, 'RegCM5')
+cpc_jan = import_obs(dict_var[var][0], 'CPC')
+noto_jan = import_rcm(var, 'NoTo-Europe')
+wsm5_jan = import_rcm(var, 'WSM5-Europe')
+wsm7_jan = import_rcm(var, 'WSM7-Europe')
+wdm7_jan = import_rcm(var, 'WDM7-Europe')
 
-mbe_wdm7_jan_v4_v1 = wdm7_jan_v4 - wdm7_jan_v1
-mbe_wdm7_jan_v4_v2 = wdm7_jan_v4 - wdm7_jan_v2
-mbe_wdm7_jan_v4_v3 = wdm7_jan_v4 - wdm7_jan_v3
+# Convert array in list
+cpc_jan_list = cpc_jan.flatten()
+noto_jan_list = noto_jan.flatten()
+wsm5_jan_list = wsm5_jan.flatten()
+wsm7_jan_list = wsm7_jan.flatten()
+wdm7_jan_list = wdm7_jan.flatten()
+
+# Round values
+cpc_jan_round = np.round(cpc_jan_list,0)
+noto_jan_round = np.round(noto_jan_list,0)
+wsm5_jan_round = np.round(wsm5_jan_list,0)
+wsm7_jan_round = np.round(wsm7_jan_list,0)
+wdm7_jan_round = np.round(wdm7_jan_list,0)
+
+# Filter 0 mm/day
+cpc_jan_filter = cpc_jan_round[cpc_jan_round > 0.]
+noto_jan_filter = noto_jan_round[noto_jan_round > 0.]
+wsm5_jan_filter = wsm5_jan_round[wsm5_jan_round > 0.]
+wsm7_jan_filter = wsm7_jan_round[wsm7_jan_round > 0.]
+wdm7_jan_filter = wdm7_jan_round[wdm7_jan_round > 0.]
+
+# Compute frequency
+x_pdf_cpc, pdf_cpc = np.unique(cpc_jan_filter, return_counts=True) 
+x_pdf_noto, pdf_noto = np.unique(noto_jan_filter, return_counts=True) 
+x_pdf_wsm5, pdf_wsm5 = np.unique(wsm5_jan_filter, return_counts=True) 
+x_pdf_wsm7, pdf_wsm7 = np.unique(wsm7_jan_filter, return_counts=True) 
+x_pdf_wdm7, pdf_wdm7 = np.unique(wdm7_jan_filter, return_counts=True) 
 
 # Plot figure
-fig = plt.figure(figsize=(10, 6))
-dict_plot = {'pr': ['Diff of precipitation (mm d$^-$$^1$)', np.arange(-4, 4.5, 0.5), cm.PiYG]}
-font_size = 8
+fig = plt.figure()
+font_size = 10
 
-ax = fig.add_subplot(2, 2, 1)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v4_v1, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(a) WDM7_v4(less ccn2) - WDM7_v1(ctrl) Jan', loc='left', fontsize=font_size, fontweight='bold')
+ax = fig.add_subplot(1, 1, 1)  
+plt.plot(x_pdf_cpc, pdf_cpc, marker='o', markersize=3, mfc='black', mec='black', alpha=0.70, linestyle='None', label='CPC')
+plt.plot(x_pdf_noto, pdf_noto, marker='o', markersize=3, mfc='blue', mec='blue', alpha=0.70, linestyle='None', label='NoTo')
+plt.plot(x_pdf_wsm5, pdf_wsm5, marker='o', markersize=3, mfc='red', mec='red', alpha=0.70, linestyle='None', label='WSM5')
+plt.plot(x_pdf_wsm7, pdf_wsm7, marker='o', markersize=3, mfc='magenta', mec='magenta', alpha=0.70, linestyle='None', label='WSM7')
+plt.plot(x_pdf_wdm7, pdf_wdm7, marker='o', markersize=3, mfc='green', mec='green', alpha=0.70, linestyle='None', label='WDM7')
 
-ax = fig.add_subplot(2, 2, 2)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v4_v2, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(a) WDM7_v4(less ccn2) - WDM7_v2(more ccn) Jan', loc='left', fontsize=font_size, fontweight='bold')
+plt.title('(a)', loc='left', fontsize=font_size, fontweight='bold') 
+plt.yscale('log')
+plt.ylabel('Frequency (#)', fontsize=font_size, fontweight='bold')
+plt.xlabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
+plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
-ax = fig.add_subplot(2, 2, 3)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_wdm7_jan_v4_v3, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(a) WDM7_v4(less ccn2) - WDM7_v3(less ccn) Jan', loc='left', fontsize=font_size, fontweight='bold')
-
-# Set colobar
-cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.01, 0.4]))
-cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
-cbar.ax.tick_params(labelsize=font_size)
-	
 # Path out to save figure
 path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
-name_out = 'pyplt_maps_diff_{0}_{1}_RegCM5_WDM7_{2}.png'.format(var, domain, dt)
+name_out = 'pyplt_pdf_daily_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
