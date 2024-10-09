@@ -15,7 +15,7 @@ from mpl_toolkits.basemap import Basemap
 
 var = 'quv'
 domain = 'CSAM-3'
-level = '200'
+level = '850'
 path = '/marconi/home/userexternal/mdasilva'
 
 idt, fdt = '2000', '2009'
@@ -118,21 +118,22 @@ mulc = 1000
 
 if level == '200':
 	dict_plot = {
-	'u': [u'Bias of zonal wind {0} (m s$^-$$^1$)'.format(level), np.arange(-10, 11, 1), cm.RdBu_r],
-	'v': [u'Bias of meridional wind {0} (m s$^-$$^1$)'.format(level), np.arange(-10, 11, 1), cm.RdBu_r],
-	'q': [u'Bias of specific humidity {0} (10e$^-$$^3$kg kg$^-$$^1$)'.format(level), np.arange(-0.07, 0.09, 0.02), cm.BrBG]
+	'u': [u'Bias of zonal wind {0} hPa (m s$^-$$^1$)'.format(level), np.arange(-4, 4.4, 0.4), cm.RdBu_r],
+	'v': [u'Bias of meridional wind {0} hPa (m s$^-$$^1$)'.format(level), np.arange(-4, 4.4, 0.4), cm.RdBu_r],
+	'q': [u'Bias of specific humidity {0} hPa (10e$^-$$^3$g kg$^-$$^1$)'.format(level), np.arange(-0.02, 0.02, 0.002), cm.BrBG]
 	}
 else:
 	dict_plot = {
-	'u': [u'Bias of zonal wind {0} (m s$^-$$^1$)'.format(level), np.arange(-10, 11, 1), cm.RdBu_r],
-	'v': [u'Bias of meridional wind {0} (m s$^-$$^1$)'.format(level), np.arange(-10, 11, 1), cm.RdBu_r],
-	'q': [u'Bias of specific humidity {0} (10e$^-$$^3$kg kg$^-$$^1$)'.format(level), np.arange(-8, 9, 1), cm.BrBG]
+	'u': [u'Bias of zonal wind {0} hPa (m s$^-$$^1$)'.format(level), np.arange(-6, 6.6, 0.6), cm.RdBu_r],
+	'v': [u'Bias of meridional wind {0} hPa (m s$^-$$^1$)'.format(level), np.arange(-6, 6.6, 0.6), cm.RdBu_r],
+	'q': [u'Bias of specific humidity {0} hPa (10e$^-$$^3$kg kg$^-$$^1$)'.format(level), np.arange(-3, 3.3, 0.3), cm.BrBG]
 	}
 	
 ax = fig.add_subplot(4, 3, 1)  
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_djf_regcm_era5_u, levels=dict_plot['u'][1], cmap=dict_plot['u'][2], extend='neither') 
 plt.title(u'(a) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
 
 # Set colobar
 cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
@@ -163,6 +164,7 @@ ax = fig.add_subplot(4, 3, 4)
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_mam_regcm_era5_u, levels=dict_plot['u'][1], cmap=dict_plot['u'][2], extend='neither') 
 plt.title(u'(d) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
 
 ax = fig.add_subplot(4, 3, 5)  
 map, xx, yy = basemap(lat, lon)
@@ -178,6 +180,7 @@ ax = fig.add_subplot(4, 3, 7)
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_jja_regcm_era5_u, levels=dict_plot['u'][1], cmap=dict_plot['u'][2], extend='neither') 
 plt.title(u'(g) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
 
 ax = fig.add_subplot(4, 3, 8)  
 map, xx, yy = basemap(lat, lon)
@@ -193,16 +196,20 @@ ax = fig.add_subplot(4, 3, 10)
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_son_regcm_era5_u, levels=dict_plot['u'][1], cmap=dict_plot['u'][2], extend='neither') 
 plt.title(u'(j) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
+plt.xlabel(u'Zonal wind', labelpad=10, fontsize=font_size, fontweight='bold')
 
 ax = fig.add_subplot(4, 3, 11)  
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_son_regcm_era5_v, levels=dict_plot['v'][1], cmap=dict_plot['v'][2], extend='neither') 
 plt.title(u'(k) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+plt.xlabel(u'Meridional wind', labelpad=10, fontsize=font_size, fontweight='bold')
 
 ax = fig.add_subplot(4, 3, 12)  
 map, xx, yy = basemap(lat, lon)
 plt_map = map.contourf(xx, yy, mbe_son_regcm_era5_q*mulc, levels=dict_plot['q'][1], cmap=dict_plot['q'][2], extend='neither') 
 plt.title(u'(l) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+plt.xlabel(u'Specific humidity', labelpad=10, fontsize=font_size, fontweight='bold')
 	
 # Path out to save figure
 path_out = '{0}/user/mdasilva/CORDEX/figs'.format(path)

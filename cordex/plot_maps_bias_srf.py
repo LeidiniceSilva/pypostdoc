@@ -19,7 +19,7 @@ from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.basemap import maskoceans
 from import_climate_tools import compute_mbe
 
-var = 'evspsblpot'
+var = 'pr'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2009'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -65,7 +65,7 @@ def basemap(lat, lon):
 	
 	
 # Import model and obs dataset
-dict_var = {'pr': ['pre', 'precip', 'hrf', 'precipitation', 'pr'],
+dict_var = {'pr': ['pre', 'precip', 'cmorph', 'precipitation', 'pr'],
 'tas': ['tmp', 'tas'],
 'tasmax': ['tmx', 'tmax', 'tasmax'],
 'tasmin': ['tmn', 'tmin', 'tasmin'],
@@ -88,10 +88,10 @@ if var == 'pr':
 	lat, lon, cpc_jja = import_obs(dict_var[var][1], 'CSAM-3_CPC', 'JJA')
 	lat, lon, cpc_son = import_obs(dict_var[var][1], 'CSAM-3_CPC', 'SON')
 
-	lat, lon, trmm_djf = import_obs(dict_var[var][2], 'CSAM-3_TRMM', 'DJF')
-	lat, lon, trmm_mam = import_obs(dict_var[var][2], 'CSAM-3_TRMM', 'MAM')
-	lat, lon, trmm_jja = import_obs(dict_var[var][2], 'CSAM-3_TRMM', 'JJA')
-	lat, lon, trmm_son = import_obs(dict_var[var][2], 'CSAM-3_TRMM', 'SON')
+	lat, lon, cmorph_djf = import_obs(dict_var[var][2], 'CSAM-3_CMORPH', 'DJF')
+	lat, lon, cmorph_mam = import_obs(dict_var[var][2], 'CSAM-3_CMORPH', 'MAM')
+	lat, lon, cmorph_jja = import_obs(dict_var[var][2], 'CSAM-3_CMORPH', 'JJA')
+	lat, lon, cmorph_son = import_obs(dict_var[var][2], 'CSAM-3_CMORPH', 'SON')
 
 	lat, lon, mswep_djf = import_obs(dict_var[var][3], 'CSAM-3_MSWEP', 'DJF')
 	lat, lon, mswep_mam = import_obs(dict_var[var][3], 'CSAM-3_MSWEP', 'MAM')
@@ -118,10 +118,10 @@ if var == 'pr':
 	mbe_jja_rcm_cpc = compute_mbe(rcm3_jja, cpc_jja)
 	mbe_son_rcm_cpc = compute_mbe(rcm3_son, cpc_son)	
 	
-	mbe_djf_rcm_trmm = compute_mbe(rcm3_djf, trmm_djf)
-	mbe_mam_rcm_trmm = compute_mbe(rcm3_mam, trmm_mam)
-	mbe_jja_rcm_trmm = compute_mbe(rcm3_jja, trmm_jja)
-	mbe_son_rcm_trmm = compute_mbe(rcm3_son, trmm_son)
+	mbe_djf_rcm_cmorph = compute_mbe(rcm3_djf, cmorph_djf)
+	mbe_mam_rcm_cmorph = compute_mbe(rcm3_mam, cmorph_mam)
+	mbe_jja_rcm_cmorph = compute_mbe(rcm3_jja, cmorph_jja)
+	mbe_son_rcm_cmorph = compute_mbe(rcm3_son, cmorph_son)
 
 	mbe_djf_rcm_mswep = compute_mbe(rcm3_djf, mswep_djf)
 	mbe_mam_rcm_mswep = compute_mbe(rcm3_mam, mswep_mam)
@@ -268,8 +268,8 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 3)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_djf_rcm_trmm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(c) CPM3 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_djf_rcm_cmorph[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(c) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 4)  
 	map, xx, yy = basemap(lat, lon)
@@ -294,8 +294,8 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 8)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_mam_rcm_trmm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(h) CPM3 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_mam_rcm_cmorph[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(h) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 9)  
 	map, xx, yy = basemap(lat, lon)
@@ -320,8 +320,8 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 13)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_jja_rcm_trmm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(m) CPM3 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_jja_rcm_cmorph[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(m) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 14)  
 	map, xx, yy = basemap(lat, lon)
@@ -346,8 +346,8 @@ if var == 'pr':
 
 	ax = fig.add_subplot(4, 5, 18)  
 	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_son_rcm_trmm[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt.title(u'(r) CPM3 - TRMM', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = map.contourf(xx, yy, mbe_son_rcm_cmorph[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt.title(u'(r) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
 
 	ax = fig.add_subplot(4, 5, 19)  
 	map, xx, yy = basemap(lat, lon)

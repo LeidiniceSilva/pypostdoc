@@ -75,7 +75,6 @@ plt.ylabel(u'Latitude', labelpad=30, fontsize=font_size, fontweight='bold')
 plt.text(-36, 11, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
 
 my_map.plot(-47.9000, -16.0000, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Brazilia
-my_map.plot(-51.2090, -30.0368, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Porto Alegre
 my_map.plot(-56.1674, -34.8335, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Montevideo
 my_map.plot(-57.5759, -25.2637, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Asuncion
 my_map.plot(-58.4004, -34.6051, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Buenos Aires
