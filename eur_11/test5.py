@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-var = 'cli'
+var = 'cl'
 dt = '200001'
 domain = 'EUR-11'
 path='/marconi/home/userexternal/mdasilva'

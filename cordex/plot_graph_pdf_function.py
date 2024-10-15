@@ -16,14 +16,6 @@ var = 'pr'
 freq= 'hourly'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2009'
-
-if freq == 'hourly':
-	dt = '1hr_{0}-{1}'.format('2000', '2005')
-	legend = 'Precipitation (mm h$^-$$^1$)'
-
-else:
-	dt = 'day_{0}-{1}'.format('2000', '2005')
-	legend = 'Precipitation (mm d$^-$$^1$)'
 				
 dict_ws = {
 	   0: [-68.1193, -16.4897, 'La Paz'],
@@ -43,6 +35,11 @@ def import_obs(param, dataset):
 		dt = '1hr_{0}-{1}'.format(idt, fdt)
 	else:
 		dt = 'day_{0}-{1}'.format(idt, fdt)
+	
+	if param == 'pr':
+		param_ = 'tp'
+	else:
+		param_ = param
 		
 	ts = []
 	for i in range(0, 6):
@@ -50,7 +47,7 @@ def import_obs(param, dataset):
 		xx=dict_ws[i][0]
 
 		arq  = xr.open_dataset('{0}/user/mdasilva/CORDEX/post_evaluate/obs/{1}_{2}_{3}_lonlat.nc'.format(path, param, dataset, dt))
-		data = arq[param]
+		data = arq[param_]
 		var  = data.sel(lat=slice(yy-0.03,yy+0.03),lon=slice(xx-0.03,xx+0.03)).mean(('lat','lon'))
 		ts.append(var.values)
 
@@ -128,6 +125,9 @@ time = np.arange(0.5, 12 + 0.5)
 font_size = 8
 
 if freq == 'hourly':
+	dt = '1hr_{0}-{1}'.format(idt, fdt)
+	legend = 'Precipitation (mm h$^-$$^1$)'
+
 	ax = fig.add_subplot(3, 3, 1)
 	plt.plot(x_pdf_rcm3[0], pdf_rcm3[0],     marker='o', markersize=3, mfc='black',  mec='black',  alpha=0.75, linestyle='None', label='CPM3')
 	plt.plot(x_pdf_cmorph[0], pdf_cmorph[0], marker='o', markersize=3, mfc='red',    mec='red',    alpha=0.75, linestyle='None', label='CMORPH')
@@ -176,6 +176,9 @@ if freq == 'hourly':
 	plt.xlabel('{0}'.format(legend), fontsize=font_size, fontweight='bold')
 	plt.yscale('log')
 else:
+	dt = 'day_{0}-{1}'.format(idt, fdt)
+	legend = 'Precipitation (mm d$^-$$^1$)'
+
 	ax = fig.add_subplot(3, 3, 1)
 	plt.plot(x_pdf_rcm3[0], pdf_rcm3[0],     marker='o', markersize=3, mfc='black',  mec='black',  alpha=0.75, linestyle='None', label='CPM3')
 	plt.plot(x_pdf_cpc[0], pdf_cpc[0],       marker='o', markersize=3, mfc='green',  mec='green',  alpha=0.75, linestyle='None', label='CPC')
