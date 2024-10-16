@@ -90,12 +90,12 @@ def open_file_dt(dataset):
 	
 def import_data(param, dataset, indices):
 
-	if dataset == 'RegCM5':
-		arq = '{0}/user/mdasilva/SAM-3km/post_cyclone/regcm5/regcm5/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
-	elif dataset == 'WRF415':
-		arq = '{0}/user/mdasilva/SAM-3km/post_cyclone/wrf/wrf/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
-	else:
+	if dataset == 'ERA5':
 		arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/obs/era5/era5/{1}_SAM-25km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)		
+	elif dataset == 'RegCM5':
+		arq = '{0}/user/mdasilva/SAM-3km/post_cyclone/regcm5/regcm5/{1}/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
+	else:
+		arq = '{0}/user/mdasilva/SAM-3km/post_cyclone/wrf/wrf/{1}/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
 	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
@@ -129,13 +129,15 @@ lat, lon, msl_era5 = import_data('msl', 'ERA5', era5_idx)
 lat, lon, u10_era5 = import_data('u10', 'ERA5', era5_idx)
 lat, lon, v10_era5 = import_data('v10', 'ERA5', era5_idx)
 
-lat, lon, msl_regcm5 = import_data('psl', 'RegCM5', regcm5_idx)
+lat, lon, msl_regcm = import_data('psl', 'RegCM5', regcm5_idx)
 lat, lon, u10_regcm5 = import_data('uas', 'RegCM5', regcm5_idx)
 lat, lon, v10_regcm5 = import_data('vas', 'RegCM5', regcm5_idx)
 
 lat, lon, msl_wrf415 = import_data('PSL', 'WRF415', wrf415_idx)
 lat, lon, u10_wrf415 = import_data('U10e', 'WRF415', wrf415_idx)
 lat, lon, v10_wrf415 = import_data('V10e', 'WRF415', wrf415_idx)
+
+msl_regcm5 = np.where(msl_regcm < 0, np.nan, msl_regcm)
 
 # Calculate wind speed
 uv10_era5 = np.sqrt(u10_era5**2 + v10_era5**2)
@@ -148,7 +150,7 @@ ax1, ax2, ax3 = axes
 font_size = 10
 
 states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
-level = np.arange(0,12.5,0.5)
+level = np.arange(0,8.25,0.25)
 
 ax1.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax1.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -161,9 +163,9 @@ ax1.coastlines()
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
-cf = ax1.contourf(lon, lat, uv10_era5, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap='jet')
-ct = ax1.contour(lon, lat, msl_era5/100, colors='black', linewidths=0.50)
-ax1.clabel(ct, inline=1, fontsize=font_size)
+cf1 = ax1.contourf(lon, lat, uv10_era5, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap='Blues')
+ct1 = ax1.contour(lon, lat, msl_era5/100, colors='black', linewidths=0.50)
+ax1.clabel(ct1, inline=1, fontsize=font_size)
 
 ax2.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax2.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -175,9 +177,9 @@ ax2.add_feature(states_provinces, edgecolor='0.25')
 ax2.coastlines()
 ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
-cf = ax2.contourf(lon, lat, uv10_regcm5, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap='jet')
-ct = ax2.contour(lon, lat, msl_regcm5/100, colors='black', linewidths=0.50)
-ax2.clabel(ct, inline=1, fontsize=font_size)
+cf2 = ax2.contourf(lon, lat, uv10_regcm5, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap='Blues')
+ct2 = ax2.contour(lon, lat, msl_regcm5/100, colors='black', linewidths=0.50)
+ax2.clabel(ct2, inline=1, fontsize=font_size)
 
 ax3.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax3.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -189,10 +191,10 @@ ax3.add_feature(states_provinces, edgecolor='0.25')
 ax3.coastlines()
 ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
-cf = ax3.contourf(lon, lat, uv10_wrf415, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap='jet')
-ct = ax3.contour(lon, lat, msl_wrf415, colors='black', linewidths=0.50)
-ax3.clabel(ct, inline=1, fontsize=font_size)
-cb = plt.colorbar(cf, cax=fig.add_axes([0.91, 0.2, 0.015, 0.6]))
+cf3 = ax3.contourf(lon, lat, uv10_wrf415, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap='Blues')
+ct3 = ax3.contour(lon, lat, msl_wrf415, colors='black', linewidths=0.50)
+ax3.clabel(ct3, inline=1, fontsize=font_size)
+cb = plt.colorbar(cf3, cax=fig.add_axes([0.91, 0.2, 0.015, 0.6]))
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone/paper'.format(path)
