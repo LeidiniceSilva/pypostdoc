@@ -7,6 +7,7 @@ __description__ = "This script plot composites"
 
 import os
 import netCDF4
+import warnings
 import numpy as np
 import xarray as xr
 import pandas as pd
@@ -16,6 +17,8 @@ import cartopy.feature as cfeat
 
 from datetime import datetime, timedelta
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 path='/marconi/home/userexternal/mdasilva'
 
@@ -77,7 +80,7 @@ def read_dat_file(filename):
 def open_file_dt(dataset):
 
 	dt_hr = []
-	for yr in range(2018, 2018+1):
+	for yr in range(2018, 2021+1):
 	
 		data = read_dat_file('{0}/user/mdasilva/SAM-3km/post_cyclone/ECv2/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 	
@@ -103,15 +106,28 @@ def import_data(param, dataset, indices):
 	lon  = data.variables['lon'][:]
 	avg  = var[:][:,:,:]
 	
-	mean = np.where(avg < 0, np.nan, avg)
-
-	var_i = []
-	for idx in indices:
-		var_i.append(np.squeeze(mean[idx,:,:]))
-	
-	mean_i = np.nanmean(var_i, axis=0)
+	if dataset == 'RegCM5':
+		mean = np.where(avg < 0, np.nan, avg)
+	elif dataset == 'WRF415':
+		if param == 'AFWA_CAPE_MU':
+			mean = np.where(avg < 0, 0, avg)
+		else:
+			mean_ = np.where(avg <= -99999., np.nan, avg)
+			mean = mean_ * -1.0
+	else:
+		mean = np.where(avg < 0, np.nan, avg)
 		
-	return lat, lon, mean_i
+	var_i, var_ii, var_iii = [], [], [] 
+	for idx in indices:
+		var_i.append(np.squeeze(mean[idx-4,:,:]))
+		var_ii.append(np.squeeze(mean[idx,:,:]))
+		var_iii.append(np.squeeze(mean[idx+4,:,:]))
+
+	mean_i = np.nanmean(var_i, axis=0)
+	mean_ii = np.nanmean(var_ii, axis=0)
+	mean_iii = np.nanmean(var_iii, axis=0)
+		
+	return lat, lon, mean_i, mean_ii, mean_iii
 	
 	
 # Generate list of dates from 2018 to 2021
@@ -127,23 +143,25 @@ regcm5_idx = find_indices_in_date_list(hourly_dates, dt_regcm5)
 wrf415_idx = find_indices_in_date_list(hourly_dates, dt_wrf415)
 
 # Import model and obs dataset 
-lat, lon, cape_era5_i = import_data('cape', 'ERA5', era5_idx)
-lat, lon, cin_era5_i = import_data('cin', 'ERA5', era5_idx)
+lat, lon, cin_era5_i, cin_era5_ii, cin_era5_iii = import_data('cin', 'ERA5', era5_idx)
 
-lat, lon, cape_regcm5_i = import_data('CAPE', 'RegCM5', regcm5_idx)
-lat, lon, cin_regcm5_i = import_data('CIN', 'RegCM5', regcm5_idx)
+lat, lon, cin_regcm5_i, cin_regcm5_ii, cin_regcm5_iii = import_data('CIN', 'RegCM5', regcm5_idx)
 
-lat, lon, cape_wrf415_i = import_data('AFWA_CAPE_MU', 'WRF415', wrf415_idx)
-lat, lon, cin_wrf415_i = import_data('AFWA_CIN_MU', 'WRF415', wrf415_idx)
+lat, lon, cin_wrf415_i, cin_wrf415_ii, cin_wrf415_iii = import_data('AFWA_CIN_MU', 'WRF415', wrf415_idx)
+
+print(np.nanmin(cin_era5_i), np.nanmax(cin_era5_i))
+
+print(np.nanmin(cin_regcm5_i), np.nanmax(cin_regcm5_i))
+
+print(np.nanmin(cin_wrf415_i), np.nanmax(cin_wrf415_i))
 
 # Plot figure
-fig, axes = plt.subplots(2,3, figsize=(14, 6), subplot_kw={"projection": ccrs.PlateCarree()})
-(ax1, ax2, ax3), (ax4, ax5, ax6) = axes
+fig, axes = plt.subplots(3,3, figsize=(14, 9), subplot_kw={"projection": ccrs.PlateCarree()})
+(ax1, ax2, ax3), (ax4, ax5, ax6), (ax7, ax8, ax9) = axes
 font_size = 10
 
 states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
-level1 = np.arange(0,1025,25)
-level2 = np.arange(0,510,10)
+level1 = np.arange(0,1050,50)
 
 ax1.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax1.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -153,11 +171,10 @@ ax1.grid(c='k', ls='--', alpha=0.3)
 ax1.add_feature(cfeat.BORDERS)
 ax1.add_feature(states_provinces, edgecolor='0.25')
 ax1.coastlines()
+ax1.set_title('(a) ERA5 (-24hr)', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
-ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-ax1.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
-cf = ax1.contourf(lon, lat, cape_era5_i, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Greens')
-cb = plt.colorbar(cf, cax=fig.add_axes([0.91, 0.3, 0.015, 0.4]))
+cf1 = ax1.contourf(lon, lat, cin_era5_i, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax1.clabel(ct1, inline=1, fontsize=8)
 
 ax2.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax2.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -167,9 +184,9 @@ ax2.grid(c='k', ls='--', alpha=0.3)
 ax2.add_feature(cfeat.BORDERS)
 ax2.add_feature(states_provinces, edgecolor='0.25')
 ax2.coastlines()
-ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
-ax2.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
-cf = ax2.contourf(lon, lat, cape_regcm5_i, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Greens')
+ax2.set_title('(b) RegCM5 (-24hr)', loc='left', fontsize=font_size, fontweight='bold')
+cf2 = ax2.contourf(lon, lat, cin_regcm5_i, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax2.clabel(ct2, inline=1, fontsize=8)
 
 ax3.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax3.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -179,9 +196,10 @@ ax3.grid(c='k', ls='--', alpha=0.3)
 ax3.add_feature(cfeat.BORDERS)
 ax3.add_feature(states_provinces, edgecolor='0.25')
 ax3.coastlines()
-ax3.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
-ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax3.contourf(lon, lat, cape_wrf415_i, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Greens')
+ax3.set_title('(c) WRF415 (-24hr)', loc='left', fontsize=font_size, fontweight='bold')
+cf3 = ax3.contourf(lon, lat, cin_wrf415_i, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax3.clabel(ct3, inline=1, fontsize=8)
+cb = plt.colorbar(cf3, cax=fig.add_axes([0.91, 0.2, 0.015, 0.6]))
 
 ax4.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax4.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -191,11 +209,10 @@ ax4.grid(c='k', ls='--', alpha=0.3)
 ax4.add_feature(cfeat.BORDERS)
 ax4.add_feature(states_provinces, edgecolor='0.25')
 ax4.coastlines()
+ax4.set_title('(d) ERA5 (cyclogenesis)', loc='left', fontsize=font_size, fontweight='bold')
 ax4.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
-ax4.set_title('(d) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-ax4.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
-cf = ax4.contourf(lon, lat, cin_era5_i, levels=level2, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
-cb = plt.colorbar(cf, cax=fig.add_axes([0.96, 0.3, 0.015, 0.4]))
+cf4 = ax4.contourf(lon, lat, cin_era5_ii, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax4.clabel(ct4, inline=1, fontsize=8)
 
 ax5.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax5.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -205,9 +222,9 @@ ax5.grid(c='k', ls='--', alpha=0.3)
 ax5.add_feature(cfeat.BORDERS)
 ax5.add_feature(states_provinces, edgecolor='0.25')
 ax5.coastlines()
-ax5.set_title('(e) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
-ax5.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
-cf = ax5.contourf(lon, lat, cin_regcm5_i, levels=level2, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax5.set_title('(e) RegCM5 (cyclogenesis)', loc='left', fontsize=font_size, fontweight='bold')
+cf5 = ax5.contourf(lon, lat, cin_regcm5_ii, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax5.clabel(ct5, inline=1, fontsize=8)
 
 ax6.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
 ax6.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
@@ -217,13 +234,54 @@ ax6.grid(c='k', ls='--', alpha=0.3)
 ax6.add_feature(cfeat.BORDERS)
 ax6.add_feature(states_provinces, edgecolor='0.25')
 ax6.coastlines()
-ax6.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
-ax6.set_title('(f) WRF415', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax6.contourf(lon, lat, cin_wrf415_i, levels=level2, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax6.set_title('(f) WRF415 (cyclogenesis)', loc='left', fontsize=font_size, fontweight='bold')
+cf6 = ax6.contourf(lon, lat, cin_wrf415_ii, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax6.clabel(ct6, inline=1, fontsize=8)
+
+ax7.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
+ax7.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
+ax7.xaxis.set_major_formatter(LongitudeFormatter())
+ax7.yaxis.set_major_formatter(LatitudeFormatter())
+ax7.grid(c='k', ls='--', alpha=0.3)
+ax7.add_feature(cfeat.BORDERS)
+ax7.add_feature(states_provinces, edgecolor='0.25')
+ax7.coastlines()
+ax7.set_title('(g) ERA5 (+24hr)', loc='left', fontsize=font_size, fontweight='bold')
+ax7.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
+ax7.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
+cf7 = ax7.contourf(lon, lat, cin_era5_iii, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax7.clabel(ct7, inline=1, fontsize=8)
+
+ax8.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
+ax8.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
+ax8.xaxis.set_major_formatter(LongitudeFormatter())
+ax8.yaxis.set_major_formatter(LatitudeFormatter())
+ax8.grid(c='k', ls='--', alpha=0.3)
+ax8.add_feature(cfeat.BORDERS)
+ax8.add_feature(states_provinces, edgecolor='0.25')
+ax8.coastlines()
+ax8.set_title('(h) RegCM5 (+24hr)', loc='left', fontsize=font_size, fontweight='bold')
+ax8.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
+cf8 = ax8.contourf(lon, lat, cin_regcm5_iii, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax8.clabel(ct8, inline=1, fontsize=8)
+
+ax9.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
+ax9.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
+ax9.xaxis.set_major_formatter(LongitudeFormatter())
+ax9.yaxis.set_major_formatter(LatitudeFormatter())
+ax9.grid(c='k', ls='--', alpha=0.3)
+ax9.add_feature(cfeat.BORDERS)
+ax9.add_feature(states_provinces, edgecolor='0.25')
+ax9.coastlines()
+ax9.set_title('(i) WRF415 (+24hr)', loc='left', fontsize=font_size, fontweight='bold')
+ax9.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
+cf9 = ax9.contourf(lon, lat, cin_wrf415_iii, levels=level1, transform=ccrs.PlateCarree(), extend='max', cmap='Reds')
+ax9.clabel(ct9, inline=1, fontsize=8)
+cb = plt.colorbar(cf9, cax=fig.add_axes([0.91, 0.2, 0.015, 0.6]))
 
 # Path out to save figure
 path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone/paper'.format(path)
-name_out = 'pyplt_maps_cape_cin_CP-RCM_SAM-3km_2018-2021.png'
+name_out = 'pyplt_maps_cin_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
