@@ -17,12 +17,12 @@ from mpl_toolkits.basemap import Basemap
 var = 'pr'
 dt = '20000101'
 domain = 'EUR-11'
-path = '/marconi/home/userexternal/mdasilva'
+path = '/home/mda_silv/scratch/EUR-11/postproc'
 
 
 def import_obs(param, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/postproc/obs/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt) 
+	arq   = '{0}/obs/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt) 
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -34,7 +34,7 @@ def import_obs(param, dataset):
 
 def import_rcm(param, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/postproc/rcm/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
+	arq   = '{0}/rcm/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -99,7 +99,7 @@ plt.xlabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold'
 plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
+path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_pdf_daily_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

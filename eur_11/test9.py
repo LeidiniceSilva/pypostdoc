@@ -18,16 +18,13 @@ from mpl_toolkits.basemap import Basemap
 var = 'pr'
 dt = '2000010100'
 domain = 'EUR-11'
-path = '/marconi/home/userexternal/mdasilva'
+path = '/home/mda_silv/scratch/EUR-11/postproc'
 
 
 def import_obs(param, dataset):
-
-	if param == 'pr':
-		param_ = 'tp'
 	
-	arq  = xr.open_dataset('{0}/user/mdasilva/EUR-11/postproc/obs/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt))
-	data = arq[param_]
+	arq  = xr.open_dataset('{0}/obs/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt))
+	data = arq[param]
 	time = data.sel(time=slice('2000-01-01','2000-01-31'))
 	var  = time.groupby('time.hour').mean()
 	mean = np.nanmean(np.nanmean(var.values, axis=1), axis=1)
@@ -37,7 +34,7 @@ def import_obs(param, dataset):
 
 def import_rcm(param, dataset):
 
-	arq  = xr.open_dataset('{0}/user/mdasilva/EUR-11/postproc/rcm/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt))
+	arq  = xr.open_dataset('{0}/rcm/{1}_{2}_FPS_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt))
 	data = arq[param]
 	time = data.sel(time=slice('2000-01-01','2000-01-31'))
 	var  = time.groupby('time.hour').mean()
@@ -47,7 +44,7 @@ def import_rcm(param, dataset):
 	
 	
 # Import model and obs dataset
-dict_var = {'pr': ['precip', 'rr', 'pr']}
+dict_var = {'pr': ['precip', 'rr', 'tp']}
 
 era5_jan = import_obs(dict_var[var][2], 'ERA5')
 noto_jan = import_rcm(var, 'NoTo-Europe')
@@ -78,7 +75,7 @@ plt.grid(linestyle='--')
 plt.legend(loc=10, ncol=5, fontsize=font_size, shadow=True)
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
+path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_diurnal_cycle_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
