@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 var = 'cl'
 dt = '200001'
 domain = 'EUR-11'
-path='/marconi/home/userexternal/mdasilva'
+path = '/home/mda_silv/scratch/EUR-11/postproc'
 
 
 def import_obs(param, dataset):
@@ -26,7 +26,7 @@ def import_obs(param, dataset):
 	else:
 		param_ = 'ciwc'
 		
-	arq   = '{0}/user/mdasilva/EUR-11/postproc/obs/{1}_{2}_FPS_{3}_200001_lonlat.nc'.format(path, param, domain, dataset)	     
+	arq   = '{0}/obs/{1}_{2}_FPS_{3}_200001_lonlat.nc'.format(path, param, domain, dataset)	     
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param_][:] 
 	value = var[:][:,:,:,:]
@@ -37,7 +37,7 @@ def import_obs(param, dataset):
 
 def import_rcm(param, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/postproc/rcm/{1}_{2}_FPS_{3}_200001_lonlat.nc'.format(path, param, domain, dataset)
+	arq   = '{0}/rcm/{1}_{2}_FPS_{3}_200001_lonlat.nc'.format(path, param, domain, dataset)
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	value = var[:][:,:,:,:]
@@ -165,7 +165,7 @@ plt.setp(ax.get_yticklabels(), visible=False)
 plt.gca().invert_yaxis()
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
+path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_vertical_profile_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

@@ -18,12 +18,12 @@ from import_climate_tools import compute_mbe
 var = 'pr_freq'
 domain = 'EUR-11'
 dt = '20000101'
-path = '/marconi/home/userexternal/mdasilva'
+path = '/home/mda_silv/scratch/EUR-11/postproc'
 
 
 def import_obs(param, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/postproc/obs/{1}_freq_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
+	arq   = '{0}/obs/{1}_freq_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -35,7 +35,7 @@ def import_obs(param, dataset):
 		
 def import_rcm(param, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/postproc/rcm/{1}_freq_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
+	arq   = '{0}/rcm/{1}_freq_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -105,7 +105,7 @@ cbar.set_label('Frequency (%)'.format(legend), fontsize=font_size, fontweight='b
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
+path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
