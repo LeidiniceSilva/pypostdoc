@@ -17,13 +17,13 @@ from mpl_toolkits.basemap import maskoceans
 
 var = 'pr'
 domain = 'EUR-11'
-dt = '2000-2000'
-path = '/marconi/home/userexternal/mdasilva'
+dt = '2000-2001'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 	
 			
 def import_obs(param, dataset, season):
 
-	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	arq   = '{0}/postproc/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -35,7 +35,7 @@ def import_obs(param, dataset, season):
 
 def import_rcm(param, dataset, season):
 
-	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/rcm/{1}/{2}_{3}_{4}_RegCM5_{5}_{6}_lonlat.nc'.format(path, dataset, param, domain, dataset, season, dt)	
+	arq   = '{0}/postproc/rcm/{1}/{2}_{3}_{4}_RegCM5_{5}_{6}_lonlat.nc'.format(path, dataset, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -61,7 +61,7 @@ def basemap(lat, lon):
 	
 	
 # Import model and obs dataset
-dict_var = {'pr': ['rr', 'precipitation', 'precip', ]}
+dict_var = {'pr': ['rr', 'precipitation', 'precip']}
 
 lat, lon, eobs_djf = import_obs(dict_var[var][0], 'EOBS', 'DJF')
 lat, lon, eobs_mam = import_obs(dict_var[var][0], 'EOBS', 'MAM')
@@ -78,26 +78,25 @@ lat, lon, cpc_mam = import_obs(dict_var[var][2], 'CPC', 'MAM')
 lat, lon, cpc_jja = import_obs(dict_var[var][2], 'CPC', 'JJA')
 lat, lon, cpc_son = import_obs(dict_var[var][2], 'CPC', 'SON')
 
-lat, lon, noto_djf = import_rcm(var, 'Noto-Europe', 'DJF')
-lat, lon, noto_mam = import_rcm(var, 'Noto-Europe', 'MAM')
-lat, lon, noto_jja = import_rcm(var, 'Noto-Europe', 'JJA')
-lat, lon, noto_son = import_rcm(var, 'Noto-Europe', 'SON')
+lat, lon, noto_djf = import_rcm(var, 'NoTo-Europe', 'DJF')
+lat, lon, noto_mam = import_rcm(var, 'NoTo-Europe', 'MAM')
+lat, lon, noto_jja = import_rcm(var, 'NoTo-Europe', 'JJA')
+lat, lon, noto_son = import_rcm(var, 'NoTo-Europe', 'SON')
 
-lat, lon, wdm7_djf = import_rcm(var, 'wdm7-Europe', 'DJF')
-lat, lon, wdm7_mam = import_rcm(var, 'wdm7-Europe', 'MAM')
-lat, lon, wdm7_jja = import_rcm(var, 'wdm7-Europe', 'JJA')
-lat, lon, wdm7_son = import_rcm(var, 'wdm7-Europe', 'SON')
+lat, lon, wdm7_djf = import_rcm(var, 'WDM7-Europe', 'DJF')
+lat, lon, wdm7_mam = import_rcm(var, 'WDM7-Europe', 'MAM')
+lat, lon, wdm7_jja = import_rcm(var, 'WDM7-Europe', 'JJA')
+lat, lon, wdm7_son = import_rcm(var, 'WDM7-Europe', 'SON')
 
-lat, lon, wsm7_djf = import_rcm(var, 'wsm7-Europe', 'DJF')
-lat, lon, wsm7_mam = import_rcm(var, 'wsm7-Europe', 'MAM')
-lat, lon, wsm7_jja = import_rcm(var, 'wsm7-Europe', 'JJA')
-lat, lon, wsm7_son = import_rcm(var, 'wsm7-Europe', 'SON')
+lat, lon, wsm7_djf = import_rcm(var, 'WSM7-Europe', 'DJF')
+lat, lon, wsm7_mam = import_rcm(var, 'WSM7-Europe', 'MAM')
+lat, lon, wsm7_jja = import_rcm(var, 'WSM7-Europe', 'JJA')
+lat, lon, wsm7_son = import_rcm(var, 'WSM7-Europe', 'SON')
 
-lat, lon, wsm5_djf = import_rcm(var, 'wsm5-Europe', 'DJF')
-lat, lon, wsm5_mam = import_rcm(var, 'wsm5-Europe', 'MAM')
-lat, lon, wsm5_jja = import_rcm(var, 'wsm5-Europe', 'JJA')
-lat, lon, wsm5_son = import_rcm(var, 'wsm5-Europe', 'SON')
-
+lat, lon, wsm5_djf = import_rcm(var, 'WSM5-Europe', 'DJF')
+lat, lon, wsm5_mam = import_rcm(var, 'WSM5-Europe', 'MAM')
+lat, lon, wsm5_jja = import_rcm(var, 'WSM5-Europe', 'JJA')
+lat, lon, wsm5_son = import_rcm(var, 'WSM5-Europe', 'SON')
 
 # Plot figure
 color = ['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
@@ -212,7 +211,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
