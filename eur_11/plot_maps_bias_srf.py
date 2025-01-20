@@ -11,93 +11,82 @@ import numpy as np
 import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.feature as cfeat
 
-from mpl_toolkits.basemap import Basemap
-from mpl_toolkits.basemap import maskoceans
+from cartopy import config
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
 var = 'pr'
 domain = 'EUR-11'
-dt = '2000-2000'
-path = '/marconi/home/userexternal/mdasilva'
+dt = '2000-2001'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 	
-			
+
 def import_obs(param, dataset, season):
 
-	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
-	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param][:] 
-	lat   = data.variables['lat'][:]
-	lon   = data.variables['lon'][:]
-	mean = var[:][0,:,:]
+        arq   = '{0}/postproc/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
+        data  = netCDF4.Dataset(arq)
+        var   = data.variables[param][:]
+        lat   = data.variables['lat'][:]
+        lon   = data.variables['lon'][:]
+        mean = var[:][0,:,:]
 
-	return lat, lon, mean
+        return lat, lon, mean
 
 
 def import_rcm(param, dataset, season):
 
-	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/rcm/{1}/{2}_{3}_{4}_RegCM5_{5}_{6}_lonlat.nc'.format(path, dataset, param, domain, dataset, season, dt)	
-	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param][:] 
-	lat   = data.variables['lat'][:]
-	lon   = data.variables['lon'][:]
-	mean = var[:][0,:,:]
+        arq   = '{0}/postproc/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
+        data  = netCDF4.Dataset(arq)
+        var   = data.variables[param][:]
+        lat   = data.variables['lat'][:]
+        lon   = data.variables['lon'][:]
+        mean = var[:][0,:,:]
 
-	return lat, lon, mean
-	
-	
-def basemap(lat, lon):
+        return lat, lon, mean
 
-	lat_start, lat_end, lon_start, lon_end = 15, 75, -45, 65
-	
-	map = Basemap(projection='cyl', llcrnrlon=lon_start, llcrnrlat=lat_start, urcrnrlon=lon_end,urcrnrlat=lat_end, resolution='c')
-	map.drawmeridians(np.arange(lon_start, lon_end, 20.), size=6, labels=[0,0,0,1], linewidth=0.4, color='black')
-	map.drawparallels(np.arange(lat_start, lat_end, 10.), size=6, labels=[1,0,0,0], linewidth=0.4, color='black')
-	map.drawcoastlines(linewidth=0.5, color='black')
-	
-	lons, lats = np.meshgrid(lon, lat)
-	xx, yy = map(lons,lats)
-	
-	return map, xx, yy
-	
+
+def configure_subplot(ax):
+
+    ax.set_xticks(np.arange(-40,65,25), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(30,85,15), crs=ccrs.PlateCarree())
+    ax.xaxis.set_major_formatter(LongitudeFormatter())
+    ax.yaxis.set_major_formatter(LatitudeFormatter())
+    ax.tick_params(axis='x', labelsize=6, labelcolor='black')
+    ax.tick_params(axis='y', labelsize=6, labelcolor='black')
+    ax.grid(c='k', ls='--', alpha=0.4)
+    ax.coastlines()
+
 	
 # Import model and obs dataset
-dict_var = {'pr': ['rr', 'precipitation', 'precip', ]}
+dict_var = {'pr': ['rr', 'precipitation', 'precip']}
 
 lat, lon, eobs_djf = import_obs(dict_var[var][0], 'EOBS', 'DJF')
 lat, lon, eobs_mam = import_obs(dict_var[var][0], 'EOBS', 'MAM')
 lat, lon, eobs_jja = import_obs(dict_var[var][0], 'EOBS', 'JJA')
 lat, lon, eobs_son = import_obs(dict_var[var][0], 'EOBS', 'SON')
 
-lat, lon, mswep_djf = import_obs(dict_var[var][1], 'MSWEP', 'DJF')
-lat, lon, mswep_mam = import_obs(dict_var[var][1], 'MSWEP', 'MAM')
-lat, lon, mswep_jja = import_obs(dict_var[var][1], 'MSWEP', 'JJA')
-lat, lon, mswep_son = import_obs(dict_var[var][1], 'MSWEP', 'SON')
+lat, lon, noto_djf = import_rcm(var, 'NoTo-Europe_RegCM5', 'DJF')
+lat, lon, noto_mam = import_rcm(var, 'NoTo-Europe_RegCM5', 'MAM')
+lat, lon, noto_jja = import_rcm(var, 'NoTo-Europe_RegCM5', 'JJA')
+lat, lon, noto_son = import_rcm(var, 'NoTo-Europe_RegCM5', 'SON')
 
-lat, lon, cpc_djf = import_obs(dict_var[var][2], 'CPC', 'DJF')
-lat, lon, cpc_mam = import_obs(dict_var[var][2], 'CPC', 'MAM')
-lat, lon, cpc_jja = import_obs(dict_var[var][2], 'CPC', 'JJA')
-lat, lon, cpc_son = import_obs(dict_var[var][2], 'CPC', 'SON')
+lat, lon, wdm7_djf = import_rcm(var, 'WDM7-Europe_RegCM5', 'DJF')
+lat, lon, wdm7_mam = import_rcm(var, 'WDM7-Europe_RegCM5', 'MAM')
+lat, lon, wdm7_jja = import_rcm(var, 'WDM7-Europe_RegCM5', 'JJA')
+lat, lon, wdm7_son = import_rcm(var, 'WDM7-Europe_RegCM5', 'SON')
 
-lat, lon, noto_djf = import_rcm(var, 'Noto-Europe', 'DJF')
-lat, lon, noto_mam = import_rcm(var, 'Noto-Europe', 'MAM')
-lat, lon, noto_jja = import_rcm(var, 'Noto-Europe', 'JJA')
-lat, lon, noto_son = import_rcm(var, 'Noto-Europe', 'SON')
+lat, lon, wsm7_djf = import_rcm(var, 'WSM7-Europe_RegCM5', 'DJF')
+lat, lon, wsm7_mam = import_rcm(var, 'WSM7-Europe_RegCM5', 'MAM')
+lat, lon, wsm7_jja = import_rcm(var, 'WSM7-Europe_RegCM5', 'JJA')
+lat, lon, wsm7_son = import_rcm(var, 'WSM7-Europe_RegCM5', 'SON')
 
-lat, lon, wdm7_djf = import_rcm(var, 'wdm7-Europe', 'DJF')
-lat, lon, wdm7_mam = import_rcm(var, 'wdm7-Europe', 'MAM')
-lat, lon, wdm7_jja = import_rcm(var, 'wdm7-Europe', 'JJA')
-lat, lon, wdm7_son = import_rcm(var, 'wdm7-Europe', 'SON')
-
-lat, lon, wsm7_djf = import_rcm(var, 'wsm7-Europe', 'DJF')
-lat, lon, wsm7_mam = import_rcm(var, 'wsm7-Europe', 'MAM')
-lat, lon, wsm7_jja = import_rcm(var, 'wsm7-Europe', 'JJA')
-lat, lon, wsm7_son = import_rcm(var, 'wsm7-Europe', 'SON')
-
-lat, lon, wsm5_djf = import_rcm(var, 'wsm5-Europe', 'DJF')
-lat, lon, wsm5_mam = import_rcm(var, 'wsm5-Europe', 'MAM')
-lat, lon, wsm5_jja = import_rcm(var, 'wsm5-Europe', 'JJA')
-lat, lon, wsm5_son = import_rcm(var, 'wsm5-Europe', 'SON')
+lat, lon, wsm5_djf = import_rcm(var, 'WSM5-Europe_RegCM5', 'DJF')
+lat, lon, wsm5_mam = import_rcm(var, 'WSM5-Europe_RegCM5', 'MAM')
+lat, lon, wsm5_jja = import_rcm(var, 'WSM5-Europe_RegCM5', 'JJA')
+lat, lon, wsm5_son = import_rcm(var, 'WSM5-Europe_RegCM5', 'SON')
 
 mbe_djf_noto_eobs = compute_mbe(noto_djf, eobs_djf)
 mbe_mam_noto_eobs = compute_mbe(noto_mam, eobs_mam)
@@ -120,97 +109,46 @@ mbe_jja_wsm5_eobs = compute_mbe(wsm5_jja, eobs_jja)
 mbe_son_wsm5_eobs = compute_mbe(wsm5_son, eobs_son)
 
 # Plot figure
-fig = plt.figure(figsize=(10, 6))
+fig, axes = plt.subplots(4, 4, figsize=(12, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+axes = axes.flatten()
+
 dict_plot = {'pr': ['Bias of precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.BrBG]}
 font_size = 8
-	
-ax = fig.add_subplot(4, 4, 1)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_djf_noto_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(a) NoTo-EOBS DJF', loc='left', fontsize=font_size, fontweight='bold')
 
-ax = fig.add_subplot(4, 4, 2)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_djf_wdm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(b) WDM7-EOBS DJF', loc='left', fontsize=font_size, fontweight='bold')
+plot_data = {
+     'Plot 1': {'data': mbe_djf_noto_eobs, 'title': '(a) NoTo-EOBS DJF'},
+     'Plot 2': {'data': mbe_djf_wdm7_eobs, 'title': '(b) WDM7-EOBS DJF'},
+     'Plot 3': {'data': mbe_djf_wsm7_eobs, 'title': '(c) WSM7-EOBS DJF'},
+     'Plot 4': {'data': mbe_djf_wsm5_eobs, 'title': '(d) WSM5-EOBS DJF'},
+     'Plot 5': {'data': mbe_mam_noto_eobs, 'title': '(e) NoTo-EOBS MAM'},
+     'Plot 6': {'data': mbe_mam_wdm7_eobs, 'title': '(f) WDM7-EOBS MAM'},
+     'Plot 7': {'data': mbe_mam_wsm7_eobs, 'title': '(g) WSM7-EOBS MAM'},
+     'Plot 8': {'data': mbe_mam_wsm5_eobs, 'title': '(h) WSM5-EOBS MAM'},
+     'Plot 9': {'data': mbe_jja_noto_eobs, 'title': '(i) NoTo-EOBS JJA'},
+     'Plot 10': {'data': mbe_jja_wdm7_eobs, 'title': '(j) WDM7-EOBS JJA'},
+     'Plot 11': {'data': mbe_jja_wsm7_eobs, 'title': '(k) WSM7-EOBS JJA'},
+     'Plot 12': {'data': mbe_jja_wsm5_eobs, 'title': '(l) WSM5-EOBS JJA'},
+     'Plot 13': {'data': mbe_son_noto_eobs, 'title': '(m) NoTo-EOBS SON'},
+     'Plot 14': {'data': mbe_son_wdm7_eobs, 'title': '(n) WDM7-EOBS SON'},
+     'Plot 15': {'data': mbe_son_wsm7_eobs, 'title': '(o) WSM7-EOBS SON'},
+     'Plot 16': {'data': mbe_son_wsm5_eobs, 'title': '(p) WSM5-EOBS SON'}
+}
 
-ax = fig.add_subplot(4, 4, 3)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_djf_wsm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(c) WSM7-EOBS DJF', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 4)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_djf_wsm5_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(d) WSM5-EOBS DJF', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 5)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_mam_noto_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(e) NoTo-EOBS MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 6)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_mam_wdm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(f) WDM7-EOBS MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 7)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_mam_wsm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(g) WSM7-EOBS MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 8)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_mam_wsm5_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(h) WSM5-EOBS MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 9)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_jja_noto_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(i) NoTo-EOBS JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 10)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_jja_wdm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(j) WDM7-EOBS JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 11)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_jja_wsm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(k) WSM7-EOBS JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 12)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_jja_wsm5_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(l) WSM5-EOBS JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 13)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_son_noto_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(m) NoTo-EOBS SON', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 14)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_son_wdm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(n) WDM7-EOBS SON', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 15)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_son_wsm7_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(o) WSM7-EOBS SON', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(4, 4, 16)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_son_wsm5_eobs, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-plt.title(u'(p) WSM5-EOBS SON', loc='left', fontsize=font_size, fontweight='bold')
+for ax, (key, value) in zip(axes, plot_data.items()):
+    data = value['data']
+    title = value['title']
+    
+    contour = ax.contourf(lon, lat, data, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+    ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
+    configure_subplot(ax)
 
 # Set colobar
-cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.01, 0.4]))
+cbar = fig.colorbar(contour, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)
 cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
-	
+
 # Path out to save figure
-path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
