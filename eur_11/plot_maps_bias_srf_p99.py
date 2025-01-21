@@ -5,31 +5,29 @@ __email__       = "leidinicesilva@gmail.com"
 __date__        = "Mar 12, 2024"
 __description__ = "This script plot bias maps"
 
+
 import os
 import netCDF4
 import numpy as np
 import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.feature as cfeat
 
-from mpl_toolkits.basemap import Basemap
-from mpl_toolkits.basemap import maskoceans
+from cartopy import config
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
 var = 'p99'
-freq = 'daily'
+dt = '2000-2001'
 domain = 'EUR-11'
-path = '/marconi/home/userexternal/mdasilva'
-
-if freq == 'hourly':
-	dt = '1hr_2000-2000'
-else:
-	dt = '2000-2000'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 
 def import_obs(param, domain, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/obs/p99_{1}_{2}_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
+	arq   = '{0}/postproc/obs/p99_{1}_{2}_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -41,7 +39,7 @@ def import_obs(param, domain, dataset):
 		
 def import_rcm(param, domain, dataset):
 
-	arq   = '{0}/user/mdasilva/EUR-11/post_evaluate/rcm/{2}/p99_{1}_{2}_RegCM5_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
+	arq   = '{0}/postproc/rcm/p99_{1}_{2}_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -51,83 +49,61 @@ def import_rcm(param, domain, dataset):
 	return lat, lon, mean
 
 
-def basemap(lat, lon):
+def configure_subplot(ax):
 
-	lat_start, lat_end, lon_start, lon_end = 15, 75, -45, 65
-	
-	map = Basemap(projection='cyl', llcrnrlon=lon_start, llcrnrlat=lat_start, urcrnrlon=lon_end,urcrnrlat=lat_end, resolution='c')
-	map.drawmeridians(np.arange(lon_start, lon_end, 20.), size=6, labels=[0,0,0,1], linewidth=0.4, color='black')
-	map.drawparallels(np.arange(lat_start, lat_end, 10.), size=6, labels=[1,0,0,0], linewidth=0.4, color='black')
-	map.drawcoastlines(linewidth=0.5, color='black')
-	
-	lons, lats = np.meshgrid(lon, lat)
-	xx, yy = map(lons,lats)
-	
-	return map, xx, yy
+    ax.set_xticks(np.arange(-40,65,25), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(30,85,15), crs=ccrs.PlateCarree())
+    ax.xaxis.set_major_formatter(LongitudeFormatter())
+    ax.yaxis.set_major_formatter(LatitudeFormatter())
+    ax.tick_params(axis='x', labelsize=6, labelcolor='black')
+    ax.tick_params(axis='y', labelsize=6, labelcolor='black')
+    ax.grid(c='k', ls='--', alpha=0.4)
+    ax.coastlines()
 	
 	
 # Import model and obs dataset
-if freq == 'hourly':
-	lat, lon, eobs = import_obs('rr', domain, 'EOBS')
-	lat, lon, noto = import_rcm('pr', domain, 'Noto-Europe')
-	lat, lon, wdm7 = import_rcm('pr', domain, 'wdm7-Europe')
-	lat, lon, wsm7 = import_rcm('pr', domain, 'wsm7-Europe')
-	lat, lon, wsm5 = import_rcm('pr', domain, 'wsm5-Europe')
+lat, lon, eobs = import_obs('rr', domain, 'EOBS')
+lat, lon, noto = import_rcm('pr', domain, 'NoTo-Europe_RegCM5')
+lat, lon, wdm7 = import_rcm('pr', domain, 'WDM7-Europe_RegCM5')
+lat, lon, wsm7 = import_rcm('pr', domain, 'WSM7-Europe_RegCM5')
+lat, lon, wsm5 = import_rcm('pr', domain, 'WSM5-Europe_RegCM5')
 	
-	mbe_noto_eobs = compute_mbe(noto, eobs)	
-	mbe_wdm7_eobs = compute_mbe(wdm7, eobs)	
-	mbe_wsm7_eobs = compute_mbe(wsm7, eobs)	
-	mbe_wsm5_eobs = compute_mbe(wsm5, eobs)  
-else:
-	lat, lon, eobs = import_obs('rr', domain, 'EOBS')
-	lat, lon, noto = import_rcm('pr', domain, 'Noto-Europe')
-	lat, lon, wdm7 = import_rcm('pr', domain, 'wdm7-Europe')
-	lat, lon, wsm7 = import_rcm('pr', domain, 'wsm7-Europe')
-	lat, lon, wsm5 = import_rcm('pr', domain, 'wsm5-Europe')
-	
-	mbe_noto_eobs = compute_mbe(noto, eobs)	
-	mbe_wdm7_eobs = compute_mbe(wdm7, eobs)	
-	mbe_wsm7_eobs = compute_mbe(wsm7, eobs)	
-	mbe_wsm5_eobs = compute_mbe(wsm5, eobs)  
-	
+mbe_noto_eobs = compute_mbe(noto, eobs)	
+mbe_wdm7_eobs = compute_mbe(wdm7, eobs)	
+mbe_wsm7_eobs = compute_mbe(wsm7, eobs)	
+mbe_wsm5_eobs = compute_mbe(wsm5, eobs)  
+
 # Plot figure
-fig = plt.figure(figsize=(8, 3))   
+fig, axes = plt.subplots(1, 4, figsize=(9, 4), subplot_kw={'projection': ccrs.PlateCarree()})
+axes = axes.flatten()
+
+dict_plot = {'p99': ['Daily p99 (mm d$^-$$^1$)', np.arange(-50, 55, 5), cm.BrBG]}
 font_size = 8
 
-if freq == 'hourly':
-	levs = np.arange(-5, 5.5, 0.5)
-	legend = 'Hourly p99 (mm h$^-$$^1$)'
-else:
-	levs = np.arange(-50, 55, 5)
-	legend = 'Daily p99 (mm d$^-$$^1$)'
+plot_data = {
+     'Plot 1': {'data': mbe_noto_eobs[0], 'title': '(a) NoTo-EOBS'},
+     'Plot 2': {'data': mbe_wdm7_eobs[0], 'title': '(b) WDM7-EOBS'},
+     'Plot 3': {'data': mbe_wsm7_eobs[0], 'title': '(c) WSM7-EOBS'},
+     'Plot 4': {'data': mbe_wsm5_eobs[0], 'title': '(d) WSM5-EOBS'}
+}
 
-ax = fig.add_subplot(1, 4, 1)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_noto_eobs[0], levels=levs, cmap=cm.BrBG, extend='neither') 
-plt.title(u'(a) NoTo-EOBS', loc='left', fontsize=font_size, fontweight='bold')
+for ax, (key, value) in zip(axes, plot_data.items()):
+    data = value['data']
+    title = value['title']
+    
+    contour = ax.contourf(lon, lat, data, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+    ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
+    configure_subplot(ax)
 
-ax = fig.add_subplot(1, 4, 2)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_wdm7_eobs[0], levels=levs, cmap=cm.BrBG, extend='neither') 
-plt.title(u'(b) WDM7-EOBS', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(1, 4, 3)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_wsm7_eobs[0], levels=levs, cmap=cm.BrBG, extend='neither') 
-plt.title(u'(c) WSM7-EOBS', loc='left', fontsize=font_size, fontweight='bold')
-
-ax = fig.add_subplot(1, 4, 4)  
-map, xx, yy = basemap(lat, lon)
-plt_map = map.contourf(xx, yy, mbe_wsm5_eobs[0], levels=levs, cmap=cm.BrBG, extend='neither') 
-plt.title(u'(d) WSM5-EOBS', loc='left', fontsize=font_size, fontweight='bold')
-	
-cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.01, 0.4]))
-cbar.set_label('{0}'.format(legend), fontsize=font_size, fontweight='bold')
+# Set colobar
+cbar = fig.colorbar(contour, ax=fig.axes, orientation='horizontal', pad=0.1, aspect=50)
+cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/EUR-11/figs'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
+
