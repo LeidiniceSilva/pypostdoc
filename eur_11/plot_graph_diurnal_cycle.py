@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Mar 12, 2024"
-__description__ = "This script plot clim maps"
+__description__ = "This script plot diurnal cycle"
 
 import os
 import netCDF4
@@ -77,7 +77,7 @@ plt.legend(loc=2, ncol=3, fontsize=font_size, shadow=True)
 
 # Path out to save figure
 path_out = '{0}/figs/ctrl'.format(path)
-name_out = 'pyplt_diurnal_cycle_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
+name_out = 'pyplt_graph_diurnal_cycle_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

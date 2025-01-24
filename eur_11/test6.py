@@ -86,7 +86,7 @@ fig = plt.figure()
 font_size = 10
 
 ax = fig.add_subplot(1, 1, 1)  
-plt.plot(x_pdf_cpc, pdf_cpc, marker='o', markersize=3, mfc='black', mec='black', alpha=0.70, linestyle='None', label='CPC')
+plt.plot(x_pdf_cpc,  pdf_cpc, marker='o', markersize=3, mfc='black', mec='black', alpha=0.70, linestyle='None', label='CPC')
 plt.plot(x_pdf_noto, pdf_noto, marker='o', markersize=3, mfc='blue', mec='blue', alpha=0.70, linestyle='None', label='NoTo')
 plt.plot(x_pdf_wsm5, pdf_wsm5, marker='o', markersize=3, mfc='red', mec='red', alpha=0.70, linestyle='None', label='WSM5')
 plt.plot(x_pdf_wsm7, pdf_wsm7, marker='o', markersize=3, mfc='magenta', mec='magenta', alpha=0.70, linestyle='None', label='WSM7')
