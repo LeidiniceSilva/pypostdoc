@@ -18,7 +18,7 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'clt'
+var = 'clh'
 domain = 'CSAM-3'
 idt, fdt = '1999', '1999'
 dt = '{0}-{1}'.format(idt, fdt)
