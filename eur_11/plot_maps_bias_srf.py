@@ -50,14 +50,14 @@ def import_rcm(param, dataset, season):
 
 def configure_subplot(ax):
 
-    ax.set_xticks(np.arange(-40,65,25), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(30,85,15), crs=ccrs.PlateCarree())
-    ax.xaxis.set_major_formatter(LongitudeFormatter())
-    ax.yaxis.set_major_formatter(LatitudeFormatter())
-    ax.tick_params(axis='x', labelsize=6, labelcolor='black')
-    ax.tick_params(axis='y', labelsize=6, labelcolor='black')
-    ax.grid(c='k', ls='--', alpha=0.4)
-    ax.coastlines()
+	ax.set_xticks(np.arange(-40,65,25), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(30,85,15), crs=ccrs.PlateCarree())
+	ax.xaxis.set_major_formatter(LongitudeFormatter())
+	ax.yaxis.set_major_formatter(LatitudeFormatter())
+	ax.tick_params(axis='x', labelsize=6, labelcolor='black')
+	ax.tick_params(axis='y', labelsize=6, labelcolor='black')
+	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.coastlines()
 
 	
 # Import model and obs dataset
