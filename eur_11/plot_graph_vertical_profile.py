@@ -12,7 +12,7 @@ import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-var = 'cli'
+var = 'hus'
 domain = 'EUR-11'
 dt = '2000-2001'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
@@ -24,8 +24,10 @@ def import_obs(param, dataset, season):
 		param_ = 'cc'
 	elif param == 'clliq':
 		param_ = 'clwc'
-	else:
+	elif param == 'clice':
 		param_ = 'ciwc'
+	else:
+		param_ = param
 		
 	arq   = '{0}/postproc/obs/{1}_{2}_FPS_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	     
 	data  = netCDF4.Dataset(arq)
@@ -50,8 +52,10 @@ def import_rcm(param, dataset, season):
 # Import model and obs dataset
 dict_var = {'cl': ['clfrac'], 
 'clw': ['clliq'],
-'cli': ['clice']}
- 
+'cli': ['clice'],
+'rh': ['r'],
+'hus': ['q']}
+
 if var == 'cl':
 	obs_djf = import_obs(dict_var[var][0], 'ERA5', 'DJF')
 	obs_mam = import_obs(dict_var[var][0], 'ERA5', 'MAM')
@@ -97,6 +101,98 @@ if var == 'cl':
 	wsm5_mam_ = wsm5_mam[0]*100
 	wsm5_jja_ = wsm5_jja[0]*100
 	wsm5_son_ = wsm5_son[0]*100
+
+elif var == 'rh':
+	obs_djf = import_obs(dict_var[var][0], 'ERA5', 'DJF')
+	obs_mam = import_obs(dict_var[var][0], 'ERA5', 'MAM')
+	obs_jja = import_obs(dict_var[var][0], 'ERA5', 'JJA')
+	obs_son = import_obs(dict_var[var][0], 'ERA5', 'SON')
+	obs_djf_ = obs_djf[0]
+	obs_mam_ = obs_mam[0]
+	obs_jja_ = obs_jja[0]
+	obs_son_ = obs_son[0]
+
+	noto_djf = import_rcm(var, 'NoTo-Europe', 'DJF')
+	noto_mam = import_rcm(var, 'NoTo-Europe', 'MAM')
+	noto_jja = import_rcm(var, 'NoTo-Europe', 'JJA')
+	noto_son = import_rcm(var, 'NoTo-Europe', 'SON')
+	noto_djf_ = noto_djf[0]
+	noto_mam_ = noto_mam[0]
+	noto_jja_ = noto_jja[0]
+	noto_son_ = noto_son[0]
+
+	wdm7_djf = import_rcm(var, 'WDM7-Europe', 'DJF')
+	wdm7_mam = import_rcm(var, 'WDM7-Europe', 'MAM')
+	wdm7_jja = import_rcm(var, 'WDM7-Europe', 'JJA')
+	wdm7_son = import_rcm(var, 'WDM7-Europe', 'SON')
+	wdm7_djf_ = wdm7_djf[0]
+	wdm7_mam_ = wdm7_mam[0]
+	wdm7_jja_ = wdm7_jja[0]
+	wdm7_son_ = wdm7_son[0]
+
+	wsm7_djf = import_rcm(var, 'WSM7-Europe', 'DJF')
+	wsm7_mam = import_rcm(var, 'WSM7-Europe', 'MAM')
+	wsm7_jja = import_rcm(var, 'WSM7-Europe', 'JJA')
+	wsm7_son = import_rcm(var, 'WSM7-Europe', 'SON')
+	wsm7_djf_ = wsm7_djf[0]
+	wsm7_mam_ = wsm7_mam[0]
+	wsm7_jja_ = wsm7_jja[0]
+	wsm7_son_ = wsm7_son[0]
+
+	wsm5_djf = import_rcm(var, 'WSM5-Europe', 'DJF')
+	wsm5_mam = import_rcm(var, 'WSM5-Europe', 'MAM')
+	wsm5_jja = import_rcm(var, 'WSM5-Europe', 'JJA')
+	wsm5_son = import_rcm(var, 'WSM5-Europe', 'SON')
+	wsm5_djf_ = wsm5_djf[0]
+	wsm5_mam_ = wsm5_mam[0]
+	wsm5_jja_ = wsm5_jja[0]
+	wsm5_son_ = wsm5_son[0]
+
+elif var == 'hus':
+	obs_djf = import_obs(dict_var[var][0], 'ERA5', 'DJF')
+	obs_mam = import_obs(dict_var[var][0], 'ERA5', 'MAM')
+	obs_jja = import_obs(dict_var[var][0], 'ERA5', 'JJA')
+	obs_son = import_obs(dict_var[var][0], 'ERA5', 'SON')
+	obs_djf_ = obs_djf[0]*1000
+	obs_mam_ = obs_mam[0]*1000
+	obs_jja_ = obs_jja[0]*1000
+	obs_son_ = obs_son[0]*1000
+
+	noto_djf = import_rcm(var, 'NoTo-Europe', 'DJF')
+	noto_mam = import_rcm(var, 'NoTo-Europe', 'MAM')
+	noto_jja = import_rcm(var, 'NoTo-Europe', 'JJA')
+	noto_son = import_rcm(var, 'NoTo-Europe', 'SON')
+	noto_djf_ = noto_djf[0]*1000
+	noto_mam_ = noto_mam[0]*1000
+	noto_jja_ = noto_jja[0]*1000
+	noto_son_ = noto_son[0]*1000
+
+	wdm7_djf = import_rcm(var, 'WDM7-Europe', 'DJF')
+	wdm7_mam = import_rcm(var, 'WDM7-Europe', 'MAM')
+	wdm7_jja = import_rcm(var, 'WDM7-Europe', 'JJA')
+	wdm7_son = import_rcm(var, 'WDM7-Europe', 'SON')
+	wdm7_djf_ = wdm7_djf[0]*1000
+	wdm7_mam_ = wdm7_mam[0]*1000
+	wdm7_jja_ = wdm7_jja[0]*1000
+	wdm7_son_ = wdm7_son[0]*1000
+
+	wsm7_djf = import_rcm(var, 'WSM7-Europe', 'DJF')
+	wsm7_mam = import_rcm(var, 'WSM7-Europe', 'MAM')
+	wsm7_jja = import_rcm(var, 'WSM7-Europe', 'JJA')
+	wsm7_son = import_rcm(var, 'WSM7-Europe', 'SON')
+	wsm7_djf_ = wsm7_djf[0]*1000
+	wsm7_mam_ = wsm7_mam[0]*1000
+	wsm7_jja_ = wsm7_jja[0]*1000
+	wsm7_son_ = wsm7_son[0]*1000
+
+	wsm5_djf = import_rcm(var, 'WSM5-Europe', 'DJF')
+	wsm5_mam = import_rcm(var, 'WSM5-Europe', 'MAM')
+	wsm5_jja = import_rcm(var, 'WSM5-Europe', 'JJA')
+	wsm5_son = import_rcm(var, 'WSM5-Europe', 'SON')
+	wsm5_djf_ = wsm5_djf[0]*1000
+	wsm5_mam_ = wsm5_mam[0]*1000
+	wsm5_jja_ = wsm5_jja[0]*1000
+	wsm5_son_ = wsm5_son[0]*1000
 
 else:
 	obs_djf = import_obs(dict_var[var][0], 'ERA5', 'DJF')
@@ -151,7 +247,9 @@ font_size = 8
 dict_plot = {
 'cl': ['Cloud fraction (%)', 0, 40, np.arange(0, 44, 4)],
 'clw': ['Cloud liquid water (mg kg$^-$$^1$)', 0, 50, np.arange(0, 55, 5)],
-'cli': ['Cloud ice (mg kg$^-$$^1$)', 0, 20, np.arange(0, 22, 2)]
+'cli': ['Cloud ice (mg kg$^-$$^1$)', 0, 20, np.arange(0, 22, 2)],
+'hus': ['Specific humidity (g kg$^-$$^1$)', 0, 10, np.arange(0, 11, 1)],
+'rh': ['Relative humidity (%)', 0, 100, np.arange(0, 110, 10)]
 }
 
 levels_i = (1000,975,950,925,900,875,850,825,800,775,750,700,650,600,550,500,450,400,350,300,250,225,200,175,150,125,100,70,50,30,20,10,7,5,3,2,1)

@@ -18,22 +18,34 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'pr'
+var = 'clt'
 domain = 'EUR-11'
 dt = '2000-2001'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 	
+if var == 'pr':
+	dataset = 'EOBS'
+else:
+	dataset = 'ERA5'
+
 
 def import_obs(param, dataset, season):
 
-        arq   = '{0}/postproc/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
-        data  = netCDF4.Dataset(arq)
-        var   = data.variables[param][:]
-        lat   = data.variables['lat'][:]
-        lon   = data.variables['lon'][:]
-        mean = var[:][0,:,:]
+	if param == 'pr':
+		param_ = 'pr'
+	elif param == 'tas':
+		param_ = 't2m'
+	else:
+		param_ = 'tcc'
 
-        return lat, lon, mean
+	arq   = '{0}/postproc/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
+	data  = netCDF4.Dataset(arq)
+	var   = data.variables[param_][:]
+	lat   = data.variables['lat'][:]
+	lon   = data.variables['lon'][:]
+	mean = var[:][0,:,:]
+	
+	return lat, lon, mean
 
 
 def import_rcm(param, dataset, season):
@@ -61,12 +73,14 @@ def configure_subplot(ax):
 
 	
 # Import model and obs dataset
-dict_var = {'pr': ['rr', 'precipitation', 'precip']}
+dict_var = {'pr': ['rr', 'precipitation', 'precip'],
+'tas': ['tas'],
+'clt': ['clt']}
 
-lat, lon, eobs_djf = import_obs(dict_var[var][0], 'EOBS', 'DJF')
-lat, lon, eobs_mam = import_obs(dict_var[var][0], 'EOBS', 'MAM')
-lat, lon, eobs_jja = import_obs(dict_var[var][0], 'EOBS', 'JJA')
-lat, lon, eobs_son = import_obs(dict_var[var][0], 'EOBS', 'SON')
+lat, lon, obs_djf = import_obs(dict_var[var][0], dataset, 'DJF')
+lat, lon, obs_mam = import_obs(dict_var[var][0], dataset, 'MAM')
+lat, lon, obs_jja = import_obs(dict_var[var][0], dataset, 'JJA')
+lat, lon, obs_son = import_obs(dict_var[var][0], dataset, 'SON')
 
 lat, lon, noto_djf = import_rcm(var, 'NoTo-Europe_RegCM5', 'DJF')
 lat, lon, noto_mam = import_rcm(var, 'NoTo-Europe_RegCM5', 'MAM')
@@ -88,51 +102,72 @@ lat, lon, wsm5_mam = import_rcm(var, 'WSM5-Europe_RegCM5', 'MAM')
 lat, lon, wsm5_jja = import_rcm(var, 'WSM5-Europe_RegCM5', 'JJA')
 lat, lon, wsm5_son = import_rcm(var, 'WSM5-Europe_RegCM5', 'SON')
 
-mbe_djf_noto_eobs = compute_mbe(noto_djf, eobs_djf)
-mbe_mam_noto_eobs = compute_mbe(noto_mam, eobs_mam)
-mbe_jja_noto_eobs = compute_mbe(noto_jja, eobs_jja)
-mbe_son_noto_eobs = compute_mbe(noto_son, eobs_son)
+if var == 'tas':
+	mbe_djf_noto_obs = compute_mbe(noto_djf[0], obs_djf)
+	mbe_mam_noto_obs = compute_mbe(noto_mam[0], obs_mam)
+	mbe_jja_noto_obs = compute_mbe(noto_jja[0], obs_jja)
+	mbe_son_noto_obs = compute_mbe(noto_son[0], obs_son)
 
-mbe_djf_wdm7_eobs = compute_mbe(wdm7_djf, eobs_djf)
-mbe_mam_wdm7_eobs = compute_mbe(wdm7_mam, eobs_mam)
-mbe_jja_wdm7_eobs = compute_mbe(wdm7_jja, eobs_jja)
-mbe_son_wdm7_eobs = compute_mbe(wdm7_son, eobs_son)
+	mbe_djf_wdm7_obs = compute_mbe(wdm7_djf[0], obs_djf)
+	mbe_mam_wdm7_obs = compute_mbe(wdm7_mam[0], obs_mam)
+	mbe_jja_wdm7_obs = compute_mbe(wdm7_jja[0], obs_jja)
+	mbe_son_wdm7_obs = compute_mbe(wdm7_son[0], obs_son)
 
-mbe_djf_wsm7_eobs = compute_mbe(wsm7_djf, eobs_djf)
-mbe_mam_wsm7_eobs = compute_mbe(wsm7_mam, eobs_mam)
-mbe_jja_wsm7_eobs = compute_mbe(wsm7_jja, eobs_jja)
-mbe_son_wsm7_eobs = compute_mbe(wsm7_son, eobs_son)
+	mbe_djf_wsm7_obs = compute_mbe(wsm7_djf[0], obs_djf)
+	mbe_mam_wsm7_obs = compute_mbe(wsm7_mam[0], obs_mam)
+	mbe_jja_wsm7_obs = compute_mbe(wsm7_jja[0], obs_jja)
+	mbe_son_wsm7_obs = compute_mbe(wsm7_son[0], obs_son)
 
-mbe_djf_wsm5_eobs = compute_mbe(wsm5_djf, eobs_djf)
-mbe_mam_wsm5_eobs = compute_mbe(wsm5_mam, eobs_mam)
-mbe_jja_wsm5_eobs = compute_mbe(wsm5_jja, eobs_jja)
-mbe_son_wsm5_eobs = compute_mbe(wsm5_son, eobs_son)
+	mbe_djf_wsm5_obs = compute_mbe(wsm5_djf[0], obs_djf)
+	mbe_mam_wsm5_obs = compute_mbe(wsm5_mam[0], obs_mam)
+	mbe_jja_wsm5_obs = compute_mbe(wsm5_jja[0], obs_jja)
+	mbe_son_wsm5_obs = compute_mbe(wsm5_son[0], obs_son)
+else:
+	mbe_djf_noto_obs = compute_mbe(noto_djf, obs_djf)
+	mbe_mam_noto_obs = compute_mbe(noto_mam, obs_mam)
+	mbe_jja_noto_obs = compute_mbe(noto_jja, obs_jja)
+	mbe_son_noto_obs = compute_mbe(noto_son, obs_son)
+
+	mbe_djf_wdm7_obs = compute_mbe(wdm7_djf, obs_djf)
+	mbe_mam_wdm7_obs = compute_mbe(wdm7_mam, obs_mam)
+	mbe_jja_wdm7_obs = compute_mbe(wdm7_jja, obs_jja)
+	mbe_son_wdm7_obs = compute_mbe(wdm7_son, obs_son)
+
+	mbe_djf_wsm7_obs = compute_mbe(wsm7_djf, obs_djf)
+	mbe_mam_wsm7_obs = compute_mbe(wsm7_mam, obs_mam)
+	mbe_jja_wsm7_obs = compute_mbe(wsm7_jja, obs_jja)
+	mbe_son_wsm7_obs = compute_mbe(wsm7_son, obs_son)
+
+	mbe_djf_wsm5_obs = compute_mbe(wsm5_djf, obs_djf)
+	mbe_mam_wsm5_obs = compute_mbe(wsm5_mam, obs_mam)
+	mbe_jja_wsm5_obs = compute_mbe(wsm5_jja, obs_jja)
+	mbe_son_wsm5_obs = compute_mbe(wsm5_son, obs_son)
 
 # Plot figure
 fig, axes = plt.subplots(4, 4, figsize=(12, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 axes = axes.flatten()
-
-dict_plot = {'pr': ['Bias of precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.BrBG]}
 font_size = 8
 
-plot_data = {
-     'Plot 1': {'data': mbe_djf_noto_eobs, 'title': '(a) NoTo-EOBS DJF'},
-     'Plot 2': {'data': mbe_djf_wdm7_eobs, 'title': '(b) WDM7-EOBS DJF'},
-     'Plot 3': {'data': mbe_djf_wsm7_eobs, 'title': '(c) WSM7-EOBS DJF'},
-     'Plot 4': {'data': mbe_djf_wsm5_eobs, 'title': '(d) WSM5-EOBS DJF'},
-     'Plot 5': {'data': mbe_mam_noto_eobs, 'title': '(e) NoTo-EOBS MAM'},
-     'Plot 6': {'data': mbe_mam_wdm7_eobs, 'title': '(f) WDM7-EOBS MAM'},
-     'Plot 7': {'data': mbe_mam_wsm7_eobs, 'title': '(g) WSM7-EOBS MAM'},
-     'Plot 8': {'data': mbe_mam_wsm5_eobs, 'title': '(h) WSM5-EOBS MAM'},
-     'Plot 9': {'data': mbe_jja_noto_eobs, 'title': '(i) NoTo-EOBS JJA'},
-     'Plot 10': {'data': mbe_jja_wdm7_eobs, 'title': '(j) WDM7-EOBS JJA'},
-     'Plot 11': {'data': mbe_jja_wsm7_eobs, 'title': '(k) WSM7-EOBS JJA'},
-     'Plot 12': {'data': mbe_jja_wsm5_eobs, 'title': '(l) WSM5-EOBS JJA'},
-     'Plot 13': {'data': mbe_son_noto_eobs, 'title': '(m) NoTo-EOBS SON'},
-     'Plot 14': {'data': mbe_son_wdm7_eobs, 'title': '(n) WDM7-EOBS SON'},
-     'Plot 15': {'data': mbe_son_wsm7_eobs, 'title': '(o) WSM7-EOBS SON'},
-     'Plot 16': {'data': mbe_son_wsm5_eobs, 'title': '(p) WSM5-EOBS SON'}
-}
+dict_plot = {'pr': ['Bias of precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.BrBG],
+'tas': ['Bias of air temperature (°C)', np.arange(-10, 11, 1), cm.RdBu_r],
+'clt': ['Bias of total cloud cover (%)', np.arange(-50, 55, 5), cm.RdGy]}
+
+plot_data = {'Plot 1': {'data': mbe_djf_noto_obs, 'title': '(a) NoTo-{0} DJF'.format(dataset)},
+'Plot 2': {'data': mbe_djf_wdm7_obs, 'title': '(b) WDM7-{0} DJF'.format(dataset)},
+'Plot 3': {'data': mbe_djf_wsm7_obs, 'title': '(c) WSM7-{0} DJF'.format(dataset)},
+'Plot 4': {'data': mbe_djf_wsm5_obs, 'title': '(d) WSM5-{0} DJF'.format(dataset)},
+'Plot 5': {'data': mbe_mam_noto_obs, 'title': '(e) NoTo-{0} MAM'.format(dataset)},
+'Plot 6': {'data': mbe_mam_wdm7_obs, 'title': '(f) WDM7-{0} MAM'.format(dataset)},
+'Plot 7': {'data': mbe_mam_wsm7_obs, 'title': '(g) WSM7-{0} MAM'.format(dataset)},
+'Plot 8': {'data': mbe_mam_wsm5_obs, 'title': '(h) WSM5-{0} MAM'.format(dataset)},
+'Plot 9': {'data': mbe_jja_noto_obs, 'title': '(i) NoTo-{0} JJA'.format(dataset)},
+'Plot 10': {'data': mbe_jja_wdm7_obs, 'title': '(j) WDM7-{0} JJA'.format(dataset)},
+'Plot 11': {'data': mbe_jja_wsm7_obs, 'title': '(k) WSM7-{0} JJA'.format(dataset)},
+'Plot 12': {'data': mbe_jja_wsm5_obs, 'title': '(l) WSM5-{0} JJA'.format(dataset)},
+'Plot 13': {'data': mbe_son_noto_obs, 'title': '(m) NoTo-{0} SON'.format(dataset)},
+'Plot 14': {'data': mbe_son_wdm7_obs, 'title': '(n) WDM7-{0} SON'.format(dataset)},
+'Plot 15': {'data': mbe_son_wsm7_obs, 'title': '(o) WSM7-{0} SON'.format(dataset)},
+'Plot 16': {'data': mbe_son_wsm5_obs, 'title': '(p) WSM5-{0} SON'.format(dataset)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
     data = value['data']
