@@ -20,7 +20,7 @@ from import_climate_tools import compute_mbe
 
 var = 'cll'
 domain = 'CSAM-3'
-idt, fdt = '1999', '1999'
+idt, fdt = '2000', '2000'
 dt = '{0}-{1}'.format(idt, fdt)
 
 if var == 'cll' or var == 'clm' or var == 'clh':

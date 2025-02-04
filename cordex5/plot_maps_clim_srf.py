@@ -51,20 +51,21 @@ def import_rcm(param, dataset, season):
 		
 def configure_subplot(ax):
 
-    ax.set_xticks(np.arange(-40,65,25), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(30,85,15), crs=ccrs.PlateCarree())
-    ax.xaxis.set_major_formatter(LongitudeFormatter())
-    ax.yaxis.set_major_formatter(LatitudeFormatter())
-    ax.tick_params(axis='x', labelsize=6, labelcolor='black')
-    ax.tick_params(axis='y', labelsize=6, labelcolor='black')
-    ax.grid(c='k', ls='--', alpha=0.4)
-    ax.coastlines()
+	ax.set_xticks(np.arange(-82,-34,12), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(-38,-10,6), crs=ccrs.PlateCarree())
+	ax.xaxis.set_major_formatter(LongitudeFormatter())
+	ax.yaxis.set_major_formatter(LatitudeFormatter())
+	ax.tick_params(axis='x', labelsize=6, labelcolor='black')
+	ax.tick_params(axis='y', labelsize=6, labelcolor='black')
+	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.coastlines()
 	
 	
 # Import model and obs dataset
-dict_var = {'CAPE': ['cape'],
-'CIN': ['cin'],
+dict_var = {'pr': ['pr'],
 'evspsblpot': ['mper'],
+'CAPE': ['cape'],
+'CIN': ['cin'],
 'LI': ['lftx']}
 
 lat, lon, era5_djf = import_obs(dict_var[var][0], 'CSAM-3_ERA5', 'DJF')
@@ -78,6 +79,8 @@ lat, lon, rcm3_jja = import_rcm(var, 'CSAM-3_RegCM5', 'JJA')
 lat, lon, rcm3_son = import_rcm(var, 'CSAM-3_RegCM5', 'SON')
 	
 # Plot figure   
+fig, axes = plt.subplots(4, 2, figsize=(4, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+axes = axes.flatten()
 font_size = 6
 
 # Step 1: Define a custom colormap similar to the image colors
@@ -96,170 +99,53 @@ colors = [
 # Create a colormap object
 custom_cmap = LinearSegmentedColormap.from_list('cape_colormap', colors, N=256)
 
-dict_plot = {'CAPE': ['Convective Available Potential Energy (J kg$^-$$^1$)', np.arange(0, 2550, 50), custom_cmap],
+dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 17, 1), cm.BrBG],
+'evspsblpot': ['Potential evaporation (mm d$^-$$^1$)', np.arange(0, 8.5, 0.5), cm.jet],
+'CAPE': ['Convective Available Potential Energy (J kg$^-$$^1$)', np.arange(0, 2550, 50), custom_cmap],
 'CIN': ['Convective inhibition (J kg$^-$$^1$)', np.arange(0, 675, 25), custom_cmap],
-'LI': ['Lifted Index (Kelvin)', np.arange(-100, 110, 10), cm.jet],
-'evspsblpot': ['Potential evaporation (mm d$^-$$^1$)', np.arange(0, 8.5, 0.5), cm.jet]}
-	
+'LI': ['Lifted Index (Kelvin)', np.arange(-100, 110, 10), cm.jet]}
+
+plot_data = {'Plot 1': {'data': era5_djf, 'title': '(a) OBS DJF'},
+'Plot 2': {'data': rcm3_djf, 'title': '(b) RCM3 DJF'},
+'Plot 3': {'data': era5_mam, 'title': '(c) OBS JJA'},
+'Plot 4': {'data': rcm3_mam, 'title': '(d) RCM3 SON'},
+'Plot 5': {'data': era5_jja, 'title': '(e) OBS DJF'},
+'Plot 6': {'data': rcm3_jja, 'title': '(f) RCM3 MAM'},
+'Plot 7': {'data': era5_son, 'title': '(g) OBS JJA'},
+'Plot 8': {'data': rcm3_son, 'title': '(h) RCM3 SON'}}
+
 if var == 'evspsblpot':
-	fig = plt.figure(figsize=(4, 6))
-
-	ax = fig.add_subplot(4, 2, 1)  
-	map, xx, yy = basemap(lat, lon)
-	era5_djf_mask = maskoceans(xx, yy, era5_djf[0])	
-	plt_map = map.contourf(xx, yy, era5_djf_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 2)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_djf[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(b) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 2, 3)  
-	map, xx, yy = basemap(lat, lon)
-	era5_mam_mask = maskoceans(xx, yy, era5_mam[0])
-	plt_map = map.contourf(xx, yy, era5_mam_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(c) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 4)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_mam[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(d) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 2, 5)  
-	map, xx, yy = basemap(lat, lon)
-	era5_jja_mask = maskoceans(xx, yy, era5_jja[0])
-	plt_map = map.contourf(xx, yy, era5_jja_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(e) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 6)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_jja[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(f) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 2, 7)  
-	map, xx, yy = basemap(lat, lon)
-	era5_son_mask = maskoceans(xx, yy, era5_son[0])
-	plt_map = map.contourf(xx, yy, era5_son_mask, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(g) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 8)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_son[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(h) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.015, 0.4]))
-	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
-	cbar.ax.tick_params(labelsize=font_size)
-	
+	for ax, (key, value) in zip(axes, plot_data.items()):
+        	data = value['data']
+        	title = value['title']
+    
+        	contour = ax.contourf(lon, lat, data[0], transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+        	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
+        	configure_subplot(ax)
 elif var == 'LI':
-	fig = plt.figure(figsize=(4, 6))
-
-	ax = fig.add_subplot(4, 2, 1)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_djf[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(a) NCEP reanalysis 1', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 2)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_djf[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(b) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 2, 3)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_mam[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(c) NCEP reanalysis 1', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 4)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_mam[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(d) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 2, 5)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_jja[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(e) NCEP reanalysis 1', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 6)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_jja[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(f) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 2, 7)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_son[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(g) NCEP reanalysis 1', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 8)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_son[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(h) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.015, 0.4]))
-	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
-	cbar.ax.tick_params(labelsize=font_size)
-
+	for ax, (key, value) in zip(axes, plot_data.items()):
+        	data = value['data']
+        	title = value['title']
+    
+        	contour = ax.contourf(lon, lat, data[0], transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+        	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
+        	configure_subplot(ax)
 else:
-	fig = plt.figure(figsize=(4, 6))
+	for ax, (key, value) in zip(axes, plot_data.items()):
+        	data = value['data']
+        	title = value['title']
+    
+        	contour = ax.contourf(lon, lat, data[0], transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+        	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
+        	configure_subplot(ax)
 
-	ax = fig.add_subplot(4, 2, 1)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_djf[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 2)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_djf[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(b) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 2, 3)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_mam[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(c) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 4)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_mam[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(d) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 2, 5)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_jja[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(e) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 6)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_jja[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(f) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	ax = fig.add_subplot(4, 2, 7)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, era5_son[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(g) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
-	
-	ax = fig.add_subplot(4, 2, 8)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, rcm3_son[0], levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	plt.title(u'(h) CPM3', loc='left', fontsize=font_size, fontweight='bold')
-
-	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.015, 0.4]))
-	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
-	cbar.ax.tick_params(labelsize=font_size)
+# Set colobar
+cbar = fig.colorbar(contour, ax=fig.axes, orientation='horizontal', pad=0.1, aspect=50)
+cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
+cbar.ax.tick_params(labelsize=font_size)
 			
 # Path out to save figure
-path_out = '{0}/user/mdasilva/CORDEX/figs'.format(path)
+path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
