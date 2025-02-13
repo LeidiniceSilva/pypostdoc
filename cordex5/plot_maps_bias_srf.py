@@ -18,36 +18,27 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'cll'
+var = 'pr'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2000'
 dt = '{0}-{1}'.format(idt, fdt)
 
-if var == 'cll' or var == 'clm' or var == 'clh':
+if var == 'evspsblpot' or var == 'rsnl' or var == 'rsns' or var == 'clt' or var == 'cll' or var == 'clm' or var == 'clh':
 	dataset = 'ERA5'
 else:
 	dataset = 'CRU'
 
-path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5_MOIST'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5'
 
 		
 def import_obs(param, dataset, season):
 
-	if param == 'cll':
-		param_ = 'lcc'
-	elif param == 'clm':
-		param_ = 'mcc'
-	elif param == 'clh':
-		param_ = 'hcc'
-	else:
-		param_ = param
-
 	arq   = '{0}/postproc/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param_][:] 
+	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][:,:,:]
+	mean = var[:][0,:,:]
 	
 	return lat, lon, mean
 
@@ -59,7 +50,11 @@ def import_rcm(param, dataset, season):
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][:,:,:]
+
+	if param == 'tas' or param == 'tasmax' or param == 'tasmin':
+		mean = var[:][0,0,:,:]
+	else:
+		mean = var[:][0,:,:]
 	
 	return lat, lon, mean
 	
@@ -77,65 +72,32 @@ def configure_subplot(ax):
 	
 
 # Import model and obs dataset
-dict_var = {'pr': ['pre', 'precip', 'cmorph', 'precipitation', 'pr'],
-'tas': ['tmp', 'tas'],
-'tasmax': ['tmx', 'tmax', 'tasmax'],
-'tasmin': ['tmn', 'tmin', 'tasmin'],
+dict_var = {'pr': ['pre'],
+'tas': ['tmp'],
+'tasmax': ['tmx'],
+'tasmin': ['tmn'],
 'evspsblpot': ['pev'],
 'rsnl': ['msnlwrf'],
 'rsns': ['msnswrf'],
-'clt': ['cld', 'clt'],
-'cll': ['cll'],
-'clm': ['clm'],
-'clh': ['clh']}
+'clt': ['tcc'],
+'cll': ['lcc'],
+'clm': ['mcc'],
+'clh': ['hcc']}
 
-if var == 'tas' or var == 'tasmax' or var == 'tasmin':
-	lat, lon, obs_djf = import_obs(dict_var[var][0], dataset, 'DJF')
-	lat, lon, obs_mam = import_obs(dict_var[var][0], dataset, 'MAM')
-	lat, lon, obs_jja = import_obs(dict_var[var][0], dataset, 'JJA')
-	lat, lon, obs_son = import_obs(dict_var[var][0], dataset, 'SON')
+lat, lon, obs_djf = import_obs(dict_var[var][0], dataset, 'DJF')
+lat, lon, obs_mam = import_obs(dict_var[var][0], dataset, 'MAM')
+lat, lon, obs_jja = import_obs(dict_var[var][0], dataset, 'JJA')
+lat, lon, obs_son = import_obs(dict_var[var][0], dataset, 'SON')
 
-	lat, lon, rcm3_djf = import_rcm(var, 'RegCM5', 'DJF')
-	lat, lon, rcm3_mam = import_rcm(var, 'RegCM5', 'MAM')
-	lat, lon, rcm3_jja = import_rcm(var, 'RegCM5', 'JJA')
-	lat, lon, rcm3_son = import_rcm(var, 'RegCM5', 'SON')
+lat, lon, rcm3_djf = import_rcm(var, 'RegCM5', 'DJF')
+lat, lon, rcm3_mam = import_rcm(var, 'RegCM5', 'MAM')
+lat, lon, rcm3_jja = import_rcm(var, 'RegCM5', 'JJA')
+lat, lon, rcm3_son = import_rcm(var, 'RegCM5', 'SON')
 
-	mbe_djf_rcm3_obs = compute_mbe(rcm3_djf[0], obs_djf)
-	mbe_mam_rcm3_obs = compute_mbe(rcm3_mam[0], obs_mam)
-	mbe_jja_rcm3_obs = compute_mbe(rcm3_jja[0], obs_jja)
-	mbe_son_rcm3_obs = compute_mbe(rcm3_son[0], obs_son)
-
-elif var == 'pr' or var == 'clt':
-	lat, lon, obs_djf = import_obs(dict_var[var][0], dataset, 'DJF')
-	lat, lon, obs_mam = import_obs(dict_var[var][0], dataset, 'MAM')
-	lat, lon, obs_jja = import_obs(dict_var[var][0], dataset, 'JJA')
-	lat, lon, obs_son = import_obs(dict_var[var][0], dataset, 'SON')
-
-	lat, lon, rcm3_djf = import_rcm(var, 'RegCM5', 'DJF')
-	lat, lon, rcm3_mam = import_rcm(var, 'RegCM5', 'MAM')
-	lat, lon, rcm3_jja = import_rcm(var, 'RegCM5', 'JJA')
-	lat, lon, rcm3_son = import_rcm(var, 'RegCM5', 'SON')
-		
-	mbe_djf_rcm3_obs = compute_mbe(rcm3_djf, obs_djf)
-	mbe_mam_rcm3_obs = compute_mbe(rcm3_mam, obs_mam)
-	mbe_jja_rcm3_obs = compute_mbe(rcm3_jja, obs_jja)
-	mbe_son_rcm3_obs = compute_mbe(rcm3_son, obs_son)
-
-else:
-	lat, lon, obs_djf = import_obs(dict_var[var][0], dataset, 'DJF')
-	lat, lon, obs_mam = import_obs(dict_var[var][0], dataset, 'MAM')
-	lat, lon, obs_jja = import_obs(dict_var[var][0], dataset, 'JJA')
-	lat, lon, obs_son = import_obs(dict_var[var][0], dataset, 'SON')
-
-	lat, lon, rcm3_djf = import_rcm(var, 'RegCM5', 'DJF')
-	lat, lon, rcm3_mam = import_rcm(var, 'RegCM5', 'MAM')
-	lat, lon, rcm3_jja = import_rcm(var, 'RegCM5', 'JJA')
-	lat, lon, rcm3_son = import_rcm(var, 'RegCM5', 'SON')
-		
-	mbe_djf_rcm3_obs = compute_mbe(rcm3_djf/100, obs_djf)
-	mbe_mam_rcm3_obs = compute_mbe(rcm3_mam/100, obs_mam)
-	mbe_jja_rcm3_obs = compute_mbe(rcm3_jja/100, obs_jja)
-	mbe_son_rcm3_obs = compute_mbe(rcm3_son/100, obs_son)	
+mbe_djf_rcm3_obs = compute_mbe(rcm3_djf, obs_djf)
+mbe_mam_rcm3_obs = compute_mbe(rcm3_mam, obs_mam)
+mbe_jja_rcm3_obs = compute_mbe(rcm3_jja, obs_jja)
+mbe_son_rcm3_obs = compute_mbe(rcm3_son, obs_son)
 
 print(mbe_djf_rcm3_obs.shape)
 
@@ -156,7 +118,7 @@ dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.Br
 'evspsblpot': ['Potential evaporation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.seismic],
 'rsnl': ['Surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r],
 'rsns': ['Surface net downward shortwave flux (W mm$^-$$^2$)', np.arange(-60, 65, 5), cm.RdBu_r],
-'clt': ['Total cloud cover (%)', np.arange(-90, 100, 10), cm.RdGy],
+'clt': ['Total cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'cll': ['Low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clm': ['Medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clh': ['High cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy]}
@@ -165,7 +127,7 @@ for ax, (key, value) in zip(axes, plot_data.items()):
         data = value['data']
         title = value['title']
     
-        contour = ax.contourf(lon, lat, data[0], transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+        contour = ax.contourf(lon, lat, data, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
         ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
         configure_subplot(ax)
 

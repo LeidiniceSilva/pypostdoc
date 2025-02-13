@@ -31,33 +31,30 @@ else:
 
 def import_obs(param, dataset, season):
 
-	if param == 'pr':
-		param_ = 'pr'
-	elif param == 'tas':
-		param_ = 't2m'
-	else:
-		param_ = 'tcc'
-
 	arq   = '{0}/postproc/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
 	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param_][:]
+	var   = data.variables[param][:]
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
 	mean = var[:][0,:,:]
-	
+
 	return lat, lon, mean
 
 
 def import_rcm(param, dataset, season):
 
-        arq   = '{0}/postproc/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
-        data  = netCDF4.Dataset(arq)
-        var   = data.variables[param][:]
-        lat   = data.variables['lat'][:]
-        lon   = data.variables['lon'][:]
-        mean = var[:][0,:,:]
-
-        return lat, lon, mean
+	arq   = '{0}/postproc/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
+	data  = netCDF4.Dataset(arq)
+	var   = data.variables[param][:]
+	lat   = data.variables['lat'][:]
+	lon   = data.variables['lon'][:]
+	
+	if param == 'tas':
+		mean = var[:][0,0,:,:]
+	else:
+		mean = var[:][0,:,:]
+	
+	return lat, lon, mean
 
 
 def configure_subplot(ax):
@@ -73,9 +70,9 @@ def configure_subplot(ax):
 
 	
 # Import model and obs dataset
-dict_var = {'pr': ['rr', 'precipitation', 'precip'],
-'tas': ['tas'],
-'clt': ['clt']}
+dict_var = {'pr': ['rr'],
+'tas': ['t2m'],
+'clt': ['tcc']}
 
 lat, lon, obs_djf = import_obs(dict_var[var][0], dataset, 'DJF')
 lat, lon, obs_mam = import_obs(dict_var[var][0], dataset, 'MAM')
@@ -102,46 +99,25 @@ lat, lon, wsm5_mam = import_rcm(var, 'WSM5-Europe_RegCM5', 'MAM')
 lat, lon, wsm5_jja = import_rcm(var, 'WSM5-Europe_RegCM5', 'JJA')
 lat, lon, wsm5_son = import_rcm(var, 'WSM5-Europe_RegCM5', 'SON')
 
-if var == 'tas':
-	mbe_djf_noto_obs = compute_mbe(noto_djf[0], obs_djf)
-	mbe_mam_noto_obs = compute_mbe(noto_mam[0], obs_mam)
-	mbe_jja_noto_obs = compute_mbe(noto_jja[0], obs_jja)
-	mbe_son_noto_obs = compute_mbe(noto_son[0], obs_son)
+mbe_djf_noto_obs = compute_mbe(noto_djf, obs_djf)
+mbe_mam_noto_obs = compute_mbe(noto_mam, obs_mam)
+mbe_jja_noto_obs = compute_mbe(noto_jja, obs_jja)
+mbe_son_noto_obs = compute_mbe(noto_son, obs_son)
 
-	mbe_djf_wdm7_obs = compute_mbe(wdm7_djf[0], obs_djf)
-	mbe_mam_wdm7_obs = compute_mbe(wdm7_mam[0], obs_mam)
-	mbe_jja_wdm7_obs = compute_mbe(wdm7_jja[0], obs_jja)
-	mbe_son_wdm7_obs = compute_mbe(wdm7_son[0], obs_son)
+mbe_djf_wdm7_obs = compute_mbe(wdm7_djf, obs_djf)
+mbe_mam_wdm7_obs = compute_mbe(wdm7_mam, obs_mam)
+mbe_jja_wdm7_obs = compute_mbe(wdm7_jja, obs_jja)
+mbe_son_wdm7_obs = compute_mbe(wdm7_son, obs_son)
 
-	mbe_djf_wsm7_obs = compute_mbe(wsm7_djf[0], obs_djf)
-	mbe_mam_wsm7_obs = compute_mbe(wsm7_mam[0], obs_mam)
-	mbe_jja_wsm7_obs = compute_mbe(wsm7_jja[0], obs_jja)
-	mbe_son_wsm7_obs = compute_mbe(wsm7_son[0], obs_son)
+mbe_djf_wsm7_obs = compute_mbe(wsm7_djf, obs_djf)
+mbe_mam_wsm7_obs = compute_mbe(wsm7_mam, obs_mam)
+mbe_jja_wsm7_obs = compute_mbe(wsm7_jja, obs_jja)
+mbe_son_wsm7_obs = compute_mbe(wsm7_son, obs_son)
 
-	mbe_djf_wsm5_obs = compute_mbe(wsm5_djf[0], obs_djf)
-	mbe_mam_wsm5_obs = compute_mbe(wsm5_mam[0], obs_mam)
-	mbe_jja_wsm5_obs = compute_mbe(wsm5_jja[0], obs_jja)
-	mbe_son_wsm5_obs = compute_mbe(wsm5_son[0], obs_son)
-else:
-	mbe_djf_noto_obs = compute_mbe(noto_djf, obs_djf)
-	mbe_mam_noto_obs = compute_mbe(noto_mam, obs_mam)
-	mbe_jja_noto_obs = compute_mbe(noto_jja, obs_jja)
-	mbe_son_noto_obs = compute_mbe(noto_son, obs_son)
-
-	mbe_djf_wdm7_obs = compute_mbe(wdm7_djf, obs_djf)
-	mbe_mam_wdm7_obs = compute_mbe(wdm7_mam, obs_mam)
-	mbe_jja_wdm7_obs = compute_mbe(wdm7_jja, obs_jja)
-	mbe_son_wdm7_obs = compute_mbe(wdm7_son, obs_son)
-
-	mbe_djf_wsm7_obs = compute_mbe(wsm7_djf, obs_djf)
-	mbe_mam_wsm7_obs = compute_mbe(wsm7_mam, obs_mam)
-	mbe_jja_wsm7_obs = compute_mbe(wsm7_jja, obs_jja)
-	mbe_son_wsm7_obs = compute_mbe(wsm7_son, obs_son)
-
-	mbe_djf_wsm5_obs = compute_mbe(wsm5_djf, obs_djf)
-	mbe_mam_wsm5_obs = compute_mbe(wsm5_mam, obs_mam)
-	mbe_jja_wsm5_obs = compute_mbe(wsm5_jja, obs_jja)
-	mbe_son_wsm5_obs = compute_mbe(wsm5_son, obs_son)
+mbe_djf_wsm5_obs = compute_mbe(wsm5_djf, obs_djf)
+mbe_mam_wsm5_obs = compute_mbe(wsm5_mam, obs_mam)
+mbe_jja_wsm5_obs = compute_mbe(wsm5_jja, obs_jja)
+mbe_son_wsm5_obs = compute_mbe(wsm5_son, obs_son)
 
 # Plot figure
 fig, axes = plt.subplots(4, 4, figsize=(12, 6), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -170,12 +146,12 @@ plot_data = {'Plot 1': {'data': mbe_djf_noto_obs, 'title': '(a) NoTo-{0} DJF'.fo
 'Plot 16': {'data': mbe_son_wsm5_obs, 'title': '(p) WSM5-{0} SON'.format(dataset)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
-    data = value['data']
-    title = value['title']
+	data = value['data']
+	title = value['title']
     
-    contour = ax.contourf(lon, lat, data, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-    ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
-    configure_subplot(ax)
+	contour = ax.contourf(lon, lat, data, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax)
 
 # Set colobar
 cbar = fig.colorbar(contour, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)

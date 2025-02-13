@@ -17,12 +17,16 @@ import cartopy.feature as cfeat
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'pr'
+var = 'clt'
 domain = 'EUR-11'
 dt = '2000-2001'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
-	
-			
+
+if var == 'pr':
+	dataset = 'EOBS'
+else:
+	dataset = 'ERA5'
+
 def import_obs(param, dataset, season):
 
 	arq   = '{0}/postproc/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
@@ -42,29 +46,36 @@ def import_rcm(param, dataset, season):
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][0,:,:]
+
+	if param == 'tas':
+		mean = var[:][0,0,:,:]
+	else:
+		mean = var[:][0,:,:]
 
 	return lat, lon, mean
 	
 
 def configure_subplot(ax):
 
-    ax.set_xticks(np.arange(-40,65,25), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(30,85,15), crs=ccrs.PlateCarree())
-    ax.xaxis.set_major_formatter(LongitudeFormatter())
-    ax.yaxis.set_major_formatter(LatitudeFormatter())
-    ax.tick_params(axis='x', labelsize=6, labelcolor='black') 
-    ax.tick_params(axis='y', labelsize=6, labelcolor='black') 
-    ax.grid(c='k', ls='--', alpha=0.4)
-    ax.coastlines()
+	ax.set_xticks(np.arange(-40,65,25), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(30,85,15), crs=ccrs.PlateCarree())
+	ax.xaxis.set_major_formatter(LongitudeFormatter())
+	ax.yaxis.set_major_formatter(LatitudeFormatter())
+	ax.tick_params(axis='x', labelsize=6, labelcolor='black')
+	ax.tick_params(axis='y', labelsize=6, labelcolor='black')
+	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.coastlines()
+
 
 # Import model and obs dataset
-dict_var = {'pr': ['rr', 'precipitation', 'precip']}
+dict_var = {'pr': ['rr', 'precipitation', 'precip'],
+'tas': ['t2m'],
+'clt': ['tcc']}
 
-lat, lon, eobs_djf = import_obs(dict_var[var][0], 'EOBS', 'DJF')
-lat, lon, eobs_mam = import_obs(dict_var[var][0], 'EOBS', 'MAM')
-lat, lon, eobs_jja = import_obs(dict_var[var][0], 'EOBS', 'JJA')
-lat, lon, eobs_son = import_obs(dict_var[var][0], 'EOBS', 'SON')
+lat, lon, eobs_djf = import_obs(dict_var[var][0], dataset, 'DJF')
+lat, lon, eobs_mam = import_obs(dict_var[var][0], dataset, 'MAM')
+lat, lon, eobs_jja = import_obs(dict_var[var][0], dataset, 'JJA')
+lat, lon, eobs_son = import_obs(dict_var[var][0], dataset, 'SON')
 
 lat, lon, noto_djf = import_rcm(var, 'NoTo-Europe_RegCM5', 'DJF')
 lat, lon, noto_mam = import_rcm(var, 'NoTo-Europe_RegCM5', 'MAM')
@@ -87,119 +98,54 @@ lat, lon, wsm5_jja = import_rcm(var, 'WSM5-Europe_RegCM5', 'JJA')
 lat, lon, wsm5_son = import_rcm(var, 'WSM5-Europe_RegCM5', 'SON')
 
 # Plot figure
-fig = plt.figure(figsize=(15, 6))
-
-color = ['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
-dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 18, 1), matplotlib.colors.ListedColormap(color)]}
+fig, axes = plt.subplots(4, 5, figsize=(15, 6), subplot_kw={'projection': ccrs.PlateCarree()})
+axes = axes.flatten()
 font_size = 6 
 
-ax1 = fig.add_subplot(4, 5, 1, projection=ccrs.PlateCarree())
-plt1 = ax1.contourf(lon, lat, eobs_djf, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-configure_subplot(ax1)
-ax1.set_title(u'(a) EOBS DJF', loc='left', fontsize=font_size, fontweight='bold')
+color=['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
 
-ax2 = fig.add_subplot(4, 5, 2, projection=ccrs.PlateCarree())
-plt2 = ax2.contourf(lon, lat, noto_djf, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax2)
-ax2.set_title(u'(b) NoTo DJF', loc='left', fontsize=font_size, fontweight='bold')
+dict_plot={
+'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 18.5, 0.5), matplotlib.colors.ListedColormap(color)],
+'tas': ['Air temperature (°C)', np.arange(-18, 39, 3), cm.jet],
+'clt': ['Total cloud cover (%)', np.arange(0, 105, 5), cm.rainbow]}
 
-ax3 = fig.add_subplot(4, 5, 3, projection=ccrs.PlateCarree())
-plt3 = ax3.contourf(lon, lat, wdm7_djf, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax3)
-ax3.set_title(u'(c) WDM7 DJF', loc='left', fontsize=font_size, fontweight='bold')
+plot_data = {
+	'Plot 1': {'data': eobs_djf, 'title': '(a) {0} DJF'.format(dataset)},
+	'Plot 2': {'data': noto_djf, 'title': '(b) NoTo DJF'},
+	'Plot 3': {'data': wdm7_djf, 'title': '(c) WDM7 DJF'},
+	'Plot 4': {'data': wsm7_djf, 'title': '(d) WDM7 DJF'},
+	'Plot 5': {'data': wsm5_djf, 'title': '(e) WSM5 DJF'},
+	'Plot 6': {'data': eobs_mam, 'title': '(f) {0} MAM'.format(dataset)},
+	'Plot 7': {'data': noto_mam, 'title': '(g) NoTo MAM'},
+	'Plot 8': {'data': wdm7_mam, 'title': '(h) WDM7 MAM'},
+	'Plot 9': {'data': wsm7_mam, 'title': '(i) WDM7 MAM'},
+	'Plot 10': {'data': wsm5_mam, 'title': '(j) WSM5 MAM'},
+	'Plot 11': {'data': eobs_jja, 'title': '(k) {0} JJA'.format(dataset)},
+	'Plot 12': {'data': noto_jja, 'title': '(l) NoTo JJA'},
+	'Plot 13': {'data': wdm7_jja, 'title': '(m) WDM7 JJA'},
+	'Plot 14': {'data': wsm7_jja, 'title': '(n) WDM7 JJA'},
+	'Plot 15': {'data': wsm5_jja, 'title': '(o) WSM5 JJA'},
+	'Plot 16': {'data': eobs_son, 'title': '(p) {0} SON'.format(dataset)},
+	'Plot 17': {'data': noto_son, 'title': '(q) NoTo SON'},
+	'Plot 18': {'data': wdm7_son, 'title': '(r) WDM7 SON'},
+	'Plot 19': {'data': wsm7_son, 'title': '(s) WDM7 SON'},
+	'Plot 20': {'data': wsm5_son, 'title': '(t) WSM5 SON'}}
 
-ax4 = fig.add_subplot(4, 5, 4, projection=ccrs.PlateCarree())
-plt4 = ax4.contourf(lon, lat, wsm7_djf, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax4)
-ax4.set_title(u'(d) WSM7 DJF', loc='left', fontsize=font_size, fontweight='bold')
-
-ax5 = fig.add_subplot(4, 5, 5, projection=ccrs.PlateCarree())
-plt5 = ax5.contourf(lon, lat, wsm5_djf, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax5)
-ax5.set_title(u'(e) WSM5 DJF', loc='left', fontsize=font_size, fontweight='bold')
-
-ax6 = fig.add_subplot(4, 5, 6, projection=ccrs.PlateCarree())
-plt6 = ax6.contourf(lon, lat, eobs_mam, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax6)
-ax6.set_title(u'(f) EOBS MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-ax7 = fig.add_subplot(4, 5, 7, projection=ccrs.PlateCarree())
-plt7 = ax7.contourf(lon, lat, noto_mam, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax7)
-ax7.set_title(u'(g) NoTo MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-ax8 = fig.add_subplot(4, 5, 8, projection=ccrs.PlateCarree())
-plt8 = ax8.contourf(lon, lat, wdm7_mam, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax8)
-ax8.set_title(u'(h) WDM7 MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-ax9 = fig.add_subplot(4, 5, 9, projection=ccrs.PlateCarree())
-plt9 = ax9.contourf(lon, lat, wsm7_mam, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax9)
-ax9.set_title(u'(i) WSM7 MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-ax10 = fig.add_subplot(4, 5, 10, projection=ccrs.PlateCarree())
-plt10 = ax10.contourf(lon, lat, wsm5_mam, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax10)
-ax10.set_title(u'(j) WSM5 MAM', loc='left', fontsize=font_size, fontweight='bold')
-
-ax11 = fig.add_subplot(4, 5, 11, projection=ccrs.PlateCarree())
-plt11 = ax11.contourf(lon, lat, eobs_jja, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax11)
-ax11.set_title(u'(k) EOBS JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-ax12 = fig.add_subplot(4, 5, 12, projection=ccrs.PlateCarree())
-plt12 = ax12.contourf(lon, lat, noto_jja, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax12)
-ax12.set_title(u'(l) NoTo JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-ax13 = fig.add_subplot(4, 5, 13, projection=ccrs.PlateCarree())
-plt13 = ax13.contourf(lon, lat, wdm7_jja, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-configure_subplot(ax13)
-ax13.set_title(u'(m) WDM7 JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-ax14 = fig.add_subplot(4, 5, 14, projection=ccrs.PlateCarree())
-plt14 = ax14.contourf(lon, lat, wsm7_jja, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-configure_subplot(ax14)
-ax14.set_title(u'(n) WSM7 JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-ax15 = fig.add_subplot(4, 5, 15, projection=ccrs.PlateCarree())
-plt15 = ax15.contourf(lon, lat, wsm5_jja, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-configure_subplot(ax15)
-ax15.set_title(u'(o) WSM5 JJA', loc='left', fontsize=font_size, fontweight='bold')
-
-ax16 = fig.add_subplot(4, 5, 16, projection=ccrs.PlateCarree())
-plt16 = ax16.contourf(lon, lat, eobs_son, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-configure_subplot(ax16)
-ax16.set_title(u'(p) EOBS SON', loc='left', fontsize=font_size, fontweight='bold')
-
-ax17 = fig.add_subplot(4, 5, 17, projection=ccrs.PlateCarree())
-plt17 = ax17.contourf(lon, lat, noto_son, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-configure_subplot(ax17)
-ax17.set_title(u'(q) NoTo SON', loc='left', fontsize=font_size, fontweight='bold')
-
-ax18 = fig.add_subplot(4, 5, 18, projection=ccrs.PlateCarree())
-plt18 = ax18.contourf(lon, lat, wdm7_son, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-configure_subplot(ax18)
-ax18.set_title(u'(r) WDM7 SON', loc='left', fontsize=font_size, fontweight='bold')
-
-ax19 = fig.add_subplot(4, 5, 19, projection=ccrs.PlateCarree())
-plt19 = ax19.contourf(lon, lat, wsm7_son, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-configure_subplot(ax19)
-ax19.set_title(u'(s) WSM7 SON', loc='left', fontsize=font_size, fontweight='bold')
-
-ax20 = fig.add_subplot(4, 5, 20, projection=ccrs.PlateCarree())
-plt20 = ax20.contourf(lon, lat, wsm5_son, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-configure_subplot(ax20)
-ax20.set_title(u'(t) WSM5 SON', loc='left', fontsize=font_size, fontweight='bold')
+for ax, (key, value) in zip(axes, plot_data.items()):
+	data = value['data']
+	title = value['title']
+    
+	contour = ax.contourf(lon, lat, data, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax)
 
 # Set colobar
-cbar = fig.colorbar(plt1, ax=fig.axes, pad=0.025, aspect=50)
+cbar = fig.colorbar(contour, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)
 cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/figs/ctrl'.format(path)
+path_out = '{0}/figs/totc'.format(path)
 name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
