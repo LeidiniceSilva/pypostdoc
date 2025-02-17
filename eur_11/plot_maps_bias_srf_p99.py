@@ -22,6 +22,7 @@ from import_climate_tools import compute_mbe
 var = 'p99'
 dt = '2000-2001'
 domain = 'EUR-11'
+dataset = 'EOBS'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 
@@ -62,16 +63,16 @@ def configure_subplot(ax):
 	
 	
 # Import model and obs dataset
-lat, lon, eobs = import_obs('rr', domain, 'EOBS')
+lat, lon, obs = import_obs('rr', domain, dataset)
 lat, lon, noto = import_rcm('pr', domain, 'NoTo-Europe_RegCM5')
 lat, lon, wdm7 = import_rcm('pr', domain, 'WDM7-Europe_RegCM5')
 lat, lon, wsm7 = import_rcm('pr', domain, 'WSM7-Europe_RegCM5')
 lat, lon, wsm5 = import_rcm('pr', domain, 'WSM5-Europe_RegCM5')
 	
-mbe_noto_eobs = compute_mbe(noto, eobs)	
-mbe_wdm7_eobs = compute_mbe(wdm7, eobs)	
-mbe_wsm7_eobs = compute_mbe(wsm7, eobs)	
-mbe_wsm5_eobs = compute_mbe(wsm5, eobs)  
+mbe_noto_obs = compute_mbe(noto, obs)	
+mbe_wdm7_obs = compute_mbe(wdm7, obs)	
+mbe_wsm7_obs = compute_mbe(wsm7, obs)	
+mbe_wsm5_obs = compute_mbe(wsm5, obs)  
 
 # Plot figure
 fig, axes = plt.subplots(1, 4, figsize=(9, 4), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -80,12 +81,10 @@ axes = axes.flatten()
 dict_plot = {'p99': ['Daily p99 (mm d$^-$$^1$)', np.arange(-50, 55, 5), cm.BrBG]}
 font_size = 8
 
-plot_data = {
-     'Plot 1': {'data': mbe_noto_eobs[0], 'title': '(a) NoTo-EOBS'},
-     'Plot 2': {'data': mbe_wdm7_eobs[0], 'title': '(b) WDM7-EOBS'},
-     'Plot 3': {'data': mbe_wsm7_eobs[0], 'title': '(c) WSM7-EOBS'},
-     'Plot 4': {'data': mbe_wsm5_eobs[0], 'title': '(d) WSM5-EOBS'}
-}
+plot_data = {'Plot 1': {'data': mbe_noto_obs[0], 'title': '(a) NoTo-{0}'.format(dataset)},
+'Plot 2': {'data': mbe_wdm7_obs[0], 'title': '(b) WDM7-{0}'.format(dataset)},
+'Plot 3': {'data': mbe_wsm7_obs[0], 'title': '(c) WSM7-{0}'.format(dataset)},
+'Plot 4': {'data': mbe_wsm5_obs[0], 'title': '(d) WSM5-{0}'.format(dataset)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
     data = value['data']

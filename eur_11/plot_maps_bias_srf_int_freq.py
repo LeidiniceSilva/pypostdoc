@@ -20,9 +20,10 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
 var = 'pr'
-stats = 'freq'
+stats = 'int'
 dt = '2000-2001'
 domain = 'EUR-11'
+dataset = 'EOBS'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 
@@ -66,10 +67,10 @@ def configure_subplot(ax):
 # Import model and obs dataset
 dict_var = {'pr': ['precip', 'rr', 'tp']}
 
-lat, lon, eobs_djf = import_obs(dict_var[var][1], 'EOBS', 'DJF')
-lat, lon, eobs_mam = import_obs(dict_var[var][1], 'EOBS', 'MAM')
-lat, lon, eobs_jja = import_obs(dict_var[var][1], 'EOBS', 'JJA')
-lat, lon, eobs_son = import_obs(dict_var[var][1], 'EOBS', 'SON')
+lat, lon, obs_djf = import_obs(dict_var[var][1], dataset, 'DJF')
+lat, lon, obs_mam = import_obs(dict_var[var][1], dataset, 'MAM')
+lat, lon, obs_jja = import_obs(dict_var[var][1], dataset, 'JJA')
+lat, lon, obs_son = import_obs(dict_var[var][1], dataset, 'SON')
 
 lat, lon, noto_djf = import_rcm(var, 'NoTo-Europe_RegCM5', 'DJF')
 lat, lon, noto_mam = import_rcm(var, 'NoTo-Europe_RegCM5', 'MAM')
@@ -91,25 +92,25 @@ lat, lon, wsm5_mam = import_rcm(var, 'WSM5-Europe_RegCM5', 'MAM')
 lat, lon, wsm5_jja = import_rcm(var, 'WSM5-Europe_RegCM5', 'JJA')
 lat, lon, wsm5_son = import_rcm(var, 'WSM5-Europe_RegCM5', 'SON')
 
-mbe_djf_noto_eobs = compute_mbe(noto_djf, eobs_djf)	
-mbe_mam_noto_eobs = compute_mbe(noto_mam, eobs_mam)	
-mbe_jja_noto_eobs = compute_mbe(noto_jja, eobs_jja)	
-mbe_son_noto_eobs = compute_mbe(noto_son, eobs_son)  
+mbe_djf_noto_obs = compute_mbe(noto_djf, obs_djf)	
+mbe_mam_noto_obs = compute_mbe(noto_mam, obs_mam)	
+mbe_jja_noto_obs = compute_mbe(noto_jja, obs_jja)	
+mbe_son_noto_obs = compute_mbe(noto_son, obs_son)  
 	
-mbe_djf_wdm7_eobs = compute_mbe(wdm7_djf, eobs_djf)	
-mbe_mam_wdm7_eobs = compute_mbe(wdm7_mam, eobs_mam)	
-mbe_jja_wdm7_eobs = compute_mbe(wdm7_jja, eobs_jja)	
-mbe_son_wdm7_eobs = compute_mbe(wdm7_son, eobs_son) 
+mbe_djf_wdm7_obs = compute_mbe(wdm7_djf, obs_djf)	
+mbe_mam_wdm7_obs = compute_mbe(wdm7_mam, obs_mam)	
+mbe_jja_wdm7_obs = compute_mbe(wdm7_jja, obs_jja)	
+mbe_son_wdm7_obs = compute_mbe(wdm7_son, obs_son) 
 
-mbe_djf_wsm7_eobs = compute_mbe(wsm7_djf, eobs_djf)	
-mbe_mam_wsm7_eobs = compute_mbe(wsm7_mam, eobs_mam)	
-mbe_jja_wsm7_eobs = compute_mbe(wsm7_jja, eobs_jja)	
-mbe_son_wsm7_eobs = compute_mbe(wsm7_son, eobs_son) 
+mbe_djf_wsm7_obs = compute_mbe(wsm7_djf, obs_djf)	
+mbe_mam_wsm7_obs = compute_mbe(wsm7_mam, obs_mam)	
+mbe_jja_wsm7_obs = compute_mbe(wsm7_jja, obs_jja)	
+mbe_son_wsm7_obs = compute_mbe(wsm7_son, obs_son) 
 
-mbe_djf_wsm5_eobs = compute_mbe(wsm5_djf, eobs_djf)	
-mbe_mam_wsm5_eobs = compute_mbe(wsm5_mam, eobs_mam)	
-mbe_jja_wsm5_eobs = compute_mbe(wsm5_jja, eobs_jja)	
-mbe_son_wsm5_eobs = compute_mbe(wsm5_son, eobs_son)   
+mbe_djf_wsm5_obs = compute_mbe(wsm5_djf, obs_djf)	
+mbe_mam_wsm5_obs = compute_mbe(wsm5_mam, obs_mam)	
+mbe_jja_wsm5_obs = compute_mbe(wsm5_jja, obs_jja)	
+mbe_son_wsm5_obs = compute_mbe(wsm5_son, obs_son)   
 
 # Plot figure
 fig, axes = plt.subplots(4, 4, figsize=(10, 6), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -122,24 +123,22 @@ if stats == 'int':
 else:
 	dict_plot = {'pr': ['Frequency of daily precipitation (%)', np.arange(-50, 55, 5), cm.BrBG]}
 
-plot_data = {
-     'Plot 1': {'data': mbe_djf_noto_eobs[0][0], 'title': '(a) NoTo-EOBS DJF'},
-     'Plot 2': {'data': mbe_djf_wdm7_eobs[0][0], 'title': '(b) WDM7-EOBS DJF'},
-     'Plot 3': {'data': mbe_djf_wsm7_eobs[0][0], 'title': '(c) WSM7-EOBS DJF'},
-     'Plot 4': {'data': mbe_djf_wsm5_eobs[0][0], 'title': '(d) WSM5-EOBS DJF'},
-     'Plot 5': {'data': mbe_mam_noto_eobs[0][0], 'title': '(e) NoTo-EOBS MAM'},
-     'Plot 6': {'data': mbe_mam_wdm7_eobs[0][0], 'title': '(f) WDM7-EOBS MAM'},
-     'Plot 7': {'data': mbe_mam_wsm7_eobs[0][0], 'title': '(g) WSM7-EOBS MAM'},
-     'Plot 8': {'data': mbe_mam_wsm5_eobs[0][0], 'title': '(h) WSM5-EOBS MAM'},
-     'Plot 9': {'data': mbe_jja_noto_eobs[0][0], 'title': '(i) NoTo-EOBS JJA'},
-     'Plot 10': {'data': mbe_jja_wdm7_eobs[0][0], 'title': '(j) WDM7-EOBS JJA'},
-     'Plot 11': {'data': mbe_jja_wsm7_eobs[0][0], 'title': '(k) WSM7-EOBS JJA'},
-     'Plot 12': {'data': mbe_jja_wsm5_eobs[0][0], 'title': '(l) WSM5-EOBS JJA'},
-     'Plot 13': {'data': mbe_son_noto_eobs[0][0], 'title': '(m) NoTo-EOBS SON'},
-     'Plot 14': {'data': mbe_son_wdm7_eobs[0][0], 'title': '(n) WDM7-EOBS SON'},
-     'Plot 15': {'data': mbe_son_wsm7_eobs[0][0], 'title': '(o) WSM7-EOBS SON'},
-     'Plot 16': {'data': mbe_son_wsm5_eobs[0][0], 'title': '(p) WSM5-EOBS SON'}
-}
+plot_data = {'Plot 1': {'data': mbe_djf_noto_obs[0][0], 'title': '(a) NoTo-{0} DJF'.format(dataset)},
+'Plot 2': {'data': mbe_djf_wdm7_obs[0][0], 'title': '(b) WDM7-{0} DJF'.format(dataset)},
+'Plot 3': {'data': mbe_djf_wsm7_obs[0][0], 'title': '(c) WSM7-{0} DJF'.format(dataset)},
+'Plot 4': {'data': mbe_djf_wsm5_obs[0][0], 'title': '(d) WSM5-{0} DJF'.format(dataset)},
+'Plot 5': {'data': mbe_mam_noto_obs[0][0], 'title': '(e) NoTo-{0} MAM'.format(dataset)},
+'Plot 6': {'data': mbe_mam_wdm7_obs[0][0], 'title': '(f) WDM7-{0} MAM'.format(dataset)},
+'Plot 7': {'data': mbe_mam_wsm7_obs[0][0], 'title': '(g) WSM7-{0} MAM'.format(dataset)},
+'Plot 8': {'data': mbe_mam_wsm5_obs[0][0], 'title': '(h) WSM5-{0} MAM'.format(dataset)},
+'Plot 9': {'data': mbe_jja_noto_obs[0][0], 'title': '(i) NoTo-{0} JJA'.format(dataset)},
+'Plot 10': {'data': mbe_jja_wdm7_obs[0][0], 'title': '(j) WDM7-{0} JJA'.format(dataset)},
+'Plot 11': {'data': mbe_jja_wsm7_obs[0][0], 'title': '(k) WSM7-{0} JJA'.format(dataset)},
+'Plot 12': {'data': mbe_jja_wsm5_obs[0][0], 'title': '(l) WSM5-{0} JJA'.format(dataset)},
+'Plot 13': {'data': mbe_son_noto_obs[0][0], 'title': '(m) NoTo-{0} SON'.format(dataset)},
+'Plot 14': {'data': mbe_son_wdm7_obs[0][0], 'title': '(n) WDM7-{0} SON'.format(dataset)},
+'Plot 15': {'data': mbe_son_wsm7_obs[0][0], 'title': '(o) WSM7-{0} SON'.format(dataset)},
+'Plot 16': {'data': mbe_son_wsm5_obs[0][0], 'title': '(p) WSM5-{0} SON'.format(dataset)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
     data = value['data']

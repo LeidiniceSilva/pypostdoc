@@ -72,10 +72,10 @@ dict_var = {'pr': ['rr', 'precipitation', 'precip'],
 'tas': ['t2m'],
 'clt': ['tcc']}
 
-lat, lon, eobs_djf = import_obs(dict_var[var][0], dataset, 'DJF')
-lat, lon, eobs_mam = import_obs(dict_var[var][0], dataset, 'MAM')
-lat, lon, eobs_jja = import_obs(dict_var[var][0], dataset, 'JJA')
-lat, lon, eobs_son = import_obs(dict_var[var][0], dataset, 'SON')
+lat, lon, obs_djf = import_obs(dict_var[var][0], dataset, 'DJF')
+lat, lon, obs_mam = import_obs(dict_var[var][0], dataset, 'MAM')
+lat, lon, obs_jja = import_obs(dict_var[var][0], dataset, 'JJA')
+lat, lon, obs_son = import_obs(dict_var[var][0], dataset, 'SON')
 
 lat, lon, noto_djf = import_rcm(var, 'NoTo-Europe_RegCM5', 'DJF')
 lat, lon, noto_mam = import_rcm(var, 'NoTo-Europe_RegCM5', 'MAM')
@@ -109,27 +109,26 @@ dict_plot={
 'tas': ['Air temperature (°C)', np.arange(-18, 39, 3), cm.jet],
 'clt': ['Total cloud cover (%)', np.arange(0, 105, 5), cm.rainbow]}
 
-plot_data = {
-	'Plot 1': {'data': eobs_djf, 'title': '(a) {0} DJF'.format(dataset)},
-	'Plot 2': {'data': noto_djf, 'title': '(b) NoTo DJF'},
-	'Plot 3': {'data': wdm7_djf, 'title': '(c) WDM7 DJF'},
-	'Plot 4': {'data': wsm7_djf, 'title': '(d) WDM7 DJF'},
-	'Plot 5': {'data': wsm5_djf, 'title': '(e) WSM5 DJF'},
-	'Plot 6': {'data': eobs_mam, 'title': '(f) {0} MAM'.format(dataset)},
-	'Plot 7': {'data': noto_mam, 'title': '(g) NoTo MAM'},
-	'Plot 8': {'data': wdm7_mam, 'title': '(h) WDM7 MAM'},
-	'Plot 9': {'data': wsm7_mam, 'title': '(i) WDM7 MAM'},
-	'Plot 10': {'data': wsm5_mam, 'title': '(j) WSM5 MAM'},
-	'Plot 11': {'data': eobs_jja, 'title': '(k) {0} JJA'.format(dataset)},
-	'Plot 12': {'data': noto_jja, 'title': '(l) NoTo JJA'},
-	'Plot 13': {'data': wdm7_jja, 'title': '(m) WDM7 JJA'},
-	'Plot 14': {'data': wsm7_jja, 'title': '(n) WDM7 JJA'},
-	'Plot 15': {'data': wsm5_jja, 'title': '(o) WSM5 JJA'},
-	'Plot 16': {'data': eobs_son, 'title': '(p) {0} SON'.format(dataset)},
-	'Plot 17': {'data': noto_son, 'title': '(q) NoTo SON'},
-	'Plot 18': {'data': wdm7_son, 'title': '(r) WDM7 SON'},
-	'Plot 19': {'data': wsm7_son, 'title': '(s) WDM7 SON'},
-	'Plot 20': {'data': wsm5_son, 'title': '(t) WSM5 SON'}}
+plot_data = {'Plot 1': {'data': obs_djf, 'title': '(a) {0} DJF'.format(dataset)},
+'Plot 2': {'data': noto_djf, 'title': '(b) NoTo DJF'},
+'Plot 3': {'data': wdm7_djf, 'title': '(c) WDM7 DJF'},
+'Plot 4': {'data': wsm7_djf, 'title': '(d) WDM7 DJF'},
+'Plot 5': {'data': wsm5_djf, 'title': '(e) WSM5 DJF'},
+'Plot 6': {'data': obs_mam, 'title': '(f) {0} MAM'.format(dataset)},
+'Plot 7': {'data': noto_mam, 'title': '(g) NoTo MAM'},
+'Plot 8': {'data': wdm7_mam, 'title': '(h) WDM7 MAM'},
+'Plot 9': {'data': wsm7_mam, 'title': '(i) WDM7 MAM'},
+'Plot 10': {'data': wsm5_mam, 'title': '(j) WSM5 MAM'},
+'Plot 11': {'data': obs_jja, 'title': '(k) {0} JJA'.format(dataset)},
+'Plot 12': {'data': noto_jja, 'title': '(l) NoTo JJA'},
+'Plot 13': {'data': wdm7_jja, 'title': '(m) WDM7 JJA'},
+'Plot 14': {'data': wsm7_jja, 'title': '(n) WDM7 JJA'},
+'Plot 15': {'data': wsm5_jja, 'title': '(o) WSM5 JJA'},
+'Plot 16': {'data': obs_son, 'title': '(p) {0} SON'.format(dataset)},
+'Plot 17': {'data': noto_son, 'title': '(q) NoTo SON'},
+'Plot 18': {'data': wdm7_son, 'title': '(r) WDM7 SON'},
+'Plot 19': {'data': wsm7_son, 'title': '(s) WDM7 SON'},
+'Plot 20': {'data': wsm5_son, 'title': '(t) WSM5 SON'}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
 	data = value['data']
