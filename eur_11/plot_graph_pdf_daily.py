@@ -87,7 +87,7 @@ plt.xlabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold'
 plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
 # Path out to save figure
-path_out = '{0}/figs/ctrl'.format(path)
+path_out = '{0}/figs/totc'.format(path)
 name_out = 'pyplt_graph_pdf_{0}_{1}_RegCM5_{2}_{3}.png'.format(var, domain, freq, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
