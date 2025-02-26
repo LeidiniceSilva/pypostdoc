@@ -99,8 +99,6 @@ mbe_mam_rcm3_obs = compute_mbe(rcm3_mam, obs_mam)
 mbe_jja_rcm3_obs = compute_mbe(rcm3_jja, obs_jja)
 mbe_son_rcm3_obs = compute_mbe(rcm3_son, obs_son)
 
-print(mbe_djf_rcm3_obs.shape)
-
 # Plot figure  
 fig, axes = plt.subplots(1, 4, figsize=(10, 4), subplot_kw={'projection': ccrs.PlateCarree()})
 axes = axes.flatten()
