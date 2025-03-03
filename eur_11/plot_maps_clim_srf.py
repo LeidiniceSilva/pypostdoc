@@ -17,9 +17,9 @@ import cartopy.feature as cfeat
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'clt'
+var = 'tas'
 domain = 'EUR-11'
-dt = '2000-2001'
+dt = '2000-2004'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 if var == 'pr':
@@ -68,7 +68,7 @@ def configure_subplot(ax):
 
 
 # Import model and obs dataset
-dict_var = {'pr': ['rr', 'precipitation', 'precip'],
+dict_var = {'pr': ['rr', 'pre', 'precip', 'precipitation', 'tp'],
 'tas': ['t2m'],
 'clt': ['tcc']}
 
@@ -144,7 +144,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/figs/totc'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

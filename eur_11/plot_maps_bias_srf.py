@@ -20,7 +20,7 @@ from import_climate_tools import compute_mbe
 
 var = 'clt'
 domain = 'EUR-11'
-dt = '2000-2001'
+dt = '2000-2004'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 	
 if var == 'pr':
@@ -124,8 +124,8 @@ fig, axes = plt.subplots(4, 4, figsize=(12, 6), subplot_kw={'projection': ccrs.P
 axes = axes.flatten()
 font_size = 8
 
-dict_plot = {'pr': ['Bias of precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.BrBG],
-'tas': ['Bias of air temperature (°C)', np.arange(-10, 11, 1), cm.RdBu_r],
+dict_plot = {'pr': ['Bias of precipitation (mm d$^-$$^1$)', np.arange(-6, 6.5, 0.5), cm.BrBG],
+'tas': ['Bias of air temperature (°C)', np.arange(-6, 6.5, 0.5), cm.RdBu_r],
 'clt': ['Bias of total cloud cover (%)', np.arange(-50, 55, 5), cm.RdGy]}
 
 plot_data = {'Plot 1': {'data': mbe_djf_noto_obs, 'title': '(a) NoTo-{0} DJF'.format(dataset)},
@@ -159,7 +159,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs/totc'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
