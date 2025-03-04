@@ -18,9 +18,9 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 var = 'uv'
-level = '200hPa'
+level = '850hPa'
 domain = 'EUR-11'
-dt = '2000-2001'
+dt = '2000-2004'
 dataset = 'ERA5'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
@@ -199,7 +199,6 @@ for ax, (key, value) in zip(axes, plot_data.items()):
 	lons, lats = np.meshgrid(lon, lat)
 	contour = ax.contourf(lons, lats, data_, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
 	quiv = ax.quiver(lons[::vector, ::vector], lats[::vector, ::vector], data_i[::vector, ::vector], data_ii[::vector, ::vector], color='white') 
-	#stream = ax.streamplot(lons, lats, data_i, data_ii, color='white', density=0.25)
 	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax)     
 
@@ -209,7 +208,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/figs/totc'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_maps_clim_{0}_{1}_{2}_RegCM5_{3}.png'.format(var, level, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
