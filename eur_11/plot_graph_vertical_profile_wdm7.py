@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 var = 'nc'
 domain = 'EUR-11'
-dt = '2000-2001'
+dt = '2000-2004'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 def import_rcm(param, dataset, season):
@@ -177,7 +177,7 @@ plt.gca().invert_yaxis()
 plt.legend(loc=1, ncol=1, fontsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs/totc'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_graph_vertical_profile_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

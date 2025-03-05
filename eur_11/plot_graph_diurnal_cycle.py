@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 var = 'pr'
 domain = 'EUR-11'
-dt = '2000-2001'
+dt = '2000-2004'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 	
 			
@@ -22,7 +22,7 @@ def import_obs(param, dataset):
 
 	arq   = '{0}/postproc/obs/{1}_{2}_FPS_{3}_diurnal_cycle_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
-	var   = data.variables['tp'][:] 
+	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
 	value = var[:][:,:,:]
@@ -45,7 +45,7 @@ def import_rcm(param, dataset):
 	
 	
 # Import model and obs dataset
-dict_var = {'pr': ['precip', 'rr', 'pr']}
+dict_var = {'pr': ['precip', 'rr', 'tp']}
 
 era5 = import_obs(dict_var[var][2], 'ERA5')
 noto = import_rcm(var, 'NoTo-Europe_RegCM5')
@@ -76,7 +76,7 @@ plt.grid(linestyle='--')
 plt.legend(loc=2, ncol=3, fontsize=font_size, shadow=True)
 
 # Path out to save figure
-path_out = '{0}/figs/totc'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_graph_diurnal_cycle_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

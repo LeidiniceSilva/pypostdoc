@@ -14,19 +14,24 @@ import matplotlib.pyplot as plt
 
 var = 'cls'
 domain = 'EUR-11'
-dt = '2000-2001'
+dt = '2000-2004'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 
 def import_obs(param, dataset, season):
-		
-	arq   = '{0}/postproc/obs/{1}_{2}_FPS_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	     
-	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param][:] 
-	value = var[:][:,:,:,:]
-	mean = np.nanmean(np.nanmean(value, axis=2), axis=2)
-	
-	return mean
+    
+        arq   = '{0}/postproc/obs/{1}_{2}_FPS_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
+        data  = netCDF4.Dataset(arq)
+        var   = data.variables[param][:]
+        
+        if param == 'crwc' or param == 'cswc':
+                value = var[:][:,:,:,:]
+        else:
+            value = var[:][:,::-1,:,:]
+        
+        mean = np.nanmean(np.nanmean(value, axis=2), axis=2)
+        
+        return mean
 
 
 def import_rcm(param, dataset, season):
@@ -41,9 +46,9 @@ def import_rcm(param, dataset, season):
 	
 	
 # Import model and obs dataset
-dict_var = {'cl': ['clfrac'], 
-'clw': ['clliq'],
-'cli': ['clice'],
+dict_var = {'cl': ['cc'], 
+'clw': ['clwc'],
+'cli': ['ciwc'],
 'clr': ['crwc'],
 'cls': ['cswc'],
 'rh': ['r'],
@@ -126,7 +131,6 @@ levels_i = (1000,975,950,925,900,875,850,825,800,775,750,700,650,600,550,500,450
 levels_ii = (1000,925,850,700,600,500,400,300,250,200,150,100)
 
 ax = fig.add_subplot(1, 4, 1)
-#plt.plot(obs_djf_[::-1], levels_i, color='black', label='ERA5', linewidth=1)
 plt.plot(obs_djf_, levels_i, color='black', label='ERA5', linewidth=1)
 plt.plot(noto_djf_, levels_ii, color='blue', label='NoTo', linewidth=1)
 plt.plot(wdm7_djf_, levels_ii, color='green', label='WDM7', linewidth=1)
@@ -144,7 +148,6 @@ plt.gca().invert_yaxis()
 plt.legend(loc=1, ncol=1, fontsize=font_size)
 
 ax = fig.add_subplot(1, 4, 2)
-#plt.plot(obs_mam_[::-1], levels_i, color='black', label='ERA5', linewidth=1)
 plt.plot(obs_mam_, levels_i, color='black', label='ERA5', linewidth=1)
 plt.plot(noto_mam_, levels_ii, color='blue', label='NoTo', linewidth=1)
 plt.plot(wdm7_mam_, levels_ii, color='green', label='WDM7', linewidth=1)
@@ -160,7 +163,6 @@ plt.grid(linestyle='--')
 plt.gca().invert_yaxis()
 
 ax = fig.add_subplot(1, 4, 3)
-#plt.plot(obs_jja_[::-1], levels_i, color='black', label='ERA5', linewidth=1)
 plt.plot(obs_jja_, levels_i, color='black', label='ERA5', linewidth=1)
 plt.plot(noto_jja_, levels_ii, color='blue', label='NoTo', linewidth=1)
 plt.plot(wdm7_jja_, levels_ii, color='green', label='WDM7', linewidth=1)
@@ -176,7 +178,6 @@ plt.grid(linestyle='--')
 plt.gca().invert_yaxis()
 
 ax = fig.add_subplot(1, 4, 4)
-#plt.plot(obs_son_[::-1], levels_i, color='black', label='ERA5', linewidth=1)
 plt.plot(obs_son_, levels_i, color='black', label='ERA5', linewidth=1)
 plt.plot(noto_son_, levels_ii, color='blue', label='NoTo', linewidth=1)
 plt.plot(wdm7_son_, levels_ii, color='green', label='WDM7', linewidth=1)
@@ -192,7 +193,7 @@ plt.grid(linestyle='--')
 plt.gca().invert_yaxis()
 
 # Path out to save figure
-path_out = '{0}/figs/totc'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_graph_vertical_profile_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

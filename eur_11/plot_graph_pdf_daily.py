@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 var = 'pr'
 freq = 'day'
 domain = 'EUR-11'
-dt = '2000-2001'
+dt = '2000-2004'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 
@@ -54,7 +54,7 @@ def compute_pdf(data):
 
 
 # Import model and obs dataset
-dict_var = {'pr': ['precip', 'rr', 'pr']}
+dict_var = {'pr': ['precip', 'rr', 'tp']}
 
 eobs = import_obs(dict_var[var][1], 'EOBS')
 noto = import_rcm(var, 'NoTo-Europe_RegCM5')
@@ -87,7 +87,7 @@ plt.xlabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold'
 plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
 # Path out to save figure
-path_out = '{0}/figs/totc'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_graph_pdf_{0}_{1}_RegCM5_{2}_{3}.png'.format(var, domain, freq, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

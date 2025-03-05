@@ -15,18 +15,15 @@ import matplotlib.pyplot as plt
 var = 'pr'
 freq = '1hr'
 domain = 'EUR-11'
-dt = '2000-2001'
+dt = '2000-2004'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 
 def import_obs(param, dataset):
 
-	if param == 'pr':
-		param_ = 'tp'
-
 	arq   = '{0}/postproc/obs/{1}_{2}_FPS_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, freq, dt) 
 	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param_][:] 
+	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
 	value = var[:][:,:,:]
@@ -57,7 +54,7 @@ def compute_pdf(data):
 
 
 # Import model and obs dataset
-dict_var = {'pr': ['precip', 'rr', 'pr']}
+dict_var = {'pr': ['precip', 'rr', 'tp']}
 
 era5 = import_obs(dict_var[var][2], 'ERA5')
 noto = import_rcm(var, 'NoTo-Europe_RegCM5')
@@ -90,7 +87,7 @@ plt.xlabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='bold'
 plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
 # Path out to save figure
-path_out = '{0}/figs/totc'.format(path)
+path_out = '{0}/figs/ctrl'.format(path)
 name_out = 'pyplt_graph_pdf_{0}_{1}_RegCM5_{2}_{3}.png'.format(var, domain, freq, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
