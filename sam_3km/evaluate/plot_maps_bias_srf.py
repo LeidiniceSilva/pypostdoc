@@ -22,9 +22,9 @@ from dict_inmet_stations import inmet
 from dict_smn_i_stations import smn_i
 from dict_smn_ii_stations import smn_ii
 
-var = 'tas'
+var = 'rsnl'
 domain = 'SAM-3km'
-idt, fdt = '2018', '2018'
+idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
 
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
@@ -354,5 +354,4 @@ else:
 path_out = '{0}/SAM-3km/figs/evaluate'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()

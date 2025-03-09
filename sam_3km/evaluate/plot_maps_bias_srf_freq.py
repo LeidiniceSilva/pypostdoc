@@ -19,9 +19,9 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
 var = 'pr_freq'
-freq = 'daily'
+freq = 'hourly'
 domain = 'SAM-3km'
-idt, fdt = '2018', '2018'
+idt, fdt = '2018', '2021'
 
 if freq == 'hourly':
 	dataset = 'ERA5'
@@ -141,5 +141,4 @@ cbar.ax.tick_params(labelsize=font_size)
 path_out = '{0}/SAM-3km/figs/evaluate'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()
