@@ -20,7 +20,7 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
 var = 'p99'
-dt = '2000-2004'
+dt = '1970-1973'
 domain = 'EUR-11'
 dataset = 'EOBS'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
@@ -64,7 +64,7 @@ def configure_subplot(ax):
 	
 # Import model and obs dataset
 lat, lon, obs = import_obs('rr', domain, dataset)
-lat, lon, noto = import_rcm('pr', domain, 'NoTo-Europe_RegCM5')
+lat, lon, noto = import_rcm('pr', domain, 'NoTo-Europe_cordex5_RegCM5')
 lat, lon, wdm7 = import_rcm('pr', domain, 'WDM7-Europe_RegCM5')
 lat, lon, wsm7 = import_rcm('pr', domain, 'WSM7-Europe_RegCM5')
 lat, lon, wsm5 = import_rcm('pr', domain, 'WSM5-Europe_RegCM5')
@@ -100,8 +100,8 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs/ctrl'.format(path)
-name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
+path_out = '{0}/figs'.format(path)
+name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}_v2.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
