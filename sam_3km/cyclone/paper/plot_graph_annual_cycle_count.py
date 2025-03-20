@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from netCDF4 import Dataset
 from datetime import datetime
 
-path = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km'
 
 
 def read_dat_file(filename):
@@ -29,11 +29,10 @@ def read_dat_file(filename):
 	for line in lines:
 		line = line.strip().split()
 		
-		# If the line contains 6 elements, it's considered a header
 		if len(line) == 6:
-			if rows:  # If we have rows, append them to data
+			if rows:  
 				data.append((header, rows))
-				rows = []  # Reset rows
+				rows = [] 
 			header = line
 		else:
 			rows.append(line)
@@ -50,24 +49,11 @@ def open_dat_file(dataset, yr_init, yr_end):
 	header_list_i, header_list_ii = [], []
 	for yr in range(yr_init, yr_end+1):
 	
-		data = read_dat_file('{0}/post_cyclone/ECyclone_v2/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
+		data = read_dat_file('{0}/postproc/cyclone/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 		for i, (header, rows) in enumerate(data):
 			if (rows[0][2] < str(-56)):			
 				header_list_i.append(header[1])
 				header_list_ii.append(header)
-	
-	return header_list_i, header_list_ii
-
-
-def open_dat_file_v2(dataset, yr_init, yr_end):
-
-	header_list_i, header_list_ii = [], []
-	for yr in range(yr_init, yr_end+1):
-	
-		data = read_dat_file('{0}/post_cyclone/ECyclone_v2/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
-		for i, (header, rows) in enumerate(data):
-			header_list_i.append(header[1])
-			header_list_ii.append(header)
 	
 	return header_list_i, header_list_ii
 	
@@ -160,10 +146,6 @@ list_era5_i, list_era5_ii = open_dat_file('ERA5', 2018, 2021)
 list_regcm5_i, list_regcm5_ii = open_dat_file('RegCM5', 2018, 2021)
 list_wrf415_i, list_wrf415_ii = open_dat_file('WRF415', 2018, 2021)
 
-list_era5_j, list_era5_jj = open_dat_file_v2('ERA5', 2018, 2021)
-list_regcm5_j, list_regcm5_jj = open_dat_file_v2('RegCM5', 2018, 2021)
-list_wrf415_j, list_wrf415_jj = open_dat_file_v2('WRF415', 2018, 2021)
-
 list_number_era5 = cyclone_number(list_era5_i)
 list_number_regcm5 = cyclone_number(list_regcm5_i)
 list_number_wrf415 = cyclone_number(list_wrf415_i)
@@ -172,17 +154,9 @@ list_lifetime_era5 = cyclone_lifetime(list_era5_ii)
 list_lifetime_regcm5 = cyclone_lifetime(list_regcm5_ii)
 list_lifetime_wrf415 = cyclone_lifetime(list_wrf415_ii)
 
-list_number_era5_ = cyclone_number(list_era5_j)
-list_number_regcm5_ = cyclone_number(list_regcm5_j)
-list_number_wrf415_ = cyclone_number(list_wrf415_j)
-
-list_lifetime_era5_ = cyclone_lifetime(list_era5_jj)
-list_lifetime_regcm5_ = cyclone_lifetime(list_regcm5_jj)
-list_lifetime_wrf415_ = cyclone_lifetime(list_wrf415_jj)
-
 # Plot figure
-fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-(ax1, ax2), (ax3, ax4) = axes
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+ax1, ax2 = axes
 
 labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 x = np.arange(len(labels))  
@@ -197,51 +171,26 @@ ax1.set_ylabel('Number of cyclones', fontsize=font_size, fontweight='bold')
 ax1.set_xticks(x)
 ax1.set_xticklabels(labels, fontsize=font_size)
 ax1.set_ylim(0, 10)
-ax1.grid(axis='y', c='k', ls='--', alpha=0.3)
+ax1.grid(axis='y', c='k', ls='--', alpha=0.4)
 ax1.axvspan(0, 3, color='k', alpha=0.1)
 ax1.axvspan(8, 11, color='k', alpha=0.1)
-ax1.legend(fontsize=font_size, ncol=1, loc=9, shadow=True)
+ax1.legend(fontsize=font_size, ncol=3, loc=9, shadow=True)
 
 ax2.bar(x-width, list_lifetime_era5,   width, color='black', alpha=0.75, edgecolor='black', linewidth=1., label='ERA5')
 ax2.bar(x,       list_lifetime_regcm5, width, color='blue',  alpha=0.75, edgecolor='black', linewidth=1., label='RegCM5')
 ax2.bar(x+width, list_lifetime_wrf415, width, color='red',   alpha=0.75, edgecolor='black', linewidth=1., label='WRF415')
 ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
-ax2.set_ylabel('LIfetime of cyclones', fontsize=font_size, fontweight='bold')
+ax2.set_ylabel('Lifetime of cyclones', fontsize=font_size, fontweight='bold')
+ax2.set_xlabel('Months', fontsize=font_size, fontweight='bold')
 ax2.set_xticks(x)
 ax2.set_xticklabels(labels, fontsize=font_size)
 ax2.set_ylim(0, 10)
-ax2.grid(axis='y', c='k', ls='--', alpha=0.3)
+ax2.grid(axis='y', c='k', ls='--', alpha=0.4)
 ax2.axvspan(0, 3, color='k', alpha=0.1)
 ax2.axvspan(8, 11, color='k', alpha=0.1)
 
-ax3.bar(x-width, list_number_era5_,   width, color='black', alpha=0.75, edgecolor='black', linewidth=1., label='ERA5')
-ax3.bar(x,       list_number_regcm5_, width, color='blue',  alpha=0.75, edgecolor='black', linewidth=1., label='RegCM5')
-ax3.bar(x+width, list_number_wrf415_, width, color='red',   alpha=0.75, edgecolor='black', linewidth=1., label='WRF415')
-ax3.set_title('(c)', loc='left', fontsize=font_size, fontweight='bold')
-ax3.set_xlabel('Months', fontsize=font_size, fontweight='bold')
-ax3.set_ylabel('Number of cyclones (Total)', fontsize=font_size, fontweight='bold')
-ax3.set_xticks(x)
-ax3.set_xticklabels(labels, fontsize=font_size)
-ax3.set_ylim(0, 24)
-ax3.grid(axis='y', c='k', ls='--', alpha=0.3)
-ax3.axvspan(0, 3, color='k', alpha=0.1)
-ax3.axvspan(8, 11, color='k', alpha=0.1)
-
-ax4.bar(x-width, list_lifetime_era5_,   width, color='black', alpha=0.75, edgecolor='black', linewidth=1., label='ERA5')
-ax4.bar(x,       list_lifetime_regcm5_, width, color='blue',  alpha=0.75, edgecolor='black', linewidth=1., label='RegCM5')
-ax4.bar(x+width, list_lifetime_wrf415_, width, color='red',   alpha=0.75, edgecolor='black', linewidth=1., label='WRF415')
-ax4.set_title('(d)', loc='left', fontsize=font_size, fontweight='bold')
-ax4.set_xlabel('Months', fontsize=font_size, fontweight='bold')
-ax4.set_ylabel('LIfetime of cyclones (Total)', fontsize=font_size, fontweight='bold')
-ax4.set_xticks(x)
-ax4.set_xticklabels(labels, fontsize=font_size)
-ax4.set_ylim(0, 12)
-ax4.grid(axis='y', c='k', ls='--', alpha=0.3)
-ax4.axvspan(0, 3, color='k', alpha=0.1)
-ax4.axvspan(8, 11, color='k', alpha=0.1)
-
 # Path out to save figure
-path_out = '{0}/figs/cyclone/paper'.format(path)
+path_out = '{0}/figs/cyclone'.format(path)
 name_out = 'pyplt_graph_annual_cycle_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

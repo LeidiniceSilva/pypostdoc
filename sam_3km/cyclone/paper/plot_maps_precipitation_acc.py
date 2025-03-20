@@ -13,7 +13,6 @@ import xarray as xr
 import matplotlib.colors
 import matplotlib.cm as cm
 import cartopy.crs as ccrs
-import matplotlib.pyplot as plt
 import cartopy.feature as cfeat
 
 from scipy import signal, misc
@@ -22,7 +21,7 @@ from datetime import datetime, timedelta
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 font_size = 10
-path='/marconi/home/userexternal/mdasilva'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
 
 skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,7793,100,105,106,107,112,117,124,135,137,139,
 149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
@@ -76,9 +75,7 @@ def read_dat_file(filename):
 	for line in lines:
 		line = line.strip().split()
 		
-		# If the line contains 6 elements, it's considered a header
 		if len(line) == 6:
-			# If we have rows, append them to data
 			if rows:
 				data.append((header, rows))
 				rows = []
@@ -98,7 +95,7 @@ def open_dat_file(dataset):
 	dt = []
 	for yr in range(2018, 2021+1):
 	
-		data = read_dat_file('{0}/user/mdasilva/SAM-3km/post_cyclone/ECyclone_v2/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
+		data = read_dat_file('{0}/SAM-3km/postproc/cyclone/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 	
 		rows_list = []
 		rows_list_i = []
@@ -116,11 +113,11 @@ def open_dat_file(dataset):
 def import_data(param, dataset, indices):
 
 	if dataset == 'RegCM5':
-		arq = '{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)
+		arq = '{0}/SAM-3km/postproc/cyclone/RegCM5/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)
 	elif dataset == 'WRF415':
-		arq = '{0}/user/mdasilva/SAM-3km/post_cyclone/wrf/wrf/{1}/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)
+		arq = '{0}/SAM-3km/postproc/cyclone/WRF415/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)
 	else:
-		arq   = '{0}/user/mdasilva/SAM-3km/post_evaluate/obs/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)		
+		arq   = '{0}/SAM-3km/postproc/cyclone/ERA5/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)		
 	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
@@ -151,7 +148,7 @@ def import_ws(param, indices):
 		yy.append(inmet[station][2])
 		xx.append(inmet[station][3])
 
-		arq  = xr.open_dataset('{0}/user/mdasilva/WS-SA/INMET/automatic/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
+		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_br/inmet_nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
 		data = arq[param]
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
 		var  = time.resample(time='1D').sum()	
@@ -187,10 +184,10 @@ wrf415_idx_i = find_indices_in_date_list(daily_dates, wrf415_idx)
 
 # Import model and obs dataset 
 lat_, lon_, inmet_idx_ii = import_ws('pre', era5_idx_i)
-lat, lon, gpm_idx_ii = import_data('precipitation', 'GPM', era5_idx_i)
+lat, lon, gpm_idx_ii = import_data('tp', 'ERA5', era5_idx_i)
 lat, lon, era5_idx_ii = import_data('tp', 'ERA5', era5_idx_i)
 lat, lon, regcm5_idx_ii = import_data('pr', 'RegCM5', regcm5_idx_i)
-lat, lon, wrf415_idx_ii = import_data('PREC_ACC_NC', 'WRF415', wrf415_idx_i)
+lat, lon, wrf415_idx_ii = import_data('pr', 'RegCM5', wrf415_idx_i)
 
 # Plot figure
 fig, axes = plt.subplots(2,3, figsize=(14, 6), subplot_kw={"projection": ccrs.PlateCarree()})
@@ -264,7 +261,7 @@ ax5.set_title('(e) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 cf = ax5.contourf(lon, lat, wrf415_idx_ii/12, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone/paper'.format(path)
+path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
 name_out = 'pyplt_maps_precipitation_acc_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

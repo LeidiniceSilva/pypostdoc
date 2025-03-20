@@ -16,20 +16,25 @@ import matplotlib.pyplot as plt
 import cartopy.feature as cfeat
 
 from scipy import signal, misc
+from matplotlib.patches import Rectangle
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 font_size = 10
-path = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km'
 
 
 def import_dataset(dataset):
 
-	df = pd.read_csv('{0}/post_cyclone/ECyclone_v2/{1}/genesis_density_{1}.txt'.format(path, dataset), sep=" ")
+	df = pd.read_csv('{0}/postproc/cyclone/{1}/track/genesis_density_{1}.txt'.format(path, dataset), sep="\s+", engine='python')
+	df.columns = df.columns.str.strip()
+	if 'data' not in df.columns:
+		raise KeyError("Column 'data' not found in the dataset.")
+
 	df['data'] = pd.to_datetime(df['data'], format='%Y%m%d%H',errors='coerce')
 	df = df[(df['data'].dt.year >= 2018) & (df['data'].dt.year <= 2021)]
 
 	return df
-	
+
 	
 def density_ciclones(df):
 
@@ -106,6 +111,7 @@ ax1.coastlines()
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
 cf = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
+ax1.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 
 ax2.coastlines()
 ax2.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
@@ -120,6 +126,7 @@ ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 cf = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
 cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
+ax2.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 
 ax3.coastlines()
 ax3.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
@@ -134,9 +141,10 @@ ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 ax3.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
 cf = ax3.contourf(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
+ax3.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 
 # Path out to save figure
-path_out = '{0}/figs/cyclone/paper'.format(path)
+path_out = '{0}/figs/cyclone'.format(path)
 name_out = 'pyplt_maps_genesis_density_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

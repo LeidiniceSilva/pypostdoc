@@ -6,7 +6,7 @@ __date__        = "Apr 01, 2024"
 __description__ = "This script .txt with cyclone genesis"
 
 dataset = 'ERA5'
-path = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km/post_cyclone/ECv2'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km'
 
 
 def read_dat_file(filename):
@@ -45,7 +45,7 @@ def open_dat_file(dataset):
 	
 	for yr in range(2018, 2021+1):
 	
-		data = read_dat_file('{0}/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
+		data = read_dat_file('{0}/postproc/cyclone/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 	
 		rows_list = []
 		for i, (header, rows) in enumerate(data):
@@ -64,12 +64,11 @@ def open_dat_file(dataset):
 	
 def write_list_to_dat(data):
 	
-	with open('{0}/{1}/genesis_density_{1}.txt'.format(path, dataset), 'w') as f:
-			
+	with open('{0}/postproc/cyclone/{1}/genesis_density_{1}.txt'.format(path, dataset), 'w') as f:
+		f.write("data\tlat\tlon\tvo\tpres\n")
 		for row in data:
 			row_string = '\t'.join(map(str, row)) + '\n'
 			f.write(row_string)
-
 
 # Import model and obs dataset
 list_dt, list_lat, list_lon, list_vo, list_pcen = open_dat_file(dataset)

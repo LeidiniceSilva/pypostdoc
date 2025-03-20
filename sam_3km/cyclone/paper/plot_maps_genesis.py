@@ -18,7 +18,7 @@ import cartopy.feature as cfeat
 from scipy import signal, misc
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-path = '/marconi/home/userexternal/mdasilva/user/mdasilva/SAM-3km'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km'
 
 
 def read_dat_file(filename):
@@ -54,7 +54,7 @@ def open_dat_file(dataset, yr_init, yr_end):
 	lat, lon = [], []
 	for yr in range(yr_init, yr_end+1):
 	
-		data = read_dat_file('{0}/post_cyclone/ECyclone_v2/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
+		data = read_dat_file('{0}/postproc/cyclone/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 		for i, (header, rows) in enumerate(data):
 			lat.append(rows[0][1])
 			lon.append(rows[0][2])
@@ -64,7 +64,7 @@ def open_dat_file(dataset, yr_init, yr_end):
 
 def import_data(param, dataset):
 
-	arq   = '{0}/post_evaluate/obs/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)		
+	arq   = '{0}/postproc/cyclone/{2}/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)		
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]	
@@ -139,7 +139,7 @@ cf = ax3.contourf(lon_, lat_, data_mean-data_mean, levels=level, cmap=matplotlib
 sc = ax3.scatter(lon_wrf415_ls, lat_wrf415_ls, 12, color='blue', edgecolors='black', linewidth=0.5, marker='o') 
 
 # Path out to save figure
-path_out = '{0}/figs/cyclone/paper'.format(path)
+path_out = '{0}/figs/cyclone'.format(path)
 name_out = 'pyplt_maps_tracking_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
