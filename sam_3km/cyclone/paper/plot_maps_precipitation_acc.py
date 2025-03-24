@@ -13,6 +13,7 @@ import xarray as xr
 import matplotlib.colors
 import matplotlib.cm as cm
 import cartopy.crs as ccrs
+import matplotlib.pyplot as plt
 import cartopy.feature as cfeat
 
 from scipy import signal, misc
@@ -116,8 +117,10 @@ def import_data(param, dataset, indices):
 		arq = '{0}/SAM-3km/postproc/cyclone/RegCM5/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)
 	elif dataset == 'WRF415':
 		arq = '{0}/SAM-3km/postproc/cyclone/WRF415/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)
+	elif dataset == 'CMORPH':
+		arq   = '{0}/SAM-3km/postproc/cyclone/CMORPH/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)		
 	else:
-		arq   = '{0}/SAM-3km/postproc/cyclone/ERA5/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)		
+		arq   = '{0}/SAM-3km/postproc/cyclone/ERA5/{1}_SAM-3km_{2}_day_2018-2021_lonlat.nc'.format(path, param, dataset)
 	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
@@ -167,7 +170,7 @@ def import_ws(param, indices):
 	
 	
 # Generate list of daily dates from 2018 to 2021
-daily_dates = generate_daily_dates(datetime(2018, 1, 1), datetime(2021, 12, 31))
+daily_dates = generate_daily_dates(datetime(2018, 1, 1), datetime(2021, 11, 30))
 
 # Import cyclone tracking date 
 dt_era5 = open_dat_file('ERA5')
@@ -184,10 +187,10 @@ wrf415_idx_i = find_indices_in_date_list(daily_dates, wrf415_idx)
 
 # Import model and obs dataset 
 lat_, lon_, inmet_idx_ii = import_ws('pre', era5_idx_i)
-lat, lon, gpm_idx_ii = import_data('tp', 'ERA5', era5_idx_i)
+lat, lon, gpm_idx_ii = import_data('cmorph', 'CMORPH', era5_idx_i)
 lat, lon, era5_idx_ii = import_data('tp', 'ERA5', era5_idx_i)
 lat, lon, regcm5_idx_ii = import_data('pr', 'RegCM5', regcm5_idx_i)
-lat, lon, wrf415_idx_ii = import_data('pr', 'RegCM5', wrf415_idx_i)
+lat, lon, wrf415_idx_ii = import_data('PREC_ACC_NC', 'WRF415', wrf415_idx_i)
 
 # Plot figure
 fig, axes = plt.subplots(2,3, figsize=(14, 6), subplot_kw={"projection": ccrs.PlateCarree()})
@@ -219,7 +222,7 @@ ax2.grid(c='k', ls='--', alpha=0.3)
 ax2.add_feature(cfeat.BORDERS)
 ax2.add_feature(states_provinces, edgecolor='0.25')
 ax2.coastlines()
-ax2.set_title('(b) GPM', loc='left', fontsize=font_size, fontweight='bold')
+ax2.set_title('(b) CMORPH', loc='left', fontsize=font_size, fontweight='bold')
 cf = ax2.contourf(lon, lat, gpm_idx_ii/4, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 

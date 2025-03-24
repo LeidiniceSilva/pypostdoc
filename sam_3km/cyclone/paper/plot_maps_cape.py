@@ -20,7 +20,7 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
-path='/marconi/home/userexternal/mdasilva'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
 
 
 def generate_hourly_dates(start_date, end_date):
@@ -82,7 +82,7 @@ def open_file_dt(dataset):
 	dt_hr = []
 	for yr in range(2018, 2021+1):
 	
-		data = read_dat_file('{0}/user/mdasilva/SAM-3km/post_cyclone/ECv2/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
+		data = read_dat_file('{0}/SAM-3km/postproc/cyclone/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 	
 		for i, (header, rows) in enumerate(data):
 			if (rows[0][2] < str(-56)):
@@ -94,11 +94,11 @@ def open_file_dt(dataset):
 def import_data(param, dataset, indices):
 
 	if dataset == 'RegCM5':
-		arq = '{0}/user/mdasilva/SAM-3km/post_cyclone/regcm5/regcm5/{1}/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
+		arq = '{0}/SAM-3km/postproc/cyclone/RegCM5/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
 	elif dataset == 'WRF415':
-		arq = '{0}/user/mdasilva/SAM-3km/post_cyclone/wrf/wrf/{1}/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
+		arq = '{0}/SAM-3km/postproc/cyclone/WRF415/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
 	else:
-		arq   = '{0}/user/mdasilva/SAM-3km/post_cyclone/era5/era5/{1}_SAM-25km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)		
+		arq   = '{0}/SAM-3km/postproc/cyclone/ERA5/{1}_SAM-25km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)		
 	
 	data = netCDF4.Dataset(arq)
 	var  = data.variables[param][:] 
@@ -109,7 +109,7 @@ def import_data(param, dataset, indices):
 	if dataset == 'RegCM5':
 		mean = np.where(avg < 0, np.nan, avg)
 	elif dataset == 'WRF415':
-		if param == 'AFWA_CAPE_MU':
+		if param == 'CAPE':
 			mean = np.where(avg < 0, 0, avg)
 		else:
 			mean_ = np.where(avg <= -99999., np.nan, avg)
@@ -147,7 +147,7 @@ lat, lon, cape_era5_i, cape_era5_ii, cape_era5_iii = import_data('cape', 'ERA5',
 
 lat, lon, cape_regcm5_i, cape_regcm5_ii, cape_regcm5_iii = import_data('CAPE', 'RegCM5', regcm5_idx)
 
-lat, lon, cape_wrf415_i, cape_wrf415_ii, cape_wrf415_iii = import_data('AFWA_CAPE_MU', 'WRF415', wrf415_idx)
+lat, lon, cape_wrf415_i, cape_wrf415_ii, cape_wrf415_iii = import_data('CAPE', 'WRF415', wrf415_idx)
 
 print(np.nanmin(cape_era5_i), np.nanmax(cape_era5_i))
 
@@ -289,7 +289,7 @@ ax9.clabel(ct9, inline=1, fontsize=8)
 cb = plt.colorbar(cf9, cax=fig.add_axes([0.91, 0.2, 0.015, 0.6]))
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone/paper'.format(path)
+path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
 name_out = 'pyplt_maps_cape_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
