@@ -25,17 +25,13 @@ path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5'
 
 def import_dataset(param, domain, dataset):
 
-	if dataset == 'RegCM5':
-		arq   = '{0}/postproc/rcm/{1}_{2}_{3}_1hr_20000105-20000120_lonlat.nc'.format(path, param, domain, dataset)
-	else:
-		arq   = '{0}/postproc/obs/{1}_{2}_{3}_1hr_20000105-20000120.nc'.format(path, param, domain, dataset)
-
+	arq   = '{0}/postproc/obs/{1}_{2}_{3}_1hr_20000105-20000120.nc'.format(path, param, domain, dataset)
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
-	lat   = data.variables['lat'][:]
-	lon   = data.variables['lon'][:]
+	lat   = data.variables['latitude'][:]
+	lon   = data.variables['longitude'][:]
 	mean = var[:][:,:,:]
-	
+
 	return lat, lon, mean
 
 
@@ -67,8 +63,10 @@ latc = RCMf.latitude_of_projection_origin
 RCMf.close()
 
 # Import model and obs dataset
-#lat_rcm, lon_rcm, rcm_new = import_dataset('pr', 'CSAM-3', 'RegCM5')
+# lat_rcm, lon_rcm, rcm_new = import_dataset('pr', 'CSAM-3', 'RegCM5')
 lat_obs, lon_obs, obs_new = import_dataset('tp', 'CSAM-3', 'ERA5')
+
+print(obs_new.shape)
 
 # Creating mask of the border
 border_mask = np.full((rcm.shape[1], rcm.shape[2]), np.nan)
@@ -89,8 +87,8 @@ for i in range(0, rcm.shape[0]):
 
 	# Plot figure
 	fig, ax = plt.subplots(1, 1, figsize=(10, 8), subplot_kw={'projection': ccrs.PlateCarree()})
-	contour = ax.contourf(lat_obs, lon_obs, obs_new[i], levels=np.arange(0, 5.25, 0.25), cmap=cm.BuPu, extend='max', transform=ccrs.PlateCarree())
-	#contour = ax.contourf(lat_rcm, lon_rcm, rcm_new[i], levels=np.arange(0, 5.25, 0.25), cmap=cm.BuPu, extend='max', transform=ccrs.PlateCarree())
+	contour = ax.contourf(lon_obs, lat_obs, obs_new[i], levels=np.arange(0, 5.25, 0.25), cmap=cm.BuPu, extend='max', transform=ccrs.PlateCarree())
+	contour = ax.contourf(lon, lat, rcm[i], levels=np.arange(0, 6.5, 0.25), cmap=cm.BuPu, extend='max', transform=ccrs.PlateCarree())
 	cbar = fig.colorbar(contour, ax=ax, orientation='vertical', shrink=0.75, pad=0.07)
 
 	ax.contourf(lon, lat, border_mask, levels=[0, 1], cmap='gray')
