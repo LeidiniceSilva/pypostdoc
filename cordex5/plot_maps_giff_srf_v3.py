@@ -20,13 +20,16 @@ from cartopy import config
 from netCDF4 import Dataset as nc
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/rcm'
-domname = 'pr_CSAM-3_RegCM5_1hr'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5'
 
 
-def import_rcm(param):
+def import_dataset(param, domain, dataset):
 
-	arq   = '{0}/pr_CSAM-3_RegCM5_1hr_20000105-20000120_lonlat.nc'.format(path)    
+	if dataset == 'RegCM5':
+		arq   = '{0}/postproc/rcm/{1}_{2}_{3}_1hr_20000105-20000120_lonlat.nc'.format(path, param, domain, dataset)
+	else:
+		arq   = '{0}/postproc/obs/{1}_{2}_{3}_1hr_20000105-20000120.nc'.format(path, param, domain, dataset)
+
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -34,6 +37,7 @@ def import_rcm(param):
 	mean = var[:][:,:,:]
 	
 	return lat, lon, mean
+
 
 def configure_subplot(ax):
 
@@ -53,7 +57,7 @@ def configure_subplot(ax):
 if len(sys.argv) > 1:
     RCMf = nc(sys.argv[1], mode='r')
 else:
-    RCMf = nc(os.path.join(path,domname+'_200001.nc'), mode='r')
+    RCMf = nc(os.path.join('/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/rcm','pr_CSAM-3_RegCM5_1hr_200001.nc'), mode='r')
     
 lat  = RCMf.variables['xlat'][:,:]
 lon  = RCMf.variables['xlon'][:,:]
@@ -63,8 +67,9 @@ latc = RCMf.latitude_of_projection_origin
 RCMf.close()
 
 # Import model and obs dataset
-lat_new, lon_new, rcm_new = import_rcm('pr')
-	
+#lat_rcm, lon_rcm, rcm_new = import_dataset('pr', 'CSAM-3', 'RegCM5')
+lat_obs, lon_obs, obs_new = import_dataset('tp', 'CSAM-3', 'ERA5')
+
 # Creating mask of the border
 border_mask = np.full((rcm.shape[1], rcm.shape[2]), np.nan)
 border_mask[:29, :] = 1
@@ -84,7 +89,8 @@ for i in range(0, rcm.shape[0]):
 
 	# Plot figure
 	fig, ax = plt.subplots(1, 1, figsize=(10, 8), subplot_kw={'projection': ccrs.PlateCarree()})
-	contour = ax.contourf(lon_new, lat_new, rcm_new[i], levels=np.arange(0, 5.25, 0.25), cmap=cm.BuPu, extend='max', transform=ccrs.PlateCarree())
+	contour = ax.contourf(lat_obs, lon_obs, obs_new[i], levels=np.arange(0, 5.25, 0.25), cmap=cm.BuPu, extend='max', transform=ccrs.PlateCarree())
+	#contour = ax.contourf(lat_rcm, lon_rcm, rcm_new[i], levels=np.arange(0, 5.25, 0.25), cmap=cm.BuPu, extend='max', transform=ccrs.PlateCarree())
 	cbar = fig.colorbar(contour, ax=ax, orientation='vertical', shrink=0.75, pad=0.07)
 
 	ax.contourf(lon, lat, border_mask, levels=[0, 1], cmap='gray')
@@ -93,8 +99,8 @@ for i in range(0, rcm.shape[0]):
 	configure_subplot(ax)
 
 	# Path out to save figure
-	path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/giff'
-	name_out = 'pyplt_maps_giff_pr_RegCM5_{0}.png'.format(iso8601_s[i])
+	path_out = '{0}/figs/giff'.format(path)
+	name_out = 'pyplt_maps_giff_pr_RegCM5_ERA5_{0}.png'.format(iso8601_s[i])
 	plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 	plt.close('all')
 	plt.cla()

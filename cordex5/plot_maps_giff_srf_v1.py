@@ -51,17 +51,25 @@ def configure_subplot(ax):
 lat, lon, rcm = import_rcm('pr', 'RegCM5')
 
 # Creating mask of the border
-rcm_ = rcm[30:-30, 30:-30]
 border_mask = np.full((rcm.shape[1], rcm.shape[2]), np.nan)
 border_mask[:29, :] = 1
 border_mask[-29:, :] = 1
 border_mask[:, :29] = 1
 border_mask[:, -29:] = 1
-lon_ = lon[30:-30,30:-30]
-lat_ = lat[30:-30,30:-30]
 
-t1 = pd.to_datetime('2000-01-01 01:00:00')
-t2 = pd.to_datetime('2000-02-01 00:00:00')
+print(border_mask)
+exit()
+
+lat_1d = np.linspace(np.min(lat), np.max(lat), border_mask.shape[0])
+lon_1d = np.linspace(np.min(lon), np.max(lon), border_mask.shape[1])
+lon2d, lat2d = np.meshgrid(lon_1d, lat_1d)
+
+lon_ = lon2d[30:-30,30:-30]
+lat_ = lat2d[30:-30,30:-30]
+
+# Creating datetime
+t1 = pd.to_datetime('2000-01-05 01:00:00')
+t2 = pd.to_datetime('2000-01-20 00:00:00')
 series = pd.date_range(t1,t2,freq='60min')
 iso8601_t = [t.strftime('%Y/%m/%d %H') for t in series]
 iso8601_s = [t.strftime('%Y%m%dT%H') for t in series]
@@ -74,14 +82,17 @@ for i in range(0, rcm.shape[0]):
 	contour = ax.contourf(lon, lat, rcm[i], levels=np.arange(0, 5.25, 0.25), cmap=cm.BuPu, extend='max', transform=ccrs.PlateCarree())
 	cbar = fig.colorbar(contour, ax=ax, orientation='vertical', shrink=0.75, pad=0.07)
 
-	ax.contourf(lon, lat, border_mask, levels=[0, 1], cmap='gray')
+	ax.contourf(lon_, lat_, border_mask, levels=[0, 1], cmap='gray')
+
+	ax.set_title(u'Total precipitation {0} UTC'.format(iso8601_t[i]))
 	configure_subplot(ax)
 
 	# Path out to save figure
-	path_out = '{0}/figs/'.format(path)
-	name_out = 'pyplt_maps_giff_pr_RegCM5_{0}_ttt.png'.format(iso8601_s[i])
+	path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/giff'
+	name_out = 'pyplt_maps_giff_pr_RegCM5_{0}.png'.format(iso8601_s[i])
 	plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 	plt.close('all')
 	plt.cla()
 
 exit()
+

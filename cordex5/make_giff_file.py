@@ -10,7 +10,7 @@ import os
 
 # Define input/output paths
 img_dir = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/giff'
-output_gif = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/animated_pr_RegCM5.gif'
+output_gif = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/animated_pr_RegCM5-ERA5_2000Jan5-20th.gif'
 
 # Get all image file names sorted by timestamp
 images = sorted([img for img in os.listdir(img_dir) if img.endswith('.png')])
