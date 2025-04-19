@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 import cartopy.feature as cfeature
 import cartopy.mpl.ticker as cticker
 
+from matplotlib.colors import ListedColormap, BoundaryNorm
+
 # Load environment variables
 fname = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/ERA5/icbc/CSAM-3_CLM45_surface.nc"
 snum = os.getenv("snum")
@@ -49,7 +51,6 @@ else:
 
 # Create urban mask
 urb_mask = np.where(urb_frac > this_frac, 1, 0)
-urb_mask = np.where(np.isnan(urb_frac), np.nan, urb_mask)
 
 # Plot both subplots in one figure
 fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(12, 6), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -79,9 +80,13 @@ ax.add_feature(cfeature.COASTLINE, edgecolor='black')
 ax.add_feature(cfeature.BORDERS, linestyle=':')
 ax.set_title(f"(b) Urban Mask (frac > {this_frac})", loc='left', fontsize=font_size, fontweight='bold')
 ax.text(-38, -38, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
-im = ax.contourf(lon, lat, urb_mask, levels=[0, 0.5, 1], cmap="Reds", transform=ccrs.PlateCarree())
-cbar = plt.colorbar(im, ax=ax, orientation='horizontal')
-cbar.set_label('%')
+
+colors = ["white", "red"]
+cmap = ListedColormap(colors)
+norm = BoundaryNorm([0, 0.7, 1], cmap.N)
+
+im = ax.contourf(lon, lat, urb_mask, levels=[0, 0.7, 1], cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
+cbar = plt.colorbar(im, ax=ax, orientation='horizontal', ticks=[0, 0.7, 1])
 
 gl = ax.gridlines(draw_labels=True, linestyle="-")
 gl.top_labels = False
@@ -93,5 +98,6 @@ gl.yformatter = cticker.LatitudeFormatter()
 plt.tight_layout()
 os.makedirs(outp, exist_ok=True)
 plt.savefig(os.path.join(outp, "pyplt_maps_urban_mask_RegCM5_CSAM-3_2000-2009.png"), dpi=400, bbox_inches='tight')
-plt.close()
+plt.show()
+exit()
 
