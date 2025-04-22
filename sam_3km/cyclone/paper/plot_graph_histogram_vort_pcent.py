@@ -84,7 +84,7 @@ ax1.set_ylabel('Frequency', fontsize=font_size, fontweight='bold')
 ax1.set_ylim(0, 20)
 ax1.axvspan(-1, -1.5, color='k', alpha=0.1)
 ax1.grid(axis='y', c='k', ls='--', alpha=0.3)
-ax1.legend(fontsize=font_size, ncol=3, loc=2, shadow=True)
+ax1.legend(fontsize=font_size, ncol=3, loc=9, shadow=True)
 
 ax2.hist([list_era5_ii, list_regcm5_ii, list_wrf415_ii], bins=10, color=['black', 'blue', 'red'], alpha=0.75, edgecolor='black', linewidth=1., label=['ERA5', 'RegCM5', 'WRF415'])
 ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')

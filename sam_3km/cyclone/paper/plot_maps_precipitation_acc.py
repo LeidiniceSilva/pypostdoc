@@ -162,15 +162,28 @@ def import_ws(param, indices):
 			var_i.append(var_[idx_i])
 				
 		acc = np.sum(var_i, axis=0)
-		acc_ = acc /4
-		
-		mean.append(acc_)
+		mean.append(acc)
 		
 	return yy, xx, mean
 	
-	
+
+def configure_subplot(ax):
+
+	states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
+
+	ax.set_extent([-76, -38.5, -34.5, -15], crs=ccrs.PlateCarree())
+	ax.set_xticks(np.arange(-76,-38.5,5), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(-34.5,-15,5), crs=ccrs.PlateCarree())
+	ax.xaxis.set_major_formatter(LongitudeFormatter())
+	ax.yaxis.set_major_formatter(LatitudeFormatter())
+	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.add_feature(cfeat.BORDERS)
+	ax.add_feature(states_provinces, edgecolor='0.25')
+	ax.coastlines()	
+
+
 # Generate list of daily dates from 2018 to 2021
-daily_dates = generate_daily_dates(datetime(2018, 1, 1), datetime(2021, 11, 30))
+daily_dates = generate_daily_dates(datetime(2018, 1, 1), datetime(2021, 12, 31))
 
 # Import cyclone tracking date 
 dt_era5 = open_dat_file('ERA5')
@@ -199,69 +212,34 @@ fig.delaxes(ax6)
 
 states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 color = ['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
-level = np.arange(0,290,10)
+level = np.arange(0,600,20)
 
-ax1.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
-ax1.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
-ax1.xaxis.set_major_formatter(LongitudeFormatter())
-ax1.yaxis.set_major_formatter(LatitudeFormatter())
-ax1.grid(c='k', ls='--', alpha=0.3)
-ax1.add_feature(cfeat.BORDERS)
-ax1.add_feature(states_provinces, edgecolor='0.25')
-ax1.coastlines()
-ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
+sc1 = ax1.scatter(lon_, lat_, 12, inmet_idx_ii, cmap=matplotlib.colors.ListedColormap(color), edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=500) 
 ax1.set_title('(a) INMET', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax1.contourf(lon, lat, gpm_idx_ii-gpm_idx_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
-sc = ax1.scatter(lon_, lat_, 12, inmet_idx_ii, cmap=matplotlib.colors.ListedColormap(color), edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=300) 
+ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
+configure_subplot(ax1)
 
-ax2.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
-ax2.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
-ax2.xaxis.set_major_formatter(LongitudeFormatter())
-ax2.yaxis.set_major_formatter(LatitudeFormatter())
-ax2.grid(c='k', ls='--', alpha=0.3)
-ax2.add_feature(cfeat.BORDERS)
-ax2.add_feature(states_provinces, edgecolor='0.25')
-ax2.coastlines()
+cf2 = ax2.contourf(lon, lat, gpm_idx_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 ax2.set_title('(b) CMORPH', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax2.contourf(lon, lat, gpm_idx_ii/4, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
-cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
+configure_subplot(ax2)
 
-ax3.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
-ax3.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
-ax3.xaxis.set_major_formatter(LongitudeFormatter())
-ax3.yaxis.set_major_formatter(LatitudeFormatter())
-ax3.grid(c='k', ls='--', alpha=0.3)
-ax3.add_feature(cfeat.BORDERS)
-ax3.add_feature(states_provinces, edgecolor='0.25')
-ax3.coastlines()
+cf3 = ax3.contourf(lon, lat, era5_idx_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 ax3.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax3.set_title('(c) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax3.contourf(lon, lat, era5_idx_ii/4, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+configure_subplot(ax3)
 
-ax4.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
-ax4.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
-ax4.xaxis.set_major_formatter(LongitudeFormatter())
-ax4.yaxis.set_major_formatter(LatitudeFormatter())
-ax4.grid(c='k', ls='--', alpha=0.3)
-ax4.add_feature(cfeat.BORDERS)
-ax4.add_feature(states_provinces, edgecolor='0.25')
-ax4.coastlines()
+cf4 = ax4.contourf(lon, lat, regcm5_idx_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+ax4.set_title('(d) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax4.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax4.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
-ax4.set_title('(d) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax4.contourf(lon, lat, regcm5_idx_ii/4, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+configure_subplot(ax4)
 
-ax5.set_xticks(np.arange(-76,38.5,7), crs=ccrs.PlateCarree())
-ax5.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
-ax5.xaxis.set_major_formatter(LongitudeFormatter())
-ax5.yaxis.set_major_formatter(LatitudeFormatter())
-ax5.grid(c='k', ls='--', alpha=0.3)
-ax5.add_feature(cfeat.BORDERS)
-ax5.add_feature(states_provinces, edgecolor='0.25')
-ax5.coastlines()
-ax5.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
+cf5 = ax5.contourf(lon, lat, wrf415_idx_ii/12, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 ax5.set_title('(e) WRF415', loc='left', fontsize=font_size, fontweight='bold')
-cf = ax5.contourf(lon, lat, wrf415_idx_ii/12, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+ax5.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
+configure_subplot(ax5)
+
+cb = plt.colorbar(cf2, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 
 # Path out to save figure
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)

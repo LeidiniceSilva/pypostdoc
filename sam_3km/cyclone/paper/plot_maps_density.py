@@ -19,13 +19,12 @@ from scipy import signal, misc
 from matplotlib.patches import Rectangle
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-font_size = 10
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km'
 
 
 def import_dataset(dataset):
 
-	df = pd.read_csv('{0}/postproc/cyclone/{1}/track/genesis_density_{1}.txt'.format(path, dataset), sep="\s+", engine='python')
+	df = pd.read_csv('{0}/postproc/cyclone/{1}/genesis_density_{1}.txt'.format(path, dataset), sep="\s+", engine='python')
 	df.columns = df.columns.str.strip()
 	if 'data' not in df.columns:
 		raise KeyError("Column 'data' not found in the dataset.")
@@ -80,6 +79,21 @@ def density_ciclones(df):
 	return den
 
 
+def configure_subplot(ax):
+
+	states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
+
+	ax.set_extent([-76, -38.5, -34.5, -15], crs=ccrs.PlateCarree())
+	ax.set_xticks(np.arange(-76,-38.5,5), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(-34.5,-15,5), crs=ccrs.PlateCarree())
+	ax.xaxis.set_major_formatter(LongitudeFormatter())
+	ax.yaxis.set_major_formatter(LatitudeFormatter())
+	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.add_feature(cfeat.BORDERS)
+	ax.add_feature(states_provinces, edgecolor='0.25')
+	ax.coastlines()
+
+
 # Import model and obs dataset    
 era5_dateset = import_dataset('ERA5')
 regcm5_dateset = import_dataset('RegCM5')
@@ -94,54 +108,30 @@ fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.Pl
 (ax1, ax2), (ax3, ax4) = axes
 fig.delaxes(ax4)
 
-states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
-
+font_size = 10
 colorb = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
 levels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
 
-ax1.coastlines()
-ax1.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
-ax1.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
-ax1.xaxis.set_major_formatter(LongitudeFormatter())
-ax1.yaxis.set_major_formatter(LatitudeFormatter())
-ax1.grid(c='k', ls='--', alpha=0.3)
-ax1.add_feature(cfeat.BORDERS)
-ax1.add_feature(states_provinces, edgecolor='0.25')
-ax1.coastlines()
+cf1 = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
-cf = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
 ax1.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
+configure_subplot(ax1)
 
-ax2.coastlines()
-ax2.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
-ax2.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
-ax2.xaxis.set_major_formatter(LongitudeFormatter())
-ax2.yaxis.set_major_formatter(LatitudeFormatter())
-ax2.grid(c='k', ls='--', alpha=0.3)
-ax2.add_feature(cfeat.BORDERS)
-ax2.add_feature(states_provinces, edgecolor='0.25')
-ax2.coastlines()
+cf2 = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
 ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
-cf = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
-cb = plt.colorbar(cf, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 ax2.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
+configure_subplot(ax2)
 
-ax3.coastlines()
-ax3.set_xticks(np.arange(-76,38.5,5), crs=ccrs.PlateCarree())
-ax3.set_yticks(np.arange(-34.5,15,5), crs=ccrs.PlateCarree())
-ax3.xaxis.set_major_formatter(LongitudeFormatter())
-ax3.yaxis.set_major_formatter(LatitudeFormatter())
-ax3.grid(c='k', ls='--', alpha=0.3)
-ax3.add_feature(cfeat.BORDERS)
-ax3.add_feature(states_provinces, edgecolor='0.25')
-ax3.coastlines()
+cf3 = ax3.contourf(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
 ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 ax3.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
-cf = ax3.contourf(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
 ax3.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
+configure_subplot(ax3)
+
+cb = plt.colorbar(cf2, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 
 # Path out to save figure
 path_out = '{0}/figs/cyclone'.format(path)
