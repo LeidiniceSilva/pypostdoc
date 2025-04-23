@@ -20,7 +20,8 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
-path='/marconi/home/userexternal/mdasilva'
+font_size = 10
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
 
 
 def generate_hourly_dates(start_date, end_date):
