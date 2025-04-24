@@ -181,7 +181,6 @@ uv10_wrf415_iii = np.sqrt(u10_wrf415_iii**2 + v10_wrf415_iii**2)
 fig, axes = plt.subplots(3,3, figsize=(14, 9), subplot_kw={"projection": ccrs.PlateCarree()})
 (ax1, ax2, ax3), (ax4, ax5, ax6), (ax7, ax8, ax9) = axes
 
-states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 level = np.arange(0,10.25,0.25)
 
 cf1 = ax1.contourf(lon, lat, uv10_era5_i, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap='jet')
@@ -245,6 +244,8 @@ ax9.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax9)
 
 cb = plt.colorbar(cf3, cax=fig.add_axes([0.91, 0.2, 0.015, 0.6]))
+cb.set_label('Wind speed (m s$^-$$^1$)', fontsize=font_size, fontweight='bold')
+cb.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)

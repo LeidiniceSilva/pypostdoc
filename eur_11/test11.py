@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 var = 'pr'
 freq = 'day'
 domain = 'EUR-11'
-dt = '1970-1973'
+dt = '1970-1970'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 
@@ -91,7 +91,7 @@ plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
 # Path out to save figure
 path_out = '{0}/figs'.format(path)
-name_out = 'pyplt_graph_pdf_{0}_{1}_RegCM5_{2}_{3}_v2.png'.format(var, domain, freq, dt)
+name_out = 'pyplt_graph_pdf_{0}_{1}_RegCM5_{2}_{3}_v1-v2.png'.format(var, domain, freq, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

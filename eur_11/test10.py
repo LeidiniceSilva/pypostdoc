@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 var = 'pr'
 domain = 'EUR-11'
-dt = '1970-1973'
+dt = '1970-1970'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 
@@ -78,7 +78,7 @@ plt.plot(time, wsm7, label='WSM7', color='magenta', linewidth=1., marker='.', li
 plt.plot(time, wsm5, label='WSM5', color='red', linewidth=1., marker='.', linestyle='-')
 
 plt.title('(a)', loc='left', fontsize=font_size, fontweight='bold') 
-plt.xlabel('Months (1970-1973)', fontsize=font_size, fontweight='bold')
+plt.xlabel('Months', fontsize=font_size, fontweight='bold')
 plt.ylabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.xlim(0, 13)
 plt.ylim(0, 8)
@@ -89,7 +89,7 @@ plt.legend(loc=2, ncol=6, fontsize=font_size, shadow=True)
 
 # Path out to save figure
 path_out = '{0}/figs'.format(path)
-name_out = 'pyplt_graph_annual_cycle_{0}_{1}_RegCM5_{2}_v2.png'.format(var, domain, dt)
+name_out = 'pyplt_graph_annual_cycle_{0}_{1}_RegCM5_{2}_v1-v2.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

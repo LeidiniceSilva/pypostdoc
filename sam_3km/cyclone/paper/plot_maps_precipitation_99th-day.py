@@ -211,7 +211,6 @@ fig, axes = plt.subplots(2,3, figsize=(14, 6), subplot_kw={"projection": ccrs.Pl
 (ax1, ax2, ax3), (ax4, ax5, ax6) = axes
 fig.delaxes(ax6)
 
-states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 color = ['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
 level = np.arange(0,180,10)
 

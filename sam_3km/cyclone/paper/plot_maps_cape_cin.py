@@ -8,6 +8,7 @@ __description__ = "This script plot composites"
 import os
 import netCDF4
 import warnings
+import argparse
 import numpy as np
 import xarray as xr
 import pandas as pd
@@ -20,7 +21,11 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
-variable = 'cape'
+parser = argparse.ArgumentParser(description='Plot composites for given variable')
+parser.add_argument('--variable', type=str, required=True, choices=['cape', 'cin'], help='Plot: cape or cin')
+args = parser.parse_args()
+variable = args.variable
+
 font_size = 10
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
 
@@ -100,7 +105,7 @@ def import_data(param, dataset, indices):
 	elif dataset == 'WRF415':
 		arq = '{0}/SAM-3km/postproc/cyclone/WRF415/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
 	else:
-		arq   = '{0}/SAM-3km/postproc/cyclone/ERA5/{1}_SAM-25km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)		
+		arq   = '{0}/SAM-3km/postproc/cyclone/ERA5/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)		
 	
 	data = netCDF4.Dataset(arq)
 	var  = data.variables[param][:] 
@@ -114,8 +119,7 @@ def import_data(param, dataset, indices):
 		if param == 'CAPE':
 			mean = np.where(avg < 0, 0, avg)
 		else:
-			mean_ = np.where(avg <= -99999., np.nan, avg)
-			mean = mean_ * -1.0
+			mean = np.where(avg <= -99999., np.nan, avg)
 	else:
 		mean = np.where(avg < 0, np.nan, avg)
 		
@@ -130,7 +134,22 @@ def import_data(param, dataset, indices):
 	mean_iii = np.nanmean(var_iii, axis=0)
 		
 	return lat, lon, mean_i, mean_ii, mean_iii
-	
+
+
+def configure_subplot(ax):
+
+	states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
+
+	ax.set_extent([-76, -38.5, -34.5, -15], crs=ccrs.PlateCarree())
+	ax.set_xticks(np.arange(-76,-38.5,5), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(-34.5,-15,5), crs=ccrs.PlateCarree())
+	ax.xaxis.set_major_formatter(LongitudeFormatter())
+	ax.yaxis.set_major_formatter(LatitudeFormatter())
+	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.add_feature(cfeat.BORDERS)
+	ax.add_feature(states_provinces, edgecolor='0.25')
+	ax.coastlines()	
+
 	
 # Generate list of dates from 2018 to 2021
 hourly_dates = generate_hourly_dates(datetime(2018, 1, 1, 0), datetime(2021, 12, 31, 23))
@@ -148,14 +167,12 @@ wrf415_idx = find_indices_in_date_list(hourly_dates, dt_wrf415)
 dict_var = {'cape': ['cape', 'cape', 'AFWA_CAPE_MU'],
 'cin': ['cin', 'cin', 'AFWA_CIN_MU']}
 
-lat, lon, var_era5_i, var_era5_ii, var_era5_iii = import_data(dict_var[var][0], 'ERA5', era5_idx)
-lat, lon, var_regcm5_i, var_regcm5_ii, var_regcm5_iii = import_data(dict_var[var][1], 'RegCM5', regcm5_idx)
-lat, lon, cape_wrf415_i, var_wrf415_ii, var_wrf415_iii = import_data(dict_var[var][2], 'WRF415', wrf415_idx)
+lat, lon, var_era5_i, var_era5_ii, var_era5_iii = import_data(dict_var[variable][0], 'ERA5', era5_idx)
+lat, lon, var_regcm5_i, var_regcm5_ii, var_regcm5_iii = import_data(dict_var[variable][1], 'RegCM5', regcm5_idx)
+lat, lon, var_wrf415_i, var_wrf415_ii, var_wrf415_iii = import_data(dict_var[variable][2], 'WRF415', wrf415_idx)
 
 print(np.nanmin(var_era5_i), np.nanmax(var_era5_i))
-
 print(np.nanmin(var_regcm5_i), np.nanmax(var_regcm5_i))
-
 print(np.nanmin(var_wrf415_i), np.nanmax(var_wrf415_i))
 
 # Plot figure
@@ -165,9 +182,11 @@ fig, axes = plt.subplots(3,3, figsize=(14, 9), subplot_kw={"projection": ccrs.Pl
 states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 
 if variable == 'cape':
+	legend = 'CAPE (J Kg$^-$$^1$)'
 	level = np.arange(0,1150,50)
 	cmap_color = 'Greens'
 else:
+	legend = 'CIN (J Kg$^-$$^1$)'
 	level = np.arange(0,1050,50)
 	cmap_color = 'Reds'
 
@@ -232,6 +251,8 @@ ax9.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax9)
 
 cb = plt.colorbar(cf3, cax=fig.add_axes([0.91, 0.2, 0.015, 0.6]))
+cb.set_label('{0}'.format(legend), fontsize=font_size, fontweight='bold')
+cb.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)

@@ -145,12 +145,13 @@ def import_ws(param, indices):
 
 		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_br/inmet_nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
 		data = arq[param]
-		time = data.isel(time=slice(None,None, 6))
+		time = data.sel(time=slice('2018-01-01','2021-12-31'))
 		var  = time.values
+		var_ = var[::6]
 
 		var_i = []
 		for idx_i in indices:
-			var_i.append(var[idx_i])
+			var_i.append(var_[idx_i])
 				
 		mean_99.append(np.percentile(var_i, 99, axis=0))
 		
@@ -196,11 +197,10 @@ fig, axes = plt.subplots(2,3, figsize=(14, 6), subplot_kw={"projection": ccrs.Pl
 (ax1, ax2, ax3), (ax4, ax5, ax6) = axes
 fig.delaxes(ax6)
 
-states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 color = ['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
 level = np.arange(0,17.5,0.5)
 
-sc1 = ax1.scatter(lon_, lat_, 12, inmet_idx_99, cmap=matplotlib.colors.ListedColormap(color), edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=18) 
+sc1 = ax1.scatter(lon_, lat_, 12, inmet_idx_99, cmap=matplotlib.colors.ListedColormap(color), edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=16) 
 ax1.set_title('(a) INMET', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)

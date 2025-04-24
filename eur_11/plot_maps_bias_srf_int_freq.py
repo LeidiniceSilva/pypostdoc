@@ -20,8 +20,8 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
 var = 'pr'
-stats = 'int'
-dt = '1970-1973'
+stats = 'freq'
+dt = '1970-1970'
 domain = 'EUR-11'
 dataset = 'EOBS'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
@@ -72,10 +72,10 @@ lat, lon, obs_mam = import_obs(dict_var[var][1], dataset, 'MAM')
 lat, lon, obs_jja = import_obs(dict_var[var][1], dataset, 'JJA')
 lat, lon, obs_son = import_obs(dict_var[var][1], dataset, 'SON')
 
-lat, lon, noto_djf = import_rcm(var, 'NoTo-Europe_cordex5_RegCM5', 'DJF')
-lat, lon, noto_mam = import_rcm(var, 'NoTo-Europe_cordex5_RegCM5', 'MAM')
-lat, lon, noto_jja = import_rcm(var, 'NoTo-Europe_cordex5_RegCM5', 'JJA')
-lat, lon, noto_son = import_rcm(var, 'NoTo-Europe_cordex5_RegCM5', 'SON')
+lat, lon, noto_djf = import_rcm(var, 'NoTo-Europe_RegCM5', 'DJF')
+lat, lon, noto_mam = import_rcm(var, 'NoTo-Europe_RegCM5', 'MAM')
+lat, lon, noto_jja = import_rcm(var, 'NoTo-Europe_RegCM5', 'JJA')
+lat, lon, noto_son = import_rcm(var, 'NoTo-Europe_RegCM5', 'SON')
 
 lat, lon, wdm7_djf = import_rcm(var, 'WDM7-Europe_RegCM5', 'DJF')
 lat, lon, wdm7_mam = import_rcm(var, 'WDM7-Europe_RegCM5', 'MAM')
@@ -155,7 +155,7 @@ cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
 path_out = '{0}/figs'.format(path)
-name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_{3}_v2.png'.format(var, stats, domain, dt)
+name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_{3}_v1.png'.format(var, stats, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
