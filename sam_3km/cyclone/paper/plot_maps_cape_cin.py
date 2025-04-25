@@ -114,12 +114,16 @@ def import_data(param, dataset, indices):
 	avg  = var[:][:,:,:]
 	
 	if dataset == 'RegCM5':
-		mean = np.where(avg < 0, np.nan, avg)
-	elif dataset == 'WRF415':
-		if param == 'CAPE':
-			mean = np.where(avg < 0, 0, avg)
+		if param == 'cape':
+			mean = np.where(avg >= 1.e+20, np.nan, avg)
 		else:
+			mean = np.where(avg >= 1.e+20, np.nan, avg)
+	elif dataset == 'WRF415':
+		if param == 'AFWA_CAPE_MU':
 			mean = np.where(avg <= -99999., np.nan, avg)
+		else:
+			mean_ = np.where(avg <= -99999., np.nan, avg)
+			mean = mean_ * -1.0
 	else:
 		mean = np.where(avg < 0, np.nan, avg)
 		
@@ -179,72 +183,70 @@ print(np.nanmin(var_wrf415_i), np.nanmax(var_wrf415_i))
 fig, axes = plt.subplots(3,3, figsize=(14, 9), subplot_kw={"projection": ccrs.PlateCarree()})
 (ax1, ax2, ax3), (ax4, ax5, ax6), (ax7, ax8, ax9) = axes
 
-states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
-
 if variable == 'cape':
 	legend = 'CAPE (J Kg$^-$$^1$)'
-	level = np.arange(0,1150,50)
-	cmap_color = 'Greens'
+	level = np.arange(0,1350,50)
+	cmap_color = 'gist_ncar_r'
 else:
 	legend = 'CIN (J Kg$^-$$^1$)'
-	level = np.arange(0,1050,50)
-	cmap_color = 'Reds'
+	level = np.arange(0,675,25)
+	cmap_color = 'twilight'
 
+cf1 = ax1.contourf(lon, lat, var_era5_i, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)
+ct1 = ax1.contour(lon, lat, var_era5_i, levels=3, colors='black', linewidths=0.50)
+ax1.clabel(ct1, inline=1, fontsize=8)
 ax1.set_title('(a) ERA5 (-24hr)', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
-cf1 = ax1.contourf(lon, lat, var_era5_i, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)
-ct1 = ax1.contour(lon, lat, var_era5_i, levels=10, colors='black', linewidths=0.50)
-ax1.clabel(ct1, inline=1, fontsize=8)
 configure_subplot(ax1)
 
 cf2 = ax2.contourf(lon, lat, var_regcm5_i, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)
-ct2 = ax2.contour(lon, lat, var_regcm5_i, levels=10, colors='black', linewidths=0.50)
+ct2 = ax2.contour(lon, lat, var_regcm5_i, levels=3, colors='black', linewidths=0.50)
 ax2.clabel(ct2, inline=1, fontsize=8)
 ax2.set_title('(b) RegCM5 (-24hr)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
 ax3.set_title('(c) WRF415 (-24hr)', loc='left', fontsize=font_size, fontweight='bold')
 cf3 = ax3.contourf(lon, lat, var_wrf415_i, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)
-ct3 = ax3.contour(lon, lat, var_wrf415_i, levels=10, colors='black', linewidths=0.50)
+ct3 = ax3.contour(lon, lat, var_wrf415_i, levels=3, colors='black', linewidths=0.50)
 ax3.clabel(ct3, inline=1, fontsize=8)
 configure_subplot(ax3)
 
 cf4 = ax4.contourf(lon, lat, var_era5_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)
-ct4 = ax4.contour(lon, lat, var_era5_ii, levels=10, colors='black', linewidths=0.50)
+ct4 = ax4.contour(lon, lat, var_era5_ii, levels=3, colors='black', linewidths=0.50)
 ax4.clabel(ct4, inline=1, fontsize=8)
 ax4.set_title('(d) ERA5 (cyclogenesis)', loc='left', fontsize=font_size, fontweight='bold')
 ax4.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax4)
 
 cf5 = ax5.contourf(lon, lat, var_regcm5_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)
-ct5 = ax5.contour(lon, lat, var_regcm5_ii, levels=10, colors='black', linewidths=0.50)
+ct5 = ax5.contour(lon, lat, var_regcm5_ii, levels=3, colors='black', linewidths=0.50)
 ax5.clabel(ct5, inline=1, fontsize=8)
 ax5.set_title('(e) RegCM5 (cyclogenesis)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax5)
 
 cf6 = ax6.contourf(lon, lat, var_wrf415_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)
-ct6 = ax6.contour(lon, lat, var_wrf415_ii, levels=10, colors='black', linewidths=0.50)
+ct6 = ax6.contour(lon, lat, var_wrf415_ii, levels=3, colors='black', linewidths=0.50)
 ax6.clabel(ct6, inline=1, fontsize=8)
 ax6.set_title('(f) WRF415 (cyclogenesis)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax6)
 
 cf7 = ax7.contourf(lon, lat, var_era5_iii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)
-ct7 = ax7.contour(lon, lat, var_era5_iii, levels=10, colors='black', linewidths=0.50)
+ct7 = ax7.contour(lon, lat, var_era5_iii, levels=3, colors='black', linewidths=0.50)
 ax7.clabel(ct7, inline=1, fontsize=8)
 ax7.set_title('(g) ERA5 (+24hr)', loc='left', fontsize=font_size, fontweight='bold')
 ax7.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax7.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax7)
 
-cf8 = ax8.contourf(lon, lat, var_regcm5_iii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap='Greens')
-ct8 = ax8.contour(lon, lat, var_regcm5_iii, levels=10, colors='black', linewidths=0.50)
+cf8 = ax8.contourf(lon, lat, var_regcm5_iii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)
+ct8 = ax8.contour(lon, lat, var_regcm5_iii, levels=3, colors='black', linewidths=0.50)
 ax8.clabel(ct8, inline=1, fontsize=8)
 ax8.set_title('(h) RegCM5 (+24hr)', loc='left', fontsize=font_size, fontweight='bold')
 ax8.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax8)
 
 cf9 = ax9.contourf(lon, lat, var_wrf415_iii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)
-ct9 = ax9.contour(lon, lat, var_wrf415_iii, levels=10, colors='black', linewidths=0.50)
+ct9 = ax9.contour(lon, lat, var_wrf415_iii, levels=3, colors='black', linewidths=0.50)
 ax9.clabel(ct9, inline=1, fontsize=8)
 ax9.set_title('(i) WRF415 (+24hr)', loc='left', fontsize=font_size, fontweight='bold')
 ax9.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
@@ -258,5 +260,4 @@ cb.ax.tick_params(labelsize=font_size)
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
 name_out = 'pyplt_maps_{0}_CP-RCM_SAM-3km_2018-2021.png'.format(variable)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()

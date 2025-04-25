@@ -133,13 +133,13 @@ def import_data_hr(param, dataset, indices):
 			continue
 
 		if dataset == 'RegCM5':
-			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/RegCM5/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/RegCM5/'.format(path) + '{0}_SAM-3km_{1}_6hr_2018-2021_lonlat.nc'.format(param, dataset))
 		elif dataset == 'WRF415':
-			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/WRF415/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/WRF415/'.format(path) + '{0}_SAM-3km_{1}_6hr_2018-2021_lonlat.nc'.format(param, dataset))
 		elif dataset == 'CMORPH':
-			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/CMORPH/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/CMORPH/'.format(path) + '{0}_SAM-3km_{1}_6hr_2018-2021_lonlat.nc'.format(param, dataset))
 		else:
-			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/ERA5/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/ERA5/'.format(path) + '{0}_SAM-3km_{1}_6hr_2018-2021_lonlat.nc'.format(param, dataset))
 		
 		data   = arq[param]
 		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
@@ -169,13 +169,13 @@ def import_data_day(param, dataset, indices):
 			continue
 		
 		if dataset == 'RegCM5':
-			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/RegCM5/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/RegCM5/'.format(path) + '{0}_SAM-3km_{1}_day_2018-2021_lonlat.nc'.format(param, dataset))
 		elif dataset == 'WRF415':
-			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/WRF415/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/WRF415/'.format(path) + '{0}_SAM-3km_{1}_day_2018-2021_lonlat.nc'.format(param, dataset))
 		elif dataset == 'CMORPH':
-			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/CMORPH/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/CMORPH/'.format(path) + '{0}_SAM-3km_{1}_day_2018-2021_lonlat.nc'.format(param, dataset))
 		else:
-			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/ERA5/'.format(path) + '{0}_SAM-3km_{1}_1hr_2018-2021_lonlat.nc'.format(param, dataset))
+			arq = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/ERA5/'.format(path) + '{0}_SAM-3km_{1}_day_2018-2021_lonlat.nc'.format(param, dataset))
 		
 		data   = arq[param]
 		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
@@ -267,48 +267,60 @@ era5_idx_hr_i = find_indices_in_date_list(hourly_dates, dt_era5_hr)
 regcm5_idx_hr_i = find_indices_in_date_list(hourly_dates, dt_regcm5_hr)
 wrf415_idx_hr_i = find_indices_in_date_list(hourly_dates, dt_wrf415_hr)
 
+print("date")
+
 era5_idx_day_i = find_indices_in_date_list(daily_dates, era5_idx_day)
 regcm5_idx_day_i = find_indices_in_date_list(daily_dates, regcm5_idx_day)
 wrf415_idx_day_i = find_indices_in_date_list(daily_dates, wrf415_idx_day)
 
-# Import model and obs dataset 
-pr_inmet_hr  = import_ws_hr('pre', era5_idx_hr_i)
-pr_cmorph_hr = import_data_hr('cmorph', 'CMORPH', era5_idx_hr_i)
-pr_era5_hr   = import_data_hr('tp', 'ERA5', era5_idx_hr_i)
-pr_regcm5_hr = import_data_hr('pr', 'RegCM5', regcm5_idx_hr_i)
-pr_wrf415_hr = import_data_hr('PREC_ACC_NC', 'WRF415', wrf415_idx_hr_i)
+print("day")
 
+# Import model and obs dataset 
 pr_inmet_day  = import_ws_day('pre', era5_idx_day_i)
 pr_cmorph_day = import_data_day('cmorph', 'CMORPH', era5_idx_day_i)
 pr_era5_day   = import_data_day('tp', 'ERA5', era5_idx_day_i)
 pr_regcm5_day = import_data_day('pr', 'RegCM5', regcm5_idx_day_i)
 pr_wrf415_day = import_data_day('PREC_ACC_NC', 'WRF415', wrf415_idx_day_i)
 
-# Import pdf function
-x_pdf_inmet_hr, pdf_inmet_hr = comp_pdf(pr_inmet_hr)
-x_pdf_cmorph_hr, pdf_gpm_hr = comp_pdf(pr_gpm_hr)
-x_pdf_era5_hr, pdf_era5_hr = comp_pdf(pr_era5_hr)
-x_pdf_regcm5_hr, pdf_regcm5_hr = comp_pdf(pr_regcm5_hr)
-x_pdf_wrf415_hr, pdf_wrf415_hr = comp_pdf(pr_wrf415_hr)
+print("hour")
 
+pr_inmet_hr  = import_ws_hr('pre', era5_idx_hr_i)
+pr_cmorph_hr = import_data_hr('cmorph', 'CMORPH', era5_idx_hr_i)
+pr_era5_hr   = import_data_hr('tp', 'ERA5', era5_idx_hr_i)
+pr_regcm5_hr = import_data_hr('pr', 'RegCM5', regcm5_idx_hr_i)
+pr_wrf415_hr = import_data_hr('PREC_ACC_NC', 'WRF415', wrf415_idx_hr_i)
+
+print("pdf")
+
+# Import pdf function
 x_pdf_inmet_day, pdf_inmet_day = comp_pdf(pr_inmet_day)
-x_pdf_cmorph_day, pdf_gpm_day = comp_pdf(pr_gpm_day)
+x_pdf_cmorph_day, pdf_cmorph_day = comp_pdf(pr_gpm_day)
 x_pdf_era5_day, pdf_era5_day = comp_pdf(pr_era5_day)
 x_pdf_regcm5_day, pdf_regcm5_day = comp_pdf(pr_regcm5_day)
 x_pdf_wrf415_day, pdf_wrf415_day = comp_pdf(pr_wrf415_day)
 
+x_pdf_inmet_hr, pdf_inmet_hr = comp_pdf(pr_inmet_hr)
+x_pdf_cmorph_hr, pdf_cmorph_hr = comp_pdf(pr_gpm_hr)
+x_pdf_era5_hr, pdf_era5_hr = comp_pdf(pr_era5_hr)
+x_pdf_regcm5_hr, pdf_regcm5_hr = comp_pdf(pr_regcm5_hr)
+x_pdf_wrf415_hr, pdf_wrf415_hr = comp_pdf(pr_wrf415_hr)
+
+print("here")
+
 # Compute 99.9th percentile
+p99_inmet_day = np.nanpercentile(pr_inmet_day, 99.0)
+p99_cmorph_day = np.nanpercentile(pr_cmorph_day, 99.0)
+p99_era5_day = np.nanpercentile(pr_era5_day, 99.0)
+p99_regcm5_day = np.nanpercentile(pr_regcm5_day, 99.0)
+p99_wrf415_day = np.nanpercentile(pr_wrf415_day, 99.0)
+
 p99_inmet_hr = np.nanpercentile(pr_inmet_hr, 99.0)
-p99_gpm_hr = np.nanpercentile(pr_cmorph_hr, 99.0)
+p99_cmorph_hr = np.nanpercentile(pr_cmorph_hr, 99.0)
 p99_era5_hr = np.nanpercentile(pr_era5_hr, 99.0)
 p99_regcm5_hr = np.nanpercentile(pr_regcm5_hr, 99.0)
 p99_wrf415_hr = np.nanpercentile(pr_wrf415_hr, 99.0)
 
-p99_inmet_day = np.nanpercentile(pr_inmet_day, 99.0)
-p99_gpm_day = np.nanpercentile(pr_cmorph_day, 99.0)
-p99_era5_day = np.nanpercentile(pr_era5_day, 99.0)
-p99_regcm5_day = np.nanpercentile(pr_regcm5_day, 99.0)
-p99_wrf415_day = np.nanpercentile(pr_wrf415_day, 99.0)
+print("plot")
 
 # Plot figure
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
@@ -316,7 +328,7 @@ font_size = 10
 
 ax1.plot(x_pdf_inmet_day,  pdf_inmet_day,  marker='o', markersize=4, mfc='green',  mec='green',  alpha=0.75, linestyle='None', label='INMET')
 ax1.plot(x_pdf_era5_day,   pdf_era5_day,   marker='o', markersize=4, mfc='black',  mec='black',  alpha=0.75, linestyle='None', label='ERA5')
-ax1.plot(x_pdf_cmorph_day,    pdf_cmorph_day,    marker='o', markersize=4, mfc='violet', mec='violet', alpha=0.75, linestyle='None', label='GPM')
+ax1.plot(x_pdf_cmorph_day, pdf_cmorph_day,    marker='o', markersize=4, mfc='violet', mec='violet', alpha=0.75, linestyle='None', label='GPM')
 ax1.plot(x_pdf_regcm5_day, pdf_regcm5_day, marker='o', markersize=4, mfc='blue',   mec='blue',   alpha=0.75, linestyle='None', label='RegCM5')
 ax1.plot(x_pdf_wrf415_day, pdf_wrf415_day, marker='o', markersize=4, mfc='red',    mec='red',    alpha=0.75, linestyle='None', label='WRF415')
 ax1.set_title('(a)', loc='left', fontsize=font_size, fontweight='bold')
@@ -333,7 +345,7 @@ ax1.grid(axis='y', color='k', linestyle='--', alpha=0.3)
 
 ax2.plot(x_pdf_inmet_hr,  pdf_inmet_hr,  marker='o', markersize=4, mfc='green',  mec='green',  alpha=0.75, linestyle='None', label='INMET')
 ax2.plot(x_pdf_era5_hr,   pdf_era5_hr,   marker='o', markersize=4, mfc='black',  mec='black',  alpha=0.75, linestyle='None', label='ERA5')
-ax2.plot(x_pdf_cmorph_hr,    pdf_cmorph_hr,    marker='o', markersize=4, mfc='violet', mec='violet', alpha=0.75, linestyle='None', label='GPM')
+ax2.plot(x_pdf_cmorph_hr, pdf_cmorph_hr,    marker='o', markersize=4, mfc='violet', mec='violet', alpha=0.75, linestyle='None', label='GPM')
 ax2.plot(x_pdf_regcm5_hr, pdf_regcm5_hr, marker='o', markersize=4, mfc='blue',   mec='blue',   alpha=0.75, linestyle='None', label='RegCM5')
 ax2.plot(x_pdf_wrf415_hr, pdf_wrf415_hr, marker='o', markersize=4, mfc='red',    mec='red',    alpha=0.75, linestyle='None', label='WRF415')
 ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
@@ -341,11 +353,13 @@ ax2.set_xlabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='b
 ax2.set_ylabel('Frequency (#)', fontsize=font_size, fontweight='bold')
 ax2.set_yscale('log')
 ax2.axvline(x=p99_inmet_hr, color='green', linestyle='--')
-ax2.axvline(x=p99_gpm_hr, color='black', linestyle='--')
+ax2.axvline(x=p99_cmorph_hr, color='black', linestyle='--')
 ax2.axvline(x=p99_era5_hr, color='violet', linestyle='--')
 ax2.axvline(x=p99_regcm5_hr, color='blue', linestyle='--')
 ax2.axvline(x=p99_wrf415_hr, color='red', linestyle='--')
 ax2.grid(axis='y', color='k', linestyle='--', alpha=0.3)
+
+print("save")
 
 # Path out to save figure
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
