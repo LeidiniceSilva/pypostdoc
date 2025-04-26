@@ -15,7 +15,8 @@ import matplotlib.pyplot as plt
 from dict_inmet_stations import inmet
 from datetime import datetime, timedelta
 
-path='/marconi/home/userexternal/mdasilva'
+font_size = 10
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
 
 skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,77,93,100,105,106,107,112,117,124,135,137,139,
 149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
@@ -92,7 +93,7 @@ def open_dat_file(dataset):
 	dt = []
 	for yr in range(2018, 2021+1):
 	
-		data = read_dat_file('{0}/user/mdasilva/SAM-3km/post_cyclone/ECyclone_v2/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
+		data = read_dat_file('{0}/SAM-3km/postproc/cyclone/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 	
 		rows_list = []
 		rows_list_i = []
@@ -107,43 +108,10 @@ def open_dat_file(dataset):
 	return dt
 
 
-def import_data(param, dataset, indices):
+def import_data(indices_i, indices_ii, indices_iii):
 
-	mean = []
-	for station in range(1, 567):
-		print(station, inmet[station][0])
-		
-		if station in skip_list:
-			continue
-		if inmet[station][2] >= -11.25235:
-			continue
-		
-		if dataset == 'RegCM5':
-			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/rcm/'.format(path) + '{0}_SAM-3km_{1}_day_2018-2021_lonlat.nc'.format(param, dataset))
-		elif dataset == 'WRF415':
-			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_cyclone/wrf/wrf/{1}/'.format(path, param) + '{0}_SAM-3km_{1}_day_2018-2021_lonlat.nc'.format(param, dataset))
-		else:
-			arq = xr.open_dataset('{0}/user/mdasilva/SAM-3km/post_evaluate/obs/'.format(path) + '{0}_SAM-3km_{1}_day_2018-2021_lonlat.nc'.format(param, dataset))
-		
-		data   = arq[param]
-		latlon = data.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
-		
-		if dataset == 'WRF415':
-			time = latlon.sel(XTIME=slice('2018-01-01','2021-12-31'))
-		else:
-			time = latlon.sel(time=slice('2018-01-01','2021-12-31'))
-			
-		var = time.values
-
-		for idx_i in indices:
-			mean.append(var[idx_i])
-																
-	return mean		
-
-
-def import_ws(param, indices):
-
-	mean = []
+	mean_, mean_i, mean_ii, mean_iii, mean_iv = [], [], [], [], []
+	
 	for station in range(1, 567):
 		print(station, inmet[station][0])
 		
@@ -152,16 +120,48 @@ def import_ws(param, indices):
 		if inmet[station][2] >= -11.25235:
 			continue
 
-		arq  = xr.open_dataset('{0}/user/mdasilva/WS-SA/INMET/automatic/nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
-		data = arq[param]
+		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_br/inmet_nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
+		data = arq['pre']
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
 		var  = time.resample(time='1D').sum()
 		var_ = var.values
 
-		for idx_i in indices:
-			mean.append(var_[idx_i])
+		arq_i    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/CMORPH/'.format(path) + 'cmorph_SAM-3km_CMORPH_day_2018-2021_lonlat.nc')
+		data_i   = arq_i['cmorph']
+		latlon_i = data_i.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_i   = latlon_i.sel(time=slice('2018-01-01','2021-12-31'))
+		var_i    = time_i.values
+
+		arq_ii    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/ERA5/'.format(path) + 'tp_SAM-3km_ERA5_day_2018-2021_lonlat.nc')
+		data_ii   = arq_ii['tp']
+		latlon_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_ii   = latlon_ii.sel(time=slice('2018-01-01','2021-12-31'))
+		var_ii    = time_ii.values
+
+		arq_iii    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/RegCM5/'.format(path) + 'pr_SAM-3km_RegCM5_day_2018-2021_lonlat.nc')
+		data_iii   = arq_iii['pr']
+		latlon_iii = data_iii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_iii   = latlon_iii.sel(time=slice('2018-01-01','2021-12-31'))
+		var_iii    = time_iii.values
+
+		arq_iv    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/WRF415/'.format(path) + 'PREC_ACC_NC_SAM-3km_WRF415_day_2018-2021_lonlat.nc')
+		data_iv   = arq_iv['PREC_ACC_NC']
+		latlon_iv = data_iv.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		time_iv   = latlon_iv.sel(XTIME=slice('2018-01-01','2021-12-31'))
+		var_iv    = time_iv.values
+
+		for idx_i in indices_i:
+			mean_.append(var_[idx_i])
+			mean_i.append(var_i[idx_i])
+			mean_ii.append(var_ii[idx_i])
+
+		for idx_ii in indices_ii:
+			mean_iii.append(var_iii[idx_ii])
+
+		for idx_iii in indices_iii:
+			mean_iv.append(var_iv[idx_iii])
 																
-	return mean
+	return mean_, mean_i, mean_ii, mean_iii, mean_iv
 
 
 def comp_pdf(timeseries):
@@ -191,29 +191,26 @@ era5_idx_i = find_indices_in_date_list(daily_dates, era5_idx)
 regcm5_idx_i = find_indices_in_date_list(daily_dates, regcm5_idx)
 wrf415_idx_i = find_indices_in_date_list(daily_dates, wrf415_idx)
 
+# Import model and obs dataset
 # Import model and obs dataset 
-pr_inmet  = import_ws('pre', era5_idx_i)
-pr_gpm    = import_data('precipitation', 'GPM', era5_idx_i)
-pr_era5   = import_data('tp', 'ERA5', era5_idx_i)
-pr_regcm5 = import_data('pr', 'RegCM5', regcm5_idx_i)
-pr_wrf415 = import_data('PREC_ACC_NC', 'WRF415', wrf415_idx_i)
+pr_inmet, pr_cmorph, pr_era5, pr_regcm5, pr_wrf415 = import_data(era5_idx_i, regcm5_idx_i, wrf415_idx_i)
 
 # Import pdf function
 x_pdf_inmet, pdf_inmet = comp_pdf(pr_inmet)
-x_pdf_gpm, pdf_gpm = comp_pdf(pr_gpm)
+x_pdf_cmorph, pdf_cmorph = comp_pdf(pr_cmorph)
 x_pdf_era5, pdf_era5 = comp_pdf(pr_era5)
 x_pdf_regcm5, pdf_regcm5 = comp_pdf(pr_regcm5)
 x_pdf_wrf415, pdf_wrf415 = comp_pdf(pr_wrf415)
 
 # Compute 99.9th percentile
-p99_inmet = np.percentile(pr_inmet, 99.9)
-p99_gpm = np.percentile(pr_gpm, 99.9)
-p99_era5 = np.percentile(pr_era5, 99.9)
-p99_regcm5 = np.percentile(pr_regcm5, 99.9)
-p99_wrf415 = np.percentile(pr_wrf415, 99.9)
+p99_inmet = np.percentile(pr_inmet, 99.0)
+p99_cmorph = np.percentile(pr_cmorph, 99.0)
+p99_era5 = np.percentile(pr_era5, 99.0)
+p99_regcm5 = np.percentile(pr_regcm5, 99.0)
+p99_wrf415 = np.percentile(pr_wrf415, 99.0)
 
 print(p99_inmet)
-print(p99_gpm)
+print(p99_cmorph)
 print(p99_era5)
 print(p99_regcm5)
 print(p99_wrf415)
@@ -224,13 +221,13 @@ font_size = 8
 
 ax = fig.add_subplot(1, 1, 1)  
 plt.plot(x_pdf_inmet,  pdf_inmet,  marker='o', markersize=4, mfc='green',  mec='green',  alpha=0.75, linestyle='None', label='INMET')
-plt.plot(x_pdf_gpm,    pdf_gpm,    marker='o', markersize=4, mfc='violet', mec='violet', alpha=0.75, linestyle='None', label='GPM')
+plt.plot(x_pdf_cmorph, pdf_cmorph, marker='o', markersize=4, mfc='violet', mec='violet', alpha=0.75, linestyle='None', label='CMORPH')
 plt.plot(x_pdf_era5,   pdf_era5,   marker='o', markersize=4, mfc='black',  mec='black',  alpha=0.75, linestyle='None', label='ERA5')
 plt.plot(x_pdf_regcm5, pdf_regcm5, marker='o', markersize=4, mfc='blue',   mec='blue',   alpha=0.75, linestyle='None', label='RegCM5')
 plt.plot(x_pdf_wrf415, pdf_wrf415, marker='o', markersize=4, mfc='red',    mec='red',    alpha=0.75, linestyle='None', label='WRF415')
 
 plt.axvline(x=p99_inmet, color='green', linestyle='--')
-plt.axvline(x=p99_gpm, color='violet', linestyle='--')
+plt.axvline(x=p99_cmorph, color='violet', linestyle='--')
 plt.axvline(x=p99_era5, color='black', linestyle='--')
 plt.axvline(x=p99_regcm5, color='blue', linestyle='--')
 plt.axvline(x=p99_wrf415, color='red', linestyle='--')
@@ -243,7 +240,7 @@ plt.grid(axis='y', color='k', linestyle='--', alpha=0.3)
 plt.legend(loc=1, ncol=1, fontsize=font_size, shadow=True)
 
 # Path out to save figure
-path_out = '{0}/user/mdasilva/SAM-3km/figs/cyclone/paper'.format(path)
+path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
 name_out = 'pyplt_graph_pdf_precipitation_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 exit()
