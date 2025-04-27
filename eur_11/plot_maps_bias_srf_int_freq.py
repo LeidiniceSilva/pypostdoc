@@ -20,7 +20,7 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
 var = 'pr'
-stats = 'freq'
+stats = 'int'
 dt = '1970-1970'
 domain = 'EUR-11'
 dataset = 'EOBS'

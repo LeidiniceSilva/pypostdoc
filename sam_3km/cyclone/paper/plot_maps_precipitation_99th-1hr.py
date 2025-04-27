@@ -153,7 +153,7 @@ def import_ws(param, indices):
 		for idx_i in indices:
 			var_i.append(var_[idx_i])
 				
-		mean_99.append(np.percentile(var_i, 99, axis=0))
+		mean_99.append(np.nanpercentile(var_i, 99, axis=0))
 		
 	return yy, xx, mean_99
 

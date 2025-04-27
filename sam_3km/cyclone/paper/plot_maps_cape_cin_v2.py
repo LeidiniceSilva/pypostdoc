@@ -173,7 +173,7 @@ fig, axes = plt.subplots(3,3, figsize=(14, 9), subplot_kw={"projection": ccrs.Pl
 
 cmap_color = 'twilight'
 level = np.arange(0, 1230, 30)
-level_ = np.linspace(0, 300, 3) 
+level_ = 3
 legend = 'CAPE (J Kg$^-$$^1$)'
 
 cf1 = ax1.contourf(lon, lat, cape_era5_i, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cmap_color)

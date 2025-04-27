@@ -203,11 +203,11 @@ x_pdf_regcm5, pdf_regcm5 = comp_pdf(pr_regcm5)
 x_pdf_wrf415, pdf_wrf415 = comp_pdf(pr_wrf415)
 
 # Compute 99.9th percentile
-p99_inmet = np.percentile(pr_inmet, 99.0)
-p99_cmorph = np.percentile(pr_cmorph, 99.0)
-p99_era5 = np.percentile(pr_era5, 99.0)
-p99_regcm5 = np.percentile(pr_regcm5, 99.0)
-p99_wrf415 = np.percentile(pr_wrf415, 99.0)
+p99_inmet = np.nanpercentile(pr_inmet, 99)
+p99_cmorph = np.nanpercentile(pr_cmorph, 99)
+p99_era5 = np.nanpercentile(pr_era5, 99)
+p99_regcm5 = np.nanpercentile(pr_regcm5, 99)
+p99_wrf415 = np.nanpercentile(pr_wrf415, 99)
 
 print(p99_inmet)
 print(p99_cmorph)
