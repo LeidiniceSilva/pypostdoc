@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 __author__      = "Leidinice Silva"
-__email__       = "leidinicesilvae@gmail.com"
+__email__       = "leidinicesilva@gmail.com"
 __date__        = "Dec 04, 2023"
 __description__ = "Statistical metrics for model evaluation"
 
