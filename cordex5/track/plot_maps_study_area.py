@@ -17,8 +17,10 @@ from netCDF4 import Dataset as nc
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 # Specify directories 
-dirnc = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5_v2/ERA5/icbc'
 domname = 'CSAM-3'
+
+dirnc = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5_v2/ERA5/icbc'
+
 
 # RegCM file
 if len(sys.argv) > 1:
@@ -51,16 +53,6 @@ fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
 font_size = 10
 
 ax.contourf(lon, lat, border_mask, cmap='gray', levels=[0, 1])
-ax.text(-36, 11, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
-ax.plot(-47.9000, -16.0000, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Brazilia
-#ax.plot(-46.6396, -23.5558, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Sao Paulo
-ax.plot(-56.1674, -34.8335, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Montevideo
-ax.plot(-57.5759, -25.2637, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Asuncion
-ax.plot(-58.4004, -34.6051, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Buenos Aires
-ax.plot(-68.1193, -16.4897, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # La Paz
-ax.plot(-70.6693, -33.4489, 'o', ms=4, markeredgewidth=0.75, color='white', mec='black') # Santiago
-
-# Add features
 ax.set_extent([lon_bounds[0], lon_bounds[1], lat_bounds[0], lat_bounds[1]], crs=ccrs.PlateCarree())
 ax.stock_img()
 ax.coastlines()
@@ -76,7 +68,7 @@ gridlines.xlabel_style = {'size': 10}
 gridlines.ylabel_style = {'size': 10}
 
 # Path out to save figure
-path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5_v2/figs'
+path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/track'
 name_out = 'pyplt_maps_study_area_RegCM5_CSAM-3_2000-2009.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
