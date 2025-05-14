@@ -24,7 +24,7 @@ domain = 'SAM-22'
 latlon = [-105, -16, -57, 18]
 
 exp_i = 'ctrl_RegCM5'
-exp_ii = 'vfqi_RegCM5'
+exp_ii = 'vfqr_RegCM5'
 
 font_size = 8
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
@@ -115,10 +115,10 @@ plot_data = {'Plot 1': {'data': obs_djf, 'title': '(a) {0} DJF'.format(obs)},
 'Plot 6': {'data': exp_i_mam, 'title': '(f) CTRL MAM'},
 'Plot 7': {'data': exp_i_jja, 'title': '(g) CTRL JJA'},
 'Plot 8': {'data': exp_i_son, 'title': '(h) CTRL SON'},
-'Plot 9': {'data': exp_ii_djf, 'title': '(i) VFQI DJF'},
-'Plot 10': {'data': exp_ii_mam, 'title': '(j) VFQI MAM'},
-'Plot 11': {'data': exp_ii_jja, 'title': '(k) VFQI JJA'},
-'Plot 12': {'data': exp_ii_son, 'title': '(l) VFQI SON'}}
+'Plot 9': {'data': exp_ii_djf, 'title': '(i) VFQR DJF'},
+'Plot 10': {'data': exp_ii_mam, 'title': '(j) VFQR MAM'},
+'Plot 11': {'data': exp_ii_jja, 'title': '(k) VFQR JJA'},
+'Plot 12': {'data': exp_ii_son, 'title': '(l) VFQR SON'}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
 	data = value['data']
@@ -134,7 +134,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/figs'.format(path)
+path_out = '{0}/figs/vfqr'.format(path)
 name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

@@ -21,13 +21,13 @@ from import_climate_tools import compute_mbe
 
 var = 'pr'
 obs = 'ERA5'
-stats = 'int'
+stats = 'freq'
 dt = '1970-1971'
 domain = 'SAM-22'
 latlon = [-105, -16, -57, 18]
 
 exp_i = 'ctrl_RegCM5'
-exp_ii = 'vfqi_RegCM5'
+exp_ii = 'vfqr_RegCM5'
 
 font_size = 8
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
@@ -116,10 +116,10 @@ plot_data = {'Plot 1': {'data': mbe_djf_exp_i_obs[0][0], 'title': '(a) CTRL-{0} 
 'Plot 2': {'data': mbe_mam_exp_i_obs[0][0], 'title': '(b) CTRL-{0} MAM'.format(obs)},
 'Plot 3': {'data': mbe_jja_exp_i_obs[0][0], 'title': '(c) CTRL-{0} JJA'.format(obs)},
 'Plot 4': {'data': mbe_son_exp_i_obs[0][0], 'title': '(d) CTRL-{0} SON'.format(obs)},
-'Plot 5': {'data': mbe_djf_exp_ii_obs[0][0], 'title': '(e) VFQI-{0} DJF'.format(obs)},
-'Plot 6': {'data': mbe_mam_exp_ii_obs[0][0], 'title': '(f) VFQI-{0} MAM'.format(obs)},
-'Plot 7': {'data': mbe_jja_exp_ii_obs[0][0], 'title': '(g) VFQI-{0} JJA'.format(obs)},
-'Plot 8': {'data': mbe_son_exp_ii_obs[0][0], 'title': '(h) VFQI-{0} SON'.format(obs)}}
+'Plot 5': {'data': mbe_djf_exp_ii_obs[0][0], 'title': '(e) VFQR-{0} DJF'.format(obs)},
+'Plot 6': {'data': mbe_mam_exp_ii_obs[0][0], 'title': '(f) VFQR-{0} MAM'.format(obs)},
+'Plot 7': {'data': mbe_jja_exp_ii_obs[0][0], 'title': '(g) VFQR-{0} JJA'.format(obs)},
+'Plot 8': {'data': mbe_son_exp_ii_obs[0][0], 'title': '(h) VFQR-{0} SON'.format(obs)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
     data = value['data']
@@ -135,7 +135,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs'.format(path)
+path_out = '{0}/figs/vfqr'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_{3}.png'.format(var, stats, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
