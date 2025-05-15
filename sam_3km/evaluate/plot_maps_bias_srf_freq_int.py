@@ -18,13 +18,14 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'pr_int'
-freq = 'hourly'
+var = 'pr'
+stats = 'freq'
+freq = 'day'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 
 if freq == 'hourly':
-	dataset = 'ERA5'
+	dataset = 'CMORPH'
 else:
 	dataset = 'CPC'
 
@@ -38,7 +39,7 @@ def import_obs(param, domain, dataset, season):
 	else:
 		dt = '{0}_{1}-{2}'.format(season, idt, fdt)
 
-	arq   = '{0}/SAM-3km/postproc/evaluate/obs/{1}_int_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
+	arq   = '{0}/SAM-3km/postproc/evaluate/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, stats, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -55,7 +56,7 @@ def import_rcm(param, domain, dataset, season):
 	else:
 		dt = '{0}_{1}-{2}'.format(season, idt, fdt)
 
-	arq   = '{0}/SAM-3km/postproc/evaluate/rcm/{1}_int_{2}_{3}_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
+	arq   = '{0}/SAM-3km/postproc/evaluate/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, stats, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -67,14 +68,15 @@ def import_rcm(param, domain, dataset, season):
 
 def configure_subplot(ax):
 
-	ax.set_xticks(np.arange(-78,-32,12), crs=ccrs.PlateCarree())
-	ax.set_yticks(np.arange(-38,-6,6), crs=ccrs.PlateCarree())
+	ax.set_extent([-80, -34, -38, -8], crs=ccrs.PlateCarree())
+	ax.set_xticks(np.arange(-80,-34,12), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(-38,-8,6), crs=ccrs.PlateCarree())
 	ax.xaxis.set_major_formatter(LongitudeFormatter())
 	ax.yaxis.set_major_formatter(LatitudeFormatter())
-	ax.tick_params(axis='x', labelsize=6, labelcolor='black')
-	ax.tick_params(axis='y', labelsize=6, labelcolor='black')
+	ax.tick_params(labelsize=font_size)
+	ax.add_feature(cfeat.BORDERS)
+	ax.coastlines()	
 	ax.grid(c='k', ls='--', alpha=0.4)
-	ax.coastlines()
 	
 	
 # Import model and obs dataset
@@ -84,10 +86,10 @@ lat, lon, regcm_jja = import_rcm('pr', domain, 'RegCM5', 'JJA')
 lat, lon, regcm_son = import_rcm('pr', domain, 'RegCM5', 'SON')
 
 if freq == 'hourly':
-	lat, lon, obs_djf = import_obs('tp', domain, dataset, 'DJF')
-	lat, lon, obs_mam = import_obs('tp', domain, dataset, 'MAM')
-	lat, lon, obs_jja = import_obs('tp', domain, dataset, 'JJA')
-	lat, lon, obs_son = import_obs('tp', domain, dataset, 'SON')
+	lat, lon, obs_djf = import_obs('cmorph', domain, dataset, 'DJF')
+	lat, lon, obs_mam = import_obs('cmorph', domain, dataset, 'MAM')
+	lat, lon, obs_jja = import_obs('cmorph', domain, dataset, 'JJA')
+	lat, lon, obs_son = import_obs('cmorph', domain, dataset, 'SON')
 else:
 	lat, lon, obs_djf = import_obs('precip', domain, dataset, 'DJF')
 	lat, lon, obs_mam = import_obs('precip', domain, dataset, 'MAM')
@@ -100,18 +102,28 @@ mbe_regcm_obs_jja = regcm_jja - obs_jja
 mbe_regcm_obs_son = regcm_son - obs_son
 
 # Plot figure
-fig, axes = plt.subplots(4, 1, figsize=(5, 10), subplot_kw={'projection': ccrs.PlateCarree()})
+fig, axes = plt.subplots(4, 1, figsize=(5, 12), subplot_kw={'projection': ccrs.PlateCarree()})
 axes = axes.flatten()
 font_size = 8
 
-if freq == 'hourly':
-	levs = np.arange(-6, 6.5, 0.5)
-	legend = 'Intensity (mm h$^-$$^1$)'
-	dt = '1hr_{0}-{1}_th0.5'.format(idt, fdt)
+if stats == 'freq':
+	if freq == 'hourly':
+		levs = np.arange(-22, 23, 1)
+		legend = 'Frequency (%)'
+		dt = '1hr_{0}-{1}_th0.5'.format(idt, fdt)
+	else:
+		levs = np.arange(-44, 46, 2)
+		legend = 'Frequency (%)'
+		dt = '{0}-{1}'.format(idt, fdt)
 else:
-	levs = np.arange(-22, 23, 1)
-	legend = 'Intensity (mm d$^-$$^1$)'
-	dt = '{0}-{1}'.format(idt, fdt)
+	if freq == 'hourly':
+		levs = np.arange(-6, 6.5, 0.5)
+		legend = 'Intensity (mm h$^-$$^1$)'
+		dt = '1hr_{0}-{1}_th0.5'.format(idt, fdt)
+	else:
+		levs = np.arange(-22, 23, 1)
+		legend = 'Intensity (mm d$^-$$^1$)'
+		dt = '{0}-{1}'.format(idt, fdt)
 
 ax1 = axes[0]
 plt_map = ax1.contourf(lon, lat, mbe_regcm_obs_djf, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
@@ -139,7 +151,6 @@ cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
 path_out = '{0}/SAM-3km/figs/evaluate'.format(path)
-name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
+name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_{3}.png'.format(var, stats, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 exit()
-

@@ -17,7 +17,7 @@ import cartopy.feature as cfeat
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'uv'
+var = 'q'
 level = '850hPa'
 obs = 'ERA5'
 dt = '1970-1971'
@@ -25,12 +25,12 @@ domain = 'SAM-22'
 latlon = [-105, -16, -57, 18]
 
 exp_i = 'ctrl_RegCM5'
-exp_ii = 'vfqi_RegCM5'
+exp_ii = 'vfqr_RegCM5'
 
 font_size = 8
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
 
-dict_var = {'uv': ['u', 'v', 'ua', 'va']}
+dict_var = {var: ['u', 'v', 'q', 'ua', 'va', 'hus']}
 
 
 def import_obs(param, dataset, season):
@@ -103,25 +103,40 @@ lat, lon, v_obs_mam = import_obs(dict_var[var][1], obs, 'MAM')
 lat, lon, v_obs_jja = import_obs(dict_var[var][1], obs, 'JJA')
 lat, lon, v_obs_son = import_obs(dict_var[var][1], obs, 'SON')
 
-lat, lon, u_exp_i_djf = import_rcm(dict_var[var][2], exp_i, 'DJF')
-lat, lon, u_exp_i_mam = import_rcm(dict_var[var][2], exp_i, 'MAM')
-lat, lon, u_exp_i_jja = import_rcm(dict_var[var][2], exp_i, 'JJA')
-lat, lon, u_exp_i_son = import_rcm(dict_var[var][2], exp_i, 'SON')
+lat, lon, q_obs_djf = import_obs(dict_var[var][2], obs, 'DJF')
+lat, lon, q_obs_mam = import_obs(dict_var[var][2], obs, 'MAM')
+lat, lon, q_obs_jja = import_obs(dict_var[var][2], obs, 'JJA')
+lat, lon, q_obs_son = import_obs(dict_var[var][2], obs, 'SON')
 
-lat, lon, v_exp_i_djf = import_rcm(dict_var[var][3], exp_i, 'DJF')
-lat, lon, v_exp_i_mam = import_rcm(dict_var[var][3], exp_i, 'MAM')
-lat, lon, v_exp_i_jja = import_rcm(dict_var[var][3], exp_i, 'JJA')
-lat, lon, v_exp_i_son = import_rcm(dict_var[var][3], exp_i, 'SON')
+lat, lon, u_exp_i_djf = import_rcm(dict_var[var][3], exp_i, 'DJF')
+lat, lon, u_exp_i_mam = import_rcm(dict_var[var][3], exp_i, 'MAM')
+lat, lon, u_exp_i_jja = import_rcm(dict_var[var][3], exp_i, 'JJA')
+lat, lon, u_exp_i_son = import_rcm(dict_var[var][3], exp_i, 'SON')
 
-lat, lon, u_exp_ii_djf = import_rcm(dict_var[var][2], exp_ii, 'DJF')
-lat, lon, u_exp_ii_mam = import_rcm(dict_var[var][2], exp_ii, 'MAM')
-lat, lon, u_exp_ii_jja = import_rcm(dict_var[var][2], exp_ii, 'JJA')
-lat, lon, u_exp_ii_son = import_rcm(dict_var[var][2], exp_ii, 'SON')
+lat, lon, v_exp_i_djf = import_rcm(dict_var[var][4], exp_i, 'DJF')
+lat, lon, v_exp_i_mam = import_rcm(dict_var[var][4], exp_i, 'MAM')
+lat, lon, v_exp_i_jja = import_rcm(dict_var[var][4], exp_i, 'JJA')
+lat, lon, v_exp_i_son = import_rcm(dict_var[var][4], exp_i, 'SON')
 
-lat, lon, v_exp_ii_djf = import_rcm(dict_var[var][3], exp_ii, 'DJF')
-lat, lon, v_exp_ii_mam = import_rcm(dict_var[var][3], exp_ii, 'MAM')
-lat, lon, v_exp_ii_jja = import_rcm(dict_var[var][3], exp_ii, 'JJA')
-lat, lon, v_exp_ii_son = import_rcm(dict_var[var][3], exp_ii, 'SON')
+lat, lon, u_exp_ii_djf = import_rcm(dict_var[var][3], exp_ii, 'DJF')
+lat, lon, u_exp_ii_mam = import_rcm(dict_var[var][3], exp_ii, 'MAM')
+lat, lon, u_exp_ii_jja = import_rcm(dict_var[var][3], exp_ii, 'JJA')
+lat, lon, u_exp_ii_son = import_rcm(dict_var[var][3], exp_ii, 'SON')
+
+lat, lon, v_exp_ii_djf = import_rcm(dict_var[var][4], exp_ii, 'DJF')
+lat, lon, v_exp_ii_mam = import_rcm(dict_var[var][4], exp_ii, 'MAM')
+lat, lon, v_exp_ii_jja = import_rcm(dict_var[var][4], exp_ii, 'JJA')
+lat, lon, v_exp_ii_son = import_rcm(dict_var[var][4], exp_ii, 'SON')
+
+lat, lon, q_exp_i_djf = import_rcm(dict_var[var][5], exp_i, 'DJF')
+lat, lon, q_exp_i_mam = import_rcm(dict_var[var][5], exp_i, 'MAM')
+lat, lon, q_exp_i_jja = import_rcm(dict_var[var][5], exp_i, 'JJA')
+lat, lon, q_exp_i_son = import_rcm(dict_var[var][5], exp_i, 'SON')
+
+lat, lon, q_exp_ii_djf = import_rcm(dict_var[var][5], exp_ii, 'DJF')
+lat, lon, q_exp_ii_mam = import_rcm(dict_var[var][5], exp_ii, 'MAM')
+lat, lon, q_exp_ii_jja = import_rcm(dict_var[var][5], exp_ii, 'JJA')
+lat, lon, q_exp_ii_son = import_rcm(dict_var[var][5], exp_ii, 'SON')
 
 uv_obs_djf = compute_ws(u_obs_djf, v_obs_djf)
 uv_obs_mam = compute_ws(u_obs_mam, v_obs_mam)
@@ -145,37 +160,46 @@ font_size = 6
 vector = 25
 
 if level == '200hPa':
-	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 62, 2), cm.viridis_r]}
+	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 62, 2), cm.viridis_r],
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 1.1, 0.01), cm.magma_r]}
 elif level == '500hPa':
-	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 31, 1), cm.viridis_r]}
+	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 31, 1), cm.viridis_r],
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 11.25, 0.25), cm.magma_r]}
 else:
-	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 15.5, 0.5), cm.viridis_r]}
+	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 15.5, 0.5), cm.viridis_r],
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 22.5, 0.5), cm.hsv]}
 
-plot_data = {'Plot 1': {'data 0': uv_obs_djf, 'data 1': u_obs_djf, 'data 2': v_obs_djf, 'title': '(a) {0} DJF'.format(obs)},
-	'Plot 2': {'data 0': uv_obs_mam, 'data 1': u_obs_mam, 'data 2': v_obs_mam, 'title': '(b) {0} MAM'.format(obs)},
-	'Plot 3': {'data 0': uv_obs_jja, 'data 1': u_obs_jja, 'data 2': v_obs_jja, 'title': '(c) {0} JJA'.format(obs)},
-	'Plot 4': {'data 0': uv_obs_son, 'data 1': u_obs_son, 'data 2': v_obs_son, 'title': '(d) {0} SON'.format(obs)},
-	'Plot 5': {'data 0': uv_exp_i_djf, 'data 1': u_exp_i_djf, 'data 2': v_exp_i_djf, 'title': '(e) CTRL DJF'},
-	'Plot 6': {'data 0': uv_exp_i_mam, 'data 1': u_exp_i_mam, 'data 2': v_exp_i_mam, 'title': '(f) CTRL MAM'},
-	'Plot 7': {'data 0': uv_exp_i_jja, 'data 1': u_exp_i_jja, 'data 2': v_exp_i_jja, 'title': '(g) CTRL JJA'},
-	'Plot 8': {'data 0': uv_exp_i_son, 'data 1': u_exp_i_son, 'data 2': v_exp_i_son, 'title': '(h) CTRL SON'},
-	'Plot 9': {'data 0': uv_exp_ii_djf, 'data 1': u_exp_ii_djf, 'data 2': v_exp_ii_djf, 'title': '(c) VFQI DJF'},
-	'Plot 10': {'data 0': uv_exp_ii_mam, 'data 1': u_exp_ii_mam, 'data 2': v_exp_ii_mam, 'title': '(f) VFQI MAM'},
-	'Plot 11': {'data 0': uv_exp_ii_jja, 'data 1': u_exp_ii_jja, 'data 2': v_exp_ii_jja, 'title': '(i) VFQI JJA'},
-	'Plot 12': {'data 0': uv_exp_ii_son, 'data 1': u_exp_ii_son, 'data 2': v_exp_ii_son, 'title': '(l) VFQI SON'}}
+plot_data = {'Plot 1': {'data 0': uv_obs_djf, 'data 1': u_obs_djf, 'data 2': v_obs_djf, 'data 3': q_obs_djf, 'title': '(a) {0} DJF'.format(obs)},
+	'Plot 2': {'data 0': uv_obs_mam, 'data 1': u_obs_mam, 'data 2': v_obs_mam, 'data 3': q_obs_mam, 'title': '(b) {0} MAM'.format(obs)},
+	'Plot 3': {'data 0': uv_obs_jja, 'data 1': u_obs_jja, 'data 2': v_obs_jja, 'data 3': q_obs_jja, 'title': '(c) {0} JJA'.format(obs)},
+	'Plot 4': {'data 0': uv_obs_son, 'data 1': u_obs_son, 'data 2': v_obs_son, 'data 3': q_obs_son, 'title': '(d) {0} SON'.format(obs)},
+	'Plot 5': {'data 0': uv_exp_i_djf, 'data 1': u_exp_i_djf, 'data 2': v_exp_i_djf, 'data 3': q_exp_i_djf, 'title': '(e) CTRL DJF'},
+	'Plot 6': {'data 0': uv_exp_i_mam, 'data 1': u_exp_i_mam, 'data 2': v_exp_i_mam, 'data 3': q_exp_i_mam, 'title': '(f) CTRL MAM'},
+	'Plot 7': {'data 0': uv_exp_i_jja, 'data 1': u_exp_i_jja, 'data 2': v_exp_i_jja, 'data 3': q_exp_i_jja, 'title': '(g) CTRL JJA'},
+	'Plot 8': {'data 0': uv_exp_i_son, 'data 1': u_exp_i_son, 'data 2': v_exp_i_son, 'data 3': q_exp_i_son, 'title': '(h) CTRL SON'},
+	'Plot 9': {'data 0': uv_exp_ii_djf, 'data 1': u_exp_ii_djf, 'data 2': v_exp_ii_djf, 'data 3': q_exp_ii_djf, 'title': '(c) VFQR DJF'},
+	'Plot 10': {'data 0': uv_exp_ii_mam, 'data 1': u_exp_ii_mam, 'data 2': v_exp_ii_mam, 'data 3': q_exp_ii_mam, 'title': '(f) VFQR MAM'},
+	'Plot 11': {'data 0': uv_exp_ii_jja, 'data 1': u_exp_ii_jja, 'data 2': v_exp_ii_jja, 'data 3': q_exp_ii_jja, 'title': '(i) VFQR JJA'},
+	'Plot 12': {'data 0': uv_exp_ii_son, 'data 1': u_exp_ii_son, 'data 2': v_exp_ii_son, 'data 3': q_exp_ii_son, 'title': '(l) VFQR SON'}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
 	data_ = value['data 0']
 	data_i = value['data 1']
 	data_ii = value['data 2']
+	data_iii = value['data 3']
 	title = value['title']
 
-	lons, lats = np.meshgrid(lon, lat)
-	contourf = ax.contourf(lons, lats, data_, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-	#streamplt = ax.streamplot(lons, lats, data_i,  data_ii, color='black', density=1, linewidth=0.5)
-	quiv = ax.quiver(lons[::vector, ::vector], lats[::vector, ::vector], data_i[::vector, ::vector], data_ii[::vector, ::vector], color='black') 
-	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
-	configure_subplot(ax)     
+	if var == 'ua':
+		lons, lats = np.meshgrid(lon, lat)
+		contourf = ax.contourf(lons, lats, data_, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+		quiv = ax.quiver(lons[::vector, ::vector], lats[::vector, ::vector], data_i[::vector, ::vector], data_ii[::vector, ::vector], color='black') 
+		ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
+		configure_subplot(ax)     
+	else:
+		lons, lats = np.meshgrid(lon, lat)
+		contourf = ax.contourf(lons, lats, data_iii*1000, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
+		ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
+		configure_subplot(ax) 
 
 # Set colobar
 cbar = fig.colorbar(contourf, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)
@@ -183,7 +207,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/figs'.format(path)
+path_out = '{0}/figs/vfqr'.format(path)
 name_out = 'pyplt_maps_clim_{0}_{1}_{2}_RegCM5_{3}.png'.format(var, level, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

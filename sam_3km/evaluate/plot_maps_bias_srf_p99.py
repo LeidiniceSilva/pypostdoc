@@ -25,7 +25,7 @@ idt, fdt = '2018', '2021'
 
 if freq == 'hourly':
 	dt = '1hr_{0}-{1}'.format(idt, fdt)
-	dataset = 'ERA5'
+	dataset = 'CMORPH'
 else:
 	dt = '{0}-{1}'.format(idt, fdt)
 	dataset = 'CPC'
@@ -59,21 +59,22 @@ def import_rcm(param, domain, dataset):
 
 def configure_subplot(ax):
 
-	ax.set_xticks(np.arange(-78,-32,12), crs=ccrs.PlateCarree())
-	ax.set_yticks(np.arange(-38,-6,6), crs=ccrs.PlateCarree())
+	ax.set_extent([-80, -34, -38, -8], crs=ccrs.PlateCarree())
+	ax.set_xticks(np.arange(-80,-34,12), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(-38,-8,6), crs=ccrs.PlateCarree())
 	ax.xaxis.set_major_formatter(LongitudeFormatter())
 	ax.yaxis.set_major_formatter(LatitudeFormatter())
-	ax.tick_params(axis='x', labelsize=6, labelcolor='black')
-	ax.tick_params(axis='y', labelsize=6, labelcolor='black')
+	ax.tick_params(labelsize=font_size)
+	ax.add_feature(cfeat.BORDERS)
+	ax.coastlines()	
 	ax.grid(c='k', ls='--', alpha=0.4)
-	ax.coastlines()
 	
 	
 # Import model and obs dataset
 lat, lon, regcm = import_rcm('pr', domain, 'RegCM5')
 
 if freq == 'hourly':
-	lat, lon, obs = import_obs('tp', domain, dataset)
+	lat, lon, obs = import_obs('cmorph', domain, dataset)
 else:
 	lat, lon, obs = import_obs('precip', domain, dataset)
 

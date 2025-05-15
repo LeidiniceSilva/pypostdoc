@@ -15,15 +15,15 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeat
 
-from cartopy import config
-from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+from netCDF4 import Dataset
 from import_climate_tools import compute_mbe
-
 from dict_inmet_stations import inmet
 from dict_smn_i_stations import smn_i
 from dict_smn_ii_stations import smn_ii
+from cartopy import config
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'tas'
+var = 'pr'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -116,7 +116,7 @@ def import_situ_iii(param_i, param_ii, domain, dataset):
 		yy.append(smn_ii[station][1])
 		xx.append(smn_ii[station][2])
 
-		arq_i  = xr.open_dataset('{0}/FPS_SESA/database/obs/smn_ii/{1}/'.format(path, param_i) + '{0}_{1}_D_1979-01-01_2021-12-31.nc'.format(param_i, smn_ii[station][0]))
+		arq_i  = xr.open_dataset('{0}/FPS_SESA/database/obs/smn_ii/smn_nc/{1}/'.format(path, param_i) + '{0}_{1}_D_1979-01-01_2021-12-31.nc'.format(param_i, smn_ii[station][0]))
 		data_i = arq_i[param_i]
 		time_i = data_i.sel(time=slice('{0}-01-01'.format(idt),'{0}-12-31'.format(fdt)))
 		var_i  = time_i.groupby('time.season').mean(dim='time')
@@ -140,8 +140,10 @@ def import_obs(param, domain, dataset, season):
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
 
-	if param == 'pev' or param == 'msnlwrf':
+	if param == 'msnlwrf':
 		mean = var[:][0,:,:]*(-1)
+	elif param == 'pev':
+		mean = var[:][0,:,:]*(-1000)
 	else:
 		mean = var[:][0,:,:]
 	
@@ -158,6 +160,12 @@ def import_rcm(param, domain, dataset, season):
 
 	if param == 'tas':
 		mean = var[:][0,0,:,:]
+	elif param == 'evspsblpot':
+		mask_nc = Dataset('{0}/OBS/ERA5/sea_land_mask_lonlat.nc'.format(path))
+		lsm = mask_nc.variables['lsm'][:]
+		ocean_mask = (lsm == 0)
+		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, var[:][0,:,:])
+		mean = mean_[0,0,:,:]	
 	else:
 		mean = var[:][0,:,:]
 
@@ -171,13 +179,14 @@ def configure_subplot(ax):
 	ax.set_yticks(np.arange(-38,-8,6), crs=ccrs.PlateCarree())
 	ax.xaxis.set_major_formatter(LongitudeFormatter())
 	ax.yaxis.set_major_formatter(LatitudeFormatter())
-	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.tick_params(labelsize=font_size)
 	ax.add_feature(cfeat.BORDERS)
 	ax.coastlines()	
+	ax.grid(c='k', ls='--', alpha=0.4)
 
 
 # Import model and obs dataset
-dict_var = {'pr': ['pre', 'pre', 'precip', 'sat_gauge_precip', 'tp'],
+dict_var = {'pr': ['pre', 'pre', 'precip', 'cmorph', 'tp'],
 'tas': ['tmp', 'tmp', 't2m'],
 'clt': ['tcc'],
 'cll': ['lcc'],
@@ -214,10 +223,10 @@ if var == 'pr':
 	lat, lon, cpc_jja = import_obs(dict_var[var][2], domain, 'CPC', 'JJA')
 	lat, lon, cpc_son = import_obs(dict_var[var][2], domain, 'CPC', 'SON')
 
-	lat, lon, gpcp_djf = import_obs(dict_var[var][3], domain, 'GPCP', 'DJF')
-	lat, lon, gpcp_mam = import_obs(dict_var[var][3], domain, 'GPCP', 'MAM')
-	lat, lon, gpcp_jja = import_obs(dict_var[var][3], domain, 'GPCP', 'JJA')
-	lat, lon, gpcp_son = import_obs(dict_var[var][3], domain, 'GPCP', 'SON')
+	lat, lon, cmorph_djf = import_obs(dict_var[var][3], domain, 'CMORPH', 'DJF')
+	lat, lon, cmorph_mam = import_obs(dict_var[var][3], domain, 'CMORPH', 'MAM')
+	lat, lon, cmorph_jja = import_obs(dict_var[var][3], domain, 'CMORPH', 'JJA')
+	lat, lon, cmorph_son = import_obs(dict_var[var][3], domain, 'CMORPH', 'SON')
 
 	lat, lon, era5_djf = import_obs(dict_var[var][4], domain, 'ERA5', 'DJF')
 	lat, lon, era5_mam = import_obs(dict_var[var][4], domain, 'ERA5', 'MAM')
@@ -239,10 +248,10 @@ if var == 'pr':
 	mbe_jja_regcm_cpc = compute_mbe(regcm_jja, cpc_jja)
 	mbe_son_regcm_cpc = compute_mbe(regcm_son, cpc_son)	
 	
-	mbe_djf_regcm_gpcp = compute_mbe(regcm_djf, gpcp_djf)
-	mbe_mam_regcm_gpcp = compute_mbe(regcm_mam, gpcp_mam)
-	mbe_jja_regcm_gpcp = compute_mbe(regcm_jja, gpcp_jja)
-	mbe_son_regcm_gpcp = compute_mbe(regcm_son, gpcp_son)
+	mbe_djf_regcm_cmorph = compute_mbe(regcm_djf, cmorph_djf)
+	mbe_mam_regcm_cmorph = compute_mbe(regcm_mam, cmorph_mam)
+	mbe_jja_regcm_cmorph = compute_mbe(regcm_jja, cmorph_jja)
+	mbe_son_regcm_cmorph = compute_mbe(regcm_son, cmorph_son)
 		
 	mbe_djf_regcm_era5 = compute_mbe(regcm_djf, era5_djf)
 	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
@@ -251,7 +260,7 @@ if var == 'pr':
 
 elif var == 'tas':
 
-	lat_yy, lon_xx, inmet_i, regcm_i = import_situ_i(dict_var[var][0], var, domain, 'RegCM5')
+	lat_i, lon_i, inmet_i, regcm_i = import_situ_i(dict_var[var][0], var, domain, 'RegCM5')
 	mbe_djf_regcm_inmet, mbe_mam_regcm_inmet, mbe_jja_regcm_inmet, mbe_son_regcm_inmet = [], [], [], []
 
 	for i in range(0, 298):
@@ -295,7 +304,7 @@ else:
 	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
 	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
 	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
-		
+
 	mbe_djf_regcm_era5 = compute_mbe(regcm_djf, era5_djf)
 	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
 	mbe_jja_regcm_era5 = compute_mbe(regcm_jja, era5_jja)
@@ -308,11 +317,11 @@ dict_plot = {'pr': ['Bias of  precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 
 'cll': ['Bias of low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clm': ['Bias of medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clh': ['Bias of high cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
-'evspsblpot': ['Potential evaporation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.bwr],
+'evspsblpot': ['Potential evapotranspiration (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.RdYlGn],
 'rsnl': ['Bias of surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-80, 90, 10), cm.RdBu_r]}
 
 if var == 'pr':
-	fig, axes = plt.subplots(4, 5, figsize=(12, 8), subplot_kw={'projection': ccrs.PlateCarree()})
+	fig, axes = plt.subplots(4, 5, figsize=(14, 8), subplot_kw={'projection': ccrs.PlateCarree()})
 
 	ax1 = axes[0, 0]
 	plt_map = ax1.scatter(lon_xx, lat_yy, 4, mbe_djf_regcm_inmet_smn, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
@@ -330,8 +339,8 @@ if var == 'pr':
 	configure_subplot(ax3)
 
 	ax4 = axes[0, 3] 
-	plt_map = ax4.contourf(lon, lat, mbe_djf_regcm_gpcp, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	ax4.set_title(u'(d) RegCM5-GPCP DJF', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = ax4.contourf(lon, lat, mbe_djf_regcm_cmorph, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	ax4.set_title(u'(d) RegCM5-CMORPH DJF', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax4)
 
 	ax5 = axes[0, 4]
@@ -355,8 +364,8 @@ if var == 'pr':
 	configure_subplot(ax8)
 
 	ax9 = axes[1, 3] 
-	plt_map = ax9.contourf(lon, lat, mbe_mam_regcm_gpcp, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	ax9.set_title(u'(i) RegCM5-GPCP MAM', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = ax9.contourf(lon, lat, mbe_mam_regcm_cmorph, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	ax9.set_title(u'(i) RegCM5-CMORPH MAM', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax9)
 
 	ax10 = axes[1, 4]
@@ -380,8 +389,8 @@ if var == 'pr':
 	configure_subplot(ax13)
 
 	ax14 = axes[2, 3] 
-	plt_map = ax14.contourf(lon, lat, mbe_jja_regcm_gpcp, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	ax14.set_title(u'(n) RegCM5-GPCP JJA', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = ax14.contourf(lon, lat, mbe_jja_regcm_cmorph, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	ax14.set_title(u'(n) RegCM5-CMORPH JJA', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax14)
 
 	ax15 = axes[2, 4]
@@ -405,8 +414,8 @@ if var == 'pr':
 	configure_subplot(ax18)
 
 	ax19 = axes[3, 3] 
-	plt_map = ax19.contourf(lon, lat, mbe_jja_regcm_gpcp, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	ax19.set_title(u'(s) RegCM5-GPCP SON', loc='left', fontsize=font_size, fontweight='bold')
+	plt_map = ax19.contourf(lon, lat, mbe_jja_regcm_cmorph, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	ax19.set_title(u'(s) RegCM5-CMORPH SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax19)
 
 	ax20 = axes[3, 4]
@@ -415,10 +424,10 @@ if var == 'pr':
 	configure_subplot(ax20)
 	
 elif var == 'tas':
-	fig, axes = plt.subplots(4, 2, figsize=(8, 10), subplot_kw={'projection': ccrs.PlateCarree()})
+	fig, axes = plt.subplots(4, 3, figsize=(8, 8), subplot_kw={'projection': ccrs.PlateCarree()})
 
 	ax1 = axes[0, 0]
-	plt_map = ax1.scatter(lon_xx, lat_yy, 4, mbe_djf_regcm_inmet_smn, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
+	plt_map = ax1.scatter(lon_i, lat_i, 4, mbe_djf_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
 	ax1.set_title(u'(a) RegCM5-INMET DJF', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax1)
 
@@ -433,7 +442,7 @@ elif var == 'tas':
 	configure_subplot(ax3)
 
 	ax4 = axes[1, 0]
-	plt_map = ax4.scatter(lon_xx, lat_yy, 4, mbe_mam_regcm_inmet_smn, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
+	plt_map = ax4.scatter(lon_i, lat_i, 4, mbe_mam_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
 	ax4.set_title(u'(d) RegCM5-INMET MAM', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax4)
 
@@ -448,7 +457,7 @@ elif var == 'tas':
 	configure_subplot(ax6)
 
 	ax7 = axes[2, 0]
-	plt_map = ax7.scatter(lon_xx, lat_yy, 4, mbe_jja_regcm_inmet_smn, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
+	plt_map = ax7.scatter(lon_i, lat_i, 4, mbe_jja_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
 	ax7.set_title(u'(g) RegCM5-INMET JJA', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax7)
 
@@ -463,7 +472,7 @@ elif var == 'tas':
 	configure_subplot(ax9)
 
 	ax10 = axes[3, 0]
-	plt_map = ax10.scatter(lon_xx, lat_yy, 4, mbe_jja_regcm_inmet_smn, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
+	plt_map = ax10.scatter(lon_i, lat_i, 4, mbe_jja_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
 	ax10.set_title(u'(j) RegCM5-INMET SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax10)
 
@@ -507,7 +516,7 @@ if var == 'clt' or var == 'cll' or var == 'clm' or var == 'clh' or var == 'evsps
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 else:
-	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.94, 0.3, 0.015, 0.4]))
+	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 	
