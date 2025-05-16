@@ -19,8 +19,8 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
 var = 'pr'
-stats = 'freq'
-freq = 'day'
+stats = 'int'
+freq = 'hourly'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 

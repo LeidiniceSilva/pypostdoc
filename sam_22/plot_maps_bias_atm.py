@@ -18,7 +18,7 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'uv'
+var = 'q'
 level = '850hPa'
 obs = 'ERA5'
 dt = '1970-1971'
@@ -26,12 +26,12 @@ domain = 'SAM-22'
 latlon = [-105, -16, -57, 18]
 
 exp_i = 'ctrl_RegCM5'
-exp_ii = 'vfqi_RegCM5'
+exp_ii = 'vfqr_RegCM5'
 
 font_size = 8
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
 
-dict_var = {'uv': ['u', 'v', 'ua', 'va']}
+dict_var = {var: ['u', 'v', 'q', 'ua', 'va', 'hus']}
 
 
 def import_obs(param, dataset, season):
@@ -104,25 +104,40 @@ lat, lon, v_obs_mam = import_obs(dict_var[var][1], obs, 'MAM')
 lat, lon, v_obs_jja = import_obs(dict_var[var][1], obs, 'JJA')
 lat, lon, v_obs_son = import_obs(dict_var[var][1], obs, 'SON')
 
-lat, lon, u_exp_i_djf = import_rcm(dict_var[var][2], exp_i, 'DJF')
-lat, lon, u_exp_i_mam = import_rcm(dict_var[var][2], exp_i, 'MAM')
-lat, lon, u_exp_i_jja = import_rcm(dict_var[var][2], exp_i, 'JJA')
-lat, lon, u_exp_i_son = import_rcm(dict_var[var][2], exp_i, 'SON')
+lat, lon, q_obs_djf = import_obs(dict_var[var][2], obs, 'DJF')
+lat, lon, q_obs_mam = import_obs(dict_var[var][2], obs, 'MAM')
+lat, lon, q_obs_jja = import_obs(dict_var[var][2], obs, 'JJA')
+lat, lon, q_obs_son = import_obs(dict_var[var][2], obs, 'SON')
 
-lat, lon, v_exp_i_djf = import_rcm(dict_var[var][3], exp_i, 'DJF')
-lat, lon, v_exp_i_mam = import_rcm(dict_var[var][3], exp_i, 'MAM')
-lat, lon, v_exp_i_jja = import_rcm(dict_var[var][3], exp_i, 'JJA')
-lat, lon, v_exp_i_son = import_rcm(dict_var[var][3], exp_i, 'SON')
+lat, lon, u_exp_i_djf = import_rcm(dict_var[var][3], exp_i, 'DJF')
+lat, lon, u_exp_i_mam = import_rcm(dict_var[var][3], exp_i, 'MAM')
+lat, lon, u_exp_i_jja = import_rcm(dict_var[var][3], exp_i, 'JJA')
+lat, lon, u_exp_i_son = import_rcm(dict_var[var][3], exp_i, 'SON')
 
-lat, lon, u_exp_ii_djf = import_rcm(dict_var[var][2], exp_ii, 'DJF')
-lat, lon, u_exp_ii_mam = import_rcm(dict_var[var][2], exp_ii, 'MAM')
-lat, lon, u_exp_ii_jja = import_rcm(dict_var[var][2], exp_ii, 'JJA')
-lat, lon, u_exp_ii_son = import_rcm(dict_var[var][2], exp_ii, 'SON')
+lat, lon, v_exp_i_djf = import_rcm(dict_var[var][4], exp_i, 'DJF')
+lat, lon, v_exp_i_mam = import_rcm(dict_var[var][4], exp_i, 'MAM')
+lat, lon, v_exp_i_jja = import_rcm(dict_var[var][4], exp_i, 'JJA')
+lat, lon, v_exp_i_son = import_rcm(dict_var[var][4], exp_i, 'SON')
 
-lat, lon, v_exp_ii_djf = import_rcm(dict_var[var][3], exp_ii, 'DJF')
-lat, lon, v_exp_ii_mam = import_rcm(dict_var[var][3], exp_ii, 'MAM')
-lat, lon, v_exp_ii_jja = import_rcm(dict_var[var][3], exp_ii, 'JJA')
-lat, lon, v_exp_ii_son = import_rcm(dict_var[var][3], exp_ii, 'SON')
+lat, lon, q_exp_i_djf = import_rcm(dict_var[var][5], exp_i, 'DJF')
+lat, lon, q_exp_i_mam = import_rcm(dict_var[var][5], exp_i, 'MAM')
+lat, lon, q_exp_i_jja = import_rcm(dict_var[var][5], exp_i, 'JJA')
+lat, lon, q_exp_i_son = import_rcm(dict_var[var][5], exp_i, 'SON')
+
+lat, lon, u_exp_ii_djf = import_rcm(dict_var[var][3], exp_ii, 'DJF')
+lat, lon, u_exp_ii_mam = import_rcm(dict_var[var][3], exp_ii, 'MAM')
+lat, lon, u_exp_ii_jja = import_rcm(dict_var[var][3], exp_ii, 'JJA')
+lat, lon, u_exp_ii_son = import_rcm(dict_var[var][3], exp_ii, 'SON')
+
+lat, lon, v_exp_ii_djf = import_rcm(dict_var[var][4], exp_ii, 'DJF')
+lat, lon, v_exp_ii_mam = import_rcm(dict_var[var][4], exp_ii, 'MAM')
+lat, lon, v_exp_ii_jja = import_rcm(dict_var[var][4], exp_ii, 'JJA')
+lat, lon, v_exp_ii_son = import_rcm(dict_var[var][4], exp_ii, 'SON')
+
+lat, lon, q_exp_ii_djf = import_rcm(dict_var[var][5], exp_ii, 'DJF')
+lat, lon, q_exp_ii_mam = import_rcm(dict_var[var][5], exp_ii, 'MAM')
+lat, lon, q_exp_ii_jja = import_rcm(dict_var[var][5], exp_ii, 'JJA')
+lat, lon, q_exp_ii_son = import_rcm(dict_var[var][5], exp_ii, 'SON')
 
 mbe_djf_exp_i_obs_u = compute_mbe(u_exp_i_djf, u_obs_djf)
 mbe_mam_exp_i_obs_u = compute_mbe(u_exp_i_mam, u_obs_mam)
@@ -144,6 +159,16 @@ mbe_mam_exp_ii_obs_v = compute_mbe(v_exp_ii_mam, v_obs_mam)
 mbe_jja_exp_ii_obs_v = compute_mbe(v_exp_ii_jja, v_obs_jja)
 mbe_son_exp_ii_obs_v = compute_mbe(v_exp_ii_son, v_obs_son)
 
+mbe_djf_exp_i_obs_q = compute_mbe(q_exp_i_djf, q_obs_djf)
+mbe_mam_exp_i_obs_q = compute_mbe(q_exp_i_mam, q_obs_mam)
+mbe_jja_exp_i_obs_q = compute_mbe(q_exp_i_jja, q_obs_jja)
+mbe_son_exp_i_obs_q = compute_mbe(q_exp_i_son, q_obs_son)
+
+mbe_djf_exp_ii_obs_q = compute_mbe(q_exp_ii_djf, q_obs_djf)
+mbe_mam_exp_ii_obs_q = compute_mbe(q_exp_ii_mam, q_obs_mam)
+mbe_jja_exp_ii_obs_q = compute_mbe(q_exp_ii_jja, q_obs_jja)
+mbe_son_exp_ii_obs_q = compute_mbe(q_exp_ii_son, q_obs_son)
+
 uv_exp_i_djf = compute_ws(mbe_djf_exp_i_obs_u, mbe_djf_exp_i_obs_v)
 uv_exp_i_mam = compute_ws(mbe_mam_exp_i_obs_u, mbe_mam_exp_i_obs_v)
 uv_exp_i_jja = compute_ws(mbe_jja_exp_i_obs_u, mbe_jja_exp_i_obs_v)
@@ -160,39 +185,46 @@ axes = axes.flatten()
 vector = 25
 
 if level == '200hPa':
-	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 31, 1), cm.viridis_r]}
+	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 31, 1), cm.viridis_r],
+	'q': ['Bias of specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(-0.02, 0.021, 0.001), cm.Spectral]}
 elif level == '500hPa':
-	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 15.5, 0.5), cm.viridis_r]}
+	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 15.5, 0.5), cm.viridis_r],
+	'q': ['Bias of specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(-0.9, 0.91, 0.01), cm.Spectral]}
 else:
-	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 7.5, 0.5), cm.viridis_r]}
+	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 7.5, 0.5), cm.viridis_r],
+	'q': ['Bias of specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(-3, 3.1, 0.1), cm.Spectral]}
 
-plot_data = {'Plot 1': {'data 0': mbe_djf_exp_i_obs_u, 'data 1': mbe_djf_exp_i_obs_v, 'data 2': uv_exp_i_djf, 'title': '(a) CTRL-{0} DJF'.format(obs)},
-'Plot 2': {'data 0': mbe_mam_exp_i_obs_u, 'data 1': mbe_mam_exp_i_obs_v, 'data 2': uv_exp_i_mam, 'title': '(b) CTRL-{0} MAM'.format(obs)},
-'Plot 3': {'data 0': mbe_jja_exp_i_obs_u, 'data 1': mbe_jja_exp_i_obs_v, 'data 2': uv_exp_i_jja, 'title': '(c) CTRL-{0} JJA'.format(obs)},
-'Plot 4': {'data 0': mbe_son_exp_i_obs_u, 'data 1': mbe_son_exp_i_obs_v, 'data 2': uv_exp_i_son, 'title': '(d) CTRL-{0} SON'.format(obs)},
-'Plot 5': {'data 0': mbe_djf_exp_ii_obs_u, 'data 1': mbe_djf_exp_ii_obs_v, 'data 2': uv_exp_ii_djf, 'title': '(e) VFQI-{0} DJF'.format(obs)},
-'Plot 6': {'data 0': mbe_mam_exp_ii_obs_u, 'data 1': mbe_mam_exp_ii_obs_v, 'data 2': uv_exp_ii_mam, 'title': '(f) VFQI-{0} MAM'.format(obs)},
-'Plot 7': {'data 0': mbe_jja_exp_ii_obs_u, 'data 1': mbe_jja_exp_ii_obs_v, 'data 2': uv_exp_ii_jja, 'title': '(g) VFQI-{0} JJA'.format(obs)},
-'Plot 8': {'data 0': mbe_son_exp_ii_obs_u, 'data 1': mbe_son_exp_ii_obs_v, 'data 2': uv_exp_ii_son, 'title': '(h) VFQI-{0} SON'.format(obs)}}
+plot_data = {'Plot 1': {'data 0': mbe_djf_exp_i_obs_u, 'data 1': mbe_djf_exp_i_obs_v, 'data 2': uv_exp_i_djf, 'data 3': mbe_djf_exp_i_obs_q, 'title': '(a) CTRL-{0} DJF'.format(obs)},
+'Plot 2': {'data 0': mbe_mam_exp_i_obs_u, 'data 1': mbe_mam_exp_i_obs_v, 'data 2': uv_exp_i_mam, 'data 3': mbe_mam_exp_i_obs_q, 'title': '(b) CTRL-{0} MAM'.format(obs)},
+'Plot 3': {'data 0': mbe_jja_exp_i_obs_u, 'data 1': mbe_jja_exp_i_obs_v, 'data 2': uv_exp_i_jja, 'data 3': mbe_jja_exp_i_obs_q, 'title': '(c) CTRL-{0} JJA'.format(obs)},
+'Plot 4': {'data 0': mbe_son_exp_i_obs_u, 'data 1': mbe_son_exp_i_obs_v, 'data 2': uv_exp_i_son, 'data 3': mbe_son_exp_i_obs_q, 'title': '(d) CTRL-{0} SON'.format(obs)},
+'Plot 5': {'data 0': mbe_djf_exp_ii_obs_u, 'data 1': mbe_djf_exp_ii_obs_v, 'data 2': uv_exp_ii_djf, 'data 3': mbe_djf_exp_ii_obs_q, 'title': '(e) VFQR-{0} DJF'.format(obs)},
+'Plot 6': {'data 0': mbe_mam_exp_ii_obs_u, 'data 1': mbe_mam_exp_ii_obs_v, 'data 2': uv_exp_ii_mam, 'data 3': mbe_mam_exp_ii_obs_q, 'title': '(f) VFQR-{0} MAM'.format(obs)},
+'Plot 7': {'data 0': mbe_jja_exp_ii_obs_u, 'data 1': mbe_jja_exp_ii_obs_v, 'data 2': uv_exp_ii_jja, 'data 3': mbe_jja_exp_ii_obs_q, 'title': '(g) VFQR-{0} JJA'.format(obs)},
+'Plot 8': {'data 0': mbe_son_exp_ii_obs_u, 'data 1': mbe_son_exp_ii_obs_v, 'data 2': uv_exp_ii_son, 'data 3': mbe_son_exp_ii_obs_q, 'title': '(h) VFQR-{0} SON'.format(obs)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
 	data_ = value['data 0']
 	data_i = value['data 1']
 	data_ii = value['data 2']
+	data_iii = value['data 3']
 	title = value['title']
 
 	lons, lats = np.meshgrid(lon, lat)
-	quiv = ax.quiver(lons[::vector, ::vector], lats[::vector, ::vector], data_[::vector, ::vector], data_i[::vector, ::vector], data_ii[::vector, ::vector], cmap=dict_plot[var][2]) 
+	if var == 'uv':
+		plt_map = ax.quiver(lons[::vector, ::vector], lats[::vector, ::vector], data_[::vector, ::vector], data_i[::vector, ::vector], data_ii[::vector, ::vector], cmap=dict_plot[var][2])     
+	else:
+		plt_map = ax.contourf(lon, lat, data_iii*1000, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
 	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
-	configure_subplot(ax)     
+	configure_subplot(ax)   
 
 # Set colobar
-cbar = fig.colorbar(quiv, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)
+cbar = fig.colorbar(plt_map, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)
 cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs'.format(path)
+path_out = '{0}/figs/vfqr'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_{3}.png'.format(var, level, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

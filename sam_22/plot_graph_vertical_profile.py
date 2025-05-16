@@ -20,7 +20,7 @@ domain = 'SAM-22'
 latlon = [-105, -16, -57, 18]
 
 exp_i = 'ctrl_RegCM5'
-exp_ii = 'vfqi_RegCM5'
+exp_ii = 'vfqr_RegCM5'
 
 font_size = 8
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
@@ -28,8 +28,7 @@ path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
 dict_var = {'cl': ['cc'], 
 'clw': ['clwc'],
 'cli': ['ciwc'],
-'rh': ['r'],
-'hus': ['q']}
+'rh': ['r']}
 
 subdomains = {'AMZ': {'lat': (-15, -5), 'lon': (-68, -48)}, 
 'LPB': {'lat': (-33, -20), 'lon': (-62, -49)},
@@ -120,7 +119,7 @@ for i, season in enumerate(seasons):
 		ax = axes[i, j]
 		ax.plot(obs_profile, levels_i, color='black', label='ERA5', linewidth=1)
 		ax.plot(exp_i_profile, levels_ii, color='blue', label='CTRL', linewidth=1)
-		ax.plot(exp_ii_profile, levels_ii, color='red', label='VFQI', linewidth=1)
+		ax.plot(exp_ii_profile, levels_ii, color='red', label='VFQR', linewidth=1)
 		ax.set_xlim(dict_plot[var][1], dict_plot[var][2])
 		ax.set_ylim(0,1000)
 		ax.set_xticks(dict_plot[var][3])
@@ -140,7 +139,7 @@ for i, season in enumerate(seasons):
 plt.legend(loc=1, ncol=1, fontsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs'.format(path)
+path_out = '{0}/figs/vfqr'.format(path)
 name_out = 'pyplt_graph_vertical_profile_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

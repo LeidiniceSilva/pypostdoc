@@ -23,7 +23,7 @@ from dict_smn_ii_stations import smn_ii
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'pr'
+var = 'evspsblpot'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -317,7 +317,7 @@ dict_plot = {'pr': ['Bias of  precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 
 'cll': ['Bias of low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clm': ['Bias of medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clh': ['Bias of high cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
-'evspsblpot': ['Potential evapotranspiration (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.RdYlGn],
+'evspsblpot': ['Bias of potential evapotranspiration (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.RdYlGn],
 'rsnl': ['Bias of surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-80, 90, 10), cm.RdBu_r]}
 
 if var == 'pr':

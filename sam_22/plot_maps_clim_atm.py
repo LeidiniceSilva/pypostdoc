@@ -118,6 +118,11 @@ lat, lon, v_exp_i_mam = import_rcm(dict_var[var][4], exp_i, 'MAM')
 lat, lon, v_exp_i_jja = import_rcm(dict_var[var][4], exp_i, 'JJA')
 lat, lon, v_exp_i_son = import_rcm(dict_var[var][4], exp_i, 'SON')
 
+lat, lon, q_exp_i_djf = import_rcm(dict_var[var][5], exp_i, 'DJF')
+lat, lon, q_exp_i_mam = import_rcm(dict_var[var][5], exp_i, 'MAM')
+lat, lon, q_exp_i_jja = import_rcm(dict_var[var][5], exp_i, 'JJA')
+lat, lon, q_exp_i_son = import_rcm(dict_var[var][5], exp_i, 'SON')
+
 lat, lon, u_exp_ii_djf = import_rcm(dict_var[var][3], exp_ii, 'DJF')
 lat, lon, u_exp_ii_mam = import_rcm(dict_var[var][3], exp_ii, 'MAM')
 lat, lon, u_exp_ii_jja = import_rcm(dict_var[var][3], exp_ii, 'JJA')
@@ -127,11 +132,6 @@ lat, lon, v_exp_ii_djf = import_rcm(dict_var[var][4], exp_ii, 'DJF')
 lat, lon, v_exp_ii_mam = import_rcm(dict_var[var][4], exp_ii, 'MAM')
 lat, lon, v_exp_ii_jja = import_rcm(dict_var[var][4], exp_ii, 'JJA')
 lat, lon, v_exp_ii_son = import_rcm(dict_var[var][4], exp_ii, 'SON')
-
-lat, lon, q_exp_i_djf = import_rcm(dict_var[var][5], exp_i, 'DJF')
-lat, lon, q_exp_i_mam = import_rcm(dict_var[var][5], exp_i, 'MAM')
-lat, lon, q_exp_i_jja = import_rcm(dict_var[var][5], exp_i, 'JJA')
-lat, lon, q_exp_i_son = import_rcm(dict_var[var][5], exp_i, 'SON')
 
 lat, lon, q_exp_ii_djf = import_rcm(dict_var[var][5], exp_ii, 'DJF')
 lat, lon, q_exp_ii_mam = import_rcm(dict_var[var][5], exp_ii, 'MAM')
@@ -156,18 +156,17 @@ uv_exp_ii_son = compute_ws(u_exp_ii_son, v_exp_ii_son)
 # Plot figure
 fig, axes = plt.subplots(3, 4, figsize=(12, 8), subplot_kw={'projection': ccrs.PlateCarree()})
 axes = axes.flatten()
-font_size = 6 
 vector = 25
 
 if level == '200hPa':
 	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 62, 2), cm.viridis_r],
-	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 1.1, 0.01), cm.magma_r]}
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 0.1, 0.001), cm.hsv]}
 elif level == '500hPa':
 	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 31, 1), cm.viridis_r],
-	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 11.25, 0.25), cm.magma_r]}
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 5.125, 0.125), cm.hsv]}
 else:
 	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 15.5, 0.5), cm.viridis_r],
-	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 22.5, 0.5), cm.hsv]}
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 20.25, 0.25), cm.hsv]}
 
 plot_data = {'Plot 1': {'data 0': uv_obs_djf, 'data 1': u_obs_djf, 'data 2': v_obs_djf, 'data 3': q_obs_djf, 'title': '(a) {0} DJF'.format(obs)},
 	'Plot 2': {'data 0': uv_obs_mam, 'data 1': u_obs_mam, 'data 2': v_obs_mam, 'data 3': q_obs_mam, 'title': '(b) {0} MAM'.format(obs)},
@@ -189,17 +188,14 @@ for ax, (key, value) in zip(axes, plot_data.items()):
 	data_iii = value['data 3']
 	title = value['title']
 
-	if var == 'ua':
-		lons, lats = np.meshgrid(lon, lat)
+	lons, lats = np.meshgrid(lon, lat)
+	if var == 'uv':
 		contourf = ax.contourf(lons, lats, data_, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-		quiv = ax.quiver(lons[::vector, ::vector], lats[::vector, ::vector], data_i[::vector, ::vector], data_ii[::vector, ::vector], color='black') 
-		ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
-		configure_subplot(ax)     
+		quiv = ax.quiver(lons[::vector, ::vector], lats[::vector, ::vector], data_i[::vector, ::vector], data_ii[::vector, ::vector], color='black')     
 	else:
-		lons, lats = np.meshgrid(lon, lat)
 		contourf = ax.contourf(lons, lats, data_iii*1000, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-		ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
-		configure_subplot(ax) 
+	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax) 
 
 # Set colobar
 cbar = fig.colorbar(contourf, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)
