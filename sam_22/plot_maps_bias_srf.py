@@ -18,21 +18,26 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'clt'
+var = 'pr'
 obs = 'ERA5'
 dt = '1970-1971'
 domain = 'SAM-22'
 latlon = [-105, -16, -57, 18]
 
 exp_i = 'ctrl_RegCM5'
-exp_ii = 'vfqr_RegCM5'
+exp_i_tg = exp_i.split('_RegCM5')[0]
+exp_i_up = exp_i_tg.upper()
 
-font_size = 8
-path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
+exp_ii = 'rclcrit_RegCM5'
+exp_ii_tg = exp_ii.split('_RegCM5')[0]
+exp_ii_up = exp_ii_tg.upper()
 
 dict_var = {'pr': ['tp'],
 'tas': ['t2m'],
 'clt': ['tcc']}
+
+font_size = 8
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
 
 
 def import_obs(param, dataset, season):
@@ -113,14 +118,14 @@ dict_plot = {'pr': ['Bias of precipitation (mm d$^-$$^1$)', np.arange(-8, 8.5, 0
 'tas': ['Bias of air temperature (°C)', np.arange(-8, 8.5, 0.5), cm.RdBu_r],
 'clt': ['Bias of total cloud cover (%)', np.arange(-60, 65, 5), cm.RdGy]}
 
-plot_data = {'Plot 1': {'data': mbe_djf_exp_i_obs, 'title': '(a) CTRL-{0} DJF'.format(obs)},
-'Plot 2': {'data': mbe_mam_exp_i_obs, 'title': '(b) CTRL-{0} MAM'.format(obs)},
-'Plot 3': {'data': mbe_jja_exp_i_obs, 'title': '(c) CTRL-{0} JJA'.format(obs)},
-'Plot 4': {'data': mbe_son_exp_i_obs, 'title': '(d) CTRL-{0} SON'.format(obs)},
-'Plot 5': {'data': mbe_djf_exp_ii_obs, 'title': '(e) VFQR-{0} DJF'.format(obs)},
-'Plot 6': {'data': mbe_mam_exp_ii_obs, 'title': '(f) VFQR-{0} MAM'.format(obs)},
-'Plot 7': {'data': mbe_jja_exp_ii_obs, 'title': '(g) VFQR-{0} JJA'.format(obs)},
-'Plot 8': {'data': mbe_son_exp_ii_obs, 'title': '(h) VFQR-{0} SON'.format(obs)}}
+plot_data = {'Plot 1': {'data': mbe_djf_exp_i_obs, 'title': '(a) {0}-{1} DJF'.format(exp_i_up, obs)},
+'Plot 2': {'data': mbe_mam_exp_i_obs, 'title': '(b) {0}-{1} MAM'.format(exp_i_up, obs)},
+'Plot 3': {'data': mbe_jja_exp_i_obs, 'title': '(c) {0}-{1} JJA'.format(exp_i_up, obs)},
+'Plot 4': {'data': mbe_son_exp_i_obs, 'title': '(d) {0}-{1} SON'.format(exp_i_up, obs)},
+'Plot 5': {'data': mbe_djf_exp_ii_obs, 'title': '(e) {0}-{1} DJF'.format(exp_ii_up, obs)},
+'Plot 6': {'data': mbe_mam_exp_ii_obs, 'title': '(f) {0}-{1} MAM'.format(exp_ii_up, obs)},
+'Plot 7': {'data': mbe_jja_exp_ii_obs, 'title': '(g) {0}-{1} JJA'.format(exp_ii_up, obs)},
+'Plot 8': {'data': mbe_son_exp_ii_obs, 'title': '(h) {0}-{1} SON'.format(exp_ii_up, obs)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
 	data = value['data']
@@ -136,7 +141,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs/vfqr'.format(path)
+path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

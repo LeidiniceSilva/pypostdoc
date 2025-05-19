@@ -7,6 +7,7 @@ __description__ = "This script plot clim maps"
 
 import os
 import netCDF4
+import argparse
 import numpy as np
 import matplotlib.colors
 import matplotlib.cm as cm
@@ -18,20 +19,48 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'q'
-level = '850hPa'
 obs = 'ERA5'
 dt = '1970-1971'
 domain = 'SAM-22'
 latlon = [-105, -16, -57, 18]
 
-exp_i = 'ctrl_RegCM5'
-exp_ii = 'vfqr_RegCM5'
-
 font_size = 8
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
 
-dict_var = {var: ['u', 'v', 'q', 'ua', 'va', 'hus']}
+
+def main():
+
+	parser = argparse.ArgumentParser(description='Process experiment configuration.')
+	parser.add_argument('--var', type=str, required=True, help='Variable name (e.g., uv)')
+	parser.add_argument('--level', type=str, required=True, help='Pressure level (e.g., 200hPa)')
+	parser.add_argument('--exp_i', type=str, required=True, help='First experiment name (e.g., ctrl_RegCM5)')
+	parser.add_argument('--exp_ii', type=str, required=True, help='Second experiment name (e.g., rclcrit_RegCM5)')
+
+	args = parser.parse_args()
+
+	var = args.var
+	level = args.level
+	exp_i = args.exp_i
+	exp_ii = args.exp_ii
+
+	exp_i_tg = exp_i.split('_RegCM5')[0]
+	exp_i_up = exp_i_tg.upper()
+
+	exp_ii_tg = exp_ii.split('_RegCM5')[0]
+	exp_ii_up = exp_ii_tg.upper()
+
+	dict_var = {var: ['u', 'v', 'q', 'ua', 'va', 'hus']}
+
+	print(f"Variable: {var}")
+	print(f"Level: {level}")
+	print(f"exp_i_up: {exp_i_up}")
+	print(f"exp_ii_up: {exp_ii_up}")
+
+	return dict_var, var, level, exp_i, exp_i_tg, exp_i_up, exp_ii, exp_ii_tg, exp_ii_up  
+
+
+if __name__ == '__main__':
+	dict_var, var, level, exp_i, exp_i_tg, exp_i_up, exp_ii, exp_ii_tg, exp_ii_up = main()
 
 
 def import_obs(param, dataset, season):
@@ -195,13 +224,13 @@ else:
 	'q': ['Bias of specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(-3, 3.1, 0.1), cm.Spectral]}
 
 plot_data = {'Plot 1': {'data 0': mbe_djf_exp_i_obs_u, 'data 1': mbe_djf_exp_i_obs_v, 'data 2': uv_exp_i_djf, 'data 3': mbe_djf_exp_i_obs_q, 'title': '(a) CTRL-{0} DJF'.format(obs)},
-'Plot 2': {'data 0': mbe_mam_exp_i_obs_u, 'data 1': mbe_mam_exp_i_obs_v, 'data 2': uv_exp_i_mam, 'data 3': mbe_mam_exp_i_obs_q, 'title': '(b) CTRL-{0} MAM'.format(obs)},
-'Plot 3': {'data 0': mbe_jja_exp_i_obs_u, 'data 1': mbe_jja_exp_i_obs_v, 'data 2': uv_exp_i_jja, 'data 3': mbe_jja_exp_i_obs_q, 'title': '(c) CTRL-{0} JJA'.format(obs)},
-'Plot 4': {'data 0': mbe_son_exp_i_obs_u, 'data 1': mbe_son_exp_i_obs_v, 'data 2': uv_exp_i_son, 'data 3': mbe_son_exp_i_obs_q, 'title': '(d) CTRL-{0} SON'.format(obs)},
-'Plot 5': {'data 0': mbe_djf_exp_ii_obs_u, 'data 1': mbe_djf_exp_ii_obs_v, 'data 2': uv_exp_ii_djf, 'data 3': mbe_djf_exp_ii_obs_q, 'title': '(e) VFQR-{0} DJF'.format(obs)},
-'Plot 6': {'data 0': mbe_mam_exp_ii_obs_u, 'data 1': mbe_mam_exp_ii_obs_v, 'data 2': uv_exp_ii_mam, 'data 3': mbe_mam_exp_ii_obs_q, 'title': '(f) VFQR-{0} MAM'.format(obs)},
-'Plot 7': {'data 0': mbe_jja_exp_ii_obs_u, 'data 1': mbe_jja_exp_ii_obs_v, 'data 2': uv_exp_ii_jja, 'data 3': mbe_jja_exp_ii_obs_q, 'title': '(g) VFQR-{0} JJA'.format(obs)},
-'Plot 8': {'data 0': mbe_son_exp_ii_obs_u, 'data 1': mbe_son_exp_ii_obs_v, 'data 2': uv_exp_ii_son, 'data 3': mbe_son_exp_ii_obs_q, 'title': '(h) VFQR-{0} SON'.format(obs)}}
+'Plot 2': {'data 0': mbe_mam_exp_i_obs_u, 'data 1': mbe_mam_exp_i_obs_v, 'data 2': uv_exp_i_mam, 'data 3': mbe_mam_exp_i_obs_q, 'title': '(b) {0}-{1} MAM'.format(exp_i_up, obs)},
+'Plot 3': {'data 0': mbe_jja_exp_i_obs_u, 'data 1': mbe_jja_exp_i_obs_v, 'data 2': uv_exp_i_jja, 'data 3': mbe_jja_exp_i_obs_q, 'title': '(c) {0}-{1} JJA'.format(exp_i_up, obs)},
+'Plot 4': {'data 0': mbe_son_exp_i_obs_u, 'data 1': mbe_son_exp_i_obs_v, 'data 2': uv_exp_i_son, 'data 3': mbe_son_exp_i_obs_q, 'title': '(d) {0}-{1} SON'.format(exp_i_up, obs)},
+'Plot 5': {'data 0': mbe_djf_exp_ii_obs_u, 'data 1': mbe_djf_exp_ii_obs_v, 'data 2': uv_exp_ii_djf, 'data 3': mbe_djf_exp_ii_obs_q, 'title': '(e) {0}-{1} DJF'.format(exp_ii_up, obs)},
+'Plot 6': {'data 0': mbe_mam_exp_ii_obs_u, 'data 1': mbe_mam_exp_ii_obs_v, 'data 2': uv_exp_ii_mam, 'data 3': mbe_mam_exp_ii_obs_q, 'title': '(f) {0}-{1} MAM'.format(exp_ii_up, obs)},
+'Plot 7': {'data 0': mbe_jja_exp_ii_obs_u, 'data 1': mbe_jja_exp_ii_obs_v, 'data 2': uv_exp_ii_jja, 'data 3': mbe_jja_exp_ii_obs_q, 'title': '(g) {0}-{1} JJA'.format(exp_ii_up, obs)},
+'Plot 8': {'data 0': mbe_son_exp_ii_obs_u, 'data 1': mbe_son_exp_ii_obs_v, 'data 2': uv_exp_ii_son, 'data 3': mbe_son_exp_ii_obs_q, 'title': '(h) {0}-{1} SON'.format(exp_ii_up, obs)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
 	data_ = value['data 0']
@@ -224,10 +253,9 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs/vfqr'.format(path)
+path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
 name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_{3}.png'.format(var, level, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()
 
 

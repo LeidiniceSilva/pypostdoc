@@ -31,12 +31,12 @@ exp_ii = 'rclcrit_RegCM5'
 exp_ii_tg = exp_ii.split('_RegCM5')[0]
 exp_ii_up = exp_ii_tg.upper()
 
-font_size = 8
-path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
-
 dict_var = {'pr': ['tp'],
 'tas': ['t2m'],
 'clt': ['tcc']}
+
+font_size = 8
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
 
 
 def import_obs(param, dataset, season):

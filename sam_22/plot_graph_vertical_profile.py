@@ -13,14 +13,19 @@ import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-var = 'rh'
+var = 'cl'
 obs = 'ERA5'
 dt = '1970-1971'
 domain = 'SAM-22'
 latlon = [-105, -16, -57, 18]
 
 exp_i = 'ctrl_RegCM5'
-exp_ii = 'vfqr_RegCM5'
+exp_i_tg = exp_i.split('_RegCM5')[0]
+exp_i_up = exp_i_tg.upper()
+
+exp_ii = 'rclcrit_RegCM5'
+exp_ii_tg = exp_ii.split('_RegCM5')[0]
+exp_ii_up = exp_ii_tg.upper()
 
 font_size = 8
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
@@ -36,6 +41,7 @@ subdomains = {'AMZ': {'lat': (-15, -5), 'lon': (-68, -48)},
 'NEB': {'lat': (-15, -2), 'lon': (-45, -35)}}
 
 subplot_labels = [f"({letter})" for letter in string.ascii_lowercase[:16]]
+
 
 def import_obs(param, dataset, season, subdomain):
 
@@ -118,8 +124,8 @@ for i, season in enumerate(seasons):
 	
 		ax = axes[i, j]
 		ax.plot(obs_profile, levels_i, color='black', label='ERA5', linewidth=1)
-		ax.plot(exp_i_profile, levels_ii, color='blue', label='CTRL', linewidth=1)
-		ax.plot(exp_ii_profile, levels_ii, color='red', label='VFQR', linewidth=1)
+		ax.plot(exp_i_profile, levels_ii, color='blue', label='{0}'.format(exp_i_up), linewidth=1)
+		ax.plot(exp_ii_profile, levels_ii, color='red', label='{0}'.format(exp_ii_up), linewidth=1)
 		ax.set_xlim(dict_plot[var][1], dict_plot[var][2])
 		ax.set_ylim(0,1000)
 		ax.set_xticks(dict_plot[var][3])
@@ -139,7 +145,7 @@ for i, season in enumerate(seasons):
 plt.legend(loc=1, ncol=1, fontsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs/vfqr'.format(path)
+path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
 name_out = 'pyplt_graph_vertical_profile_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
