@@ -29,7 +29,7 @@ exp_i = 'ctrl_RegCM5'
 exp_i_tg = exp_i.split('_RegCM5')[0]
 exp_i_up = exp_i_tg.upper()
 
-exp_ii = 'rclcrit_RegCM5'
+exp_ii = 'restclm_RegCM5'
 exp_ii_tg = exp_ii.split('_RegCM5')[0]
 exp_ii_up = exp_ii_tg.upper()
 

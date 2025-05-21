@@ -16,14 +16,14 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeat
 
 from netCDF4 import Dataset
-from import_climate_tools import compute_mbe
 from dict_inmet_stations import inmet
 from dict_smn_i_stations import smn_i
 from dict_smn_ii_stations import smn_ii
+from import_climate_tools import compute_mbe
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'evspsblpot'
+var = 'pr'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -143,7 +143,13 @@ def import_obs(param, domain, dataset, season):
 	if param == 'msnlwrf':
 		mean = var[:][0,:,:]*(-1)
 	elif param == 'pev':
-		mean = var[:][0,:,:]*(-1000)
+		mean_i = var[:][0,:,:]*(-1000)
+		mean_i = np.abs(mean_i)
+		mask_nc = Dataset('{0}/SAM-3km/postproc/evaluate/rcm/sea_land_mask_lonlat.nc'.format(path))
+		lsm = mask_nc.variables['lsm'][:]
+		ocean_mask = (lsm == 0)
+		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, mean_i)
+		mean = mean_[0,0,:,:]	
 	else:
 		mean = var[:][0,:,:]
 	
@@ -161,7 +167,7 @@ def import_rcm(param, domain, dataset, season):
 	if param == 'tas':
 		mean = var[:][0,0,:,:]
 	elif param == 'evspsblpot':
-		mask_nc = Dataset('{0}/OBS/ERA5/sea_land_mask_lonlat.nc'.format(path))
+		mask_nc = Dataset('{0}/SAM-3km/postproc/evaluate/rcm/sea_land_mask_lonlat.nc'.format(path))
 		lsm = mask_nc.variables['lsm'][:]
 		ocean_mask = (lsm == 0)
 		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, var[:][0,:,:])
@@ -317,7 +323,7 @@ dict_plot = {'pr': ['Bias of  precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 
 'cll': ['Bias of low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clm': ['Bias of medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clh': ['Bias of high cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
-'evspsblpot': ['Bias of potential evapotranspiration (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.RdYlGn],
+'evspsblpot': ['Bias of potential evapotranspiration (mm d$^-$$^1$)', np.arange(-5, 5.5, 0.5), cm.bwr],
 'rsnl': ['Bias of surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-80, 90, 10), cm.RdBu_r]}
 
 if var == 'pr':
@@ -399,27 +405,27 @@ if var == 'pr':
 	configure_subplot(ax15)
 
 	ax16 = axes[3, 0]
-	plt_map = ax16.scatter(lon_xx, lat_yy, 4, mbe_jja_regcm_inmet_smn, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
+	plt_map = ax16.scatter(lon_xx, lat_yy, 4, mbe_son_regcm_inmet_smn, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
 	ax16.set_title(u'(p) RegCM5-INMET SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax16)
 
 	ax17 = axes[3, 1]
-	plt_map = ax17.contourf(lon, lat, mbe_jja_regcm_cru, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt_map = ax17.contourf(lon, lat, mbe_son_regcm_cru, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	ax17.set_title(u'(q) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax17)
 
 	ax18 = axes[3, 2]
-	plt_map = ax18.contourf(lon, lat, mbe_jja_regcm_cpc, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt_map = ax18.contourf(lon, lat, mbe_son_regcm_cpc, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	ax18.set_title(u'(r) RegCM5-CPC SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax18)
 
 	ax19 = axes[3, 3] 
-	plt_map = ax19.contourf(lon, lat, mbe_jja_regcm_cmorph, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt_map = ax19.contourf(lon, lat, mbe_son_regcm_cmorph, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	ax19.set_title(u'(s) RegCM5-CMORPH SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax19)
 
 	ax20 = axes[3, 4]
-	plt_map = ax20.contourf(lon, lat, mbe_jja_regcm_era5, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt_map = ax20.contourf(lon, lat, mbe_son_regcm_era5, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	ax20.set_title(u'(t) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax20)
 	
@@ -472,17 +478,17 @@ elif var == 'tas':
 	configure_subplot(ax9)
 
 	ax10 = axes[3, 0]
-	plt_map = ax10.scatter(lon_i, lat_i, 4, mbe_jja_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
+	plt_map = ax10.scatter(lon_i, lat_i, 4, mbe_son_regcm_inmet, cmap=dict_plot[var][2], marker='o', vmin=-10, vmax=10) 
 	ax10.set_title(u'(j) RegCM5-INMET SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax10)
 
 	ax11 = axes[3, 1]
-	plt_map = ax11.contourf(lon, lat, mbe_jja_regcm_cru, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt_map = ax11.contourf(lon, lat, mbe_son_regcm_cru, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	ax11.set_title(u'(k) RegCM5-CRU SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax11)
 
 	ax12 = axes[3, 2]
-	plt_map = ax12.contourf(lon, lat, mbe_jja_regcm_era5, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
+	plt_map = ax12.contourf(lon, lat, mbe_son_regcm_era5, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	ax12.set_title(u'(l) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax12)
 

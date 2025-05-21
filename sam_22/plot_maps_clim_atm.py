@@ -235,7 +235,6 @@ cbar.ax.tick_params(labelsize=font_size)
 path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
 name_out = 'pyplt_maps_clim_{0}_{1}_{2}_RegCM5_{3}.png'.format(var, level, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()
 
 

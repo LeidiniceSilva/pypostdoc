@@ -13,7 +13,7 @@ import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-var = 'cl'
+var = 'cli'
 obs = 'ERA5'
 dt = '1970-1971'
 domain = 'SAM-22'
@@ -23,7 +23,7 @@ exp_i = 'ctrl_RegCM5'
 exp_i_tg = exp_i.split('_RegCM5')[0]
 exp_i_up = exp_i_tg.upper()
 
-exp_ii = 'rclcrit_RegCM5'
+exp_ii = 'restclm_RegCM5'
 exp_ii_tg = exp_ii.split('_RegCM5')[0]
 exp_ii_up = exp_ii_tg.upper()
 
@@ -32,8 +32,7 @@ path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
 
 dict_var = {'cl': ['cc'], 
 'clw': ['clwc'],
-'cli': ['ciwc'],
-'rh': ['r']}
+'cli': ['ciwc']}
 
 subdomains = {'AMZ': {'lat': (-15, -5), 'lon': (-68, -48)}, 
 'LPB': {'lat': (-33, -20), 'lon': (-62, -49)},

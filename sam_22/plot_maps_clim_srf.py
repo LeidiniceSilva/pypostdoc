@@ -17,7 +17,7 @@ import cartopy.feature as cfeat
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'pr'
+var = 'clt'
 obs = 'ERA5'
 dt = '1970-1971'
 domain = 'SAM-22'
@@ -27,7 +27,7 @@ exp_i = 'ctrl_RegCM5'
 exp_i_tg = exp_i.split('_RegCM5')[0]
 exp_i_up = exp_i_tg.upper()
 
-exp_ii = 'rclcrit_RegCM5'
+exp_ii = 'restclm_RegCM5'
 exp_ii_tg = exp_ii.split('_RegCM5')[0]
 exp_ii_up = exp_ii_tg.upper()
 
