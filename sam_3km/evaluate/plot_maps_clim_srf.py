@@ -22,7 +22,7 @@ from dict_smn_ii_stations import smn_ii
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'pr'
+var = 'mrsos'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -30,7 +30,7 @@ dt = '{0}-{1}'.format(idt, fdt)
 font_size = 6
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
 
-		
+
 def import_situ_i(param_i):
 	
 	yy, xx = [], []
@@ -128,6 +128,12 @@ def import_obs(param, domain, dataset, season):
 		ocean_mask = (lsm == 0)
 		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, mean_i)
 		mean = mean_[0,0,:,:]
+	elif param == 'swvl1':
+		mask_nc = Dataset('{0}/SAM-3km/postproc/evaluate/rcm/sea_land_mask_lonlat.nc'.format(path))
+		lsm = mask_nc.variables['lsm'][:]
+		ocean_mask = (lsm == 0)
+		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, var[:][0,:,:])
+		mean = mean_[0,0,:,:]
 	else:
 		mean = var[:][0,:,:]
 	
@@ -142,7 +148,7 @@ def import_rcm(param, domain, dataset, season):
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
 
-	if param == 'tas':
+	if param == 'tas' or param == 'sfcWindmax':
 		mean = var[:][0,0,:,:]
 	elif param == 'evspsblpot':
 		mask_nc = Dataset('{0}/SAM-3km/postproc/evaluate/rcm/sea_land_mask_lonlat.nc'.format(path))
@@ -163,17 +169,19 @@ dict_var = {'pr': ['pre', 'pre', 'precip', 'cmorph', 'tp'],
 'cll': ['lcc'],
 'clm': ['mcc'],
 'clh': ['hcc'],
+'sfcWindmax': ['u10max', 'v10max'],
 'evspsblpot': ['pev'],
 'rsnl': ['msnlwrf'],
+'mrsos': ['swvl1'],
 'cape': ['cape'],
 'cin': ['cin']}
 
-lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
-lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
-lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
-lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
-
 if var == 'pr':
+	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
+
 	lat_i, lon_i, inmet_i = import_situ_i(dict_var[var][0])
 	lat_ii, lon_ii, smn_ii = import_situ_ii(dict_var[var][0])
 	lat_iii, lon_iii, smn_iii = import_situ_iii(dict_var[var][0])
@@ -210,12 +218,12 @@ if var == 'pr':
 	lat, lon, era5_son = import_obs(dict_var[var][4], domain, 'ERA5', 'SON')
 
 elif var == 'tas':
-	lat_i, lon_i, inmet_i = import_situ_i(dict_var[var][0])
+	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
 
-	lat_yy = lat_i
-	lon_xx = lon_i
-	weather_stations = inmet_i
-
+	lat_yy, lon_xx, weather_stations = import_situ_i(dict_var[var][0])
 	ws_djf, ws_mam, ws_jja, ws_son = [], [], [], []
 	for i in range(0, len(lat_yy)):
 		ws_djf.append(weather_stations[i][0])
@@ -232,16 +240,54 @@ elif var == 'tas':
 	lat, lon, era5_mam = import_obs(dict_var[var][2], domain, 'ERA5', 'MAM')
 	lat, lon, era5_jja = import_obs(dict_var[var][2], domain, 'ERA5', 'JJA')
 	lat, lon, era5_son = import_obs(dict_var[var][2], domain, 'ERA5', 'SON')
-else:
+
+elif var == 'sfcWindmax':
+	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
+
+	lat, lon, u_era5_djf = import_obs(dict_var[var][0], domain, 'ERA5', 'DJF')
+	lat, lon, u_era5_mam = import_obs(dict_var[var][0], domain, 'ERA5', 'MAM')
+	lat, lon, u_era5_jja = import_obs(dict_var[var][0], domain, 'ERA5', 'JJA')
+	lat, lon, u_era5_son = import_obs(dict_var[var][0], domain, 'ERA5', 'SON')
+
+	lat, lon, v_era5_djf = import_obs(dict_var[var][1], domain, 'ERA5', 'DJF')
+	lat, lon, v_era5_mam = import_obs(dict_var[var][1], domain, 'ERA5', 'MAM')
+	lat, lon, v_era5_jja = import_obs(dict_var[var][1], domain, 'ERA5', 'JJA')
+	lat, lon, v_era5_son = import_obs(dict_var[var][1], domain, 'ERA5', 'SON')
+
+	era5_djf = np.sqrt(u_era5_djf**2 + v_era5_djf**2)
+	era5_mam = np.sqrt(u_era5_mam**2 + v_era5_mam**2)
+	era5_jja = np.sqrt(u_era5_jja**2 + v_era5_jja**2)
+	era5_son = np.sqrt(u_era5_son**2 + v_era5_son**2)
+
+elif var == 'mrsos':
+	lat, lon, regcm_djf_ = import_rcm(var, domain, 'RegCM5', 'DJF')
+	lat, lon, regcm_mam_ = import_rcm(var, domain, 'RegCM5', 'MAM')
+	lat, lon, regcm_jja_ = import_rcm(var, domain, 'RegCM5', 'JJA')
+	lat, lon, regcm_son_ = import_rcm(var, domain, 'RegCM5', 'SON')
+
+	regcm_djf = regcm_djf_/100
+	regcm_mam = regcm_mam_/100
+	regcm_jja = regcm_jja_/100
+	regcm_son = regcm_son_/100
+
 	lat, lon, era5_djf = import_obs(dict_var[var][0], domain, 'ERA5', 'DJF')
 	lat, lon, era5_mam = import_obs(dict_var[var][0], domain, 'ERA5', 'MAM')
 	lat, lon, era5_jja = import_obs(dict_var[var][0], domain, 'ERA5', 'JJA')
 	lat, lon, era5_son = import_obs(dict_var[var][0], domain, 'ERA5', 'SON')
 
+else:
 	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
 	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
 	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
 	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
+
+	lat, lon, era5_djf = import_obs(dict_var[var][0], domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs(dict_var[var][0], domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs(dict_var[var][0], domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs(dict_var[var][0], domain, 'ERA5', 'SON')
 
 # Plot figure 
 def configure_subplot(ax):
@@ -269,10 +315,12 @@ dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 18, 1), matplot
 'cll': ['Low cloud cover (0-1)', np.arange(0, 1.05, 0.05), cm.Greys],
 'clm': ['Medium cloud cover (0-1)', np.arange(0, 1.05, 0.05), cm.Greys],
 'clh': ['High cloud cover (0-1)', np.arange(0, 1.05, 0.05), cm.Greys],
+'sfcWindmax': ['Maximum wind speed at 10 meters (m s$^-$$^1$)', np.arange(0, 14.5, 0.5), cm.jet],
 'evspsblpot': ['Potential evapotranspiration (mm d$^-$$^1$)', np.arange(0, 10.5, 0.5), cm.jet],
 'rsnl': ['Surface net upward longwave flux (W mm$^-$$^2$)', np.arange(0, 220, 10), cm.rainbow],
-'CAPE': ['Convective Available Potential Energy (J kg$^-$$^1$)', np.arange(0, 2550, 50), cm.jet],
-'CIN': ['Convective inhibition (J kg$^-$$^1$)', np.arange(0, 675, 25), cm.jet]}
+'mrsos': ['Soil moisture (m m$^-$$^3$)', np.arange(0, 0.71, 0.01), cm.rainbow_r],
+'cape': ['Convective available potential energy (J kg$^-$$^1$)', np.arange(0, 1850, 50), cm.ocean_r],
+'cin': ['Convective inhibition (J kg$^-$$^1$)', np.arange(0, 430, 10), cm.CMRmap_r]}
 
 if var == 'pr':
 	fig, axes = plt.subplots(4, 5, figsize=(15, 8), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -447,7 +495,6 @@ elif var == 'tas':
 	plt_map = ax12.contourf(lon, lat, era5_son, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
 	ax12.set_title(u'(l) ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax12)
-
 else:
 	fig, axes = plt.subplots(4, 2, figsize=(10, 12), subplot_kw={'projection': ccrs.PlateCarree()})
 
