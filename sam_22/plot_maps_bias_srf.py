@@ -18,7 +18,7 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'clt'
+var = 'mrsos'
 obs = 'ERA5'
 dt = '1970-1971'
 domain = 'SAM-22'
@@ -28,13 +28,14 @@ exp_i = 'ctrl_RegCM5'
 exp_i_tg = exp_i.split('_RegCM5')[0]
 exp_i_up = exp_i_tg.upper()
 
-exp_ii = 'restclm_RegCM5'
+exp_ii = 'srfsat_RegCM5'
 exp_ii_tg = exp_ii.split('_RegCM5')[0]
 exp_ii_up = exp_ii_tg.upper()
 
 dict_var = {'pr': ['tp'],
 'tas': ['t2m'],
-'clt': ['tcc']}
+'clt': ['tcc'],
+'mrsos': ['swvl1']}
 
 font_size = 8
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
@@ -62,6 +63,8 @@ def import_rcm(param, dataset, season):
 	
 	if param == 'tas':
 		mean = var[:][0,0,:,:]
+	if param == 'mrsos':
+		mean = var[:][0,:,:] / 100
 	else:
 		mean = var[:][0,:,:]
 	
@@ -116,7 +119,8 @@ axes = axes.flatten()
 
 dict_plot = {'pr': ['Bias of precipitation (mm d$^-$$^1$)', np.arange(-8, 8.5, 0.5), cm.BrBG],
 'tas': ['Bias of air temperature (°C)', np.arange(-8, 8.5, 0.5), cm.RdBu_r],
-'clt': ['Bias of total cloud cover (%)', np.arange(-60, 65, 5), cm.RdGy]}
+'clt': ['Bias of total cloud cover (%)', np.arange(-60, 65, 5), cm.RdGy],
+'mrsos': ['Bias of soil moisture (m m$^-$$^3$)', np.arange(-0.6, 0.65, 0.05), cm.BrBG]}
 
 plot_data = {'Plot 1': {'data': mbe_djf_exp_i_obs, 'title': '(a) {0}-{1} DJF'.format(exp_i_up, obs)},
 'Plot 2': {'data': mbe_mam_exp_i_obs, 'title': '(b) {0}-{1} MAM'.format(exp_i_up, obs)},
@@ -144,6 +148,5 @@ cbar.ax.tick_params(labelsize=font_size)
 path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()
 

@@ -17,7 +17,7 @@ import cartopy.feature as cfeat
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'clt'
+var = 'mrsos'
 obs = 'ERA5'
 dt = '1970-1971'
 domain = 'SAM-22'
@@ -27,13 +27,14 @@ exp_i = 'ctrl_RegCM5'
 exp_i_tg = exp_i.split('_RegCM5')[0]
 exp_i_up = exp_i_tg.upper()
 
-exp_ii = 'restclm_RegCM5'
+exp_ii = 'srfsat_RegCM5'
 exp_ii_tg = exp_ii.split('_RegCM5')[0]
 exp_ii_up = exp_ii_tg.upper()
 
 dict_var = {'pr': ['tp'],
 'tas': ['t2m'],
-'clt': ['tcc']}
+'clt': ['tcc'],
+'mrsos': ['swvl1']}
 
 font_size = 8
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
@@ -61,6 +62,8 @@ def import_rcm(param, dataset, season):
 
 	if param == 'tas':
 		mean = var[:][0,0,:,:]
+	if param == 'mrsos':
+		mean = var[:][0,:,:] / 100
 	else:
 		mean = var[:][0,:,:]
 
@@ -81,6 +84,7 @@ def configure_subplot(ax):
 	ax.grid(c='k', ls='--', alpha=0.4)
 	ax.add_feature(cfeat.BORDERS, linewidth=0.5)
 	ax.coastlines(linewidth=0.5)	
+	ax.add_feature(cfeat.OCEAN, facecolor='white', zorder=1) 
 
 
 # Import model and obs dataset
@@ -109,8 +113,8 @@ color=['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','
 dict_plot={
 'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 18.5, 0.5), matplotlib.colors.ListedColormap(color)],
 'tas': ['Air temperature (°C)', np.arange(-18, 39, 3), cm.jet],
-'clt': ['Total cloud cover (%)', np.arange(0, 105, 5), cm.Greys]}
-
+'clt': ['Total cloud cover (%)', np.arange(0, 105, 5), cm.Greys],
+'mrsos': ['Soil moisture (m m$^-$$^3$)', np.arange(0, 0.71, 0.01), cm.rainbow_r]}
 
 plot_data = {'Plot 1': {'data': obs_djf, 'title': '(a) {0} DJF'.format(obs)},
 'Plot 2': {'data': obs_mam, 'title': '(b) {0} MAM'.format(obs)},
@@ -142,7 +146,6 @@ cbar.ax.tick_params(labelsize=font_size)
 path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
 name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()
 
 

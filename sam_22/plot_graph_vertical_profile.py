@@ -23,7 +23,7 @@ exp_i = 'ctrl_RegCM5'
 exp_i_tg = exp_i.split('_RegCM5')[0]
 exp_i_up = exp_i_tg.upper()
 
-exp_ii = 'restclm_RegCM5'
+exp_ii = 'srfsat_RegCM5'
 exp_ii_tg = exp_ii.split('_RegCM5')[0]
 exp_ii_up = exp_ii_tg.upper()
 
@@ -147,6 +147,5 @@ plt.legend(loc=1, ncol=1, fontsize=font_size)
 path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
 name_out = 'pyplt_graph_vertical_profile_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()
 

@@ -106,21 +106,22 @@ def import_data(param, dataset, indices):
 	
 	
 def wind_speed_cyclone(lat, lon, wind_data, dataset):
-	
+
 	wind_speed = []
 	for yr in range(2018, 2021+1):
 		data = read_dat_file('{0}/SAM-3km/postproc/cyclone/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 		for i, (header, rows) in enumerate(data):
-			lat_cyc = float(row[0][1])
-			lon_cyc = float(row[0][1])                   
-			lat_mask = (lat >= lat_cyc - 1) & (lat <= lat_cyc + 1)
-			lon_mask = (lon >= lon_cyc - 1) & (lon <= lon_cyc + 1)
+			if (rows[0][2] < str(-56)):
+				lat_cyc = float(rows[0][0])
+				lon_cyc = float(rows[0][1])
+				lat_mask = (lat >= lat_cyc - 1) & (lat <= lat_cyc + 1)
+				lon_mask = (lon >= lon_cyc - 1) & (lon <= lon_cyc + 1)
+				
+				if not np.any(lat_mask) or not np.any(lon_mask):
+					continue
 
-			if not np.any(lat_mask) or not np.any(lon_mask):
-                        	continue
-
-			gust_masked = wind_data[:, lat_mask, lon_mask]
-			wind_speed.append(gust_masked.compressed() if hasattr(gust_masked, 'mask') else gust_masked.flatten())
+				wind_mask = wind_data[:, lat_mask, lon_mask]
+				wind_speed.append(wind_mask.compressed() if hasattr(wind_mask, 'mask') else wind_mask.flatten())
 
 	return wind_speed
 
@@ -155,13 +156,25 @@ lat, lon, regcm5_vas = import_data('vas', 'RegCM5', regcm5_idx)
 lat, lon, wrf415_u10 = import_data('U10', 'WRF415', wrf415_idx)
 lat, lon, wrf415_v10 = import_data('V10', 'WRF415', wrf415_idx)
 
+print(era5_u10)
+print(len(era5_u10))
+print()
+print(era5_v10)
+print(len(era5_v10))
+print()
+print(regcm5_uas)
+print(len(regcm5_uas))
+print()
+print(regcm5_vas)
+print(len(regcm5_vas))
+
 # Calculate wind speed
 uv10_era5 = np.sqrt(era5_u10**2 + era5_v10**2)
 uv10_regcm5 = np.sqrt(regcm5_uas**2 + regcm5_vas**2)
 uv10_wrf415 = np.sqrt(wrf415_u10**2 + wrf415_v10**2)
 
 era5_wind = wind_speed_cyclone(lat, lon, uv10_era5, 'ERA5')
-regcm5_wind = wind_speed_cyclone(lat, lon,regcm5_era5, 'RegCM5')
+regcm5_wind = wind_speed_cyclone(lat, lon, uv10_regcm5, 'RegCM5')
 wrf415_wind = wind_speed_cyclone(lat, lon, uv10_wrf415, 'WRF415')
 
 era5_wind_median, era5_wind_mean, era5_wind_p90, era5_wind_max = comp_stats(era5_wind)
