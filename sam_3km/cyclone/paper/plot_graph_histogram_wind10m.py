@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Apr 01, 2024"
-__description__ = "This script plot map of precipitation"
+__description__ = "This script plot wind histogram"
 
 import os
 import netCDF4
@@ -12,13 +12,10 @@ import numpy as np
 import xarray as xr
 import matplotlib.colors
 import matplotlib.cm as cm
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import cartopy.feature as cfeat
 
 from scipy import signal, misc
 from datetime import datetime, timedelta
-from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 font_size = 10
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
@@ -99,8 +96,12 @@ def import_data(param, dataset, indices):
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]	
 	lon   = data.variables['lon'][:]
-	mean = var[:][:,:,:]
-		
+
+	if dataset == 'RegCM5':
+		mean = var[:][:,0,:,:]
+	else:
+		mean = var[:][:,:,:]
+
 	return lat, lon, mean
 
 	
@@ -116,10 +117,6 @@ def wind_speed_cyclone(lat, lon, wind_data, dataset):
 				lon_cyc = float(rows[0][1])
 				lat_mask = (lat >= lat_cyc - 1) & (lat <= lat_cyc + 1)
 				lon_mask = (lon >= lon_cyc - 1) & (lon <= lon_cyc + 1)
-				
-				if not np.any(lat_mask) or not np.any(lon_mask):
-					continue
-
 				wind_mask = wind_data[:, lat_mask, lon_mask]
 				wind_speed.append(wind_mask.compressed() if hasattr(wind_mask, 'mask') else wind_mask.flatten())
 
@@ -128,10 +125,10 @@ def wind_speed_cyclone(lat, lon, wind_data, dataset):
 
 def comp_stats(wind_dataset):
 
-	wind_median = np.median(wind_dataset)
-	wind_mean = np.mean(wind_dataset)
-	wind_p90 = np.percentile(wind_dataset, 90)
-	wind_max = np.max(wind_dataset)
+	wind_median = np.nanmedian(wind_dataset)
+	wind_mean = np.nanmean(wind_dataset)
+	wind_p90 = np.nanpercentile(wind_dataset, 90)
+	wind_max = np.nanmax(wind_dataset)
 
 	return wind_median, wind_mean, wind_p90, wind_max
 
@@ -156,30 +153,41 @@ lat, lon, regcm5_vas = import_data('vas', 'RegCM5', regcm5_idx)
 lat, lon, wrf415_u10 = import_data('U10', 'WRF415', wrf415_idx)
 lat, lon, wrf415_v10 = import_data('V10', 'WRF415', wrf415_idx)
 
-print(era5_u10)
-print(len(era5_u10))
-print()
-print(era5_v10)
-print(len(era5_v10))
-print()
-print(regcm5_uas)
-print(len(regcm5_uas))
-print()
-print(regcm5_vas)
-print(len(regcm5_vas))
-
 # Calculate wind speed
 uv10_era5 = np.sqrt(era5_u10**2 + era5_v10**2)
 uv10_regcm5 = np.sqrt(regcm5_uas**2 + regcm5_vas**2)
 uv10_wrf415 = np.sqrt(wrf415_u10**2 + wrf415_v10**2)
 
+
+print(uv10_era5.shape)
+print()
+print(uv10_regcm5.shape)
+print()
+print(uv10_wrf415.shape)
+print("----------------------------------------------")
+
 era5_wind = wind_speed_cyclone(lat, lon, uv10_era5, 'ERA5')
+print(era5_wind)
+print(len(era5_wind))
+print()
 regcm5_wind = wind_speed_cyclone(lat, lon, uv10_regcm5, 'RegCM5')
+print(regcm5_wind)
+print(len(regcm5_wind))
+print()
 wrf415_wind = wind_speed_cyclone(lat, lon, uv10_wrf415, 'WRF415')
+print(wrf415_wind)
+print(len(wrf415_wind))
+print("----------------------------------------------")
 
 era5_wind_median, era5_wind_mean, era5_wind_p90, era5_wind_max = comp_stats(era5_wind)
 regcm5_wind_median, regcm5_wind_mean, regcm5_wind_p90,regcm5_wind_max = comp_stats(regcm5_wind)
 wrf415_wind_median, wrf415_wind_mean, wrf415_wind_p90, wrf415_wind_max = comp_stats(wrf415_wind)
+
+print(era5_wind_median, era5_wind_mean, era5_wind_p90, era5_wind_max)
+print(regcm5_wind_median, regcm5_wind_mean, regcm5_wind_p90,regcm5_wind_max)
+print(wrf415_wind_median, wrf415_wind_mean, wrf415_wind_p90, wrf415_wind_max)
+print("----------------------------------------------")
+exit()
 
 # Plot figure
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 4))
