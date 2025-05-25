@@ -198,7 +198,7 @@ dict_var = {'pr': ['pre', 'pre', 'precip', 'cmorph', 'tp'],
 'cll': ['lcc'],
 'clm': ['mcc'],
 'clh': ['hcc'],
-'sfcWindmax': ['u10max', 'v10max'],
+'sfcWindmax': ['i10fg'],
 'evspsblpot': ['pev'],
 'rsnl': ['msnlwrf']}
 
@@ -262,7 +262,8 @@ if var == 'pr':
 	mbe_djf_regcm_era5 = compute_mbe(regcm_djf, era5_djf)
 	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
 	mbe_jja_regcm_era5 = compute_mbe(regcm_jja, era5_jja)
-	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)		
+	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)	
+	
 elif var == 'tas':
 	lat_i, lon_i, inmet_i, regcm_i = import_situ_i(dict_var[var][0], var, domain, 'RegCM5')
 	mbe_djf_regcm_inmet, mbe_mam_regcm_inmet, mbe_jja_regcm_inmet, mbe_son_regcm_inmet = [], [], [], []
@@ -297,31 +298,7 @@ elif var == 'tas':
 	mbe_mam_regcm_era5 = compute_mbe(regcm_mam, era5_mam)
 	mbe_jja_regcm_era5 = compute_mbe(regcm_jja, era5_jja)
 	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)
-elif var == 'sfcWindmax':
-	lat, lon, u_era5_djf = import_obs(dict_var[var][0], domain, 'ERA5', 'DJF')
-	lat, lon, u_era5_mam = import_obs(dict_var[var][0], domain, 'ERA5', 'MAM')
-	lat, lon, u_era5_jja = import_obs(dict_var[var][0], domain, 'ERA5', 'JJA')
-	lat, lon, u_era5_son = import_obs(dict_var[var][0], domain, 'ERA5', 'SON')
 
-	lat, lon, v_era5_djf = import_obs(dict_var[var][1], domain, 'ERA5', 'DJF')
-	lat, lon, v_era5_mam = import_obs(dict_var[var][1], domain, 'ERA5', 'MAM')
-	lat, lon, v_era5_jja = import_obs(dict_var[var][1], domain, 'ERA5', 'JJA')
-	lat, lon, v_era5_son = import_obs(dict_var[var][1], domain, 'ERA5', 'SON')
-
-	uv_era5_djf = np.sqrt(u_era5_djf**2 + v_era5_djf**2)
-	uv_era5_mam = np.sqrt(u_era5_mam**2 + v_era5_mam**2)
-	uv_era5_jja = np.sqrt(u_era5_jja**2 + v_era5_jja**2)
-	uv_era5_son = np.sqrt(u_era5_son**2 + v_era5_son**2)
-
-	lat, lon, uv_regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
-	lat, lon, uv_regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
-	lat, lon, uv_regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
-	lat, lon, uv_regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
-
-	mbe_djf_regcm_era5 = compute_mbe(uv_regcm_djf, uv_era5_djf)
-	mbe_mam_regcm_era5 = compute_mbe(uv_regcm_mam, uv_era5_mam)
-	mbe_jja_regcm_era5 = compute_mbe(uv_regcm_jja, uv_era5_jja)
-	mbe_son_regcm_era5 = compute_mbe(uv_regcm_son, uv_era5_son)
 else:
 	lat, lon, era5_djf = import_obs(dict_var[var][0], domain, 'ERA5', 'DJF')
 	lat, lon, era5_mam = import_obs(dict_var[var][0], domain, 'ERA5', 'MAM')

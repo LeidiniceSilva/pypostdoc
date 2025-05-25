@@ -22,7 +22,7 @@ from dict_smn_ii_stations import smn_ii
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'mrsos'
+var = 'sfcWindmax'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -155,7 +155,9 @@ def import_rcm(param, domain, dataset, season):
 		lsm = mask_nc.variables['lsm'][:]
 		ocean_mask = (lsm == 0)
 		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, var[:][0,:,:])
-		mean = mean_[0,0,:,:]	
+		mean = mean_[0,0,:,:]
+	elif param == 'mrsos':
+		mean = var[:][0,:,:]/100	
 	else:
 		mean = var[:][0,:,:]
 
@@ -169,7 +171,7 @@ dict_var = {'pr': ['pre', 'pre', 'precip', 'cmorph', 'tp'],
 'cll': ['lcc'],
 'clm': ['mcc'],
 'clh': ['hcc'],
-'sfcWindmax': ['u10max', 'v10max'],
+'sfcWindmax': ['fg10'],
 'evspsblpot': ['pev'],
 'rsnl': ['msnlwrf'],
 'mrsos': ['swvl1'],
@@ -241,43 +243,6 @@ elif var == 'tas':
 	lat, lon, era5_jja = import_obs(dict_var[var][2], domain, 'ERA5', 'JJA')
 	lat, lon, era5_son = import_obs(dict_var[var][2], domain, 'ERA5', 'SON')
 
-elif var == 'sfcWindmax':
-	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
-
-	lat, lon, u_era5_djf = import_obs(dict_var[var][0], domain, 'ERA5', 'DJF')
-	lat, lon, u_era5_mam = import_obs(dict_var[var][0], domain, 'ERA5', 'MAM')
-	lat, lon, u_era5_jja = import_obs(dict_var[var][0], domain, 'ERA5', 'JJA')
-	lat, lon, u_era5_son = import_obs(dict_var[var][0], domain, 'ERA5', 'SON')
-
-	lat, lon, v_era5_djf = import_obs(dict_var[var][1], domain, 'ERA5', 'DJF')
-	lat, lon, v_era5_mam = import_obs(dict_var[var][1], domain, 'ERA5', 'MAM')
-	lat, lon, v_era5_jja = import_obs(dict_var[var][1], domain, 'ERA5', 'JJA')
-	lat, lon, v_era5_son = import_obs(dict_var[var][1], domain, 'ERA5', 'SON')
-
-	era5_djf = np.sqrt(u_era5_djf**2 + v_era5_djf**2)
-	era5_mam = np.sqrt(u_era5_mam**2 + v_era5_mam**2)
-	era5_jja = np.sqrt(u_era5_jja**2 + v_era5_jja**2)
-	era5_son = np.sqrt(u_era5_son**2 + v_era5_son**2)
-
-elif var == 'mrsos':
-	lat, lon, regcm_djf_ = import_rcm(var, domain, 'RegCM5', 'DJF')
-	lat, lon, regcm_mam_ = import_rcm(var, domain, 'RegCM5', 'MAM')
-	lat, lon, regcm_jja_ = import_rcm(var, domain, 'RegCM5', 'JJA')
-	lat, lon, regcm_son_ = import_rcm(var, domain, 'RegCM5', 'SON')
-
-	regcm_djf = regcm_djf_/100
-	regcm_mam = regcm_mam_/100
-	regcm_jja = regcm_jja_/100
-	regcm_son = regcm_son_/100
-
-	lat, lon, era5_djf = import_obs(dict_var[var][0], domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_obs(dict_var[var][0], domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_obs(dict_var[var][0], domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_obs(dict_var[var][0], domain, 'ERA5', 'SON')
-
 else:
 	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
 	lat, lon, regcm_mam = import_rcm(var, domain, 'RegCM5', 'MAM')
@@ -315,7 +280,7 @@ dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 18, 1), matplot
 'cll': ['Low cloud cover (0-1)', np.arange(0, 1.05, 0.05), cm.Greys],
 'clm': ['Medium cloud cover (0-1)', np.arange(0, 1.05, 0.05), cm.Greys],
 'clh': ['High cloud cover (0-1)', np.arange(0, 1.05, 0.05), cm.Greys],
-'sfcWindmax': ['Maximum wind speed at 10 meters (m s$^-$$^1$)', np.arange(0, 14.5, 0.5), cm.jet],
+'sfcWindmax': ['Maximum wind speed at 10 meters (m s$^-$$^1$)', np.arange(0, 18.5, 0.5), cm.jet],
 'evspsblpot': ['Potential evapotranspiration (mm d$^-$$^1$)', np.arange(0, 10.5, 0.5), cm.jet],
 'rsnl': ['Surface net upward longwave flux (W mm$^-$$^2$)', np.arange(0, 220, 10), cm.rainbow],
 'mrsos': ['Soil moisture (m m$^-$$^3$)', np.arange(0, 0.71, 0.01), cm.rainbow_r],

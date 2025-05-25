@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from scipy import signal, misc
 from datetime import datetime, timedelta
 
-font_size = 8
+font_size = 10
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
 
 
@@ -83,11 +83,11 @@ def open_file_dt(dataset):
 	
 		for j  in rows_list:
 			for k in j:
-				lat_cyc.append(float(k[1][:]))
-				lon_cyc.append(float(k[2][:]))
+				lat_cyc.append(k[1][:])
+				lon_cyc.append(k[2][:])
 				dt_cyc.append(str(k[0][:]))
 
-	return lat_cyc, lon_cyc, dt_cyc
+	return lat_cyc, lon_cyc, dt_hr
 
 
 def import_data(param, dataset, indices):
@@ -112,22 +112,17 @@ def import_data(param, dataset, indices):
 	var_ = []
 	for idx_i in indices:
 		var_.append(np.squeeze(mean[idx_i,:,:]))
-	
-	mean_ = np.ma.stack(var_, axis=0)
 
-	return lat, lon, mean_
+	return lat, lon, var_
 
 
-def extract_timeseries(dataset, lat_array, lon_array, target_lats, target_lons):
+def extract_timeseries(dataset, lat_array, lon_array, target_lat, target_lon):
 
-	values = []
-	for t in range(len(target_lats)):
-		lat_idx = np.abs(lat_array - target_lats[t]).argmin()
-		lon_idx = np.abs(lon_array - target_lons[t]).argmin()
-		val = dataset[t, lat_idx, lon_idx]
-		values.append(val)
+	lat_idx = np.abs(lat_array - target_lat).argmin()
+	lon_idx = np.abs(lon_array - target_lon).argmin()
+	timeseries = dataset[:, lat_idx, lon_idx]
 
-	return values
+	return timeseries
 
 
 def comp_stats(wind_dataset):
@@ -160,6 +155,13 @@ lat, lon, regcm5_vas = import_data('vas', 'RegCM5', regcm5_idx)
 lat, lon, wrf415_u10 = import_data('U10', 'WRF415', wrf415_idx)
 lat, lon, wrf415_v10 = import_data('V10', 'WRF415', wrf415_idx)
 
+print(era5_u10.shape)
+print(era5_v10.shape)
+print(regcm5_uas.shape)
+print(regcm5_vas.shape)
+print(wrf415_u10.shape)
+print(wrf415_v10.shape)
+
 # Calculate wind speed
 uv10_era5 = np.sqrt(era5_u10**2 + era5_v10**2)
 uv10_regcm5 = np.sqrt(regcm5_uas**2 + regcm5_vas**2)
@@ -186,40 +188,44 @@ print(regcm5_wind_median, regcm5_wind_mean, regcm5_wind_p90,regcm5_wind_max)
 print(wrf415_wind_median, wrf415_wind_mean, wrf415_wind_p90, wrf415_wind_max)
 
 # Plot figure
-fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 6))
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 4))
+font_size = 10
 
-ax1.hist(uv10_ts_era5, bins=10, color='white', edgecolor='black', label='ERA5')
-ax1.axvline(era5_wind_median, color='gray', label='Median: {0}'.format(era5_wind_median))
-ax1.axvline(era5_wind_mean, color='green', label='Mean: {0}'.format(era5_wind_mean))
-ax1.axvline(era5_wind_p90, color='orange', label='90th percentile: {0}'.format(era5_wind_p90))
-ax1.axvline(era5_wind_max, color='purple', label='Max: {0}'.format(era5_wind_max))
+ax1.hist(uv10_ts_era5, bins=40, color=color, edgecolor='black', label='ERA5')
+ax1.axvline(era5_wind_median, color='red', label=f'Median: {median_val:.1f}')
+ax1.axvline(era5_wind_mean, color='darkorange', label=f'Mean: {mean_val:.1f}')
+ax1.axvline(era5_wind_p90, color='blue', label=f'90th percentile: {p90_val:.1f}')
+ax1.axvline(era5_wind_max, color='purple', label=f'Max: {max_val:.1f}')
 ax1.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size)
-ax1.set_title('(a)', loc='left', fontsize=font_size, fontweight='bold')
-ax1.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
+ax1.set_ylabel('Frequency', fontsize=font_size)
+ax1.set_title('(a)', fontsize=font_size)
+ax1.legend()
 ax1.grid(True, linestyle='--', alpha=0.5)
 
-ax2.hist(uv10_ts_regcm5, bins=10, color='white', edgecolor='blue', label='RegCM5')
-ax2.axvline(regcm5_wind_median, color='gray', label='Median: {0}'.format(regcm5_wind_median))
-ax2.axvline(regcm5_wind_mean, color='green', label='Mean: {0}'.format(regcm5_wind_mean))
-ax2.axvline(regcm5_wind_p90, color='blue', label='90th percentile: {0}'.format(regcm5_wind_p90))
-ax2.axvline(regcm5_wind_max, color='purple', label='Max: {0}'.format(regcm5_wind_max))
-ax2.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size)
-ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
-ax2.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
-ax2.grid(True, linestyle='--', alpha=0.5)
+ax2.hist(uv10_ts_regcm5, bins=40, color=color, edgecolor='black', label='RegCM5')
+ax2.axvline(regcm5_wind_median, color='red', label=f'Median: {median_val:.1f}')
+ax2.axvline(regcm5_wind_mean, color='darkorange', label=f'Mean: {mean_val:.1f}')
+ax2.axvline(regcm5_wind_p90, color='blue', label=f'90th percentile: {p90_val:.1f}')
+ax2.axvline(regcm5_wind_max, color='purple', label=f'Max: {max_val:.1f}')
+ax1.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size)
+ax1.set_ylabel('Frequency', fontsize=font_size)
+ax1.set_title('(a)', fontsize=font_size)
+ax1.legend()
+ax1.grid(True, linestyle='--', alpha=0.5)
 
-ax3.hist(uv10_ts_wrf415, bins=10, color='white', edgecolor='red', label='WRF415')
-ax3.axvline(wrf415_wind_median, color='gray', label='Median: {0}'.format(wrf415_wind_median))
-ax3.axvline(wrf415_wind_mean, color='green', label='Mean: {0}'.format(wrf415_wind_mean))
-ax3.axvline(wrf415_wind_p90, color='orange', label='90th percentile: {0}'.format(wrf415_wind_p90))
-ax3.axvline(wrf415_wind_max, color='purple', label='Max: {0}'.format(wrf415_wind_max))
-ax3.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size)
-ax3.set_title('(c)', loc='left', fontsize=font_size, fontweight='bold')
-ax3.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
-ax3.grid(True, linestyle='--', alpha=0.5)
+ax3.hist(uv10_ts_wrf415, bins=40, color=color, edgecolor='black', label='WRF415')
+ax3.axvline(wrf415_wind_median, color='red', label=f'Median: {median_val:.1f}')
+ax3.axvline(wrf415_wind_mean, color='darkorange', label=f'Mean: {mean_val:.1f}')
+ax3.axvline(wrf415_wind_p90, color='blue', label=f'90th percentile: {p90_val:.1f}')
+ax3.axvline(wrf415_wind_max, color='purple', label=f'Max: {max_val:.1f}')
+ax1.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size)
+ax1.set_ylabel('Frequency', fontsize=font_size)
+ax1.set_title('(a)', fontsize=font_size)
+ax1.legend()
+ax1.grid(True, linestyle='--', alpha=0.5)
 
 # Path out to save figure
-path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
+path_out = '{0}/figs/cyclone'.format(path)
 name_out = 'pyplt_graph_histogram_wind_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
