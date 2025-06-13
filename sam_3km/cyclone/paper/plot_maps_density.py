@@ -26,6 +26,7 @@ def import_dataset(dataset):
 
 	df = pd.read_csv('{0}/postproc/cyclone/{1}/genesis_density_{1}.txt'.format(path, dataset), sep="\s+", engine='python')
 	df.columns = df.columns.str.strip()
+
 	if 'data' not in df.columns:
 		raise KeyError("Column 'data' not found in the dataset.")
 
@@ -118,7 +119,7 @@ ax1.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
 ax1.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 configure_subplot(ax1)
 
-cf2 = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
+cf2 = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,4), scipy.ndimage.zoom(dens_regcm5.lat,4), scipy.ndimage.zoom(dens_regcm5,4).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
 ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 ax2.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))

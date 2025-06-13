@@ -23,7 +23,7 @@ from import_climate_tools import compute_mbe
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'sfcWindmax'
+var = 'evspsblpot'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -144,12 +144,7 @@ def import_obs(param, domain, dataset, season):
 		mean = var[:][0,:,:]*(-1)
 	elif param == 'pev':
 		mean_i = var[:][0,:,:]*(-1000)
-		mean_i = np.abs(mean_i)
-		mask_nc = Dataset('{0}/SAM-3km/postproc/evaluate/rcm/sea_land_mask_lonlat.nc'.format(path))
-		lsm = mask_nc.variables['lsm'][:]
-		ocean_mask = (lsm == 0)
-		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, mean_i)
-		mean = mean_[0,0,:,:]	
+		mean = np.abs(mean_i)
 	else:
 		mean = var[:][0,:,:]
 	
@@ -165,13 +160,7 @@ def import_rcm(param, domain, dataset, season):
 	lon   = data.variables['lon'][:]
 
 	if param == 'tas':
-		mean = var[:][0,0,:,:]
-	elif param == 'evspsblpot':
-		mask_nc = Dataset('{0}/SAM-3km/postproc/evaluate/rcm/sea_land_mask_lonlat.nc'.format(path))
-		lsm = mask_nc.variables['lsm'][:]
-		ocean_mask = (lsm == 0)
-		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, var[:][0,:,:])
-		mean = mean_[0,0,:,:]	
+		mean = var[:][0,0,:,:]	
 	else:
 		mean = var[:][0,:,:]
 
@@ -183,12 +172,16 @@ def configure_subplot(ax):
 	ax.set_extent([-80, -34, -38, -8], crs=ccrs.PlateCarree())
 	ax.set_xticks(np.arange(-80,-34,12), crs=ccrs.PlateCarree())
 	ax.set_yticks(np.arange(-38,-8,6), crs=ccrs.PlateCarree())
+
+	for label in ax.get_xticklabels() + ax.get_yticklabels():
+		label.set_fontsize(6)
+
 	ax.xaxis.set_major_formatter(LongitudeFormatter())
 	ax.yaxis.set_major_formatter(LatitudeFormatter())
-	ax.tick_params(labelsize=font_size)
-	ax.add_feature(cfeat.BORDERS)
-	ax.coastlines()	
 	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.add_feature(cfeat.BORDERS, linewidth=0.5)
+	ax.coastlines(linewidth=0.5)	
+	ax.add_feature(cfeat.OCEAN, facecolor='white', zorder=1) 
 
 
 # Import model and obs dataset
@@ -198,7 +191,6 @@ dict_var = {'pr': ['pre', 'pre', 'precip', 'cmorph', 'tp'],
 'cll': ['lcc'],
 'clm': ['mcc'],
 'clh': ['hcc'],
-'sfcWindmax': ['i10fg'],
 'evspsblpot': ['pev'],
 'rsnl': ['msnlwrf']}
 
@@ -322,7 +314,6 @@ dict_plot = {'pr': ['Bias of  precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 
 'cll': ['Bias of low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clm': ['Bias of medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
 'clh': ['Bias of high cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
-'sfcWindmax': ['Bias of maximum wind speed at 10 meters (m s$^-$$^1$)', np.arange(-5, 5.5, 0.5), cm.bwr],
 'evspsblpot': ['Bias of potential evapotranspiration (mm d$^-$$^1$)', np.arange(-5, 5.5, 0.5), cm.bwr],
 'rsnl': ['Bias of surface net upward longwave flux (W mm$^-$$^2$)', np.arange(-80, 90, 10), cm.RdBu_r]}
 

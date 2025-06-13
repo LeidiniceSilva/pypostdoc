@@ -17,7 +17,7 @@ import cartopy.feature as cfeat
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'mrsos'
+var = 'pr'
 obs = 'ERA5'
 dt = '1970-1971'
 domain = 'SAM-22'
@@ -146,6 +146,7 @@ cbar.ax.tick_params(labelsize=font_size)
 path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
 name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
+plt.show()
 exit()
 
 

@@ -5,7 +5,7 @@ __email__       = "leidinicesilva@gmail.com"
 __date__        = "Apr 01, 2024"
 __description__ = "This script .txt with cyclone genesis"
 
-dataset = 'WRF415'
+dataset = 'RegCM5'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km'
 
 

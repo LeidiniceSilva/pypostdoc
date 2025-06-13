@@ -22,7 +22,7 @@ from dict_smn_ii_stations import smn_ii
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'sfcWindmax'
+var = 'pr'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -121,19 +121,10 @@ def import_obs(param, domain, dataset, season):
 	if param == 'msnlwrf':
 		mean = var[:][0,:,:]*(-1)
 	elif param == 'pev':
-		mean_i = var[:][0,:,:]*(-1000)
-		mean_i = np.abs(mean_i)
-		mask_nc = Dataset('{0}/SAM-3km/postproc/evaluate/rcm/sea_land_mask_lonlat.nc'.format(path))
-		lsm = mask_nc.variables['lsm'][:]
-		ocean_mask = (lsm == 0)
-		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, mean_i)
-		mean = mean_[0,0,:,:]
+		mean_ = var[:][0,:,:]*(-1000)
+		mean = np.abs(mean_)
 	elif param == 'swvl1':
-		mask_nc = Dataset('{0}/SAM-3km/postproc/evaluate/rcm/sea_land_mask_lonlat.nc'.format(path))
-		lsm = mask_nc.variables['lsm'][:]
-		ocean_mask = (lsm == 0)
-		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, var[:][0,:,:])
-		mean = mean_[0,0,:,:]
+		mean = var[:][0,:,:]
 	else:
 		mean = var[:][0,:,:]
 	
@@ -150,12 +141,6 @@ def import_rcm(param, domain, dataset, season):
 
 	if param == 'tas' or param == 'sfcWindmax':
 		mean = var[:][0,0,:,:]
-	elif param == 'evspsblpot':
-		mask_nc = Dataset('{0}/SAM-3km/postproc/evaluate/rcm/sea_land_mask_lonlat.nc'.format(path))
-		lsm = mask_nc.variables['lsm'][:]
-		ocean_mask = (lsm == 0)
-		mean_ = np.where(ocean_mask[None, :, :] == 1, np.nan, var[:][0,:,:])
-		mean = mean_[0,0,:,:]
 	elif param == 'mrsos':
 		mean = var[:][0,:,:]/100	
 	else:
@@ -261,16 +246,19 @@ def configure_subplot(ax):
 	lon_max = np.round(np.max(lon), 1)
 	lat_min = np.round(np.min(lat), 1)
 	lat_max = np.round(np.max(lat), 1)
-
 	ax.set_extent([np.min(lon), np.max(lon), np.min(lat), np.max(lat)], crs=ccrs.PlateCarree())
 	ax.set_xticks(np.arange(lon_min,lon_max,10), crs=ccrs.PlateCarree())
 	ax.set_yticks(np.arange(lat_min,lat_max,5), crs=ccrs.PlateCarree())
+
+	for label in ax.get_xticklabels() + ax.get_yticklabels():
+		label.set_fontsize(6)
+
 	ax.xaxis.set_major_formatter(LongitudeFormatter())
 	ax.yaxis.set_major_formatter(LatitudeFormatter())
-	ax.tick_params(labelsize=font_size)
+	ax.grid(c='k', ls='--', alpha=0.4)
 	ax.add_feature(cfeat.BORDERS, linewidth=0.5)
 	ax.coastlines(linewidth=0.5)	
-	ax.grid(c='k', ls='--', alpha=0.4)
+	#ax.add_feature(cfeat.OCEAN, facecolor='white', zorder=1) 
 
 color=['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
 
