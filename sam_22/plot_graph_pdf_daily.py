@@ -23,7 +23,7 @@ exp_i = 'ctrl_RegCM5'
 exp_i_tg = exp_i.split('_RegCM5')[0]
 exp_i_up = exp_i_tg.upper()
 
-exp_ii = 'srfsat_RegCM5'
+exp_ii = 'pbl_RegCM5'
 exp_ii_tg = exp_ii.split('_RegCM5')[0]
 exp_ii_up = exp_ii_tg.upper()
 
@@ -69,7 +69,7 @@ def import_obs(param, dataset, subdomain):
 	data.close()
 
 	total = np.sum(rain_hist)
-	rain_hist[rain_hist < 1] = np.nan  # Optional: mask low-frequency bins
+	rain_hist[rain_hist < 1] = np.nan  
 	pdf = rain_hist / (total * step)
 
 	bin_centers = (bins[:-1] + bins[1:]) / 2
@@ -105,7 +105,7 @@ def import_rcm(param, dataset, subdomain):
 	data.close()
 
 	total = np.sum(rain_hist)
-	rain_hist[rain_hist < 1] = np.nan  # Optional: mask low-frequency bins
+	rain_hist[rain_hist < 1] = np.nan  
 	pdf = rain_hist / (total * step)
 
 	bin_centers = (bins[:-1] + bins[1:]) / 2

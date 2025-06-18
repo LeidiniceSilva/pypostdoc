@@ -110,7 +110,7 @@ def import_data(indices_i, indices_ii, indices_iii):
 		if inmet[station][2] >= -11.25235:
 			continue
 
-		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_br/inmet_nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
+		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
 		data = arq['pre']
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
 		var  = time.values

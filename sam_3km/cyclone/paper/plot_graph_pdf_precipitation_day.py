@@ -120,7 +120,7 @@ def import_data(indices_i, indices_ii, indices_iii):
 		if inmet[station][2] >= -11.25235:
 			continue
 
-		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_br/inmet_nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
+		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
 		data = arq['pre']
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
 		var  = time.resample(time='1D').sum()
@@ -191,7 +191,6 @@ era5_idx_i = find_indices_in_date_list(daily_dates, era5_idx)
 regcm5_idx_i = find_indices_in_date_list(daily_dates, regcm5_idx)
 wrf415_idx_i = find_indices_in_date_list(daily_dates, wrf415_idx)
 
-# Import model and obs dataset
 # Import model and obs dataset 
 pr_inmet, pr_cmorph, pr_era5, pr_regcm5, pr_wrf415 = import_data(era5_idx_i, regcm5_idx_i, wrf415_idx_i)
 

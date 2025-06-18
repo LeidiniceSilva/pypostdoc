@@ -21,7 +21,7 @@ from import_climate_tools import compute_mbe
 
 var = 'pr'
 obs = 'ERA5'
-stats = 'int'
+stats = 'freq'
 dt = '1970-1971'
 domain = 'SAM-22'
 latlon = [-105, -16, -57, 18]
@@ -30,7 +30,7 @@ exp_i = 'ctrl_RegCM5'
 exp_i_tg = exp_i.split('_RegCM5')[0]
 exp_i_up = exp_i_tg.upper()
 
-exp_ii = 'srfsat_RegCM5'
+exp_ii = 'pbl_RegCM5'
 exp_ii_tg = exp_ii.split('_RegCM5')[0]
 exp_ii_up = exp_ii_tg.upper()
 

@@ -110,18 +110,18 @@ font_size = 10
 cmap = plt.cm.viridis_r
 norm = matplotlib.colors.Normalize(vmin=0, vmax=(datetime.datetime(2021, 12, 31) - ref_date).days)
 
-sc1 = ax1.scatter(lon_era5_, lat_era5_, c=date_era5, s=20, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o') 
+sc1 = ax1.scatter(lon_era5_, lat_era5_, c=date_era5, s=25, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o') 
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
-sc2 = ax2.scatter(lon_regcm5_, lat_regcm5_, c=date_regcm5, s=20, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o') 
+sc2 = ax2.scatter(lon_regcm5_, lat_regcm5_, c=date_regcm5, s=25, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o') 
 ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
-sc = ax3.scatter(lon_wrf415_, lat_wrf415_, c=date_wrf415, s=20, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o') 
+sc = ax3.scatter(lon_wrf415_, lat_wrf415_, c=date_wrf415, s=25, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o') 
 ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax3.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
@@ -133,7 +133,7 @@ cbar.set_label('Days since 2018-01-01')
 
 # Path out to save figure
 path_out = '{0}/figs/cyclone'.format(path)
-name_out = 'pyplt_maps_track-v2_CP-RCM_SAM-3km_2018-2021.png'
+name_out = 'pyplt_maps_genesis_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

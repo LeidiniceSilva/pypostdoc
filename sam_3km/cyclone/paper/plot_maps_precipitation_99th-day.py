@@ -153,7 +153,7 @@ def import_ws(param, indices):
 		yy.append(inmet[station][2])
 		xx.append(inmet[station][3])
 
-		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_br/inmet_nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
+		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
 		data = arq[param]
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
 		var  = time.resample(time='1D').sum()	

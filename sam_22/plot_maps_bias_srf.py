@@ -18,7 +18,7 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'mrsos'
+var = 'pr'
 obs = 'ERA5'
 dt = '1970-1971'
 domain = 'SAM-22'
@@ -28,7 +28,7 @@ exp_i = 'ctrl_RegCM5'
 exp_i_tg = exp_i.split('_RegCM5')[0]
 exp_i_up = exp_i_tg.upper()
 
-exp_ii = 'srfsat_RegCM5'
+exp_ii = 'pbl_RegCM5'
 exp_ii_tg = exp_ii.split('_RegCM5')[0]
 exp_ii_up = exp_ii_tg.upper()
 
@@ -63,7 +63,7 @@ def import_rcm(param, dataset, season):
 	
 	if param == 'tas':
 		mean = var[:][0,0,:,:]
-	if param == 'mrsos':
+	elif param == 'mrsos':
 		mean = var[:][0,:,:] / 100
 	else:
 		mean = var[:][0,:,:]
@@ -148,5 +148,6 @@ cbar.ax.tick_params(labelsize=font_size)
 path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
+plt.show()
 exit()
 

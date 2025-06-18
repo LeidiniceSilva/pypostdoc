@@ -132,7 +132,8 @@ def import_data(param, dataset, indices):
 	for idx_i in indices:
 		var_i.append(np.squeeze(mean[idx_i,:,:]))
 	
-	mean_ii = np.sum(var_i, axis=0)
+	mean_i = np.sum(var_i, axis=0)
+	mean_ii = mean_i/4
 		
 	return lat, lon, mean_ii
 
@@ -151,7 +152,7 @@ def import_ws(param, indices):
 		yy.append(inmet[station][2])
 		xx.append(inmet[station][3])
 
-		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_br/inmet_nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
+		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_nc/hourly/{1}/'.format(path, param) + '{0}_{1}_H_2018-01-01_2021-12-31.nc'.format(param, inmet[station][0]))
 		data = arq[param]
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
 		var  = time.resample(time='1D').sum()	
@@ -219,22 +220,22 @@ ax1.set_title('(a) INMET', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
-cf2 = ax2.contourf(lon, lat, cmorph_idx_ii/4, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+cf2 = ax2.contourf(lon, lat, cmorph_idx_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 ax2.set_title('(b) CMORPH', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
-cf3 = ax3.contourf(lon, lat, era5_idx_ii/4, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+cf3 = ax3.contourf(lon, lat, era5_idx_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 ax3.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax3.set_title('(c) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax3)
 
-cf4 = ax4.contourf(lon, lat, regcm5_idx_ii/4, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+cf4 = ax4.contourf(lon, lat, regcm5_idx_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 ax4.set_title('(d) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax4.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax4.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax4)
 
-cf5 = ax5.contourf(lon, lat, wrf415_idx_ii/8, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+cf5 = ax5.contourf(lon, lat, wrf415_idx_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 ax5.set_title('(e) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax5.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax5)
