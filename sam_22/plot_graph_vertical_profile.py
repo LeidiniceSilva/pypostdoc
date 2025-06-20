@@ -13,7 +13,7 @@ import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-var = 'cli'
+var = 'clw'
 obs = 'ERA5'
 dt = '1970-1971'
 domain = 'SAM-22'

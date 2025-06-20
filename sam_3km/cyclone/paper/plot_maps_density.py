@@ -110,8 +110,8 @@ fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.Pl
 fig.delaxes(ax4)
 
 font_size = 10
-colorb = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
-levels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+colorb = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+levels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
 
 cf1 = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')

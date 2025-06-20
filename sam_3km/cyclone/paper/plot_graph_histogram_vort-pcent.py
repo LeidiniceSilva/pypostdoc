@@ -78,22 +78,22 @@ fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
 font_size = 10
 
 ax1.set_facecolor('lightgray')
-ax1.hist([list_era5_i_, list_regcm5_i_, list_wrf415_i_], bins=6, color=['black', 'blue', 'red'], alpha=0.75, edgecolor='black', linewidth=1.25, label=['ERA5', 'RegCM5', 'WRF415'])
+ax1.hist([list_era5_i_, list_regcm5_i_, list_wrf415_i_], bins=15, color=['black', 'blue', 'red'], alpha=0.75, edgecolor='black', linewidth=1.25, label=['ERA5', 'RegCM5', 'WRF415'])
 ax1.set_title('(a)', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_xlabel('Relative vorticity (10$^-$$^5$ s$^-$$^1$)', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Frequency', fontsize=font_size, fontweight='bold')
-ax1.set_ylim(0, 20)
-ax1.set_yticks(np.arange(0, 22, 2))
+ax1.set_ylim(0, 44)
+ax1.set_yticks(np.arange(0, 48, 4))
 ax1.grid(axis='y', c='k', ls='--', alpha=0.5)
 ax1.legend(fontsize=font_size, ncol=3, loc=9, shadow=True)
 
 ax2.set_facecolor('lightgray')
-ax2.hist([list_era5_ii, list_regcm5_ii, list_wrf415_ii], bins=6, color=['black', 'blue', 'red'], alpha=0.75, edgecolor='black', linewidth=1.25, label=['ERA5', 'RegCM5', 'WRF415'])
+ax2.hist([list_era5_ii, list_regcm5_ii, list_wrf415_ii], bins=15, color=['black', 'blue', 'red'], alpha=0.75, edgecolor='black', linewidth=1.25, label=['ERA5', 'RegCM5', 'WRF415'])
 ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Pressure center (hPa)', fontsize=font_size, fontweight='bold')
 ax2.set_ylabel('Frequency', fontsize=font_size, fontweight='bold')
-ax2.set_ylim(0, 10)
-ax2.set_yticks(np.arange(0, 11, 1))
+ax2.set_ylim(0, 22)
+ax2.set_yticks(np.arange(0, 24, 2))
 ax2.grid(axis='y', c='k', ls='--', alpha=0.5)
 
 # Path out to save figure

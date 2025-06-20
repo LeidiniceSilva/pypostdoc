@@ -205,23 +205,25 @@ fig = plt.figure()
 font_size = 8
 
 ax = fig.add_subplot(1, 1, 1)  
+ax.set_facecolor('lightgray')
+
 plt.plot(x_pdf_inmet,  pdf_inmet,  marker='o', markersize=4, mfc='green',  mec='green',  alpha=0.75, linestyle='None', label='INMET')
 plt.plot(x_pdf_cmorph, pdf_cmorph, marker='o', markersize=4, mfc='violet', mec='violet', alpha=0.75, linestyle='None', label='CMORPH')
 plt.plot(x_pdf_era5,   pdf_era5,   marker='o', markersize=4, mfc='black',  mec='black',  alpha=0.75, linestyle='None', label='ERA5')
 plt.plot(x_pdf_regcm5, pdf_regcm5, marker='o', markersize=4, mfc='blue',   mec='blue',   alpha=0.75, linestyle='None', label='RegCM5')
 plt.plot(x_pdf_wrf415, pdf_wrf415, marker='o', markersize=4, mfc='red',    mec='red',    alpha=0.75, linestyle='None', label='WRF415')
 
-plt.axvline(x=p99_inmet, color='green', linestyle='--')
-plt.axvline(x=p99_cmorph, color='violet', linestyle='--')
-plt.axvline(x=p99_era5, color='black', linestyle='--')
-plt.axvline(x=p99_regcm5, color='blue', linestyle='--')
-plt.axvline(x=p99_wrf415, color='red', linestyle='--')
+plt.axvline(x=p99_inmet, color='green', linestyle='-')
+plt.axvline(x=p99_cmorph, color='violet', linestyle='-')
+plt.axvline(x=p99_era5, color='black', linestyle='-')
+plt.axvline(x=p99_regcm5, color='blue', linestyle='-')
+plt.axvline(x=p99_wrf415, color='red', linestyle='-')
 
 plt.title('(b)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.ylabel('Frequency (#)', fontsize=font_size, fontweight='bold')
 plt.yscale('log')
-plt.grid(axis='y', color='k', linestyle='--', alpha=0.3)
+plt.grid(axis='y', color='k', linestyle='--', alpha=0.5)
 
 # Path out to save figure
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)

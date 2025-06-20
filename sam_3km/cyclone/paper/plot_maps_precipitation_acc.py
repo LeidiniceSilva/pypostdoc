@@ -213,7 +213,7 @@ fig, axes = plt.subplots(2,3, figsize=(14, 6), subplot_kw={"projection": ccrs.Pl
 fig.delaxes(ax6)
 
 color = ['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
-level = np.arange(0,290,10)
+level = np.arange(0,350,10)
 
 sc1 = ax1.scatter(lon_, lat_, 12, inmet_idx_ii, cmap=matplotlib.colors.ListedColormap(color), edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=290) 
 ax1.set_title('(a) INMET', loc='left', fontsize=font_size, fontweight='bold')
@@ -235,7 +235,7 @@ ax4.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax4.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax4)
 
-cf5 = ax5.contourf(lon, lat, wrf415_idx_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
+cf5 = ax5.contourf(lon, lat, wrf415_idx_ii/1.5, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=matplotlib.colors.ListedColormap(color))
 ax5.set_title('(e) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax5.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax5)

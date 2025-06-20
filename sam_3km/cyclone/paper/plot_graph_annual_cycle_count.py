@@ -146,25 +146,13 @@ list_era5_i, list_era5_ii = open_dat_file('ERA5', 2018, 2021)
 list_regcm5_i, list_regcm5_ii = open_dat_file('RegCM5', 2018, 2021)
 list_wrf415_i, list_wrf415_ii = open_dat_file('WRF415', 2018, 2021)
 
-list_number_era5_ = cyclone_number(list_era5_i)
-list_number_regcm5_ = cyclone_number(list_regcm5_i)
-list_number_wrf415_ = cyclone_number(list_wrf415_i)
+list_number_era5 = cyclone_number(list_era5_i)
+list_number_regcm5 = cyclone_number(list_regcm5_i)
+list_number_wrf415 = cyclone_number(list_wrf415_i)
 
-list_lifetime_era5_ = cyclone_lifetime(list_era5_ii)
-list_lifetime_regcm5_ = cyclone_lifetime(list_regcm5_ii)
-list_lifetime_wrf415_ = cyclone_lifetime(list_wrf415_ii)
-
-list_number_era5 = [5, 2, 2, 2, 0, 1, 2, 3, 0, 1, 2, 2]
-list_number_regcm5 = [1, 1, 2, 0, 0, 0, 0, 2, 3, 1, 3, 1]
-list_number_wrf415 = [8, 2, 3, 2, 0, 0, 0, 2, 6, 3, 5, 3]
-
-list_lifetime_era5_i = [float(x) for x in list_lifetime_era5_]
-list_lifetime_regcm5_i = [float(x) for x in list_lifetime_regcm5_]
-list_lifetime_wrf415_i = [float(x) for x in list_lifetime_wrf415_]
-
-list_lifetime_era5 = [6.2, 8.0, 5.0, 6.0, 0, 5.0, 5.0, 5.333333333333333, 0, 7.0, 5.0, 7.5]
-list_lifetime_regcm5 = [5.0, 10.0, 5, 0, 0, 0, 0, 7.0, 5.666666666666667, 4, 5.0, 8.0]
-list_lifetime_wrf415 = [6.25, 5.0, 5.0, 8.5, 0, 0, 0, 6.0, 5.666666666666667, 5.0, 7.2, 10.333333333333334]
+list_lifetime_era5 = cyclone_lifetime(list_era5_ii)
+list_lifetime_regcm5 = cyclone_lifetime(list_regcm5_ii)
+list_lifetime_wrf415 = cyclone_lifetime(list_wrf415_ii)
 
 # Plot figure
 fig, axes = plt.subplots(1, 2, figsize=(12, 4))
@@ -176,29 +164,29 @@ font_size = 10
 width = 0.25 
 
 ax1.set_facecolor('lightgray')
-ax1.plot(x, list_number_era5, color='black', marker='o', markersize=4, linestyle='--', linewidth=1.5, label='ERA5')
-ax1.bar(x-width, list_number_wrf415, 0.4, color='red', alpha=0.75, edgecolor='black', linewidth=1.25, label='WRF415')
-ax1.bar(x+width, list_number_regcm5, 0.4, color='blue', alpha=0.75, edgecolor='black', linewidth=1.25, label='RegCM5')
+ax1.bar(x-width, list_number_era5, width, color='black', alpha=0.75, edgecolor='black', linewidth=1.25, label='ERA5')
+ax1.bar(x, list_number_regcm5, width, color='blue', alpha=0.75, edgecolor='black', linewidth=1.25, label='RegCM5')
+ax1.bar(x+width, list_number_wrf415, width, color='red', alpha=0.75, edgecolor='black', linewidth=1.25, label='WRF415')
 ax1.set_title('(a)', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Number of cyclones', fontsize=font_size, fontweight='bold')
 ax1.set_xlabel('Months', fontsize=font_size, fontweight='bold')
 ax1.set_xticks(x)
 ax1.set_xticklabels(labels, fontsize=font_size)
-ax1.set_ylim(0, 11)
-ax1.set_yticks(np.arange(0, 11, 1))
+ax1.set_ylim(0, 20)
+ax1.set_yticks(np.arange(0, 22, 2))
 ax1.grid(axis='y', c='k', ls='--', alpha=0.5)
 ax1.legend(fontsize=font_size, ncol=3, loc=9, shadow=True)
 
 ax2.set_facecolor('lightgray')
-ax2.plot(x, list_lifetime_era5, color='black', marker='o', markersize=4, linestyle='--', linewidth=1.5, label='ERA5')
-ax2.bar(x-width, list_lifetime_regcm5, 0.4, color='blue', alpha=0.75, edgecolor='black', linewidth=1.25, label='RegCM5')
-ax2.bar(x+width, list_lifetime_wrf415, 0.4, color='red', alpha=0.75, edgecolor='black', linewidth=1.25, label='WRF415')
+ax2.bar(x-width, list_lifetime_era5, width, color='black', alpha=0.75, edgecolor='black', linewidth=1.25, label='ERA5')
+ax2.bar(x, list_lifetime_regcm5, width, color='blue', alpha=0.75, edgecolor='black', linewidth=1.25, label='RegCM5')
+ax2.bar(x+width, list_lifetime_wrf415, width, color='red', alpha=0.75, edgecolor='black', linewidth=1.25, label='WRF415')
 ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_ylabel('Lifetime of cyclones (days/month)', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Months', fontsize=font_size, fontweight='bold')
 ax2.set_xticks(x)
 ax2.set_xticklabels(labels, fontsize=font_size)
-ax2.set_ylim(0, 11)
+ax2.set_ylim(0, 10)
 ax2.set_yticks(np.arange(0, 11, 1))
 ax2.grid(axis='y', c='k', ls='--', alpha=0.5)
 

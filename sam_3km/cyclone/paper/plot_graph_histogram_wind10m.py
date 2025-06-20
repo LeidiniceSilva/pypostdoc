@@ -132,10 +132,15 @@ def extract_timeseries(dataset, lat_array, lon_array, target_lats, target_lons):
 
 def comp_stats(wind_dataset):
 
-	wind_median = np.nanmedian(wind_dataset)
-	wind_mean = np.nanmean(wind_dataset)
-	wind_p90 = np.nanpercentile(wind_dataset, 90)
-	wind_max = np.nanmax(wind_dataset)
+	wind_median_ = np.nanmedian(wind_dataset)
+	wind_mean_ = np.nanmean(wind_dataset)
+	wind_p90_ = np.nanpercentile(wind_dataset, 90)
+	wind_max_ = np.nanmax(wind_dataset)
+
+	wind_median = round(wind_median_, 2)
+	wind_mean = round(wind_mean_, 2)
+	wind_p90 = round(wind_p90_, 2)
+	wind_max = round(wind_max_, 2)
 
 	return wind_median, wind_mean, wind_p90, wind_max
 
@@ -179,7 +184,7 @@ print(uv10_ts_regcm5)
 
 era5_wind_median, era5_wind_mean, era5_wind_p90, era5_wind_max = comp_stats(uv10_ts_era5)
 regcm5_wind_median, regcm5_wind_mean, regcm5_wind_p90,regcm5_wind_max = comp_stats(uv10_ts_regcm5)
-wrf415_wind_median, wrf415_wind_mean, wrf415_wind_p90, wrf415_wind_max = comp_stats(uv10_ts_regcm5)
+wrf415_wind_median, wrf415_wind_mean, wrf415_wind_p90, wrf415_wind_max = comp_stats(uv10_ts_wrf415)
 
 print(era5_wind_median, era5_wind_mean, era5_wind_p90, era5_wind_max)
 print(regcm5_wind_median, regcm5_wind_mean, regcm5_wind_p90,regcm5_wind_max)
@@ -188,7 +193,8 @@ print(wrf415_wind_median, wrf415_wind_mean, wrf415_wind_p90, wrf415_wind_max)
 # Plot figure
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(14, 4))
 
-ax1.hist(uv10_ts_era5, bins=10, color='black', alpha=0.5, edgecolor='black', label='ERA5')
+ax1.set_facecolor('lightgray')
+ax1.hist(uv10_ts_era5, bins=10, color='black', alpha=0.75, edgecolor='black', label='ERA5')
 ax1.axvline(era5_wind_median, color='gray', label='Median: {0}'.format(era5_wind_median))
 ax1.axvline(era5_wind_mean, color='green', label='Mean: {0}'.format(era5_wind_mean))
 ax1.axvline(era5_wind_p90, color='orange', label='90th percentile: {0}'.format(era5_wind_p90))
@@ -196,9 +202,10 @@ ax1.axvline(era5_wind_max, color='purple', label='Max: {0}'.format(era5_wind_max
 ax1.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size, fontweight='bold')
 ax1.set_title('(a)', loc='left', fontsize=font_size, fontweight='bold')
 ax1.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
-ax1.grid(True, linestyle='--', alpha=0.5)
+ax1.grid(True, color='k', linestyle='--', alpha=0.5)
 
-ax2.hist(uv10_ts_regcm5, bins=10, color='blue', alpha=0.5, edgecolor='black', label='RegCM5')
+ax2.set_facecolor('lightgray')
+ax2.hist(uv10_ts_regcm5, bins=10, color='blue', alpha=0.75, edgecolor='black', label='RegCM5')
 ax2.axvline(regcm5_wind_median, color='gray', label='Median: {0}'.format(regcm5_wind_median))
 ax2.axvline(regcm5_wind_mean, color='green', label='Mean: {0}'.format(regcm5_wind_mean))
 ax2.axvline(regcm5_wind_p90, color='orange', label='90th percentile: {0}'.format(regcm5_wind_p90))
@@ -206,9 +213,10 @@ ax2.axvline(regcm5_wind_max, color='purple', label='Max: {0}'.format(regcm5_wind
 ax2.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size, fontweight='bold')
 ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
 ax2.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
-ax2.grid(True, linestyle='--', alpha=0.5)
+ax2.grid(True, color='k', linestyle='--', alpha=0.5)
 
-ax3.hist(uv10_ts_wrf415, bins=10, color='red', alpha=0.5, edgecolor='black', label='WRF415')
+ax3.set_facecolor('lightgray')
+ax3.hist(uv10_ts_wrf415, bins=10, color='red', alpha=0.75, edgecolor='black', label='WRF415')
 ax3.axvline(wrf415_wind_median, color='gray', label='Median: {0}'.format(wrf415_wind_median))
 ax3.axvline(wrf415_wind_mean, color='green', label='Mean: {0}'.format(wrf415_wind_mean))
 ax3.axvline(wrf415_wind_p90, color='orange', label='90th percentile: {0}'.format(wrf415_wind_p90))
@@ -216,7 +224,7 @@ ax3.axvline(wrf415_wind_max, color='purple', label='Max: {0}'.format(wrf415_wind
 ax3.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size, fontweight='bold')
 ax3.set_title('(c)', loc='left', fontsize=font_size, fontweight='bold')
 ax3.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
-ax3.grid(True, linestyle='--', alpha=0.5)
+ax3.grid(True, color='k', linestyle='--', alpha=0.5)
 
 # Path out to save figure
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
