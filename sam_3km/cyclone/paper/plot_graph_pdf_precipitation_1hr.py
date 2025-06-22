@@ -116,29 +116,33 @@ def import_data(indices_i, indices_ii, indices_iii):
 		var  = time.values
 		var_ = var[::6]
 
-		arq_i    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/CMORPH/'.format(path) + 'cmorph_SAM-3km_CMORPH_6hr_2018-2021_lonlat.nc')
+		arq_i    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/CMORPH/'.format(path) + 'cmorph_SAM-3km_CMORPH_1hr_2018-2021_lonlat_lonlat.nc')
 		data_i   = arq_i['cmorph']
-		latlon_i = data_i.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		latlon_i = data_i.sel(lat=slice(inmet[station][2]-0.22,inmet[station][2]+0.22),lon=slice(inmet[station][3]-0.22,inmet[station][3]+0.22)).mean(('lat','lon'))
 		time_i   = latlon_i.sel(time=slice('2018-01-01','2021-12-31'))
-		var_i    = time_i.values
+		varlue_i = time_i.values
+		var_i    = varlue_i[::6]
 
-		arq_ii    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/ERA5/'.format(path) + 'tp_SAM-3km_ERA5_6hr_2018-2021_lonlat.nc')
+		arq_ii    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/ERA5/'.format(path) + 'tp_SAM-3km_ERA5_1hr_2018-2021_lonlat_lonlat.nc')
 		data_ii   = arq_ii['tp']
-		latlon_ii = data_ii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		latlon_ii = data_ii.sel(lat=slice(inmet[station][2]-0.22,inmet[station][2]+0.22),lon=slice(inmet[station][3]-0.22,inmet[station][3]+0.22)).mean(('lat','lon'))
 		time_ii   = latlon_ii.sel(time=slice('2018-01-01','2021-12-31'))
-		var_ii    = time_ii.values
+		varlue_ii = time_ii.values
+		var_ii    = varlue_ii[::6]
 
-		arq_iii    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/RegCM5/'.format(path) + 'pr_SAM-3km_RegCM5_6hr_2018-2021_lonlat.nc')
+		arq_iii    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/RegCM5/'.format(path) + 'pr_SAM-3km_RegCM5_1hr_2018-2021_lonlat_lonlat.nc')
 		data_iii   = arq_iii['pr']
-		latlon_iii = data_iii.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		latlon_iii = data_iii.sel(lat=slice(inmet[station][2]-0.22,inmet[station][2]+0.22),lon=slice(inmet[station][3]-0.22,inmet[station][3]+0.22)).mean(('lat','lon'))
 		time_iii   = latlon_iii.sel(time=slice('2018-01-01','2021-12-31'))
-		var_iii    = time_iii.values
+		varlue_iii = time_iii.values
+		var_iii    = varlue_iii[::6]
 
-		arq_iv    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/WRF415/'.format(path) + 'PREC_ACC_NC_SAM-3km_WRF415_6hr_2018-2021_lonlat.nc')
+		arq_iv    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/WRF415/'.format(path) + 'PREC_ACC_NC_SAM-3km_WRF415_1hr_2018-2021_lonlat_lonlat.nc')
 		data_iv   = arq_iv['PREC_ACC_NC']
-		latlon_iv = data_iv.sel(lat=slice(inmet[station][2]-0.03,inmet[station][2]+0.03),lon=slice(inmet[station][3]-0.03,inmet[station][3]+0.03)).mean(('lat','lon'))
+		latlon_iv = data_iv.sel(lat=slice(inmet[station][2]-0.22,inmet[station][2]+0.22),lon=slice(inmet[station][3]-0.22,inmet[station][3]+0.22)).mean(('lat','lon'))
 		time_iv   = latlon_iv.sel(XTIME=slice('2018-01-01','2021-12-31'))
-		var_iv    = time_iv.values
+		varlue_iv = time_iv.values
+		var_iv    = varlue_iv[::6]
 
 		for idx_i in indices_i:
 			mean_.append(var_[idx_i])
@@ -187,7 +191,7 @@ x_pdf_era5, pdf_era5 = comp_pdf(pr_era5)
 x_pdf_regcm5, pdf_regcm5 = comp_pdf(pr_regcm5)
 x_pdf_wrf415, pdf_wrf415 = comp_pdf(pr_wrf415)
 
-# Compute 99.9th percentile
+# Compute 99th percentile
 p99_inmet = np.nanpercentile(pr_inmet, 99)
 p99_cmorph = np.nanpercentile(pr_cmorph, 99)
 p99_era5 = np.nanpercentile(pr_era5, 99)
@@ -223,7 +227,7 @@ plt.title('(b)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('Precipitation (mm h$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.ylabel('Frequency (#)', fontsize=font_size, fontweight='bold')
 plt.yscale('log')
-plt.grid(axis='y', color='k', linestyle='--', alpha=0.5)
+plt.grid(True, color='k', linestyle='--', alpha=0.5)
 
 # Path out to save figure
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)

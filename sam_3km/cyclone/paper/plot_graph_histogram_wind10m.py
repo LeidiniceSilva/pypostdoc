@@ -201,6 +201,10 @@ ax1.axvline(era5_wind_p90, color='orange', label='90th percentile: {0}'.format(e
 ax1.axvline(era5_wind_max, color='purple', label='Max: {0}'.format(era5_wind_max))
 ax1.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size, fontweight='bold')
 ax1.set_title('(a)', loc='left', fontsize=font_size, fontweight='bold')
+ax1.set_ylim(0, 80)
+ax1.set_yticks(np.arange(0, 90, 10))
+ax1.set_xlim(0, 20)
+ax1.set_xticks(np.arange(0, 22, 2))
 ax1.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
 ax1.grid(True, color='k', linestyle='--', alpha=0.5)
 
@@ -212,6 +216,10 @@ ax2.axvline(regcm5_wind_p90, color='orange', label='90th percentile: {0}'.format
 ax2.axvline(regcm5_wind_max, color='purple', label='Max: {0}'.format(regcm5_wind_max))
 ax2.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size, fontweight='bold')
 ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
+ax2.set_ylim(0, 80)
+ax2.set_yticks(np.arange(0, 90, 10))
+ax2.set_xlim(0, 20)
+ax2.set_xticks(np.arange(0, 22, 2))
 ax2.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
 ax2.grid(True, color='k', linestyle='--', alpha=0.5)
 
@@ -223,6 +231,10 @@ ax3.axvline(wrf415_wind_p90, color='orange', label='90th percentile: {0}'.format
 ax3.axvline(wrf415_wind_max, color='purple', label='Max: {0}'.format(wrf415_wind_max))
 ax3.set_xlabel('Wind speed at 10 m (m s$^-$$^1$)', fontsize=font_size, fontweight='bold')
 ax3.set_title('(c)', loc='left', fontsize=font_size, fontweight='bold')
+ax3.set_ylim(0, 80)
+ax3.set_yticks(np.arange(0, 90, 10))
+ax3.set_xlim(0, 20)
+ax3.set_xticks(np.arange(0, 22, 2))
 ax3.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
 ax3.grid(True, color='k', linestyle='--', alpha=0.5)
 
