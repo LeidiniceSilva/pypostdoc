@@ -227,11 +227,11 @@ plt.plot(x_pdf_era5,   pdf_era5,   marker='o', markersize=4, mfc='black',  mec='
 plt.plot(x_pdf_regcm5, pdf_regcm5, marker='o', markersize=4, mfc='blue',   mec='blue',   alpha=0.75, linestyle='None', label='RegCM5')
 plt.plot(x_pdf_wrf415, pdf_wrf415, marker='o', markersize=4, mfc='red',    mec='red',    alpha=0.75, linestyle='None', label='WRF415')
 
-plt.axvline(x=p99_inmet, color='green', linestyle='-')
-plt.axvline(x=p99_cmorph, color='violet', linestyle='-')
-plt.axvline(x=p99_era5, color='black', linestyle='-')
-plt.axvline(x=p99_regcm5, color='blue', linestyle='-')
-plt.axvline(x=p99_wrf415, color='red', linestyle='-')
+#plt.axvline(x=p99_inmet, color='green', linestyle='-')
+#plt.axvline(x=p99_cmorph, color='violet', linestyle='-')
+#plt.axvline(x=p99_era5, color='black', linestyle='-')
+#plt.axvline(x=p99_regcm5, color='blue', linestyle='-')
+#plt.axvline(x=p99_wrf415, color='red', linestyle='-')
 
 plt.title('(a)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')

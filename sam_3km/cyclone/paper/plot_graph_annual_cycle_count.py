@@ -122,7 +122,7 @@ def cyclone_lifetime(list_dataset):
                 	nov_dt.append(int(ii[4]))
 		if date_obj.month == 12:
                 	dec_dt.append(int(ii[4]))
-	
+
 	jan_dur = np.nanmean(jan_dt)
 	feb_dur = np.nanmean(feb_dt)
 	mar_dur = np.nanmean(mar_dt)
