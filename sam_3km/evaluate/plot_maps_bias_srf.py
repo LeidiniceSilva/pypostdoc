@@ -23,7 +23,7 @@ from import_climate_tools import compute_mbe
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'evspsblpot'
+var = 'cll'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -167,23 +167,6 @@ def import_rcm(param, domain, dataset, season):
 	return lat, lon, mean
 
 
-def configure_subplot(ax):
-
-	ax.set_extent([-80, -34, -38, -8], crs=ccrs.PlateCarree())
-	ax.set_xticks(np.arange(-80,-34,12), crs=ccrs.PlateCarree())
-	ax.set_yticks(np.arange(-38,-8,6), crs=ccrs.PlateCarree())
-
-	for label in ax.get_xticklabels() + ax.get_yticklabels():
-		label.set_fontsize(6)
-
-	ax.xaxis.set_major_formatter(LongitudeFormatter())
-	ax.yaxis.set_major_formatter(LatitudeFormatter())
-	ax.grid(c='k', ls='--', alpha=0.4)
-	ax.add_feature(cfeat.BORDERS, linewidth=0.5)
-	ax.coastlines(linewidth=0.5)	
-	ax.add_feature(cfeat.OCEAN, facecolor='white', zorder=1) 
-
-
 # Import model and obs dataset
 dict_var = {'pr': ['pre', 'pre', 'precip', 'cmorph', 'tp'],
 'tas': ['tmp', 'tmp', 't2m'],
@@ -308,6 +291,29 @@ else:
 	mbe_son_regcm_era5 = compute_mbe(regcm_son, era5_son)
 
 # Plot figure   
+def configure_subplot(ax):
+
+	lon_min = np.round(np.min(lon), 1)
+	lon_max = np.round(np.max(lon), 1)
+	lat_min = np.round(np.min(lat), 1)
+	lat_max = np.round(np.max(lat), 1)
+	ax.set_extent([np.min(lon), np.max(lon), np.min(lat), np.max(lat)], crs=ccrs.PlateCarree())
+	ax.set_xticks(np.arange(lon_min,lon_max,10), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(lat_min,lat_max,5), crs=ccrs.PlateCarree())
+
+	for label in ax.get_xticklabels() + ax.get_yticklabels():
+		label.set_fontsize(6)
+
+	ax.xaxis.set_major_formatter(LongitudeFormatter())
+	ax.yaxis.set_major_formatter(LatitudeFormatter())
+	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.add_feature(cfeat.BORDERS, linewidth=0.5)
+	ax.coastlines(linewidth=0.5)
+
+	if var == 'evspsblpot':
+		ax.add_feature(cfeat.OCEAN, facecolor='white', zorder=1) 
+
+
 dict_plot = {'pr': ['Bias of  precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.BrBG],
 'tas': ['Bias of air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
 'clt': ['Bias of total cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
@@ -509,7 +515,7 @@ else:
 
 # Set colobar
 if var == 'clt' or var == 'cll' or var == 'clm' or var == 'clh' or var == 'evspsblpot' or var == 'rsnl':
-	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.84, 0.3, 0.03, 0.4]))
+	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.93, 0.3, 0.03, 0.4]))
 	cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 	cbar.ax.tick_params(labelsize=font_size)
 else:

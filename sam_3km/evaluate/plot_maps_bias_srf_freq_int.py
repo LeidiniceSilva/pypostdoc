@@ -20,7 +20,7 @@ from import_climate_tools import compute_mbe
 
 var = 'pr'
 stats = 'int'
-freq = 'hourly'
+freq = 'day'
 domain = 'SAM-3km'
 idt, fdt = '2018', '2021'
 
@@ -66,19 +66,6 @@ def import_rcm(param, domain, dataset, season):
 	return lat, lon, mean
 	
 
-def configure_subplot(ax):
-
-	ax.set_extent([-80, -34, -38, -8], crs=ccrs.PlateCarree())
-	ax.set_xticks(np.arange(-80,-34,12), crs=ccrs.PlateCarree())
-	ax.set_yticks(np.arange(-38,-8,6), crs=ccrs.PlateCarree())
-	ax.xaxis.set_major_formatter(LongitudeFormatter())
-	ax.yaxis.set_major_formatter(LatitudeFormatter())
-	ax.tick_params(labelsize=font_size)
-	ax.add_feature(cfeat.BORDERS)
-	ax.coastlines()	
-	ax.grid(c='k', ls='--', alpha=0.4)
-	
-	
 # Import model and obs dataset
 lat, lon, regcm_djf = import_rcm('pr', domain, 'RegCM5', 'DJF')
 lat, lon, regcm_mam = import_rcm('pr', domain, 'RegCM5', 'MAM')
@@ -101,7 +88,27 @@ mbe_regcm_obs_mam = regcm_mam - obs_mam
 mbe_regcm_obs_jja = regcm_jja - obs_jja
 mbe_regcm_obs_son = regcm_son - obs_son
 
-# Plot figure
+# Plot figure   
+def configure_subplot(ax):
+
+	lon_min = np.round(np.min(lon), 1)
+	lon_max = np.round(np.max(lon), 1)
+	lat_min = np.round(np.min(lat), 1)
+	lat_max = np.round(np.max(lat), 1)
+	ax.set_extent([np.min(lon), np.max(lon), np.min(lat), np.max(lat)], crs=ccrs.PlateCarree())
+	ax.set_xticks(np.arange(lon_min,lon_max,10), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(lat_min,lat_max,5), crs=ccrs.PlateCarree())
+
+	for label in ax.get_xticklabels() + ax.get_yticklabels():
+		label.set_fontsize(6)
+
+	ax.xaxis.set_major_formatter(LongitudeFormatter())
+	ax.yaxis.set_major_formatter(LatitudeFormatter())
+	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.add_feature(cfeat.BORDERS, linewidth=0.5)
+	ax.coastlines(linewidth=0.5)
+
+
 fig, axes = plt.subplots(4, 1, figsize=(5, 12), subplot_kw={'projection': ccrs.PlateCarree()})
 axes = axes.flatten()
 font_size = 8

@@ -156,12 +156,12 @@ dict_var = {'pr': ['pre', 'pre', 'precip', 'cmorph', 'tp'],
 'cll': ['lcc'],
 'clm': ['mcc'],
 'clh': ['hcc'],
-'sfcWindmax': ['fg10'],
 'evspsblpot': ['pev'],
 'rsnl': ['msnlwrf'],
-'mrsos': ['swvl1'],
 'cape': ['cape'],
-'cin': ['cin']}
+'cin': ['cin'],
+'mrsos': ['swvl1'],
+'sfcWindmax': ['fg10']}
 
 if var == 'pr':
 	lat, lon, regcm_djf = import_rcm(var, domain, 'RegCM5', 'DJF')
@@ -169,13 +169,13 @@ if var == 'pr':
 	lat, lon, regcm_jja = import_rcm(var, domain, 'RegCM5', 'JJA')
 	lat, lon, regcm_son = import_rcm(var, domain, 'RegCM5', 'SON')
 
-	lat_i, lon_i, inmet_i = import_situ_i(dict_var[var][0])
-	lat_ii, lon_ii, smn_ii = import_situ_ii(dict_var[var][0])
-	lat_iii, lon_iii, smn_iii = import_situ_iii(dict_var[var][0])
+	lat_i, lon_i, inmet_v1 = import_situ_i(dict_var[var][0])
+	lat_ii, lon_ii, smn_v2 = import_situ_ii(dict_var[var][0])
+	lat_iii, lon_iii, smn_v3 = import_situ_iii(dict_var[var][0])
 
 	lat_yy = lat_i + lat_ii + lat_iii
 	lon_xx = lon_i + lon_ii + lon_iii
-	weather_stations = inmet_i + smn_ii + smn_iii
+	weather_stations = inmet_v1 + smn_v2 + smn_v3
 
 	ws_djf, ws_mam, ws_jja, ws_son = [], [], [], []
 	for i in range(0, len(lat_yy)):
@@ -257,8 +257,11 @@ def configure_subplot(ax):
 	ax.yaxis.set_major_formatter(LatitudeFormatter())
 	ax.grid(c='k', ls='--', alpha=0.4)
 	ax.add_feature(cfeat.BORDERS, linewidth=0.5)
-	ax.coastlines(linewidth=0.5)	
-	#ax.add_feature(cfeat.OCEAN, facecolor='white', zorder=1) 
+	ax.coastlines(linewidth=0.5)
+
+	if var == 'evspsblpot' or var == 'mrsos':
+		ax.add_feature(cfeat.OCEAN, facecolor='white', zorder=1) 
+
 
 color=['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
 
@@ -268,12 +271,12 @@ dict_plot = {'pr': ['Precipitation (mm d$^-$$^1$)', np.arange(0, 18, 1), matplot
 'cll': ['Low cloud cover (0-1)', np.arange(0, 1.05, 0.05), cm.Greys],
 'clm': ['Medium cloud cover (0-1)', np.arange(0, 1.05, 0.05), cm.Greys],
 'clh': ['High cloud cover (0-1)', np.arange(0, 1.05, 0.05), cm.Greys],
-'sfcWindmax': ['Maximum wind speed at 10 meters (m s$^-$$^1$)', np.arange(0, 18.5, 0.5), cm.jet],
 'evspsblpot': ['Potential evapotranspiration (mm d$^-$$^1$)', np.arange(0, 10.5, 0.5), cm.jet],
 'rsnl': ['Surface net upward longwave flux (W mm$^-$$^2$)', np.arange(0, 220, 10), cm.rainbow],
-'mrsos': ['Soil moisture (m m$^-$$^3$)', np.arange(0, 0.71, 0.01), cm.rainbow_r],
 'cape': ['Convective available potential energy (J kg$^-$$^1$)', np.arange(0, 1850, 50), cm.ocean_r],
-'cin': ['Convective inhibition (J kg$^-$$^1$)', np.arange(0, 430, 10), cm.CMRmap_r]}
+'cin': ['Convective inhibition (J kg$^-$$^1$)', np.arange(0, 430, 10), cm.CMRmap_r],
+'mrsos': ['Soil moisture (m m$^-$$^3$)', np.arange(0, 0.71, 0.01), cm.rainbow_r],
+'sfcWindmax': ['Maximum wind speed at 10 meters (m s$^-$$^1$)', np.arange(0, 18.5, 0.5), cm.jet]}
 
 if var == 'pr':
 	fig, axes = plt.subplots(4, 5, figsize=(15, 8), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -387,7 +390,7 @@ elif var == 'tas':
 
 	ax1 = axes[0, 0]
 	plt_map = ax1.contourf(lon, lat, regcm_djf, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt_sct = ax1.scatter(lon_xx, lat_yy, 4, ws_djf, cmap=dict_plot[var][2], edgecolors='black', linewidth=0.5, marker='o', vmin=10, vmax=32)
+	plt_sct = ax1.scatter(lon_xx, lat_yy, 4, ws_djf, cmap=dict_plot[var][2], edgecolors='black', linewidth=0.5, marker='o', vmin=-6, vmax=32)
 	ax1.set_title(u'(a) RegCM5(shaded) INMET(dots) DJF', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax1)
 
@@ -403,7 +406,7 @@ elif var == 'tas':
 
 	ax4 = axes[1, 0]
 	plt_map = ax4.contourf(lon, lat, regcm_mam, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt_sct = ax4.scatter(lon_xx, lat_yy, 4, ws_mam, cmap=dict_plot[var][2], edgecolors='black', linewidth=0.5, marker='o', vmin=10, vmax=32)
+	plt_sct = ax4.scatter(lon_xx, lat_yy, 4, ws_mam, cmap=dict_plot[var][2], edgecolors='black', linewidth=0.5, marker='o', vmin=-6, vmax=32)
 	ax4.set_title(u'(d) RegCM5(shaded) INMET(dots) MAM', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax4)
 
@@ -419,7 +422,7 @@ elif var == 'tas':
 
 	ax7 = axes[2, 0]
 	plt_map = ax7.contourf(lon, lat, regcm_jja, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt_sct = ax7.scatter(lon_xx, lat_yy, 4, ws_jja, cmap=dict_plot[var][2], edgecolors='black', linewidth=0.5, marker='o', vmin=10, vmax=32)
+	plt_sct = ax7.scatter(lon_xx, lat_yy, 4, ws_jja, cmap=dict_plot[var][2], edgecolors='black', linewidth=0.5, marker='o', vmin=-6, vmax=32)
 	ax7.set_title(u'(g) RegCM5(shaded) INMET(dots) JJA', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax7)
 
@@ -435,7 +438,7 @@ elif var == 'tas':
 
 	ax10 = axes[3, 0]
 	plt_map = ax10.contourf(lon, lat, regcm_son, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
-	plt_sct = ax10.scatter(lon_xx, lat_yy, 4, ws_son, cmap=dict_plot[var][2], edgecolors='black', linewidth=0.5, marker='o', vmin=10, vmax=32)
+	plt_sct = ax10.scatter(lon_xx, lat_yy, 4, ws_son, cmap=dict_plot[var][2], edgecolors='black', linewidth=0.5, marker='o', vmin=-6, vmax=32)
 	ax10.set_title(u'(j) RegCM5(shaded) INMET(dots) SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax10)
 
