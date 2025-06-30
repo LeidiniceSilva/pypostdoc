@@ -8,10 +8,14 @@ __description__ = "This script plot bias maps"
 import os
 import netCDF4
 import numpy as np
+import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.feature as cfeat
 
-from mpl_toolkits.basemap import Basemap
+from cartopy import config
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
 var = 'pr'
@@ -19,73 +23,51 @@ stats = 'int'
 freq = 'hourly'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2009'
+font_size = 6
 
-path = '/marconi/home/userexternal/mdasilva'
+if freq == 'hourly':
+	dt = '1hr_{0}-{1}_th0.5'.format(idt, fdt)
+else:
+	dt = '{0}-{1}'.format(idt, fdt)
+
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5'
 
 
 def import_obs(param, domain, dataset, season):
-
-	if freq == 'hourly':
-		dt = '1hr_{0}_{1}-{2}_th0.5'.format(season, idt, fdt)
-	else:
-		dt = '{0}_{1}-{2}'.format(season, idt, fdt)
-
-	if param == 'pr':
-		param_ = 'tp'
-	else:
-		param_ = param
 		
-	arq   = '{0}/user/mdasilva/CORDEX/post_evaluate/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, stats, domain, dataset, dt)	
+	arq   = '{0}/postproc/evaluate/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, stats, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
-	var   = data.variables[param_][:] 
+	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][:,:,:]
+	mean = var[:][0,0,:,:]
 	
 	return lat, lon, mean
 	
 		
 def import_rcm(param, domain, dataset, season):
 
-	if freq == 'hourly':
-		dt = '1hr_{0}_{1}-{2}_th0.5'.format(season, 2000, 2005)
-	else:
-		dt = '{0}_{1}-{2}'.format(season, 2000, 2005)
-
-	arq   = '{0}/user/mdasilva/CORDEX/post_evaluate/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, stats, domain, dataset, dt)	
+	arq   = '{0}/postproc/evaluate/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, stats, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][:,:,:]
+	mean = var[:][0,0,:,:]
 	
 	return lat, lon, mean
 	
 
-def basemap(lat, lon):
-	
-	map = Basemap(projection='cyl', llcrnrlon=-80., llcrnrlat=-38., urcrnrlon=-34.,urcrnrlat=-10., resolution='c')
-	map.drawmeridians(np.arange(-80., -34., 12.), size=6, labels=[0,0,0,1], linewidth=0.4, color='black')
-	map.drawparallels(np.arange(-38., -8., 6.), size=6, labels=[1,0,0,0], linewidth=0.4, color='black')
-	map.readshapefile('{0}/github_projects/shp/shp_america_sul/america_sul'.format(path), 'america_sul', drawbounds=True, color='black')
-	
-	lons, lats = np.meshgrid(lon, lat)
-	xx, yy = map(lons,lats)
-	
-	return map, xx, yy
-	
-	
 # Import model and obs dataset
 if freq == 'hourly':
-	lat, lon, era5_djf = import_obs('pr', domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_obs('pr', domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_obs('pr', domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_obs('pr', domain, 'ERA5', 'SON')
-
 	lat, lon, cmorph_djf = import_obs('cmorph', domain, 'CMORPH', 'DJF')
 	lat, lon, cmorph_mam = import_obs('cmorph', domain, 'CMORPH', 'MAM')
 	lat, lon, cmorph_jja = import_obs('cmorph', domain, 'CMORPH', 'JJA')
 	lat, lon, cmorph_son = import_obs('cmorph', domain, 'CMORPH', 'SON')
+
+	lat, lon, era5_djf = import_obs('tp', domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs('tp', domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs('tp', domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs('tp', domain, 'ERA5', 'SON')
 	
 	lat, lon, regcm_djf = import_rcm('pr', domain, 'RegCM5', 'DJF')
 	lat, lon, regcm_mam = import_rcm('pr', domain, 'RegCM5', 'MAM')
@@ -117,10 +99,10 @@ else:
 	lat, lon, mswep_jja = import_obs('precipitation', domain, 'MSWEP', 'JJA')
 	lat, lon, mswep_son = import_obs('precipitation', domain, 'MSWEP', 'SON')
 	
-	lat, lon, era5_djf = import_obs('pr', domain, 'ERA5', 'DJF')
-	lat, lon, era5_mam = import_obs('pr', domain, 'ERA5', 'MAM')
-	lat, lon, era5_jja = import_obs('pr', domain, 'ERA5', 'JJA')
-	lat, lon, era5_son = import_obs('pr', domain, 'ERA5', 'SON')
+	lat, lon, era5_djf = import_obs('tp', domain, 'ERA5', 'DJF')
+	lat, lon, era5_mam = import_obs('tp', domain, 'ERA5', 'MAM')
+	lat, lon, era5_jja = import_obs('tp', domain, 'ERA5', 'JJA')
+	lat, lon, era5_son = import_obs('tp', domain, 'ERA5', 'SON')
 	
 	lat, lon, regcm_djf = import_rcm('pr', domain, 'RegCM5', 'DJF')
 	lat, lon, regcm_mam = import_rcm('pr', domain, 'RegCM5', 'MAM')
@@ -146,173 +128,174 @@ else:
 	mbe_regcm_era5_mam = regcm_mam - era5_mam
 	mbe_regcm_era5_jja = regcm_jja - era5_jja
 	mbe_regcm_era5_son = regcm_son - era5_son
-	
+
 # Plot figure
-font_size = 8
+def configure_subplot(ax):
+
+	lon_min = np.round(np.min(lon), 1)
+	lon_max = np.round(np.max(lon), 1)
+	lat_min = np.round(np.min(lat), 1)
+	lat_max = np.round(np.max(lat), 1)
+	ax.set_extent([np.min(lon), np.max(lon), np.min(lat), np.max(lat)], crs=ccrs.PlateCarree())
+	ax.set_xticks(np.arange(lon_min,lon_max,10), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(lat_min,lat_max,5), crs=ccrs.PlateCarree())
+
+	for label in ax.get_xticklabels() + ax.get_yticklabels():
+		label.set_fontsize(6)
+
+	ax.xaxis.set_major_formatter(LongitudeFormatter())
+	ax.yaxis.set_major_formatter(LatitudeFormatter())
+	ax.grid(c='k', ls='--', alpha=0.4)
+	ax.add_feature(cfeat.BORDERS, linewidth=0.5)
+	ax.coastlines(linewidth=0.5)
 
 if stats == 'freq':
 	if freq == 'hourly':
 		levs = np.arange(-22, 23, 1)
 		legend = 'Frequency (%)'
-		dt = '1hr_{0}-{1}_th0.5'.format(idt, fdt)
 	else:
 		levs = np.arange(-44, 46, 2)
 		legend = 'Frequency (%)'
-		dt = '{0}-{1}'.format(idt, fdt)
 else:
 	if freq == 'hourly':
 		levs = np.arange(-6, 6.5, 0.5)
 		legend = 'Intensity (mm h$^-$$^1$)'
-		dt = '1hr_{0}-{1}_th0.5'.format(idt, fdt)
 	else:
 		levs = np.arange(-22, 23, 1)
 		legend = 'Intensity (mm d$^-$$^1$)'
-		dt = '{0}-{1}'.format(idt, fdt)
 
 if freq == 'hourly':
-	fig = plt.figure(figsize=(4, 6))   
-	
-	ax = fig.add_subplot(4, 2, 1)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cmorph_djf[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(a) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
+	fig, axes = plt.subplots(4, 2, figsize=(6, 8), subplot_kw={'projection': ccrs.PlateCarree()})
 
-	ax = fig.add_subplot(4, 2, 2)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_era5_djf[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(b) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	ax1 = axes[0, 0]
+	plt_map = ax1.contourf(lon, lat, mbe_regcm_cmorph_djf, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax1.set_title(u'(a) RegCM5-CMORPH DJF', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax1)
 
-	ax = fig.add_subplot(4, 2, 3)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cmorph_mam[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(c) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
+	ax2 = axes[0, 1]
+	plt_map = ax2.contourf(lon, lat, mbe_regcm_era5_djf, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax2.set_title(u'(b) RegCM5-ERA5 DJF', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax2)
 
-	ax = fig.add_subplot(4, 2, 4)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_era5_mam[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(d) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	ax3 = axes[1, 0]
+	plt_map = ax3.contourf(lon, lat, mbe_regcm_cmorph_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax3.set_title(u'(c) RegCM5-CMORPH MAM', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax3)
 
-	ax = fig.add_subplot(4, 2, 5)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cmorph_jja[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(e) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
+	ax4 = axes[1, 1]
+	plt_map = ax4.contourf(lon, lat, mbe_regcm_era5_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax4.set_title(u'(d) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax4)
 
-	ax = fig.add_subplot(4, 2, 6)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_era5_jja[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(f) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	ax5 = axes[2, 0]
+	plt_map = ax5.contourf(lon, lat, mbe_regcm_cmorph_jja, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax5.set_title(u'(e) RegCM5-CMORPH JJA', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax5)
 
-	ax = fig.add_subplot(4, 2, 7)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cmorph_son[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(g) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
+	ax6 = axes[2, 1]
+	plt_map = ax6.contourf(lon, lat, mbe_regcm_era5_jja, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=cm.BrBG, extend='neither') 
+	ax6.set_title(u'(f) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax6)
 
-	ax = fig.add_subplot(4, 2, 8)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_era5_son[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(h) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
-	
-	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.94, 0.3, 0.03, 0.4]))
-	cbar.set_label('{0}'.format(legend), fontsize=font_size, fontweight='bold')
-	cbar.ax.tick_params(labelsize=font_size)
-	
+	ax7 = axes[3, 0]
+	plt_map = ax7.contourf(lon, lat, mbe_regcm_cmorph_son, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax7.set_title(u'(g) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax7)
+
+	ax8 = axes[3, 1]
+	plt_map = ax8.contourf(lon, lat, mbe_regcm_era5_son, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax8.set_title(u'(h) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax8)	
 else:
-	fig = plt.figure(figsize=(8, 6))   
+	fig, axes = plt.subplots(4, 4, figsize=(8, 8), subplot_kw={'projection': ccrs.PlateCarree()})
 
-	ax = fig.add_subplot(4, 4, 1)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cpc_djf[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(a) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'DJF', labelpad=20, fontsize=font_size, fontweight='bold')
+	ax1 = axes[0, 0]
+	plt_map = ax1.contourf(lon, lat, mbe_regcm_cpc_djf, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax1.set_title(u'(a) RegCM5-CPC DJF', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax1)
 
-	ax = fig.add_subplot(4, 4, 2)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cmorph_djf[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(b) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
+	ax2 = axes[0, 1]
+	plt_map = ax2.contourf(lon, lat, mbe_regcm_cmorph_djf, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax2.set_title(u'(b) RegCM5-CMORPH DJF', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax2)
 
-	ax = fig.add_subplot(4, 4, 3)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_mswep_djf[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(c) CPM3 - MSWEP', loc='left', fontsize=font_size, fontweight='bold')
+	ax3 = axes[0, 2]
+	plt_map = ax3.contourf(lon, lat, mbe_regcm_mswep_djf, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax3.set_title(u'(c) RegCM5-MSWEP DJF', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax3)
 
-	ax = fig.add_subplot(4, 4, 4)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_era5_djf[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(d) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	ax4 = axes[0, 3]
+	plt_map = ax4.contourf(lon, lat, mbe_regcm_era5_djf, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax4.set_title(u'(d) RegCM5-ERA5 DJF', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax4)
 
-	ax = fig.add_subplot(4, 4, 5)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cpc_mam[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(e) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'MAM', labelpad=20, fontsize=font_size, fontweight='bold')
+	ax5 = axes[1, 0]
+	plt_map = ax5.contourf(lon, lat, mbe_regcm_cpc_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG extend='neither') 
+	ax5.set_title(u'(e) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax5)
 
-	ax = fig.add_subplot(4, 4, 6)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cmorph_mam[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(f) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
+	ax6 = axes[1, 1]
+	plt_map = ax6.contourf(lon, lat, mbe_regcm_cmorph_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax6.set_title(u'(f) RegCM5-CMORPH MAM', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax6)
 
-	ax = fig.add_subplot(4, 4, 7)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_mswep_mam[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(g) CPM3 - MSWEP', loc='left', fontsize=font_size, fontweight='bold')
+	ax7 = axes[1, 2]
+	plt_map = ax7.contourf(lon, lat, mbe_regcm_mswep_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax7.set_title(u'(g) RegCM5-MSWEP MAM', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax7)
 
-	ax = fig.add_subplot(4, 4, 8)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_era5_mam[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(h) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	ax8 = axes[1, 3]
+	plt_map = ax8.contourf(lon, lat, mbe_regcm_era5_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax8.set_title(u'(h) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax8)	
 
-	ax = fig.add_subplot(4, 4, 9)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cpc_jja[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(i) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'JJA', labelpad=20, fontsize=font_size, fontweight='bold')
+	ax9 = axes[2, 0]
+	plt_map = ax9.contourf(lon, lat, mbe_regcm_cpc_jja, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG extend='neither') 
+	ax9.set_title(u'(i) RegCM5-CPC JJA', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax9)
 
-	ax = fig.add_subplot(4, 4, 10)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cmorph_jja[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(j) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
+	ax10 = axes[2, 1]
+	plt_map = ax10.contourf(lon, lat, mbe_regcm_cmorph_jja, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax10.set_title(u'(j) RegCM5-CMORPH JJA', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax10)
 
-	ax = fig.add_subplot(4, 4, 11)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_mswep_jja[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(k) CPM3 - MSWEP', loc='left', fontsize=font_size, fontweight='bold')
+	ax11 = axes[2, 2]
+	plt_map = ax11.contourf(lon, lat, mbe_regcm_mswep_jja, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax11.set_title(u'(g) RegCM5-MSWEP JJA', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax11)
 
-	ax = fig.add_subplot(4, 4, 12)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_era5_jja[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(l) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	ax12 = axes[2, 3]
+	plt_map = ax12.contourf(lon, lat, mbe_regcm_era5_jja, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax12.set_title(u'(k) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax12)	
 
-	ax = fig.add_subplot(4, 4, 13)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cpc_son[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(m) CPM3 - CPC', loc='left', fontsize=font_size, fontweight='bold')
-	plt.ylabel(u'SON', labelpad=20, fontsize=font_size, fontweight='bold')
+	ax13 = axes[3, 0]
+	plt_map = ax13.contourf(lon, lat, mbe_regcm_cpc_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG extend='neither') 
+	ax13.set_title(u'(l) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax13)
 
-	ax = fig.add_subplot(4, 4, 14)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_cmorph_son[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(n) CPM3 - CMORPH', loc='left', fontsize=font_size, fontweight='bold')
+	ax14 = axes[3, 1]
+	plt_map = ax14.contourf(lon, lat, mbe_regcm_cmorph_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax14.set_title(u'(m) RegCM5-CMORPH MAM', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax14)
 
-	ax = fig.add_subplot(4, 4, 15)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_mswep_son[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(o) CPM3 - MSWEP', loc='left', fontsize=font_size, fontweight='bold')
+	ax15 = axes[3, 2]
+	plt_map = ax15.contourf(lon, lat, mbe_regcm_mswep_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax15.set_title(u'(n) RegCM5-MSWEP MAM', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax15)
 
-	ax = fig.add_subplot(4, 4, 16)  
-	map, xx, yy = basemap(lat, lon)
-	plt_map = map.contourf(xx, yy, mbe_regcm_era5_son[0][0], levels=levs, cmap=cm.BrBG, extend='neither') 
-	plt.title(u'(p) CPM3 - ERA5', loc='left', fontsize=font_size, fontweight='bold')
+	ax16 = axes[3, 3]
+	plt_map = ax16.contourf(lon, lat, mbe_regcm_era5_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
+	ax16.set_title(u'(o) RegCM5-ERA5 MAM', loc='left', fontsize=font_size, fontweight='bold')
+	configure_subplot(ax16)	
 
-	cbar = plt.colorbar(plt_map, cax=fig.add_axes([0.94, 0.3, 0.03, 0.4]))
-	cbar.set_label('{0}'.format(legend), fontsize=font_size, fontweight='bold')
-	cbar.ax.tick_params(labelsize=font_size)
-	
+# Set colobar
+cbar = fig.colorbar(plt_map, ax=fig.axes, pad=0.02, aspect=50)
+cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
+cbar.ax.tick_params(labelsize=font_size)
+
 # Path out to save figure
-path_out = '{0}/user/mdasilva/CORDEX/figs'.format(path)
+path_out = '{0}/figs/evaluate'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_{3}.png'.format(var, stats, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
