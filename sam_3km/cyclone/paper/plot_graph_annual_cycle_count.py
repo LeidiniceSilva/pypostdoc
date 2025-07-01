@@ -122,19 +122,23 @@ def cyclone_lifetime(list_dataset):
                 	nov_dt.append(int(ii[4]))
 		if date_obj.month == 12:
                 	dec_dt.append(int(ii[4]))
+	
+	print(dec_dt)
 
-	jan_dur = np.nanmean(jan_dt)
-	feb_dur = np.nanmean(feb_dt)
-	mar_dur = np.nanmean(mar_dt)
-	apr_dur = np.nanmean(apr_dt)
-	may_dur = np.nanmean(may_dt)
-	jun_dur = np.nanmean(jun_dt)
-	jul_dur = np.nanmean(jul_dt)
-	aug_dur = np.nanmean(aug_dt)
-	sep_dur = np.nanmean(sep_dt)
-	oct_dur = np.nanmean(oct_dt)
-	nov_dur = np.nanmean(nov_dt)
-	dec_dur = np.nanmean(dec_dt)
+	jan_dur = np.sum(jan_dt) / 12
+	feb_dur = np.sum(feb_dt) / 12
+	mar_dur = np.sum(mar_dt) / 12
+	apr_dur = np.sum(apr_dt) / 12
+	may_dur = np.sum(may_dt) / 12
+	jun_dur = np.sum(jun_dt) / 12
+	jul_dur = np.sum(jul_dt) / 12
+	aug_dur = np.sum(aug_dt) / 12
+	sep_dur = np.sum(sep_dt) / 12
+	oct_dur = np.sum(oct_dt) / 12
+	nov_dur = np.sum(nov_dt) / 12
+	dec_dur = np.sum(dec_dt) / 12
+	print(dec_dur)
+
 
 	list_lifetime = jan_dur, feb_dur, mar_dur, apr_dur, may_dur, jun_dur, jul_dur, aug_dur, sep_dur, oct_dur, nov_dur, dec_dur
 	
@@ -182,7 +186,7 @@ ax2.bar(x-width, list_lifetime_era5, width, color='black', alpha=0.75, edgecolor
 ax2.bar(x, list_lifetime_regcm5, width, color='blue', alpha=0.75, edgecolor='black', linewidth=1.25, label='RegCM5')
 ax2.bar(x+width, list_lifetime_wrf415, width, color='red', alpha=0.75, edgecolor='black', linewidth=1.25, label='WRF415')
 ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
-ax2.set_ylabel('Lifetime of cyclones (days/month)', fontsize=font_size, fontweight='bold')
+ax2.set_ylabel('Lifetime of cyclones (days)', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Months', fontsize=font_size, fontweight='bold')
 ax2.set_xticks(x)
 ax2.set_xticklabels(labels, fontsize=font_size)

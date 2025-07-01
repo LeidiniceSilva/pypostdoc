@@ -20,21 +20,21 @@ from import_climate_tools import compute_mbe
 
 var = 'pr'
 stats = 'int'
-freq = 'hourly'
+freq = 'daily'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2009'
 font_size = 6
-
-if freq == 'hourly':
-	dt = '1hr_{0}-{1}_th0.5'.format(idt, fdt)
-else:
-	dt = '{0}-{1}'.format(idt, fdt)
 
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5'
 
 
 def import_obs(param, domain, dataset, season):
-		
+
+	if freq == 'hourly':
+		dt = '1hr_{0}_{1}-{2}_th0.5'.format(season, idt, fdt)
+	else:
+		dt = '{0}_{1}-{2}'.format(season, idt, fdt)
+
 	arq   = '{0}/postproc/evaluate/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, stats, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
@@ -46,6 +46,11 @@ def import_obs(param, domain, dataset, season):
 	
 		
 def import_rcm(param, domain, dataset, season):
+
+	if freq == 'hourly':
+		dt = '1hr_{0}_{1}-{2}_th0.5'.format(season, idt, fdt)
+	else:
+		dt = '{0}_{1}-{2}'.format(season, idt, fdt)
 
 	arq   = '{0}/postproc/evaluate/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, stats, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
@@ -153,16 +158,20 @@ if stats == 'freq':
 	if freq == 'hourly':
 		levs = np.arange(-22, 23, 1)
 		legend = 'Frequency (%)'
+		dt = '1hr_{0}-{1}_th0.5'.format(idt, fdt)
 	else:
 		levs = np.arange(-44, 46, 2)
 		legend = 'Frequency (%)'
+		dt = '{0}-{1}'.format(idt, fdt)
 else:
 	if freq == 'hourly':
 		levs = np.arange(-6, 6.5, 0.5)
 		legend = 'Intensity (mm h$^-$$^1$)'
+		dt = '1hr_{0}-{1}_th0.5'.format(idt, fdt)
 	else:
 		levs = np.arange(-22, 23, 1)
 		legend = 'Intensity (mm d$^-$$^1$)'
+		dt = '{0}-{1}'.format(idt, fdt)
 
 if freq == 'hourly':
 	fig, axes = plt.subplots(4, 2, figsize=(6, 8), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -193,7 +202,7 @@ if freq == 'hourly':
 	configure_subplot(ax5)
 
 	ax6 = axes[2, 1]
-	plt_map = ax6.contourf(lon, lat, mbe_regcm_era5_jja, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=cm.BrBG, extend='neither') 
+	plt_map = ax6.contourf(lon, lat, mbe_regcm_era5_jja, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
 	ax6.set_title(u'(f) RegCM5-ERA5 JJA', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax6)
 
@@ -207,7 +216,7 @@ if freq == 'hourly':
 	ax8.set_title(u'(h) RegCM5-ERA5 SON', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax8)	
 else:
-	fig, axes = plt.subplots(4, 4, figsize=(8, 8), subplot_kw={'projection': ccrs.PlateCarree()})
+	fig, axes = plt.subplots(4, 4, figsize=(14, 8), subplot_kw={'projection': ccrs.PlateCarree()})
 
 	ax1 = axes[0, 0]
 	plt_map = ax1.contourf(lon, lat, mbe_regcm_cpc_djf, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
@@ -230,7 +239,7 @@ else:
 	configure_subplot(ax4)
 
 	ax5 = axes[1, 0]
-	plt_map = ax5.contourf(lon, lat, mbe_regcm_cpc_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG extend='neither') 
+	plt_map = ax5.contourf(lon, lat, mbe_regcm_cpc_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
 	ax5.set_title(u'(e) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax5)
 
@@ -250,7 +259,7 @@ else:
 	configure_subplot(ax8)	
 
 	ax9 = axes[2, 0]
-	plt_map = ax9.contourf(lon, lat, mbe_regcm_cpc_jja, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG extend='neither') 
+	plt_map = ax9.contourf(lon, lat, mbe_regcm_cpc_jja, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
 	ax9.set_title(u'(i) RegCM5-CPC JJA', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax9)
 
@@ -270,7 +279,7 @@ else:
 	configure_subplot(ax12)	
 
 	ax13 = axes[3, 0]
-	plt_map = ax13.contourf(lon, lat, mbe_regcm_cpc_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG extend='neither') 
+	plt_map = ax13.contourf(lon, lat, mbe_regcm_cpc_mam, transform=ccrs.PlateCarree(), levels=levs, cmap=cm.BrBG, extend='neither') 
 	ax13.set_title(u'(l) RegCM5-CPC MAM', loc='left', fontsize=font_size, fontweight='bold')
 	configure_subplot(ax13)
 
@@ -291,7 +300,7 @@ else:
 
 # Set colobar
 cbar = fig.colorbar(plt_map, ax=fig.axes, pad=0.02, aspect=50)
-cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
+cbar.set_label('{0}'.format(legend), fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
