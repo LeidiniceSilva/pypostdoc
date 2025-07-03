@@ -18,7 +18,7 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'rlds'
+var = 'evspsblpot'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2009'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -35,9 +35,7 @@ def import_obs(param, domain, dataset, season):
 	lon   = data.variables['lon'][:]
 
 	if param == 'pev':
-		mean = var[:][0,:,:]*(-1000)
-	elif param == 'msnlwrf':
-		mean = var[:][0,:,:]*(-1)
+		mean = np.abs(var[:][0,:,:])
 	else:
 		mean = var[:][0,:,:]
 	

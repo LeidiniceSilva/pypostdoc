@@ -18,7 +18,7 @@ from cartopy import config
 from matplotlib.colors import LinearSegmentedColormap
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'cin'
+var = 'evspsblpot'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2009'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -35,10 +35,7 @@ def import_obs(param, domain, dataset, season):
 	lon   = data.variables['lon'][:]
 
 	if param == 'pev':
-		mean_ = var[:][0,:,:]*(-1)
-		mean = np.abs(mean_)
-	elif param == 'msdwlwrf':
-		mean = var[:][0,:,:]
+		mean = np.abs(var[:][0,:,:])
 	else:
 		mean = var[:][0,:,:]
 	
@@ -52,14 +49,7 @@ def import_rcm(param, domain, dataset, season):
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-
-	if param == 'evspsblpot':
-		mean_ = var[:][0,:,:]
-		mean = np.abs(mean_)
-	elif param == 'rlds':
-		mean = var[:][0,:,:]
-	else:
-		mean = var[:][0,:,:]
+	mean = var[:][0,:,:]
 
 	return lat, lon, mean
 

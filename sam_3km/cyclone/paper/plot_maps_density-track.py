@@ -44,8 +44,8 @@ def density_ciclones(df):
 	lon2 = -38.5
 	lat1 = -34.5
 	lat2 = -15
-	dlon = 3
-	dlat = 3
+	dlon = 2
+	dlat = 2
 	lats = np.arange(lat1,lat2,dlat) #criando array #lat ficticia
 	lons = np.arange(lon1,lon2,dlon) #criando array #lon ficticia
 	nlat = lats.size
@@ -110,8 +110,8 @@ fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.Pl
 fig.delaxes(ax4)
 
 font_size = 10
-colorb = [10,20,30,40,50,60,70,80,90,100,150,200]
-levels = [10,20,30,40,50,60,70,80,90,100,150,200]
+colorb = [1,5,10,20,30,40,50,60,70,80,90,100]
+levels = [1,5,10,20,30,40,50,60,70,80,90,100]
 
 cf1 = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
