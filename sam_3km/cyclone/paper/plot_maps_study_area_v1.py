@@ -11,6 +11,7 @@ import numpy as np
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 from cartopy import config
 from netCDF4 import Dataset as nc
@@ -23,7 +24,7 @@ number = 29
 
 def import_regcm():
 
-	dirnc = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km/test/input'
+	dirnc = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km/v1/input'
 
 	if len(sys.argv) > 1:
 		RCMf = nc(sys.argv[1], mode='r')
@@ -88,6 +89,15 @@ ax.add_feature(cfeature.BORDERS, linestyle=':')
 plt.text(-24, 11, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
 plt.text(-56, -39, u'RegCM5', color='gray', fontsize=font_size, fontweight='bold')
 plt.text(-56, -54, u'WRF415', color='gray', fontsize=font_size, fontweight='bold')
+
+box_ll_lon, box_ll_lat = -76, -34.5  
+box_ur_lon, box_ur_lat = -38.5, -15  
+box_width = box_ur_lon - box_ll_lon
+box_height = box_ur_lat - box_ll_lat
+
+# Add track box
+rect = mpatches.Rectangle((box_ll_lon, box_ll_lat), box_width, box_height, linewidth=2, edgecolor='red', facecolor='none', alpha=0.7, transform=ccrs.PlateCarree())
+ax.add_patch(rect)
 
 # Add gridlines 
 gridlines = ax.gridlines(draw_labels=True, color='k', linestyle='--', alpha=0.4)

@@ -14,13 +14,13 @@ import matplotlib.pyplot as plt
 
 var = 'pr'
 domain = 'EUR-11'
-dt = '2000-2004'
+dt = '2000-2009'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 	
 			
 def import_obs(param, dataset):
 
-	arq   = '{0}/postproc/obs/{1}_{2}_FPS_{3}_diurnal_cycle_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
+	arq   = '{0}/postproc/obs/{1}_{2}_{3}-FPS_diurnal_cycle_{4}_lonlat.nc'.format(path, param, dataset, domain, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -33,7 +33,7 @@ def import_obs(param, dataset):
 
 def import_rcm(param, dataset):
 
-	arq   = '{0}/postproc/rcm/{1}_{2}_FPS_{3}_diurnal_cycle_{4}_lonlat.nc'.format(path, param, domain, dataset, dt)	
+	arq   = '{0}/postproc/rcm/{1}_{2}-FPS_diurnal_cycle_{3}_lonlat.nc'.format(path, param, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -48,10 +48,10 @@ def import_rcm(param, dataset):
 dict_var = {'pr': ['precip', 'rr', 'tp']}
 
 era5 = import_obs(dict_var[var][2], 'ERA5')
-noto = import_rcm(var, 'NoTo-Europe_RegCM5')
-wsm5 = import_rcm(var, 'WSM5-Europe_RegCM5')
-wsm7 = import_rcm(var, 'WSM7-Europe_RegCM5')
-wdm7 = import_rcm(var, 'WDM7-Europe_RegCM5')
+noto = import_rcm(var, 'RegCM5_NoTo-EUR')
+wdm7 = import_rcm(var, 'RegCM5_WDM7-EUR')
+wsm7 = import_rcm(var, 'RegCM5_WSM7-EUR')
+wsm5 = import_rcm(var, 'RegCM5_WSM5-EUR')
 
 # Plot figure
 fig = plt.figure(figsize=(10, 5))
@@ -66,17 +66,17 @@ plt.plot(time, wsm7*24, label='WSM7', color='magenta', linewidth=1., marker='.',
 plt.plot(time, wdm7*24, label='WDM7', color='green', linewidth=1., marker='.', linestyle='-')
 
 plt.title('(b)', loc='left', fontsize=font_size, fontweight='bold') 
-plt.xlabel('Hours', fontsize=font_size, fontweight='bold')
+plt.xlabel('Diurnal cycle ({0})'.format(dt), fontsize=font_size, fontweight='bold')
 plt.ylabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
 plt.ylim(1, 3.5)
 plt.xlim(0, 25)
 plt.yticks(np.arange(1, 3.75, 0.25), fontsize=font_size)
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
+plt.xticks(time, ('00hr', '', '02hr', '', '04hr', '', '06hr', '', '08hr', '', '10hr', '', '12hr', '', '14hr', '', '16hr', '', '18hr', '', '20hr', '', '22hr', ''), fontsize=font_size)
 plt.grid(linestyle='--')
 plt.legend(loc=2, ncol=3, fontsize=font_size, shadow=True)
 
 # Path out to save figure
-path_out = '{0}/figs/ctrl'.format(path)
+path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_graph_diurnal_cycle_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

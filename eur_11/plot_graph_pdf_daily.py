@@ -94,6 +94,7 @@ plt.title('(a)', loc='left', fontsize=font_size, fontweight='bold')
 plt.yscale('log')
 plt.ylabel('Frequency (Log)', fontsize=font_size, fontweight='bold')
 plt.xlabel('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
+plt.grid(linestyle='--')
 plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 
 # Path out to save figure

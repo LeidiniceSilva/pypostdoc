@@ -12,15 +12,17 @@ import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-var = 'cls'
+var = 'cl'
 domain = 'EUR-11'
-dt = '2000-2004'
+dt = '2000-2009'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 
 def import_obs(param, dataset, season):
     
-        arq   = '{0}/postproc/obs/{1}_{2}_FPS_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
+        arq   = '{0}/postproc/obs/{1}_{2}-FPS_{3}_{4}_{5}_lonlat.nc'.format(path, param, dataset, domain, season, dt)
+
+
         data  = netCDF4.Dataset(arq)
         var   = data.variables[param][:]
         
@@ -36,7 +38,7 @@ def import_obs(param, dataset, season):
 
 def import_rcm(param, dataset, season):
 
-	arq   = '{0}/postproc/rcm/{1}_{2}_FPS_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
+	arq   = '{0}/postproc/rcm/{1}_{2}-FPS_{3}_{4}_lonlat.nc'.format(path, param, dataset, season, dt)
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	value = var[:][:,:,:,:]
@@ -59,25 +61,25 @@ obs_mam = import_obs(dict_var[var][0], 'ERA5', 'MAM')
 obs_jja = import_obs(dict_var[var][0], 'ERA5', 'JJA')
 obs_son = import_obs(dict_var[var][0], 'ERA5', 'SON')
 
-noto_djf = import_rcm(var, 'NoTo-Europe', 'DJF')
-noto_mam = import_rcm(var, 'NoTo-Europe', 'MAM')
-noto_jja = import_rcm(var, 'NoTo-Europe', 'JJA')
-noto_son = import_rcm(var, 'NoTo-Europe', 'SON')
+noto_djf = import_rcm(var, 'RegCM5_NoTo-EUR', 'DJF')
+noto_mam = import_rcm(var, 'RegCM5_NoTo-EUR', 'MAM')
+noto_jja = import_rcm(var, 'RegCM5_NoTo-EUR', 'JJA')
+noto_son = import_rcm(var, 'RegCM5_NoTo-EUR', 'SON')
 
-wdm7_djf = import_rcm(var, 'WDM7-Europe', 'DJF')
-wdm7_mam = import_rcm(var, 'WDM7-Europe', 'MAM')
-wdm7_jja = import_rcm(var, 'WDM7-Europe', 'JJA')
-wdm7_son = import_rcm(var, 'WDM7-Europe', 'SON')
+wdm7_djf = import_rcm(var, 'RegCM5_WDM7-EUR', 'DJF')
+wdm7_mam = import_rcm(var, 'RegCM5_WDM7-EUR', 'MAM')
+wdm7_jja = import_rcm(var, 'RegCM5_WDM7-EUR', 'JJA')
+wdm7_son = import_rcm(var, 'RegCM5_WDM7-EUR', 'SON')
 
-wsm7_djf = import_rcm(var, 'WSM7-Europe', 'DJF')
-wsm7_mam = import_rcm(var, 'WSM7-Europe', 'MAM')
-wsm7_jja = import_rcm(var, 'WSM7-Europe', 'JJA')
-wsm7_son = import_rcm(var, 'WSM7-Europe', 'SON')
+wsm7_djf = import_rcm(var, 'RegCM5_WSM7-EUR', 'DJF')
+wsm7_mam = import_rcm(var, 'RegCM5_WSM7-EUR', 'MAM')
+wsm7_jja = import_rcm(var, 'RegCM5_WSM7-EUR', 'JJA')
+wsm7_son = import_rcm(var, 'RegCM5_WSM7-EUR', 'SON')
 
-wsm5_djf = import_rcm(var, 'WSM5-Europe', 'DJF')
-wsm5_mam = import_rcm(var, 'WSM5-Europe', 'MAM')
-wsm5_jja = import_rcm(var, 'WSM5-Europe', 'JJA')
-wsm5_son = import_rcm(var, 'WSM5-Europe', 'SON')
+wsm5_djf = import_rcm(var, 'RegCM5_WSM5-EUR', 'DJF')
+wsm5_mam = import_rcm(var, 'RegCM5_WSM5-EUR', 'MAM')
+wsm5_jja = import_rcm(var, 'RegCM5_WSM5-EUR', 'JJA')
+wsm5_son = import_rcm(var, 'RegCM5_WSM5-EUR', 'SON')
 
 if var == 'cl':
 	factor = 100
@@ -193,7 +195,7 @@ plt.grid(linestyle='--')
 plt.gca().invert_yaxis()
 
 # Path out to save figure
-path_out = '{0}/figs/ctrl'.format(path)
+path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_graph_vertical_profile_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

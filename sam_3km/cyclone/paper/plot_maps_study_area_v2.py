@@ -96,7 +96,7 @@ cbar.set_label('Topography (meters)', fontsize=font_size)
 
 # Path out to save figure
 path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km/figs/cyclone'
-name_out = 'pyplt_maps_study_area_CPM_2018-2021_v1.png'
+name_out = 'pyplt_maps_study_area_CPM_2018-2021_v2.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
