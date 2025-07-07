@@ -7,12 +7,17 @@ __description__ = "This script plot vertical profile"
 
 import os
 import netCDF4
+import argparse
 import numpy as np
 import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-var = 'cl'
+parser = argparse.ArgumentParser()
+parser.add_argument('--var', choices=['cl', 'clw', 'cli'], required=True)
+args = parser.parse_args()
+var = args.var
+
 domain = 'EUR-11'
 dt = '2000-2009'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
@@ -198,5 +203,4 @@ plt.gca().invert_yaxis()
 path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_graph_vertical_profile_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()

@@ -19,7 +19,7 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--var', choices=['uv', 'hus'], required=True)
+parser.add_argument('--var', choices=['uv', 'q'], required=True)
 parser.add_argument('--level', choices=['850hPa', '500hPa', '200hPa'], required=True)
 args = parser.parse_args()
 var = args.var
@@ -203,13 +203,13 @@ vector = 40
 
 if level == '200hPa':
 	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 60, 5), cm.viridis_r],
-	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 0.1, 0.001), cm.Purples]}
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 0.05, 0.0001), cm.hsv]}
 elif level == '500hPa':
 	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 30, 2.5), cm.viridis_r],
-	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 5.125, 0.125), cm.Purples]}
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 5.125, 0.125), cm.hsv]}
 else:
 	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 15, 1.25), cm.viridis_r],
-	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 20.25, 0.25), cm.Purples]}
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 20.25, 0.25), cm.hsv]}
 
 
 plot_data = {'Plot 1': {'data 0': uv_obs_djf, 'data 1': u_obs_djf, 'data 2': v_obs_djf, 'data 3': q_obs_djf, 'title': '(a) {0} DJF'.format(dataset)},
@@ -250,7 +250,7 @@ for ax, (key, value) in zip(axes, plot_data.items()):
 	configure_subplot(ax)    
 
 # Set colobar
-cbar = fig.colorbar(contour, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)
+cbar = fig.colorbar(contourf, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)
 cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 	
