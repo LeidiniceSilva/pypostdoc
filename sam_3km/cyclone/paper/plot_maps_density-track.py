@@ -22,7 +22,21 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km'
 
 
-def import_dataset(dataset):
+def import_dataset_1(dataset):
+
+	df = pd.read_csv('{0}/postproc/cyclone/{1}/genesis_density_{1}.txt'.format(path, dataset), sep="\s+", engine='python')
+	df.columns = df.columns.str.strip()
+
+	if 'data' not in df.columns:
+		raise KeyError("Column 'data' not found in the dataset.")
+
+	df['data'] = pd.to_datetime(df['data'], format='%Y%m%d%H',errors='coerce')
+	df = df[(df['data'].dt.year >= 2018) & (df['data'].dt.year <= 2021)]
+
+	return df
+
+
+def import_dataset_2(dataset):
 
 	df = pd.read_csv('{0}/postproc/cyclone/{1}/genesis_density-track_{1}.txt'.format(path, dataset), sep="\s+", engine='python')
 	df.columns = df.columns.str.strip()
@@ -40,12 +54,12 @@ def density_ciclones(df):
 
 	a = 6370 #raio da terra
 	a2 = a * a
-	lon1 = -76
-	lon2 = -38.5
-	lat1 = -34.5
-	lat2 = -15
-	dlon = 2
-	dlat = 2
+	lon1 = -93.0
+	lon2 = 0.5
+	lat1 = -60
+	lat2 = -5
+	dlon = 3
+	dlat = 3
 	lats = np.arange(lat1,lat2,dlat) #criando array #lat ficticia
 	lons = np.arange(lon1,lon2,dlon) #criando array #lon ficticia
 	nlat = lats.size
@@ -96,13 +110,21 @@ def configure_subplot(ax):
 
 
 # Import model and obs dataset    
-era5_dateset = import_dataset('ERA5')
-regcm5_dateset = import_dataset('RegCM5')
-wrf415_dateset = import_dataset('WRF415')
+era5_dateset_dens = import_dataset_1('ERA5')
+regcm5_dateset_dens = import_dataset_1('RegCM5')
+wrf415_dateset_dens = import_dataset_1('WRF415')
 
-dens_era5 = density_ciclones(era5_dateset)
-dens_regcm5 = density_ciclones(regcm5_dateset)
-dens_wrf415 = density_ciclones(wrf415_dateset)
+dens_era5 = density_ciclones(era5_dateset_dens)
+dens_regcm5 = density_ciclones(regcm5_dateset_dens)
+dens_wrf415 = density_ciclones(wrf415_dateset_dens)
+
+era5_dateset_track = import_dataset_2('ERA5')
+regcm5_dateset_track = import_dataset_2('RegCM5')
+wrf415_dateset_track = import_dataset_2('WRF415')
+
+track_era5 = density_ciclones(era5_dateset_track)
+track_regcm5 = density_ciclones(regcm5_dateset_track)
+track_wrf415 = density_ciclones(wrf415_dateset_track)
 
 # Plot figure
 fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.PlateCarree()})
@@ -110,33 +132,39 @@ fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.Pl
 fig.delaxes(ax4)
 
 font_size = 10
+colorb_1 = [1,10,20,30]
 colorb = [1,5,10,20,30,40,50,60,70,80,90,100]
-levels = [1,5,10,20,30,40,50,60,70,80,90,100]
 
-cf1 = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
+c1 = ax1.contour(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/5*1e6, colorb_1, linewidths=1.25, colors="cyan", transform=ccrs.PlateCarree())
+ax1.clabel(c1, colors='red', inline=True, inline_spacing=1, fontsize=8)
+
+cf1 = ax1.contourf(scipy.ndimage.zoom(track_era5.lon,3), scipy.ndimage.zoom(track_era5.lat,3), scipy.ndimage.zoom(track_era5,3).T/5*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
-ax1.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 configure_subplot(ax1)
 
-cf2 = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
+c2 = ax2.contour(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/5*1e6, colorb_1, linewidths=1.25, colors="cyan", transform=ccrs.PlateCarree())
+ax2.clabel(c2, colors='red', inline=True, inline_spacing=1, fontsize=8)
+
+cf2 = ax2.contourf(scipy.ndimage.zoom(track_regcm5.lon,3), scipy.ndimage.zoom(track_regcm5.lat,3), scipy.ndimage.zoom(track_regcm5,3).T/5*1e6, colorb,transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
-ax2.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 configure_subplot(ax2)
 
-cf3 = ax3.contourf(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
+c3 = ax3.contour(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/5*1e6, colorb_1, linewidths=1.25, colors="cyan", transform=ccrs.PlateCarree())
+ax3.clabel(c3, colors='red', inline=True, inline_spacing=1, fontsize=8)
+
+cf3 = ax3.contourf(scipy.ndimage.zoom(track_wrf415.lon,3), scipy.ndimage.zoom(track_wrf415.lat,3), scipy.ndimage.zoom(track_wrf415,3).T/5*1e6, colorb,transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 ax3.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
-ax3.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 configure_subplot(ax3)
 
-cb = plt.colorbar(cf2, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
+cb = plt.colorbar(cf3, ticks=colorb, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 
 # Path out to save figure
 path_out = '{0}/figs/cyclone'.format(path)
-name_out = 'pyplt_maps_density-track_CP-RCM_SAM-3km_2018-2021.png'
+name_out = 'pyplt_maps_dens-track_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

@@ -94,7 +94,6 @@ norm = matplotlib.colors.Normalize(vmin=0, vmax=(datetime.datetime(2021, 12, 31)
 def plot_tracks(ax, tracks, title):
 	for track in tracks:
 		ax.plot(track['lon'], track['lat'], marker='o', markersize=4, color='black',  markerfacecolor='gray', linewidth=0.75, alpha=0.5, transform=ccrs.PlateCarree())
-		#ax.scatter(track['lon'][0], track['lat'][0], c=[track['time'][0]], s=25, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o', transform=ccrs.PlateCarree())
 	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
 	ax.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 	ax.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
@@ -103,13 +102,6 @@ def plot_tracks(ax, tracks, title):
 plot_tracks(ax1, tracks_era5, '(a) ERA5')
 plot_tracks(ax2, tracks_regcm5, '(b) RegCM5')
 plot_tracks(ax3, tracks_wrf415, '(c) WRF415')
-
-# Add colorbar
-#cbar_ax = fig.add_axes([0.92, 0.25, 0.015, 0.5])
-#sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-#sm.set_array([])
-#cbar = plt.colorbar(sm, cax=cbar_ax)
-#cbar.set_label('Days since 2018-01-01')
 
 # Save figure
 path_out = f'{path}/figs/cyclone'

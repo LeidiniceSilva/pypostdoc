@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 __author__      = "Leidinice Silva"
@@ -40,10 +41,10 @@ def density_ciclones(df):
 
 	a = 6370 #raio da terra
 	a2 = a * a
-	lon1 = -76
-	lon2 = -38.5
-	lat1 = -34.5
-	lat2 = -15
+	lon1 = -93.0
+	lon2 = 0.5
+	lat1 = -60
+	lat2 = -5
 	dlon = 3
 	dlat = 3
 	lats = np.arange(lat1,lat2,dlat) #criando array #lat ficticia
@@ -63,7 +64,7 @@ def density_ciclones(df):
 		x0 = entrada[t,2]
 		x=np.absolute(lons-x0)
 		lonloc=np.argmin(x)
-		
+	
 		for j in range(nlat):
 			for i in range(nlon):
 				if(i==lonloc and j==latloc):
@@ -110,29 +111,25 @@ fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.Pl
 fig.delaxes(ax4)
 
 font_size = 10
-colorb = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
-levels = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+colorb = [1,3,5,7,9,12,15,20]
 
-cf1 = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
+cf1 = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/5*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
-ax1.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 configure_subplot(ax1)
 
-cf2 = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
+cf2 = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/5*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
-ax2.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 configure_subplot(ax2)
 
-cf3 = ax3.contourf(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/4*1e6, colorb,transform=ccrs.PlateCarree(), extend='max', cmap='rainbow')
+cf3 = ax3.contourf(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/5*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 ax3.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
-ax3.add_patch(Rectangle((-55, -34.5), 15, 16.5, linewidth=2, edgecolor='green', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 configure_subplot(ax3)
 
-cb = plt.colorbar(cf2, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
+cb = plt.colorbar(cf3, ticks=colorb, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 
 # Path out to save figure
 path_out = '{0}/figs/cyclone'.format(path)
@@ -140,3 +137,4 @@ name_out = 'pyplt_maps_density_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
+

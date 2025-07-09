@@ -5,7 +5,7 @@ __email__       = "leidinicesilva@gmail.com"
 __date__        = "Apr 01, 2024"
 __description__ = "This script .txt with cyclone genesis"
 
-dataset = 'RegCM5'
+dataset = 'WRF415'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km'
 
 
@@ -22,23 +22,23 @@ def open_dat_file(dataset):
 	dt_list, lat_list, lon_list, vo_list, pcen_list = [], [], [], [], []
 	
 	for yr in range(2018, 2021+1):
-		data = read_dat_file('{0}/postproc/cyclone/{1}/track/resul_era10{2}.dat'.format(path, dataset, yr))
+		data = read_dat_file('{0}/postproc/cyclone/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 
 		for line in data:
 			parts = line.strip().split()
 			if len(parts) == 5:
-				dt_list.append(int(parts[0]))
-				lat_list.append(float(parts[1]))
-				lon_list.append(float(parts[2]))
-				vo_list.append(float(parts[3]))
-				pcen_list.append(float(parts[4]))
+				dt_list.append(int(parts[4]))
+				lat_list.append(float(parts[0]))
+				lon_list.append(float(parts[1]))
+				vo_list.append(float(parts[2]))
+				pcen_list.append(float(parts[3]))
 
 	return dt_list, lat_list, lon_list, vo_list, pcen_list
 
 	
 def write_list_to_dat(data):
 	
-	with open('{0}/postproc/cyclone/{1}/genesis_density-track_{1}.txt'.format(path, dataset), 'w') as f:
+	with open('{0}/postproc/cyclone/{1}/genesis_density_{1}.txt'.format(path, dataset), 'w') as f:
 		f.write("data\tlat\tlon\tvo\tpres\n")
 		for row in data:
 			row_string = '\t'.join(map(str, row)) + '\n'
