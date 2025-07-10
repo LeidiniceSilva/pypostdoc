@@ -41,10 +41,10 @@ def density_ciclones(df):
 
 	a = 6370 #raio da terra
 	a2 = a * a
-	lon1 = -93.0
-	lon2 = 0.5
-	lat1 = -60
-	lat2 = -5
+	lon1 = -76
+	lon2 = -38.5
+	lat1 = -34.5
+	lat2 = -15
 	dlon = 3
 	dlat = 3
 	lats = np.arange(lat1,lat2,dlat) #criando array #lat ficticia
@@ -111,19 +111,19 @@ fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.Pl
 fig.delaxes(ax4)
 
 font_size = 10
-colorb = [1,3,5,7,9,12,15,20]
+colorb = [1,3,5,7,9,12,15,17,19,21,24]
 
-cf1 = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/5*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
+cf1 = ax1.contourf(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/8*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
-cf2 = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/5*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
+cf2 = ax2.contourf(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/8*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
-cf3 = ax3.contourf(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/5*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
+cf3 = ax3.contourf(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/8*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 ax3.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
