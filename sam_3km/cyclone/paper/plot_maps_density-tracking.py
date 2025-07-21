@@ -135,25 +135,22 @@ font_size = 10
 colorb_1 = [1,10,20,30]
 colorb = [1,5,10,20,30,40,50,60,70,80,90,100]
 
-c1 = ax1.contour(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/5*1e6, colorb_1, linewidths=1.25, colors="cyan", transform=ccrs.PlateCarree())
-ax1.clabel(c1, colors='red', inline=True, inline_spacing=1, fontsize=8)
-
+#c1 = ax1.contour(scipy.ndimage.zoom(dens_era5.lon,3), scipy.ndimage.zoom(dens_era5.lat,3), scipy.ndimage.zoom(dens_era5,3).T/5*1e6, colorb_1, linewidths=1.25, colors="cyan", transform=ccrs.PlateCarree())
+#ax1.clabel(c1, colors='red', inline=True, inline_spacing=1, fontsize=8)
 cf1 = ax1.contourf(scipy.ndimage.zoom(track_era5.lon,3), scipy.ndimage.zoom(track_era5.lat,3), scipy.ndimage.zoom(track_era5,3).T/5*1e6, colorb, transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude', fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
-c2 = ax2.contour(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/5*1e6, colorb_1, linewidths=1.25, colors="cyan", transform=ccrs.PlateCarree())
-ax2.clabel(c2, colors='red', inline=True, inline_spacing=1, fontsize=8)
-
+#c2 = ax2.contour(scipy.ndimage.zoom(dens_regcm5.lon,3), scipy.ndimage.zoom(dens_regcm5.lat,3), scipy.ndimage.zoom(dens_regcm5,3).T/5*1e6, colorb_1, linewidths=1.25, colors="cyan", transform=ccrs.PlateCarree())
+#ax2.clabel(c2, colors='red', inline=True, inline_spacing=1, fontsize=8)
 cf2 = ax2.contourf(scipy.ndimage.zoom(track_regcm5.lon,3), scipy.ndimage.zoom(track_regcm5.lat,3), scipy.ndimage.zoom(track_regcm5,3).T/5*1e6, colorb,transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax2.set_title('(b) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
-c3 = ax3.contour(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/5*1e6, colorb_1, linewidths=1.25, colors="cyan", transform=ccrs.PlateCarree())
-ax3.clabel(c3, colors='red', inline=True, inline_spacing=1, fontsize=8)
-
+#c3 = ax3.contour(scipy.ndimage.zoom(dens_wrf415.lon,3), scipy.ndimage.zoom(dens_wrf415.lat,3), scipy.ndimage.zoom(dens_wrf415,3).T/5*1e6, colorb_1, linewidths=1.25, colors="cyan", transform=ccrs.PlateCarree())
+#ax3.clabel(c3, colors='red', inline=True, inline_spacing=1, fontsize=8)
 cf3 = ax3.contourf(scipy.ndimage.zoom(track_wrf415.lon,3), scipy.ndimage.zoom(track_wrf415.lat,3), scipy.ndimage.zoom(track_wrf415,3).T/5*1e6, colorb,transform=ccrs.PlateCarree(), extend='both', cmap='gnuplot2_r')
 ax3.set_title('(c) WRF415', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
@@ -164,7 +161,7 @@ cb = plt.colorbar(cf3, ticks=colorb, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 
 # Path out to save figure
 path_out = '{0}/figs/cyclone'.format(path)
-name_out = 'pyplt_maps_dens-track_CP-RCM_SAM-3km_2018-2021.png'
+name_out = 'pyplt_maps_tracking_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
