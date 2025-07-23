@@ -19,44 +19,58 @@ from scipy import signal, misc
 from datetime import datetime
 
 font_size = 10
-path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
+
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km'
+
+def read_dat_file(filename):
+
+	data = []
+	with open(filename, 'r') as file:
+		lines = file.readlines()
+		header = []
+		rows = []
+	
+	# Iterate over lines in the file
+	for line in lines:
+		line = line.strip().split()
+		
+		if len(line) == 6:
+			if rows:
+				data.append((header, rows))
+				rows = []
+			header = line
+		else:  
+			rows.append(line)
+	
+	# Append the last header and rows to data
+	if header and rows:
+		data.append((header, rows))
+	
+	return data
 
 
-def process_cyclone_csv_files(dataset):
+def process_cyclone_csv_files(dataset, yr_init, yr_end):
 
 	vort_values = []
 	delta_days_vort_pres = []
-	for yr in range(2018, 2021+1):
-		file_path = os.path.join('{0}/SAM-3km/postproc/cyclone/{1}/track'.format(path, dataset), 'resultado_{0}.dat'.format(yr))
+	for yr in range(yr_init, yr_end+1):
 
-		if not os.path.exists(file_path):
-			print(f'Warming: file not found: {file_path}')
-			continue
+		data = read_dat_file('{0}/postproc/cyclone/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
+
+		rows_list = []
+		current_event = []
+		for i, (header, rows) in enumerate(data):
+			if (rows[0][2] < str(-56)):
+				rows_list.append(rows[0])
+		
+		for j  in rows_list:
+			dt = datetime.strptime(j[0], '%Y%m%d%H')
+			vo = float(j[3])
+			pc = float(j[4])
+			current_event.append({'date': dt, 'vort': vo, 'pres': pc})
+		print(current_event)
 
 		cyclones = []
-		current_event = []
-		with open(file_path, 'r') as f:
-			lines = f.readlines()
-
-		for line in lines:
-			parts = line.strip().split()
-
-			if len(parts) == 6:
-				if current_event:
-					cyclones.append(current_event)
-				current_event = []
-			elif len(parts) == 5:
-				try:
-					date = datetime.strptime(parts[0], '%Y%m%d%H')
-					lat = float(parts[1])
-					lon = float(parts[2])
-					vort = float(parts[3])
-					pres = float(parts[4])
-					if lon > -56:
-						current_event.append({'date': date, 'vort': vort, 'pres': pres})
-				except:
-					continue
-
 		if current_event:
 			cyclones.append(current_event)
 
@@ -103,9 +117,9 @@ def compute_normalized_frequency(vort_values):
 
 
 # Import cyclone tracking values 
-delta_days_era5, vort_era5 = process_cyclone_csv_files('ERA5')
-delta_days_regcm5, vort_regcm5 = process_cyclone_csv_files('RegCM5')
-delta_days_wrf415, vort_wrf415 = process_cyclone_csv_files('WRF415')
+delta_days_era5, vort_era5 = process_cyclone_csv_files('ERA5', 2018, 2021)
+delta_days_regcm5, vort_regcm5 = process_cyclone_csv_files('RegCM5', 2018, 2021)
+delta_days_wrf415, vort_wrf415 = process_cyclone_csv_files('WRF415', 2018, 2021)
 
 vort_era5_clean, delta_days_era5_clean = clean_nan_values(vort_era5, delta_days_era5)
 vort_regcm5_clean, delta_days_regcm5_clean = clean_nan_values(vort_regcm5, delta_days_regcm5)

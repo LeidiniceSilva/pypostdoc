@@ -41,10 +41,10 @@ def density_ciclones(df):
 
 	a = 6370 #raio da terra
 	a2 = a * a
-	lon1 = -76
-	lon2 = -38.5
-	lat1 = -34.5
-	lat2 = -15
+	lon1 = -93.0
+	lon2 = 0.5
+	lat1 = -60
+	lat2 = -5
 	dlon = 3
 	dlat = 3
 	lats = np.arange(lat1,lat2,dlat) #criando array #lat ficticia

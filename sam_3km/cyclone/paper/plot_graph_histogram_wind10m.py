@@ -242,6 +242,5 @@ ax3.grid(True, color='k', linestyle='--', alpha=0.5)
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
 name_out = 'pyplt_graph_histogram_wind_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()
 

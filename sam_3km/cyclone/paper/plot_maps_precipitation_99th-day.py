@@ -247,5 +247,4 @@ cb.ax.tick_params(labelsize=font_size)
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
 name_out = 'pyplt_maps_precipitation_99th-day_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()

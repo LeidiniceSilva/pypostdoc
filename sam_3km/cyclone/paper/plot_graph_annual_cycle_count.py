@@ -123,22 +123,18 @@ def cyclone_lifetime(list_dataset):
 		if date_obj.month == 12:
                 	dec_dt.append(int(ii[4]))
 	
-	print(dec_dt)
-
-	jan_dur = np.sum(jan_dt) / 12
-	feb_dur = np.sum(feb_dt) / 12
-	mar_dur = np.sum(mar_dt) / 12
-	apr_dur = np.sum(apr_dt) / 12
-	may_dur = np.sum(may_dt) / 12
-	jun_dur = np.sum(jun_dt) / 12
-	jul_dur = np.sum(jul_dt) / 12
-	aug_dur = np.sum(aug_dt) / 12
-	sep_dur = np.sum(sep_dt) / 12
-	oct_dur = np.sum(oct_dt) / 12
-	nov_dur = np.sum(nov_dt) / 12
-	dec_dur = np.sum(dec_dt) / 12
-	print(dec_dur)
-
+	jan_dur = np.sum(jan_dt) / 18
+	feb_dur = np.sum(feb_dt) / 18
+	mar_dur = np.sum(mar_dt) / 18
+	apr_dur = np.sum(apr_dt) / 18
+	may_dur = np.sum(may_dt) / 18
+	jun_dur = np.sum(jun_dt) / 18
+	jul_dur = np.sum(jul_dt) / 18
+	aug_dur = np.sum(aug_dt) / 18
+	sep_dur = np.sum(sep_dt) / 18
+	oct_dur = np.sum(oct_dt) / 18
+	nov_dur = np.sum(nov_dt) / 18
+	dec_dur = np.sum(dec_dt) / 18
 
 	list_lifetime = jan_dur, feb_dur, mar_dur, apr_dur, may_dur, jun_dur, jul_dur, aug_dur, sep_dur, oct_dur, nov_dur, dec_dur
 	

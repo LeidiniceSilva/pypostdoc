@@ -246,5 +246,4 @@ cb = plt.colorbar(cf2, cax=fig.add_axes([0.92, 0.3, 0.015, 0.4]))
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
 name_out = 'pyplt_maps_precipitation_acc_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
 exit()
