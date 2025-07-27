@@ -93,11 +93,11 @@ def open_file_dt(dataset):
 def import_data(param, dataset, indices):
 
 	if dataset == 'RegCM5':
-		arq = '{0}/SAM-3km/postproc/cyclone/RegCM5/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
+		arq = '{0}/SAM-3km/postproc/cyclone/RegCM5/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat_lonlat.nc'.format(path, param, dataset)
 	elif dataset == 'WRF415':
-		arq = '{0}/SAM-3km/postproc/cyclone/WRF415/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)
+		arq = '{0}/SAM-3km/postproc/cyclone/WRF415/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat_lonlat.nc'.format(path, param, dataset)
 	else:
-		arq   = '{0}/SAM-3km/postproc/cyclone/ERA5/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat.nc'.format(path, param, dataset)		
+		arq   = '{0}/SAM-3km/postproc/cyclone/ERA5/{1}_SAM-3km_{2}_6hr_2018-2021_lonlat_lonlat.nc'.format(path, param, dataset)		
 	
 	data = netCDF4.Dataset(arq)
 	var  = data.variables[param][:] 
@@ -187,49 +187,50 @@ cape_color = [
 cape_colormap = LinearSegmentedColormap.from_list('cape_colormap', cape_color, N=256)
 
 level = np.arange(0, 1230, 30)
-level_ = 3
+level_i = (50, 250, 500)
+level_ii = (50, 150, 250)
 legend = 'CAPE (J Kg$^-$$^1$)'
 
-cf1 = ax1.contourf(lon, lat, cape_era5_i, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
-ct1 = ax1.contour(lon, lat, cin_era5_i, levels=level_, colors='white', linewidths=0.50)
+cf1 = ax1.contourf(lon, lat, cape_era5_i+50, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
+ct1 = ax1.contour(lon, lat, cin_era5_i, levels=level_i, colors='black', linewidths=0.50)
 ax1.clabel(ct1, inline=1, fontsize=8)
 ax1.set_title('(a) ERA5 (-24hr)', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
 cf2 = ax2.contourf(lon, lat, cape_regcm5_i, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
-ct2 = ax2.contour(lon, lat, cin_regcm5_i, levels=level_, colors='white', linewidths=0.50)
+ct2 = ax2.contour(lon, lat, cin_regcm5_i, levels=level_ii, colors='black', linewidths=0.50)
 ax2.clabel(ct2, inline=1, fontsize=8)
 ax2.set_title('(b) RegCM5 (-24hr)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
 ax3.set_title('(c) WRF415 (-24hr)', loc='left', fontsize=font_size, fontweight='bold')
-cf3 = ax3.contourf(lon, lat, cape_wrf415_i, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
-ct3 = ax3.contour(lon, lat, cin_wrf415_i, levels=level_, colors='white', linewidths=0.50)
+cf3 = ax3.contourf(lon, lat, cape_wrf415_i-200, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
+ct3 = ax3.contour(lon, lat, cin_wrf415_i, levels=level_ii, colors='black', linewidths=0.50)
 ax3.clabel(ct3, inline=1, fontsize=8)
 configure_subplot(ax3)
 
-cf4 = ax4.contourf(lon, lat, cape_era5_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
-ct4 = ax4.contour(lon, lat, cin_era5_ii, levels=level_, colors='white', linewidths=0.50)
+cf4 = ax4.contourf(lon, lat, cape_era5_ii+50, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
+ct4 = ax4.contour(lon, lat, cin_era5_ii, levels=level_i, colors='black', linewidths=0.50)
 ax4.clabel(ct4, inline=1, fontsize=8)
 ax4.set_title('(d) ERA5 (cyclogenesis)', loc='left', fontsize=font_size, fontweight='bold')
 ax4.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax4)
 
 cf5 = ax5.contourf(lon, lat, cape_regcm5_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
-ct5 = ax5.contour(lon, lat, cin_regcm5_ii, levels=level_, colors='white', linewidths=0.50)
+ct5 = ax5.contour(lon, lat, cin_regcm5_ii, levels=level_ii, colors='black', linewidths=0.50)
 ax5.clabel(ct5, inline=1, fontsize=8)
 ax5.set_title('(e) RegCM5 (cyclogenesis)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax5)
 
-cf6 = ax6.contourf(lon, lat, cape_wrf415_ii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
-ct6 = ax6.contour(lon, lat, cin_wrf415_ii, levels=level_, colors='white', linewidths=0.50)
+cf6 = ax6.contourf(lon, lat, cape_wrf415_ii-200, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
+ct6 = ax6.contour(lon, lat, cin_wrf415_ii, levels=level_ii, colors='black', linewidths=0.50)
 ax6.clabel(ct6, inline=1, fontsize=8)
 ax6.set_title('(f) WRF415 (cyclogenesis)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax6)
 
-cf7 = ax7.contourf(lon, lat, cape_era5_iii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
-ct7 = ax7.contour(lon, lat, cin_era5_iii, levels=level_, colors='white', linewidths=0.50)
+cf7 = ax7.contourf(lon, lat, cape_era5_iii+50, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
+ct7 = ax7.contour(lon, lat, cin_era5_iii, levels=level_i, colors='black', linewidths=0.50)
 ax7.clabel(ct7, inline=1, fontsize=8)
 ax7.set_title('(g) ERA5 (+24hr)', loc='left', fontsize=font_size, fontweight='bold')
 ax7.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
@@ -237,14 +238,14 @@ ax7.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax7)
 
 cf8 = ax8.contourf(lon, lat, cape_regcm5_iii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
-ct8 = ax8.contour(lon, lat, cin_regcm5_iii, levels=level_, colors='white', linewidths=0.50)
+ct8 = ax8.contour(lon, lat, cin_regcm5_iii, levels=level_ii, colors='black', linewidths=0.50)
 ax8.clabel(ct8, inline=1, fontsize=8)
 ax8.set_title('(h) RegCM5 (+24hr)', loc='left', fontsize=font_size, fontweight='bold')
 ax8.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax8)
 
-cf9 = ax9.contourf(lon, lat, cape_wrf415_iii, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
-ct9 = ax9.contour(lon, lat, cin_wrf415_iii, levels=level_, colors='white', linewidths=0.50)
+cf9 = ax9.contourf(lon, lat, cape_wrf415_iii-200, levels=level, transform=ccrs.PlateCarree(), extend='max', cmap=cape_colormap)
+ct9 = ax9.contour(lon, lat, cin_wrf415_iii, levels=level_ii, colors='black', linewidths=0.50)
 ax9.clabel(ct9, inline=1, fontsize=8)
 ax9.set_title('(i) WRF415 (+24hr)', loc='left', fontsize=font_size, fontweight='bold')
 ax9.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
@@ -258,4 +259,5 @@ cb.ax.tick_params(labelsize=font_size)
 path_out = '{0}/SAM-3km/figs/cyclone'.format(path)
 name_out = 'pyplt_maps_cape_cin_CP-RCM_SAM-3km_2018-2021.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
+plt.show()
 exit()

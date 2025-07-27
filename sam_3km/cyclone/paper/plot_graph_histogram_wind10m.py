@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from scipy import signal, misc
 from datetime import datetime, timedelta
 
-font_size = 8
+font_size = 7
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
 
 
@@ -205,7 +205,7 @@ ax1.set_ylim(0, 80)
 ax1.set_yticks(np.arange(0, 90, 10))
 ax1.set_xlim(0, 20)
 ax1.set_xticks(np.arange(0, 22, 2))
-ax1.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
+ax1.legend(fontsize=6, ncol=1, loc=1, shadow=True)
 ax1.grid(True, color='k', linestyle='--', alpha=0.5)
 
 ax2.set_facecolor('lightgray')
@@ -220,7 +220,7 @@ ax2.set_ylim(0, 80)
 ax2.set_yticks(np.arange(0, 90, 10))
 ax2.set_xlim(0, 20)
 ax2.set_xticks(np.arange(0, 22, 2))
-ax2.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
+ax2.legend(fontsize=6, ncol=1, loc=1, shadow=True)
 ax2.grid(True, color='k', linestyle='--', alpha=0.5)
 
 ax3.set_facecolor('lightgray')
@@ -235,7 +235,7 @@ ax3.set_ylim(0, 80)
 ax3.set_yticks(np.arange(0, 90, 10))
 ax3.set_xlim(0, 20)
 ax3.set_xticks(np.arange(0, 22, 2))
-ax3.legend(fontsize=font_size, ncol=1, loc=2, shadow=True)
+ax3.legend(fontsize=6, ncol=1, loc=1, shadow=True)
 ax3.grid(True, color='k', linestyle='--', alpha=0.5)
 
 # Path out to save figure

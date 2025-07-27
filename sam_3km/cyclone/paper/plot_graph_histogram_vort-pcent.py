@@ -48,18 +48,31 @@ def open_dat_file(dataset, yr_init, yr_end):
 
 	vo = []
 	pc = []
+	dt = []
+	lat = []
+	lon = []
+	rows_list = []
 	for yr in range(yr_init, yr_end+1):
 		
 		data = read_dat_file('{0}/postproc/cyclone/{1}/track/resultado_{2}.dat'.format(path, dataset, yr))
 
-		rows_list = []
 		for i, (header, rows) in enumerate(data):
 			if (rows[0][2] < str(-56)):
 				rows_list.append(rows[0])
 		
-		for j  in rows_list:
-			vo.append(float(j[3]))
-			pc.append(float(j[4]))
+	for j  in rows_list:
+		vo.append(float(j[3]))
+		pc.append(float(j[4]))
+		dt.append(float(j[0]))
+		lat.append(float(j[1]))
+		lon.append(float(j[2]))
+
+	print(np.min(vo))
+	print(np.max(vo))
+	print(lat)
+	print()
+	print(lon)
+
 	return vo, pc
 	
     
