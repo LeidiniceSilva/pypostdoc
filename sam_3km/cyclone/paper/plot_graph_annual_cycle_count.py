@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 
 from netCDF4 import Dataset
 from datetime import datetime
+from scipy.stats.stats import pearsonr
 
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/SAM-3km'
 
@@ -149,6 +150,10 @@ list_wrf415_i, list_wrf415_ii = open_dat_file('WRF415', 2018, 2021)
 list_number_era5 = cyclone_number(list_era5_i)
 list_number_regcm5 = cyclone_number(list_regcm5_i)
 list_number_wrf415 = cyclone_number(list_wrf415_i)
+
+print(pearsonr(list_number_era5, list_number_regcm5))
+print(pearsonr(list_number_era5, list_number_wrf415))
+exit()
 
 list_lifetime_era5 = cyclone_lifetime(list_era5_ii)
 list_lifetime_regcm5 = cyclone_lifetime(list_regcm5_ii)
