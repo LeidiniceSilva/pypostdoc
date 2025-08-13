@@ -16,6 +16,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeat
 
 from cartopy import config
+from import_climate_tools import compute_mbe
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 parser = argparse.ArgumentParser()
@@ -41,12 +42,20 @@ def import_obs(param, dataset, season):
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
 
-	if level == '200hPa':
-		mean = var[:][0,22,:,:]
-	elif level == '500hPa':
-		mean = var[:][0,15,:,:]
+	if param == 'u' or param == 'v':
+		if level == '200hPa':
+			mean = var[:][0,22,:,:]
+		elif level == '500hPa':
+			mean = var[:][0,15,:,:]
+		else:
+			mean = var[:][0,6,:,:]
 	else:
-		mean = var[:][0,7,:,:]
+		if level == '200hPa':
+			mean = var[:][0,14,:,:]
+		elif level == '500hPa':
+			mean = var[:][0,21,:,:]
+		else:
+			mean = var[:][0,30,:,:]
 
 	return lat, lon, mean
 
@@ -167,10 +176,10 @@ u_mbe_mam_wsm5_obs = compute_mbe(u_wsm5_mam, u_obs_mam)
 u_mbe_jja_wsm5_obs = compute_mbe(u_wsm5_jja, u_obs_jja)
 u_mbe_son_wsm5_obs = compute_mbe(u_wsm5_son, u_obs_son)
 
-v_mbe_djf_noto_obs = compute_mbe(v_noto_djf, v_obs_djf)
-v_mbe_mam_noto_obs = compute_mbe(v_noto_mam, v_obs_mam)
-v_mbe_jja_noto_obs = compute_mbe(v_noto_jja, v_obs_jja)
-v_mbe_son_noto_obs = compute_mbe(v_noto_son, v_obs_son)
+u_mbe_djf_noto_obs = compute_mbe(u_noto_djf, u_obs_djf)
+u_mbe_mam_noto_obs = compute_mbe(u_noto_mam, u_obs_mam)
+u_mbe_jja_noto_obs = compute_mbe(u_noto_jja, u_obs_jja)
+u_mbe_son_noto_obs = compute_mbe(u_noto_son, u_obs_son)
 
 v_mbe_djf_wdm7_obs = compute_mbe(v_wdm7_djf, v_obs_djf)
 v_mbe_mam_wdm7_obs = compute_mbe(v_wdm7_mam, v_obs_mam)
@@ -187,25 +196,30 @@ v_mbe_mam_wsm5_obs = compute_mbe(v_wsm5_mam, v_obs_mam)
 v_mbe_jja_wsm5_obs = compute_mbe(v_wsm5_jja, v_obs_jja)
 v_mbe_son_wsm5_obs = compute_mbe(v_wsm5_son, v_obs_son)
 
-uv_mbe_noto_djf_obs = compute_ws(u_noto_djf, v_noto_djf)
-uv_mbe_noto_mam_obs = compute_ws(u_noto_mam, v_noto_mam)
-uv_mbe_noto_jja_obs = compute_ws(u_noto_jja, v_noto_jja)
-uv_mbe_noto_son_obs = compute_ws(u_noto_son, v_noto_son)
+v_mbe_djf_noto_obs = compute_mbe(v_noto_djf, v_obs_djf)
+v_mbe_mam_noto_obs = compute_mbe(v_noto_mam, v_obs_mam)
+v_mbe_jja_noto_obs = compute_mbe(v_noto_jja, v_obs_jja)
+v_mbe_son_noto_obs = compute_mbe(v_noto_son, v_obs_son)
 
-uv_mbe_wdm7_djf_obs = compute_ws(u_wdm7_djf, v_wdm7_djf)
-uv_mbe_wdm7_mam_obs = compute_ws(u_wdm7_mam, v_wdm7_mam)
-uv_mbe_wdm7_jja_obs = compute_ws(u_wdm7_jja, v_wdm7_jja)
-uv_mbe_wdm7_son_obs = compute_ws(u_wdm7_son, v_wdm7_son)
+uv_mbe_djf_wdm7_obs = compute_ws(u_mbe_djf_wdm7_obs, v_mbe_djf_wdm7_obs)
+uv_mbe_mam_wdm7_obs = compute_ws(u_mbe_mam_wdm7_obs, v_mbe_mam_wdm7_obs)
+uv_mbe_jja_wdm7_obs = compute_ws(u_mbe_jja_wdm7_obs, v_mbe_jja_wdm7_obs)
+uv_mbe_son_wdm7_obs = compute_ws(u_mbe_son_wdm7_obs, v_mbe_son_wdm7_obs)
 
-uv_mbe_wsm7_djf_obs = compute_ws(u_wsm7_djf, v_wsm7_djf)
-uv_mbe_wsm7_mam_obs = compute_ws(u_wsm7_mam, v_wsm7_mam)
-uv_mbe_wsm7_jja_obs = compute_ws(u_wsm7_jja, v_wsm7_jja)
-uv_mbe_wsm7_son_obs = compute_ws(u_wsm7_son, v_wsm7_son)
+uv_mbe_djf_wsm7_obs = compute_ws(u_mbe_djf_wsm7_obs, v_mbe_djf_wsm7_obs)
+uv_mbe_mam_wsm7_obs = compute_ws(u_mbe_mam_wsm7_obs, v_mbe_mam_wsm7_obs)
+uv_mbe_jja_wsm7_obs = compute_ws(u_mbe_jja_wsm7_obs, v_mbe_jja_wsm7_obs)
+uv_mbe_son_wsm7_obs = compute_ws(u_mbe_son_wsm7_obs, v_mbe_son_wsm7_obs)
 
-uv_mbe_wsm5_djf_obs = compute_ws(u_wsm5_djf, v_wsm5_djf)
-uv_mbe_wsm5_mam_obs = compute_ws(u_wsm5_mam, v_wsm5_mam)
-uv_mbe_wsm5_jja_obs = compute_ws(u_wsm5_jja, v_wsm5_jja)
-uv_mbe_wsm5_son_obs = compute_ws(u_wsm5_son, v_wsm5_son)
+uv_mbe_djf_wsm5_obs = compute_ws(u_mbe_djf_wsm5_obs, v_mbe_djf_wsm5_obs)
+uv_mbe_mam_wsm5_obs = compute_ws(u_mbe_mam_wsm5_obs, v_mbe_mam_wsm5_obs)
+uv_mbe_jja_wsm5_obs = compute_ws(u_mbe_jja_wsm5_obs, v_mbe_jja_wsm5_obs)
+uv_mbe_son_wsm5_obs = compute_ws(u_mbe_son_wsm5_obs, v_mbe_son_wsm5_obs)
+
+uv_mbe_djf_noto_obs = compute_ws(u_mbe_djf_noto_obs, v_mbe_djf_noto_obs)
+uv_mbe_mam_noto_obs = compute_ws(u_mbe_mam_noto_obs, v_mbe_mam_noto_obs)
+uv_mbe_jja_noto_obs = compute_ws(u_mbe_jja_noto_obs, v_mbe_jja_noto_obs)
+uv_mbe_son_noto_obs = compute_ws(u_mbe_son_noto_obs, v_mbe_son_noto_obs)
 
 q_mbe_djf_noto_obs = compute_mbe(q_noto_djf, q_obs_djf)
 q_mbe_mam_noto_obs = compute_mbe(q_noto_mam, q_obs_mam)
@@ -227,11 +241,6 @@ q_mbe_mam_wsm5_obs = compute_mbe(q_wsm5_mam, q_obs_mam)
 q_mbe_jja_wsm5_obs = compute_mbe(q_wsm5_jja, q_obs_jja)
 q_mbe_son_wsm5_obs = compute_mbe(q_wsm5_son, q_obs_son)
 
-u_mbe_djf_noto_obs = compute_mbe(u_noto_djf, u_obs_djf)
-u_mbe_mam_noto_obs = compute_mbe(u_noto_mam, u_obs_mam)
-u_mbe_jja_noto_obs = compute_mbe(u_noto_jja, u_obs_jja)
-u_mbe_son_noto_obs = compute_mbe(u_noto_son, u_obs_son)
-
 # Plot figure   
 def configure_subplot(ax):
 
@@ -251,20 +260,20 @@ def configure_subplot(ax):
 	ax.grid(c='k', ls='--', alpha=0.4)
 	ax.coastlines(linewidth=0.6)
 
-fig, axes = plt.subplots(4, 5, figsize=(18, 8), subplot_kw={'projection': ccrs.PlateCarree()})
+fig, axes = plt.subplots(4, 4, figsize=(18, 8), subplot_kw={'projection': ccrs.PlateCarree()})
 axes = axes.flatten()
 font_size = 6 
 vector = 40
 
 if level == '200hPa':
-	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 31, 1), cm.twilight_shifted],
-	'q': ['Bias of specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(-0.02, 0.021, 0.001), cm.PuOr]}
+	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(-4, 4.25, 0.25), cm.Spectral],
+	'q': ['Bias of specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(-0.004, 0.0044, 0.0004), cm.twilight_shifted]}
 elif level == '500hPa':
-	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 15.5, 0.5), cm.twilight_shifted],
-	'q': ['Bias of specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(-0.9, 0.91, 0.01), cm.PuOr]}
+	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(-6, 6.5, 0.5), cm.Spectral],
+	'q': ['Bias of specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(-0.6, 0.66, 0.06), cm.twilight_shifted]}
 else:
-	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 7.5, 0.5), cm.twilight_shifted],
-	'q': ['Bias of specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(-3, 3.1, 0.1), cm.PuOr]}
+	dict_plot={'uv': ['Bias of wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(-6, 6.5, 0.5), cm.Spectral],
+	'q': ['Bias of specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(-2, 2.2, 0.2), cm.twilight_shifted]}
 
 plot_data = {'Plot 1': {'data 0': uv_mbe_djf_noto_obs, 'data 1': q_mbe_djf_noto_obs, 'title': '(a) NoTo-{0} DJF'.format(dataset)},
 'Plot 2': {'data 0': uv_mbe_djf_wdm7_obs, 'data 1': q_mbe_djf_wdm7_obs, 'title': '(b) WDM7-{0} DJF'.format(dataset)},
@@ -297,7 +306,7 @@ for ax, (key, value) in zip(axes, plot_data.items()):
 	configure_subplot(ax)    
 
 # Set colobar
-cbar = fig.colorbar(contour, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)
+cbar = fig.colorbar(contourf, ax=fig.axes, orientation='vertical', pad=0.025, aspect=50)
 cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 	

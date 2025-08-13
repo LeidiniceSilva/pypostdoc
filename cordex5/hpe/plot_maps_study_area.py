@@ -18,7 +18,7 @@ from matplotlib.patches import Rectangle
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 # Specify directories 
-domain = 'EURR-3' # CSAM-3
+domain = 'CSAM-3' # CSAM-3 EURR-3
 
 
 def import_regcm(dirnc, number):
@@ -67,15 +67,38 @@ def import_wrf(dirnc, number):
 	return lat, lon, border_mask
 
 
+def import_cprcm(dirnc, number):
+
+	if len(sys.argv) > 1:
+		RCMf = nc(sys.argv[1], mode='r')
+	else:
+		RCMf = nc(os.path.join(dirnc,'domain_HadREM3-RAL1T.nc'), mode='r')
+
+	lat  = RCMf.variables['lat'][:]
+	lon  = RCMf.variables['lon'][:]
+	topo = RCMf.variables['pr'][0]
+	RCMf.close()
+
+	ny,nx = topo.shape
+	border_mask = np.full((ny, nx), np.nan)
+	border_mask[:number, :] = 1
+	border_mask[-number:, :] = 1
+	border_mask[:, :number] = 1
+	border_mask[:, -number:] = 1
+
+	return lat, lon, border_mask
+
 if domain == 'CSAM-3':
 	dirnc_i = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/icbc'
 	dirnc_ii = '/leonardo/home/userexternal/mdasilva/leonardo_work/WRF415/GRID'
+	dirnc_iii = '/leonardo/home/userexternal/mdasilva/leonardo_work/CPRCM'
 	latlon = [-60, 20, -100, -15]
 	number_i = 29
 
 	# Import dataset
 	lat_i, lon_i, border_mask_i = import_regcm(dirnc_i, number_i)
 	lat_ii, lon_ii, border_mask_ii = import_wrf(dirnc_ii, number_i)
+	lat_iii, lon_iii, border_mask_iii = import_cprcm(dirnc_iii, number_i)
 
 else:
 	dirnc_i = '/leonardo_work/ICT25_ESP/jdeleeuw/EURR-3/ERA5/high_soil_moisture/ERA5/EURR-3/input'
@@ -92,15 +115,17 @@ font_size = 10
 if domain == 'CSAM-3':
 	ax.contourf(lon_i, lat_i, border_mask_i, cmap='gray', levels=[0, 1])
 	ax.contourf(lon_ii, lat_ii, border_mask_ii, cmap='gray', levels=[0, 1])
+	ax.contourf(lon_iii, lat_iii, border_mask_iii, cmap='gray', levels=[0, 1])
 	ax.set_extent([latlon[2], latlon[3], latlon[0], latlon[1]], crs=ccrs.PlateCarree())
 	ax.stock_img()
 	ax.coastlines()
 	ax.add_feature(cfeature.BORDERS, linestyle=':')
 	plt.text(-24, 11, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
-	plt.text(-56, -39.5, u'SESA', color='red', fontsize=font_size, fontweight='bold')
-	plt.text(-56, -12, u'RegCM5', color='gray', fontsize=font_size, fontweight='bold')
+	plt.text(-55, -18, u'SESA', color='red', fontsize=font_size, fontweight='bold')
+	plt.text(-58, -12, u'RegCM5', color='gray', fontsize=font_size, fontweight='bold')
 	plt.text(-56, -55, u'WRF415', color='gray', fontsize=font_size, fontweight='bold')
-	ax.add_patch(Rectangle((-60, -35), 10, 13, linewidth=1.5, edgecolor='red', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
+	plt.text(-56, -43, u'CPRCM', color='gray', fontsize=font_size, fontweight='bold')
+	ax.add_patch(Rectangle((-66, -36), 20, 16, linewidth=1.5, edgecolor='red', linestyle='--', facecolor='none', transform=ccrs.PlateCarree()))
 else:
 	ax.contourf(lon_i, lat_i, border_mask_i, cmap='gray', levels=[0, 1])
 	ax.set_extent([latlon[2], latlon[3], latlon[0], latlon[1]], crs=ccrs.PlateCarree())

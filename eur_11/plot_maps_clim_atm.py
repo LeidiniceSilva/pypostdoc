@@ -41,12 +41,20 @@ def import_obs(param, dataset, season):
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
 
-	if level == '200hPa':
-		mean = var[:][0,22,:,:]
-	elif level == '500hPa':
-		mean = var[:][0,15,:,:]
+	if param == 'u' or param == 'v':
+		if level == '200hPa':
+			mean = var[:][0,22,:,:]
+		elif level == '500hPa':
+			mean = var[:][0,15,:,:]
+		else:
+			mean = var[:][0,6,:,:]
 	else:
-		mean = var[:][0,7,:,:]
+		if level == '200hPa':
+			mean = var[:][0,14,:,:]
+		elif level == '500hPa':
+			mean = var[:][0,21,:,:]
+		else:
+			mean = var[:][0,30,:,:]
 
 	return lat, lon, mean
 
@@ -202,15 +210,14 @@ font_size = 6
 vector = 40
 
 if level == '200hPa':
-	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 60, 5), cm.viridis_r],
-	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 0.05, 0.0001), cm.hsv]}
+	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 62, 2), cm.viridis_r],
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 0.04, 0.0025), cm.rainbow]}
 elif level == '500hPa':
-	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 30, 2.5), cm.viridis_r],
-	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 5.125, 0.125), cm.hsv]}
+	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 31, 1), cm.viridis_r],
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 2.125, 0.125), cm.rainbow]}
 else:
-	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 15, 1.25), cm.viridis_r],
-	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 20.25, 0.25), cm.hsv]}
-
+	dict_plot={'uv': ['Wind speed {0} (m s$^-$$^1$)'.format(level), np.arange(0, 15.05, 0.5), cm.viridis_r],
+	'q': ['Specific humidity {0} (g kg$^-$$^1$)'.format(level), np.arange(0, 8.5, 0.5), cm.rainbow]}
 
 plot_data = {'Plot 1': {'data 0': uv_obs_djf, 'data 1': u_obs_djf, 'data 2': v_obs_djf, 'data 3': q_obs_djf, 'title': '(a) {0} DJF'.format(dataset)},
 	'Plot 2': {'data 0': uv_noto_djf, 'data 1': u_noto_djf, 'data 2': v_noto_djf, 'data 3': q_noto_djf, 'title': '(b) NoTo DJF'},
@@ -229,7 +236,7 @@ plot_data = {'Plot 1': {'data 0': uv_obs_djf, 'data 1': u_obs_djf, 'data 2': v_o
 	'Plot 15': {'data 0': uv_wsm5_jja, 'data 1': u_wsm5_jja, 'data 2': v_wsm5_jja, 'data 3': q_wsm5_jja, 'title': '(o) WSM5 JJA'},
 	'Plot 16': {'data 0': uv_obs_son, 'data 1': u_obs_son, 'data 2': v_obs_son, 'data 3': q_obs_son, 'title': '(p) {0} SON'.format(dataset)},
 	'Plot 17': {'data 0': uv_noto_son, 'data 1': u_noto_son, 'data 2': v_noto_son, 'data 3': q_noto_son, 'title': '(q) NoTo SON'},
-	'Plot 18': {'data 0': uv_wdm7_son, 'data 1': u_wdm7_son, 'data 2': v_wdm7_son, 'data 3': q_wdm7_son, 'title': '(r) WDM7 JJSONA'},
+	'Plot 18': {'data 0': uv_wdm7_son, 'data 1': u_wdm7_son, 'data 2': v_wdm7_son, 'data 3': q_wdm7_son, 'title': '(r) WDM7 SON'},
 	'Plot 19': {'data 0': uv_wsm7_son, 'data 1': u_wsm7_son, 'data 2': v_wsm7_son, 'data 3': q_wsm7_son, 'title': '(s) WSM7 SON'},
 	'Plot 20': {'data 0': uv_wsm5_son, 'data 1': u_wsm5_son, 'data 2': v_wsm5_son, 'data 3': q_wsm5_son, 'title': '(t) WSM5 SON'}}
 
@@ -243,7 +250,7 @@ for ax, (key, value) in zip(axes, plot_data.items()):
 	lons, lats = np.meshgrid(lon, lat)
 	if var == 'uv':
 		contourf = ax.contourf(lons, lats, data_, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
-		quiv = ax.quiver(lons[::vector, ::vector], lats[::vector, ::vector], data_i[::vector, ::vector], data_ii[::vector, ::vector], color='black')     
+		quiv = ax.quiver(lons[::vector, ::vector], lats[::vector, ::vector], data_i[::vector, ::vector], data_ii[::vector, ::vector], color='white')     
 	else:
 		contourf = ax.contourf(lons, lats, data_iii*1000, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither')
 	ax.set_title(title, loc='left', fontsize=font_size, fontweight='bold')
