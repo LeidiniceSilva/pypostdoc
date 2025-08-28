@@ -68,7 +68,7 @@ for i in range(0, rcm.shape[0]):
 
 	# Plot figure
 	fig, ax = plt.subplots(1, 1, figsize=(10, 8), subplot_kw={'projection': ccrs.PlateCarree()})
-	contour = ax.contourf(lon, lat, rcm[i]/100, levels=np.arange(980, 1040, 2), cmap=cm.jet, extend='max', transform=ccrs.PlateCarree())
+	contour = ax.contourf(lon, lat, rcm[i]/100, levels=np.arange(980, 1030, 1), cmap=cm.jet, extend='max', transform=ccrs.PlateCarree())
 	contours = plt.contour(lon, lat, rcm[i]/100, colors="black", linewidths=1)
 	plt.clabel(contours, inline=True, fontsize=8)
 

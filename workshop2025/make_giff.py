@@ -8,9 +8,11 @@ __description__ = "This script make giff file"
 import imageio.v2 as imageio
 import os
 
+var='pr'
+
 # Define input/output paths
 img_dir = '/leonardo/home/userexternal/mdasilva/leonardo_work/WORKSHOP2025/figs'
-output_gif = '/leonardo/home/userexternal/mdasilva/leonardo_work/WORKSHOP2025/figs/animated_psl_RegCM5_2023Oct19-27th.gif'
+output_gif = '/leonardo/home/userexternal/mdasilva/leonardo_work/WORKSHOP2025/figs/animated_{0}_RegCM5_2023Oct19-27th.gif'.format(var)
 
 # Get all image file names sorted by timestamp
 images = sorted([img for img in os.listdir(img_dir) if img.endswith('.png')])
