@@ -8,11 +8,12 @@ __description__ = "This script .txt with cyclone genesis"
 import argparse
 
 parser = argparse.ArgumentParser(description="Script to save cyclone genesis")
-parser.add_argument("--dataset", type=str, default="ERA5", help="ERA5, CNRM-ESM2-1, EC-Earth3-Veg, MPI-ESM1-2-HR, NorESM2-MM")
+parser.add_argument("--dataset", type=str, help="ERA5, CNRM-ESM2-1, EC-Earth3-Veg, MPI-ESM1-2-HR, NorESM2-MM")
+parser.add_argument("--domain", type=str, help="AUS, CAM, EUR, NAM, SAM, WAS")
 args = parser.parse_args()
 
 dataset = args.dataset
-domain = 'SAM'
+domain = args.domain
 
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/TRACK-CYCLONE/CORDEX-TF/{0}/S2R-Vortrack/{1}'.format(dataset, domain)
 
