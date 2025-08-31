@@ -28,15 +28,15 @@ domain = args.domain
 if domain == 'AUS':
     lon1, lon2, lat1, lat2 = 89, 177, -52, -1
 elif domain == 'CAM':
-    lon1, lon2, lat1, lat2 = 89, 177, -52, -1
+    lon1, lon2, lat1, lat2 = -121, -28, 0, 33
 elif domain == 'EUR':
-    lon1, lon2, lat1, lat2 = 89, 177, -52, -1
+    lon1, lon2, lat1, lat2 = -12, 36, 28, 67
 elif domain == 'NAM':
-    lon1, lon2, lat1, lat2 = 89, 177, -52, -1
+    lon1, lon2, lat1, lat2 = -131.5, -53.5, 30.5, 75.5
 elif domain == 'SAM':
-    lon1, lon2, lat1, lat2 = -80, -30, -56, -16
+    lon1, lon2, lat1, lat2 = -85, -35, -56, -16
 else:
-    lon1, lon2, lat1, lat2 = 89, 177, -52, -1
+    lon1, lon2, lat1, lat2 = 19.25, 115.25, -15.75, 45.75
 
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/TRACK-CYCLONE/CORDEX-TF'
 
@@ -97,7 +97,7 @@ def configure_subplot(ax):
         ax.yaxis.set_major_formatter(LatitudeFormatter())
         ax.grid(c='k', ls='--', alpha=0.4)
         ax.add_feature(cfeat.BORDERS)
-        ax.add_feature(states_provinces, edgecolor='0.25')
+        #ax.add_feature(states_provinces, edgecolor='0.25')
         ax.coastlines()
 	
 	
@@ -131,35 +131,35 @@ fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.Pl
 (ax1, ax2), (ax3, ax4) = axes
 
 font_size = 10
-cmap = plt.cm.viridis_r
-norm = matplotlib.colors.Normalize(vmin=0, vmax=(datetime.datetime(2009, 12, 31) - ref_date).days)
+#cmap = plt.cm.viridis_r
+#norm = matplotlib.colors.Normalize(vmin=0, vmax=(datetime.datetime(2009, 12, 31) - ref_date).days)
 
-sc1 = ax1.scatter(lon_obs_, lat_obs_, c=date_obs, s=25, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o') 
+sc1 = ax1.scatter(lon_obs_, lat_obs_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o') 
 ax1.set_title('(a)', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
-sc2 = ax2.scatter(lon_gcm1_, lat_gcm1_, c=date_gcm1, s=25, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o') 
+sc2 = ax2.scatter(lon_gcm1_, lat_gcm1_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o') 
 ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
-sc = ax3.scatter(lon_gcm2_, lat_gcm2_, c=date_gcm2, s=25, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o') 
+sc = ax3.scatter(lon_gcm2_, lat_gcm2_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o') 
 ax3.set_title('(c)', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax3.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax3)
 
-sc = ax4.scatter(lon_gcm3_, lat_gcm3_, c=date_gcm3, s=25, cmap=cmap, norm=norm, edgecolors='black', linewidth=0.5, marker='o')
+sc = ax4.scatter(lon_gcm3_, lat_gcm3_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o')
 ax4.set_title('(d)', loc='left', fontsize=font_size, fontweight='bold')
 ax4.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax4.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax4)
 
-cbar_ax = fig.add_axes([0.92, 0.25, 0.015, 0.5])
-cbar = plt.colorbar(sc1, cax=cbar_ax)
-cbar.set_label('Days since 2000-01-01')
+#cbar_ax = fig.add_axes([0.92, 0.25, 0.015, 0.5])
+#cbar = plt.colorbar(sc1, cax=cbar_ax)
+#cbar.set_label('Days since 2000-01-01')
 
 # Path out to save figure
 path_out = '{0}/figs/S2R-Vortrack'.format(path)

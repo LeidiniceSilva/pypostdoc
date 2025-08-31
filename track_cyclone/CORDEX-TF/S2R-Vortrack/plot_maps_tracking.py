@@ -28,15 +28,15 @@ domain = args.domain
 if domain == 'AUS':
     lon1, lon2, lat1, lat2 = 89, 177, -52, -1
 elif domain == 'CAM':
-    lon1, lon2, lat1, lat2 = 89, 177, -52, -1
+    lon1, lon2, lat1, lat2 = -121, -28, 0, 33
 elif domain == 'EUR':
-    lon1, lon2, lat1, lat2 = 89, 177, -52, -1
+    lon1, lon2, lat1, lat2 = -12, 36, 28, 67
 elif domain == 'NAM':
-    lon1, lon2, lat1, lat2 = 89, 177, -52, -1
+    lon1, lon2, lat1, lat2 = -131.5, -53.5, 30.5, 75.5
 elif domain == 'SAM':
     lon1, lon2, lat1, lat2 = -85, -35, -56, -16
 else:
-    lon1, lon2, lat1, lat2 = 89, 177, -52, -1
+    lon1, lon2, lat1, lat2 = 19.25, 115.25, -15.75, 45.75
 
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/TRACK-CYCLONE/CORDEX-TF'
 
@@ -73,13 +73,15 @@ def open_tracks(dataset, yr_init, yr_end):
 			for row in rows:
 				track['lat'].append(float(row[1]))
 				track['lon'].append(float(row[2]))
-				print(row[0])
-
-				# Format: YYYYMMDDHH
 				date_str = row[0]
 				year, month, day, hour = int(date_str[0:4]), int(date_str[4:6]), int(date_str[6:8]), int(date_str[8:10])
-				dt = datetime.datetime(year, month, day, hour)
-				track['time'].append((dt - ref_date).days)
+
+				try:
+					dt = datetime.datetime(year, month, day, hour)
+					track['time'].append((dt - ref_date).days)
+				except ValueError:
+					continue
+
 			tracks.append(track)
 	return tracks
 
