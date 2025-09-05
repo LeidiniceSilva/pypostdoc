@@ -36,7 +36,7 @@ elif domain == 'NAM':
 elif domain == 'SAM':
     lon1, lon2, lat1, lat2 = -85, -35, -56, -16
 else:
-    lon1, lon2, lat1, lat2 = 19.25, 115.25, -15.75, 45.75
+    lon1, lon2, lat1, lat2 = 40.25, 115.25, -15.75, 45.75
 
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/TRACK-CYCLONE/CORDEX-TF'
 
