@@ -8,14 +8,14 @@ __description__ = "This script .txt with cyclone genesis"
 import argparse
 
 parser = argparse.ArgumentParser(description="Script to save cyclone genesis")
-parser.add_argument("--dataset", type=str, help="ERA5, CNRM-ESM2-1, EC-Earth3-Veg, MPI-ESM1-2-HR, NorESM2-MM")
-parser.add_argument("--domain", type=str, help="AUS, CAM, EUR, NAM, SAM, WAS")
+parser.add_argument("--dataset", type=str, help="ERA5, CNRM-ESM2-1, EC-Earth3-Veg, GFDL-ESM4, HadGEM3-GC31-MM, MPI-ESM1-2-HR, MPI-ESM1-2-LR, NorESM-2MM, UKESM1-0-LL")
+parser.add_argument("--domain", type=str, help="AFR, AUS, CAM, EAS, EUR, NAM, SAM, WAS")
 args = parser.parse_args()
 
 dataset = args.dataset
 domain = args.domain
 
-path = '/leonardo/home/userexternal/mdasilva/leonardo_work/TRACK-CYCLONE/CORDEX-TF/{0}/S2R-Vortrack/{1}'.format(dataset, domain)
+path = '/home/mda_silv/users/TRACK-CYCLONE/CORDEX-TF/S2R-Vortrack/Data/{0}/{1}/track'.format(dataset, domain)
 
 
 def read_dat_file(filename):
@@ -54,7 +54,7 @@ def open_dat_file():
 	
 	for yr in range(2000, 2009+1):
 	
-		data = read_dat_file('{0}/track/resultado_{1}.dat'.format(path, yr))
+		data = read_dat_file('{0}/resultado_{1}.dat'.format(path, yr))
 	
 		rows_list = []
 		for i, (header, rows) in enumerate(data):

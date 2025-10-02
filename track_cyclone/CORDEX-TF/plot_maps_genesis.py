@@ -20,15 +20,19 @@ from scipy import signal, misc
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 parser = argparse.ArgumentParser(description="Script to save cyclone genesis")
-parser.add_argument("--domain", type=str, help="AUS, CAM, EUR, NAM, SAM, WAS")
+parser.add_argument("--domain", type=str, help="AFR, AUS, CAM, EAS, EUR, NAM, SAM, WAS")
 args = parser.parse_args()
 
 domain = args.domain
 
-if domain == 'AUS':
+if domain == 'AFR':
+    lon1, lon2, lat1, lat2 = -20, 60, -40, -1
+elif domain == 'AUS':
     lon1, lon2, lat1, lat2 = 89, 177, -52, -1
 elif domain == 'CAM':
     lon1, lon2, lat1, lat2 = -121, -28, 0, 33
+elif domain == 'EAS':
+    lon1, lon2, lat1, lat2 = 77, 160, -16, 67
 elif domain == 'EUR':
     lon1, lon2, lat1, lat2 = -12, 36, 28, 67
 elif domain == 'NAM':
@@ -38,7 +42,7 @@ elif domain == 'SAM':
 else:
     lon1, lon2, lat1, lat2 = 40.25, 115.25, -15.75, 45.75
 
-path = '/leonardo/home/userexternal/mdasilva/leonardo_work/TRACK-CYCLONE/CORDEX-TF'
+path = '/home/mda_silv/users/TRACK-CYCLONE/CORDEX-TF/S2R-Vortrack'
 
 
 def read_dat_file(filename):
@@ -74,7 +78,7 @@ def open_dat_file(dataset, yr_init, yr_end):
 	lat, lon, dt = [], [], []
 	for yr in range(yr_init, yr_end+1):
 	
-		data = read_dat_file('{0}/{1}/S2R-Vortrack/{2}/track/resultado_{3}.dat'.format(path, dataset, domain, yr))
+		data = read_dat_file('{0}/Data/{1}/{2}/track/resultado_{3}.dat'.format(path, dataset, domain, yr))
 		for i, (header, rows) in enumerate(data):
 			lat.append(rows[0][1])
 			lon.append(rows[0][2])
@@ -88,7 +92,7 @@ def open_dat_file(dataset, yr_init, yr_end):
 
 def configure_subplot(ax):
 
-        states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
+        #states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
 
         ax.set_extent([lon1, lon2, lat1, lat2], crs=ccrs.PlateCarree())
         ax.set_xticks(np.arange(lon1,lon2,20), crs=ccrs.PlateCarree())
@@ -104,8 +108,12 @@ def configure_subplot(ax):
 # Import model and obs dataset
 lat_obs, lon_obs, dt_obs = open_dat_file('ERA5', 2000, 2009)
 lat_gcm1, lon_gcm1, dt_gcm1 = open_dat_file('EC-Earth3-Veg', 2000, 2009)
-lat_gcm2, lon_gcm2, dt_gcm2 = open_dat_file('MPI-ESM1-2-HR', 2000, 2009)
-lat_gcm3, lon_gcm3, dt_gcm3 = open_dat_file('CNRM-ESM2-1', 2000, 2009)
+lat_gcm2, lon_gcm2, dt_gcm2 = open_dat_file('GFDL-ESM4', 2000, 2009)
+lat_gcm3, lon_gcm3, dt_gcm3 = open_dat_file('HadGEM3-GC31-MM', 2000, 2009)
+lat_gcm4, lon_gcm4, dt_gcm4 = open_dat_file('MPI-ESM1-2-HR', 2000, 2009)
+lat_gcm5, lon_gcm5, dt_gcm5 = open_dat_file('MPI-ESM1-2-LR', 2000, 2009)
+lat_gcm6, lon_gcm6, dt_gcm6 = open_dat_file('CNRM-ESM2-1', 2000, 2009)
+lat_gcm7, lon_gcm7, dt_gcm7 = open_dat_file('UKESM1-0-LL', 2000, 2009)
 
 lat_obs_ = [float(i) for i in lat_obs]
 lon_obs_ = [float(i) for i in lon_obs]
@@ -119,50 +127,90 @@ lon_gcm2_ = [float(i) for i in lon_gcm2]
 lat_gcm3_ = [float(i) for i in lat_gcm3]
 lon_gcm3_ = [float(i) for i in lon_gcm3]
 
+lat_gcm4_ = [float(i) for i in lat_gcm4]
+lon_gcm4_ = [float(i) for i in lon_gcm4]
+
+lat_gcm5_ = [float(i) for i in lat_gcm5]
+lon_gcm5_ = [float(i) for i in lon_gcm5]
+
+lat_gcm6_ = [float(i) for i in lat_gcm6]
+lon_gcm6_ = [float(i) for i in lon_gcm6]
+
+lat_gcm7_ = [float(i) for i in lat_gcm7]
+lon_gcm7_ = [float(i) for i in lon_gcm7]
+
 # Convert dates to numeric days since a ref date
 ref_date = datetime.datetime(2000, 1, 1)
 date_obs = [(d - ref_date).days for d in dt_obs]
 date_gcm1 = [(d - ref_date).days for d in dt_gcm1]
 date_gcm2 = [(d - ref_date).days for d in dt_gcm2]
 date_gcm3 = [(d - ref_date).days for d in dt_gcm3]
+date_gcm4 = [(d - ref_date).days for d in dt_gcm4]
+date_gcm5 = [(d - ref_date).days for d in dt_gcm5]
+date_gcm6 = [(d - ref_date).days for d in dt_gcm6]
+date_gcm7 = [(d - ref_date).days for d in dt_gcm7]
 
 # Plot figure
-fig, axes = plt.subplots(2,2, figsize=(10, 6), subplot_kw={"projection": ccrs.PlateCarree()})
-(ax1, ax2), (ax3, ax4) = axes
+fig, axes = plt.subplots(3,3, figsize=(10, 10), subplot_kw={"projection": ccrs.PlateCarree()})
+(ax1, ax2, ax3), (ax4, ax5, ax6), (ax7, ax8, ax9) = axes
 
 font_size = 10
 #cmap = plt.cm.viridis_r
 #norm = matplotlib.colors.Normalize(vmin=0, vmax=(datetime.datetime(2009, 12, 31) - ref_date).days)
 
 sc1 = ax1.scatter(lon_obs_, lat_obs_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o') 
-ax1.set_title('(a)', loc='left', fontsize=font_size, fontweight='bold')
+ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
 ax1.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax1.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
 sc2 = ax2.scatter(lon_gcm1_, lat_gcm1_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o') 
-ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
+ax2.set_title('(b) EC-Earth3-Veg', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
 sc = ax3.scatter(lon_gcm2_, lat_gcm2_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o') 
-ax3.set_title('(c)', loc='left', fontsize=font_size, fontweight='bold')
+ax3.set_title('(c) GFDL-ESM4', loc='left', fontsize=font_size, fontweight='bold')
 ax3.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax3.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax3)
 
 sc = ax4.scatter(lon_gcm3_, lat_gcm3_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o')
-ax4.set_title('(d)', loc='left', fontsize=font_size, fontweight='bold')
+ax4.set_title('(d) HadGEM3-GC31-MM', loc='left', fontsize=font_size, fontweight='bold')
 ax4.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax4.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax4)
 
-#cbar_ax = fig.add_axes([0.92, 0.25, 0.015, 0.5])
-#cbar = plt.colorbar(sc1, cax=cbar_ax)
-#cbar.set_label('Days since 2000-01-01')
+sc = ax5.scatter(lon_gcm4_, lat_gcm4_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o')
+ax5.set_title('(e) MPI-ESM1-2-HR', loc='left', fontsize=font_size, fontweight='bold')
+ax5.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
+ax5.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
+configure_subplot(ax5)
+
+sc = ax6.scatter(lon_gcm5_, lat_gcm5_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o')
+ax6.set_title('(f) MPI-ESM1-2-LR', loc='left', fontsize=font_size, fontweight='bold')
+ax6.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
+ax6.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
+configure_subplot(ax6)
+
+sc = ax7.scatter(lon_gcm6_, lat_gcm6_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o')
+ax7.set_title('(g) NorESM-2MM', loc='left', fontsize=font_size, fontweight='bold')
+ax7.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
+ax7.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
+configure_subplot(ax7)
+
+sc = ax8.scatter(lon_gcm7_, lat_gcm7_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o')
+ax8.set_title('(h) UKESM1-0-LL', loc='left', fontsize=font_size, fontweight='bold')
+ax8.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
+ax8.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
+configure_subplot(ax8)
+
+plt.show()
+exit()
+
 
 # Path out to save figure
-path_out = '{0}/figs/S2R-Vortrack'.format(path)
+path_out = '{0}/Figs'.format(path)
 name_out = 'pyplt_maps_genesis_{0}_2000-2009.png'.format(domain)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
