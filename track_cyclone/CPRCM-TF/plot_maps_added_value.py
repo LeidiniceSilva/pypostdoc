@@ -69,14 +69,21 @@ def import_data(param, dataset):
 # Import data
 yy_ws, xx_ws, ws = import_ws()
 lat, lon, pr_era5 = import_data('tp', 'ERA5')
+lat, lon, pr_cmorph = import_data('cmorph', 'CMORPH')
 lat, lon, pr_regcm5 = import_data('pr', 'RegCM5')
 lat, lon, pr_wrf415 = import_data('PREC_ACC_NC', 'WRF415')
 
 print(pr_era5.shape)
 print(np.min(pr_era5), np.max(pr_era5))
 print()
+print(pr_cmorph.shape)
+print(np.min(pr_cmorph), np.max(pr_cmorph))
+print()
 print(pr_regcm5.shape)
 print(np.min(pr_regcm5), np.max(pr_regcm5))
+print()
+print(pr_wrf415.shape)
+print(np.min(pr_wrf415), np.max(pr_wrf415))
 
 def configure_subplot(ax):
 
@@ -93,24 +100,28 @@ def configure_subplot(ax):
 
 
 # Plot figure
-fig, axes = plt.subplots(1,3, figsize=(14, 10), subplot_kw={"projection": ccrs.PlateCarree()})
-ax1, ax2, ax3 = axes
+fig, axes = plt.subplots(2,2, figsize=(12, 10), subplot_kw={"projection": ccrs.PlateCarree()})
+(ax1, ax2), (ax3, ax4) = axes
 levels_pr = np.arange(0, 105, 5)
 
 cf1 = ax1.contourf(lon, lat, pr_era5, levels=levels_pr, cmap='Blues', extend='max')
-sc1 = ax1.scatter(xx_ws, yy_ws, 12, ws, cmap='Blues', edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=50) 
-ax1.set_title(u'(a) ERA5+INMET 29 Jan 2009', loc='left', fontsize=font_size, fontweight='bold')
+sc1 = ax1.scatter(xx_ws, yy_ws, 12, ws, cmap='Blues', edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=75) 
+ax1.set_title(u'(a) ERA5+INMET', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
-cf2 = ax2.contourf(lon, lat, pr_regcm5, levels=levels_pr, cmap='Blues', extend='max')
-ax2.set_title(u'(b) RegCM5 29 Jan 2009', loc='left', fontsize=font_size, fontweight='bold')
+cf2 = ax2.contourf(lon, lat, pr_cmorph, levels=levels_pr, cmap='Blues', extend='max')
+ax2.set_title(u'(b) CMORPH', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
-cf3 = ax3.contourf(lon, lat, pr_wrf415, levels=levels_pr, cmap='Blues', extend='max')
-ax3.set_title(u'(c) WRF415 29 Jan 2009', loc='left', fontsize=font_size, fontweight='bold')
+cf3 = ax3.contourf(lon, lat, pr_regcm5, levels=levels_pr, cmap='Blues', extend='max')
+ax3.set_title(u'(c) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax3)
 
-cbar = plt.colorbar(cf3, cax=fig.add_axes([0.91, 0.33, 0.015, 0.33]))
+cf4 = ax4.contourf(lon, lat, pr_wrf415, levels=levels_pr, cmap='Blues', extend='max')
+ax4.set_title(u'(d) WRF415', loc='left', fontsize=font_size, fontweight='bold')
+configure_subplot(ax4)
+
+cbar = plt.colorbar(cf4, cax=fig.add_axes([0.91, 0.33, 0.015, 0.33]))
 cbar.set_label('Precipitation (mm/d)', fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 
