@@ -32,7 +32,7 @@ elif domain == 'AUS':
 elif domain == 'CAM':
     lon1, lon2, lat1, lat2 = -121, -28, 0, 33
 elif domain == 'EAS':
-    lon1, lon2, lat1, lat2 = 77, 160, -16, 67
+    lon1, lon2, lat1, lat2 = 75, 165, -10, 60
 elif domain == 'EUR':
     lon1, lon2, lat1, lat2 = -12, 36, 28, 67
 elif domain == 'NAM':
@@ -42,7 +42,7 @@ elif domain == 'SAM':
 else:
     lon1, lon2, lat1, lat2 = 40.25, 115.25, -15.75, 45.75
 
-path = '/home/mda_silv/users/TRACK-CYCLONE/CORDEX-TF/S2R-Vortrack'
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/TRACK-CYCLONE/CORDEX-TF'
 
 
 def read_dat_file(filename):
@@ -78,7 +78,7 @@ def open_dat_file(dataset, yr_init, yr_end):
 	lat, lon, dt = [], [], []
 	for yr in range(yr_init, yr_end+1):
 	
-		data = read_dat_file('{0}/Data/{1}/{2}/track/resultado_{3}.dat'.format(path, dataset, domain, yr))
+		data = read_dat_file('{0}/{1}/S2R-Vortrack/{2}/track/resultado_{3}.dat'.format(path, dataset, domain, yr))
 		for i, (header, rows) in enumerate(data):
 			lat.append(rows[0][1])
 			lon.append(rows[0][2])
@@ -92,8 +92,6 @@ def open_dat_file(dataset, yr_init, yr_end):
 
 def configure_subplot(ax):
 
-        #states_provinces = cfeat.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lines', scale='50m', facecolor='none')
-
         ax.set_extent([lon1, lon2, lat1, lat2], crs=ccrs.PlateCarree())
         ax.set_xticks(np.arange(lon1,lon2,20), crs=ccrs.PlateCarree())
         ax.set_yticks(np.arange(lat1,lat2,10), crs=ccrs.PlateCarree())
@@ -101,7 +99,6 @@ def configure_subplot(ax):
         ax.yaxis.set_major_formatter(LatitudeFormatter())
         ax.grid(c='k', ls='--', alpha=0.4)
         ax.add_feature(cfeat.BORDERS)
-        #ax.add_feature(states_provinces, edgecolor='0.25')
         ax.coastlines()
 	
 	
@@ -150,13 +147,13 @@ date_gcm5 = [(d - ref_date).days for d in dt_gcm5]
 date_gcm6 = [(d - ref_date).days for d in dt_gcm6]
 date_gcm7 = [(d - ref_date).days for d in dt_gcm7]
 
+# AFR(14, 12); AUS(14, 12); CAM(14, 8); EAS(14, 8); EUR(14, 12); SAM(14, 12); NAM(16, 10); WAS(14, 8)
 # Plot figure
-fig, axes = plt.subplots(3,3, figsize=(10, 10), subplot_kw={"projection": ccrs.PlateCarree()})
+fig, axes = plt.subplots(3,3, figsize=(16, 14), subplot_kw={"projection": ccrs.PlateCarree()})
 (ax1, ax2, ax3), (ax4, ax5, ax6), (ax7, ax8, ax9) = axes
+fig.delaxes(ax9)
 
 font_size = 10
-#cmap = plt.cm.viridis_r
-#norm = matplotlib.colors.Normalize(vmin=0, vmax=(datetime.datetime(2009, 12, 31) - ref_date).days)
 
 sc1 = ax1.scatter(lon_obs_, lat_obs_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o') 
 ax1.set_title('(a) ERA5', loc='left', fontsize=font_size, fontweight='bold')
@@ -167,6 +164,7 @@ configure_subplot(ax1)
 sc2 = ax2.scatter(lon_gcm1_, lat_gcm1_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o') 
 ax2.set_title('(b) EC-Earth3-Veg', loc='left', fontsize=font_size, fontweight='bold')
 ax2.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
+ax3.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
 sc = ax3.scatter(lon_gcm2_, lat_gcm2_, s=25, color='gray', edgecolors='black', linewidth=0.5, marker='o') 
@@ -205,12 +203,8 @@ ax8.set_xlabel('Longitude',fontsize=font_size, fontweight='bold')
 ax8.set_ylabel('Latitude',fontsize=font_size, fontweight='bold')
 configure_subplot(ax8)
 
-plt.show()
-exit()
-
-
 # Path out to save figure
-path_out = '{0}/Figs'.format(path)
+path_out = '{0}/figs/S2R-Vortrack'.format(path)
 name_out = 'pyplt_maps_genesis_{0}_2000-2009.png'.format(domain)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
