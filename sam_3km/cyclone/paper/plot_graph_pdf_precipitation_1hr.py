@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 font_size = 10
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work'
 
-skip_list = [1,2,415,19,21,23,28,35,41,44,47,54,56,59,64,68,77,93,100,105,106,107,112,117,124,135,137,139,
+skip_list = [1,2,4,15,19,21,23,28,35,41,44,47,54,56,59,64,68,77,93,100,105,106,107,112,117,124,135,137,139,
 149,152,155,158,168,174,177,183,186,199,204,210,212,224,226,239,240,248,249,253,254,276,277,280,293,298,
 303,305,306,308,319,334,335,341,343,359,362,364,384,393,396,398,399,400,402,413,416,417,422,423,426,427,
 443,444,446,451,453,457,458,467,474,479,483,488,489,490,495,505,509,513,514,516,529,534,544,559,566]			
@@ -43,7 +43,7 @@ def find_indices_in_date_list(date_list, target_dates):
 			index = date_list.index(target_date)
 			indices.append(index)
 		except ValueError:
-			pass  # Date not found in date_list
+			pass  
 	
 	return indices
 	
@@ -113,31 +113,32 @@ def import_data(indices_i, indices_ii, indices_iii):
 		arq  = xr.open_dataset('{0}/FPS_SESA/database/obs/inmet/inmet_nc/hourly/pre/'.format(path) + 'pre_{0}_H_2018-01-01_2021-12-31.nc'.format(inmet[station][0]))
 		data = arq['pre']
 		time = data.sel(time=slice('2018-01-01','2021-12-31'))
-		var  = time.values
-		var_ = var[::6]
+		value_ = time.values
+		value_ = np.nan_to_num(value_, nan=0)
+		var_ = value_[::6]
 
-		arq_i    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/CMORPH/'.format(path) + 'cmorph_SAM-3km_CMORPH_1hr_2018-2021_lonlat_lonlat.nc')
+		arq_i    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/CMORPH/'.format(path) + 'cmorph_SAM-3km_CMORPH_1hr_2018-2021_lonlat.nc')
 		data_i   = arq_i['cmorph']
 		latlon_i = data_i.sel(lat=slice(inmet[station][2]-0.22,inmet[station][2]+0.22),lon=slice(inmet[station][3]-0.22,inmet[station][3]+0.22)).mean(('lat','lon'))
 		time_i   = latlon_i.sel(time=slice('2018-01-01','2021-12-31'))
 		varlue_i = time_i.values
 		var_i    = varlue_i[::6]
 
-		arq_ii    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/ERA5/'.format(path) + 'tp_SAM-3km_ERA5_1hr_2018-2021_lonlat_lonlat.nc')
+		arq_ii    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/ERA5/'.format(path) + 'tp_SAM-3km_ERA5_1hr_2018-2021_lonlat.nc')
 		data_ii   = arq_ii['tp']
 		latlon_ii = data_ii.sel(lat=slice(inmet[station][2]-0.22,inmet[station][2]+0.22),lon=slice(inmet[station][3]-0.22,inmet[station][3]+0.22)).mean(('lat','lon'))
 		time_ii   = latlon_ii.sel(time=slice('2018-01-01','2021-12-31'))
 		varlue_ii = time_ii.values
 		var_ii    = varlue_ii[::6]
 
-		arq_iii    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/RegCM5/'.format(path) + 'pr_SAM-3km_RegCM5_1hr_2018-2021_lonlat_lonlat.nc')
+		arq_iii    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/RegCM5/'.format(path) + 'pr_SAM-3km_RegCM5_1hr_2018-2021_lonlat.nc')
 		data_iii   = arq_iii['pr']
 		latlon_iii = data_iii.sel(lat=slice(inmet[station][2]-0.22,inmet[station][2]+0.22),lon=slice(inmet[station][3]-0.22,inmet[station][3]+0.22)).mean(('lat','lon'))
 		time_iii   = latlon_iii.sel(time=slice('2018-01-01','2021-12-31'))
 		varlue_iii = time_iii.values
 		var_iii    = varlue_iii[::6]
 
-		arq_iv    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/WRF415/'.format(path) + 'PREC_ACC_NC_SAM-3km_WRF415_1hr_2018-2021_lonlat_lonlat.nc')
+		arq_iv    = xr.open_dataset('{0}/SAM-3km/postproc/cyclone/WRF415/'.format(path) + 'PREC_ACC_NC_SAM-3km_WRF415_1hr_2018-2021_lonlat.nc')
 		data_iv   = arq_iv['PREC_ACC_NC']
 		latlon_iv = data_iv.sel(lat=slice(inmet[station][2]-0.22,inmet[station][2]+0.22),lon=slice(inmet[station][3]-0.22,inmet[station][3]+0.22)).mean(('lat','lon'))
 		time_iv   = latlon_iv.sel(XTIME=slice('2018-01-01','2021-12-31'))
@@ -162,7 +163,7 @@ def comp_pdf(timeseries):
 
 	ts_ = np.array(timeseries)
 	ts_list = ts_.flatten()
-	ts_round = np.round(ts_list,0)
+	ts_round = np.round(ts_list, 2)
 	ts_filter = ts_round[ts_round > 0.]
 	x_pdf_list, pdf_list = np.unique(ts_filter, return_counts=True)
 	
@@ -191,6 +192,11 @@ x_pdf_era5, pdf_era5 = comp_pdf(pr_era5)
 x_pdf_regcm5, pdf_regcm5 = comp_pdf(pr_regcm5)
 x_pdf_wrf415, pdf_wrf415 = comp_pdf(pr_wrf415)
 
+print(len(x_pdf_inmet), len(pdf_inmet))
+print(len(x_pdf_cmorph), len(pdf_cmorph))
+print(len(x_pdf_wrf415), len(pdf_wrf415))
+exit()
+
 # Compute 99th percentile
 p99_inmet = np.nanpercentile(pr_inmet, 99)
 p99_cmorph = np.nanpercentile(pr_cmorph, 99)
@@ -211,11 +217,11 @@ font_size = 8
 ax = fig.add_subplot(1, 1, 1)  
 ax.set_facecolor('lightgray')
 
-plt.plot(x_pdf_inmet,  pdf_inmet,  marker='o', markersize=4, mfc='green',  mec='green',  alpha=0.75, linestyle='None', label='INMET')
-plt.plot(x_pdf_cmorph, pdf_cmorph, marker='o', markersize=4, mfc='violet', mec='violet', alpha=0.75, linestyle='None', label='CMORPH')
-plt.plot(x_pdf_era5,   pdf_era5,   marker='o', markersize=4, mfc='black',  mec='black',  alpha=0.75, linestyle='None', label='ERA5')
-plt.plot(x_pdf_regcm5, pdf_regcm5, marker='o', markersize=4, mfc='blue',   mec='blue',   alpha=0.75, linestyle='None', label='RegCM5')
-plt.plot(x_pdf_wrf415, pdf_wrf415, marker='o', markersize=4, mfc='red',    mec='red',    alpha=0.75, linestyle='None', label='WRF415')
+plt.plot(x_pdf_inmet,  pdf_inmet,  marker='o', markersize=3, markerfacecolor='None', markeredgecolor='green', markeredgewidth=0.6, linestyle='None', label='INMET')
+plt.plot(x_pdf_cmorph, pdf_cmorph, marker='o', markersize=3, markerfacecolor='None', markeredgecolor='violet', markeredgewidth=0.6, linestyle='None', label='CMORPH')
+plt.plot(x_pdf_era5,   pdf_era5,   marker='o', markersize=3, markerfacecolor='None', markeredgecolor='black', markeredgewidth=0.6, linestyle='None', label='ERA5')
+plt.plot(x_pdf_regcm5, pdf_regcm5, marker='o', markersize=3, markerfacecolor='None', markeredgecolor='blue', markeredgewidth=0.6,  linestyle='None', label='RegCM5')
+plt.plot(x_pdf_wrf415, pdf_wrf415, marker='o', markersize=3, markerfacecolor='None', markeredgecolor='red', markeredgewidth=0.6, linestyle='None', label='WRF415')
 
 #plt.axvline(x=p99_inmet, color='green', linestyle='-')
 #plt.axvline(x=p99_cmorph, color='violet', linestyle='-')
