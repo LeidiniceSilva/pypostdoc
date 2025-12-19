@@ -50,7 +50,7 @@ lat_ii, lon_ii, border_mask_ii = import_orog('/leonardo/home/userexternal/mdasil
 
 # Plot figure
 fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
-latlon = [-12, 42, -130, -65]
+latlon = [-20, 38, -130, -65]
 font_size = 10
 
 ax.contourf(lon_i, lat_i, border_mask_i, colors=['white', 'blue'], levels=[0, 0.5, 1])
@@ -70,13 +70,13 @@ ax.add_feature(cfeat.LAND, facecolor='green')
 ax.add_feature(cfeat.BORDERS, linewidth=0.5)
 ax.coastlines(linewidth=0.75)
 
-plt.text(-125, -10, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
+plt.text(-125, -16, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
 plt.text(-116, 2, u'd2', color='blue', fontsize=font_size, fontweight='bold')
 plt.text(-105, 8, u'd1', color='red', fontsize=font_size, fontweight='bold')
 
 # Path out to save figure
 path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs'
-name_out = 'pyplt_Hurricane_Otis_simulated_domains.png'
+name_out = 'pyplt_Hurricane_Otis_simulated_domains_new.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
