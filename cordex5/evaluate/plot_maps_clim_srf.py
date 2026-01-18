@@ -18,9 +18,9 @@ from cartopy import config
 from matplotlib.colors import LinearSegmentedColormap
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'evspsblpot'
+var = 'pr'
 domain = 'CSAM-3'
-idt, fdt = '2000', '2009'
+idt, fdt = '2000', '2000'
 dt = '{0}-{1}'.format(idt, fdt)
 font_size = 6
 
@@ -516,7 +516,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/figs/evaluate'.format(path)
+path_out = '{0}/figs/evaluate/rcm'.format(path)
 name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
