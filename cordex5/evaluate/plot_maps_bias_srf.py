@@ -18,7 +18,7 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'pr'
+var = 'clt'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2000'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -44,7 +44,7 @@ def import_obs(param, domain, dataset, season):
 
 def import_rcm(param, domain, dataset, season):
 
-	arq   = '{0}/postproc/evaluate/rcm_urb/{1}_{2}_{3}_{4}_2000_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	arq   = '{0}/postproc/evaluate/rcm_urb/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -478,7 +478,7 @@ cbar.ax.tick_params(labelsize=font_size)
 path_out = '{0}/figs/evaluate/rcm_urb'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-#plt.show()
+plt.show()
 exit()
 
 

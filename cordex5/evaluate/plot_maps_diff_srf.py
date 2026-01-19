@@ -18,7 +18,7 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'pr'
+var = 'tasmax'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2000'
 dt = '{0}-{1}'.format(idt, fdt)
@@ -29,7 +29,7 @@ path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5'
 
 def import_rcm_v1(param, domain, dataset, season):
 
-        arq   = '{0}/postproc/evaluate/rcm/{1}_{2}_{3}_{4}_2000-2000_lonlat.nc'.format(path, param, domain, dataset, season, dt)
+        arq   = '{0}/postproc/evaluate/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)
         data  = netCDF4.Dataset(arq)
         var   = data.variables[param][:]
         lat   = data.variables['lat'][:]
@@ -41,7 +41,7 @@ def import_rcm_v1(param, domain, dataset, season):
 
 def import_rcm_v2(param, domain, dataset, season):
 
-	arq   = '{0}/postproc/evaluate/rcm_urb/{1}_{2}_{3}_{4}_2000_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	arq   = '{0}/postproc/evaluate/rcm_urb/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -101,19 +101,18 @@ def configure_subplot(ax):
 	if var == 'evspsblpot':
 		ax.add_feature(cfeat.OCEAN, facecolor='white', zorder=1) 
 
+fig, axes = plt.subplots(4, 1, figsize=(10, 10), subplot_kw={'projection': ccrs.PlateCarree()})
 
-dict_plot = {'pr': ['Bias of  precipitation (mm d$^-$$^1$)', np.arange(-10, 11, 1), cm.BrBG],
-'tas': ['Bias of air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
-'tasmax': ['Bias of maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
-'tasmin': ['Bias of minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
-'clt': ['Bias of total cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
-'cll': ['Bias of low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
-'clm': ['Bias of medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
-'clh': ['Bias of high cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
-'evspsblpot': ['Bias of potential evapotranspiration (mm d$^-$$^1$)', np.arange(-5, 5.5, 0.5), cm.bwr],
-'rlds': ['Bias of surface downwelling longwave radiation (W mm$^-$$^2$)', np.arange(-60, 55, 5), cm.RdBu_r]}
-
-fig, axes = plt.subplots(1, 4, subplot_kw={'projection': ccrs.PlateCarree()})
+dict_plot = {'pr': ['Diff of  precipitation (mm d$^-$$^1$)', np.arange(-5, 5.5, 0.5), cm.BrBG],
+'tas': ['Diff of air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
+'tasmax': ['Diff of maximum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
+'tasmin': ['Diff of minimum air temperature (°C)', np.arange(-10, 11, 1), cm.bwr],
+'clt': ['Diff of total cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
+'cll': ['Diff of low cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
+'clm': ['Diff of medium cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
+'clh': ['Diff of high cloud cover (0-1)', np.arange(-0.7, 0.8, 0.1), cm.RdGy],
+'evspsblpot': ['Diff of potential evapotranspiration (mm d$^-$$^1$)', np.arange(-5, 5.5, 0.5), cm.bwr],
+'rlds': ['Diff of surface downwelling longwave radiation (W mm$^-$$^2$)', np.arange(-60, 55, 5), cm.RdBu_r]}
 
 ax1 = axes[0]
 plt_map = ax1.contourf(lon, lat, mbe_djf_regcm, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='neither') 
