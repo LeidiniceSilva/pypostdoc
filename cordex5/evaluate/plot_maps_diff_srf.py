@@ -18,7 +18,7 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'tasmax'
+var = 'clt'
 domain = 'CSAM-3'
 idt, fdt = '2000', '2000'
 dt = '{0}-{1}'.format(idt, fdt)
