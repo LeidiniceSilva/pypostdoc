@@ -16,9 +16,9 @@ import cartopy.mpl.ticker as cticker
 from matplotlib.colors import ListedColormap, BoundaryNorm
 
 # Load environment variables
-fname = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/ERA5/icbc/CSAM-3_CLM45_surface.nc"
+fname = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/icbc/CSAM-3_CLM45_surface.nc"
 snum = os.getenv("snum")
-outp = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs" 
+outp = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/evaluate/rcm" 
 
 # Read dataset
 f = nc.Dataset(fname)

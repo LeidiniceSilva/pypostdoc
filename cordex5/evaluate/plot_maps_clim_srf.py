@@ -18,9 +18,9 @@ from cartopy import config
 from matplotlib.colors import LinearSegmentedColormap
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'pr'
+var = 'tas'
 domain = 'CSAM-3'
-idt, fdt = '2000', '2000'
+idt, fdt = '2000', '2009'
 dt = '{0}-{1}'.format(idt, fdt)
 font_size = 6
 
