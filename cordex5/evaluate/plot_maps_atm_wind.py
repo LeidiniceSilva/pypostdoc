@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
 var = 'uv'
-domain = 'CSAM-3'
 level = '850'
+domain = 'CSAM-3'
 path='/marconi/home/userexternal/mdasilva'
 
 idt, fdt = '2000', '2009'

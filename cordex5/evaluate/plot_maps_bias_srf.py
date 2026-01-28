@@ -7,6 +7,7 @@ __description__ = "This script plot bias maps"
 
 import os
 import netCDF4
+import argparse
 import numpy as np
 import matplotlib.colors
 import matplotlib.cm as cm
@@ -18,9 +19,17 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'clt'
-domain = 'CSAM-3'
-idt, fdt = '2000', '2000'
+parser = argparse.ArgumentParser()
+parser.add_argument('--var', required=True, help='Variable name')
+parser.add_argument('--domain', required=True, help='Domain name')
+parser.add_argument('--idt', required=True, help='Initial year')
+parser.add_argument('--fdt', required=True, help='Final year')
+args = parser.parse_args()
+
+var = args.var
+domain = args.domain
+idt = args.idt
+fdt = args.fdt
 dt = '{0}-{1}'.format(idt, fdt)
 font_size = 6
 
@@ -28,7 +37,7 @@ path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5'
 
 def import_obs(param, domain, dataset, season):
 
-	arq   = '{0}/postproc/evaluate/obs/{1}_{2}_{3}_{4}_2000-2009_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	arq   = '{0}/postproc/evaluate/obs/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -44,7 +53,7 @@ def import_obs(param, domain, dataset, season):
 
 def import_rcm(param, domain, dataset, season):
 
-	arq   = '{0}/postproc/evaluate/rcm_urb/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	arq   = '{0}/postproc/evaluate/rcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -475,7 +484,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
-path_out = '{0}/figs/evaluate/rcm_urb'.format(path)
+path_out = '{0}/figs/evaluate'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

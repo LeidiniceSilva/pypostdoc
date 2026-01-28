@@ -7,19 +7,29 @@ __description__ = "This script plot bias maps"
 
 import os
 import netCDF4
+import argparse
 import numpy as np
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
 from mpl_toolkits.basemap import Basemap
 
-var = 'quv'
-domain = 'CSAM-3'
-level = '850'
-path = '/marconi/home/userexternal/mdasilva'
+parser = argparse.ArgumentParser()
+parser.add_argument('--var', required=True, help='Variable name')
+parser.add_argument('--level', required=True, help='Level')
+parser.add_argument('--domain', required=True, help='Domain')
+parser.add_argument('--idt', required=True, help='Initial year')
+parser.add_argument('--fdt', required=True, help='Final year')
+args = parser.parse_args()
 
-idt, fdt = '2000', '2009'
+var = args.var
+level = args.level
+domain = args.domain
+idt = args.idt
+fdt = args.fdt
 dt = '{0}-{1}'.format(idt, fdt)
+
+path = '/marconi/home/userexternal/mdasilva'
 
 
 def import_obs(param, level, domain, dataset, season):

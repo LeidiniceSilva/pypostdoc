@@ -31,36 +31,25 @@ var = args.var
 domain = args.domain
 idt = args.idt
 fdt = args.fdt
-
 dt = '{0}-{1}'.format(idt, fdt)
 font_size = 8
 
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5'
 
+
 def import_dataset(param, dataset):
 
-	if dataset == 'CRU':
-		arq   = '{0}/postproc/evaluate/obs/{1}_{2}_year_{3}.nc'.format(path, param, dataset, dt)	
-		data  = netCDF4.Dataset(arq)
-		var   = data.variables[param][:] 
-		lat   = data.variables['lat'][:]
-		lon   = data.variables['lon'][:]
-	elif dataset == 'ERA5':
-		arq   = '{0}/postproc/evaluate/obs/{1}_{2}_year_{3}.nc'.format(path, param, dataset, dt)	
-		data  = netCDF4.Dataset(arq)
-		var   = data.variables[param][:] 
-		lat   = data.variables['latitude'][:]
-		lon   = data.variables['longitude'][:]
-	else:
-		arq   = '{0}/postproc/evaluate/rcm/{1}_{2}_year_{3}.nc'.format(path, param, dataset, dt)	
-		data  = netCDF4.Dataset(arq)
-		var   = data.variables[param][:] 
-		lat   = data.variables['lat'][:]
-		lon   = data.variables['lon'][:]
+	folder = 'obs' if dataset in ['CRU', 'ERA5'] else 'rcm'
+	arq = "{0}/postproc/evaluate/{1}/{2}_{3}_year_{4}.nc".format(path, folder, param, dataset, dt)
 
-	mean = var[:][:,:,:]
+	data = netCDF4.Dataset(arq)
+	lat_name = "latitude" if dataset == "ERA5" else "lat"
+	lon_name = "longitude" if dataset == "ERA5" else "lon"
+	var = data.variables[param][:]
+	lat = data.variables[lat_name][:]
+	lon = data.variables[lon_name][:]
 	
-	return lat, lon, mean
+	return lat, lon, var
 
 
 def comp_trend_sig(data, min_valid=10, per_decade=False):
@@ -83,7 +72,9 @@ def comp_trend_sig(data, min_valid=10, per_decade=False):
 	if per_decade:
 		trend = trend * 10.0
 
-	return trend, pval
+	sig = np.ma.masked_where(pval >= 0.05, trend)
+
+	return trend, sig
 
 
 # Import model and obs dataset
@@ -96,14 +87,10 @@ lat_cru, lon_cru, cru_yr = import_dataset(dict_var[var][0], 'CRU')
 lat_era5, lon_era5, era5_yr = import_dataset(dict_var[var][1], 'ERA5')
 lat_regcm, lon_regcm, regcm_yr = import_dataset(var, 'CSAM-3_RegCM5')
 
-cru_trend, cru_pval = comp_trend_sig(cru_yr, min_valid=10, per_decade=False)
-cru_sig = np.ma.masked_where(cru_pval >= 0.05, cru_trend)
-
-era5_trend, era5_pval = comp_trend_sig(era5_yr, min_valid=10, per_decade=False)
-era5_sig = np.ma.masked_where(era5_pval >= 0.05, era5_trend)
-
-regcm_trend, regcm_pval = comp_trend_sig(regcm_yr, min_valid=10, per_decade=False)
-regcm_sig = np.ma.masked_where(regcm_pval >= 0.05, regcm_trend)
+# Compute trend and significance
+cru_trend, cru_sig = comp_trend_sig(cru_yr, min_valid=10, per_decade=False)
+era5_trend, era5_sig = comp_trend_sig(era5_yr, min_valid=10, per_decade=False)
+regcm_trend, regcm_sig = comp_trend_sig(regcm_yr, min_valid=10, per_decade=False)
 
 # Plot figure
 def configure_subplot(ax):
@@ -127,28 +114,22 @@ def configure_subplot(ax):
 
 fig, axes = plt.subplots(1, 3, figsize=(12, 6), subplot_kw={'projection': ccrs.PlateCarree()})
 
-dict_plot = {'pr': ['Precipitation trend (mm yr$^-$$^1$)', np.arange(-50, 51, 1), cm.BrBG],
-'tas': ['Air temperature trend (°C yr$^-$$^1$)', np.arange(-0.5, 0.51, 0.01), cm.bwr],
-'tasmax': ['Maximum air temperature trend (°C yr$^-$$^1$)', np.arange(-0.5, 0.51, 0.01), cm.bwr],
-'tasmin': ['Minimum air temperature trend (°C yr$^-$$^1$)', np.arange(-0.5, 0.51, 0.01), cm.bwr]}
+dict_plot = {'pr': ['Precipitation trend (mm yr$^-$$^1$) p ≥ 0.05', np.arange(-60, 62, 2), cm.BrBG],
+'tas': ['Air temperature trend (°C yr$^-$$^1$) Dots: p ≥ 0.05', np.arange(-0.3, 0.31, 0.01), cm.bwr],
+'tasmax': ['Maximum air temperature trend (°C yr$^-$$^1$) Dots: p ≥ 0.05', np.arange(-0.3, 0.31, 0.01), cm.bwr],
+'tasmin': ['Minimum air temperature trend (°C yr$^-$$^1$) Dots: p ≥ 0.05', np.arange(-0.3, 0.31, 0.01), cm.bwr]}
 
-ax1 = axes[0]
-plt_map = ax1.contourf(lon_cru, lat_cru, cru_trend, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-ax1.contourf(lon_cru, lat_cru, cru_sig, hatches=['...'], colors='none', transform=ccrs.PlateCarree())
-ax1.set_title(u'(a) CRU', loc='left', fontsize=font_size, fontweight='bold')
-configure_subplot(ax1)
+datasets = [('CRU', lon_cru, lat_cru, cru_trend, cru_sig),
+('ERA5', lon_era5, lat_era5, era5_trend, era5_sig),
+('RegCM5', lon_regcm, lat_regcm, regcm_trend, regcm_sig),]
 
-ax2 = axes[1]
-plt_map = ax2.contourf(lon_era5, lat_era5, era5_trend, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-ax2.contourf(lon_era5, lat_era5, era5_sig, hatches=['...'], colors='none', transform=ccrs.PlateCarree())
-ax2.set_title(u'(b) ERA5', loc='left', fontsize=font_size, fontweight='bold')
-configure_subplot(ax2)
+for ax, (name, lon, lat, trend, sig), lab in zip(
+        axes, datasets, ['(a)', '(b)', '(c)']):
 
-ax3 = axes[2]
-plt_map = ax3.contourf(lon_regcm, lat_regcm, regcm_trend, transform=ccrs.PlateCarree(), levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both') 
-ax3.contourf(lon_regcm, lat_regcm, regcm_sig, hatches=['...'], colors='none', transform=ccrs.PlateCarree())
-ax3.set_title(u'(c) RegCM5', loc='left', fontsize=font_size, fontweight='bold')
-configure_subplot(ax3)
+    plt_map = ax.contourf(lon, lat, trend, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both', transform=ccrs.PlateCarree())
+    ax.contourf(lon, lat, sig, hatches=['...'], colors='none', transform=ccrs.PlateCarree())
+    ax.set_title('{} {}'.format(lab, name), loc='left', fontsize=font_size, fontweight='bold')
+    configure_subplot(ax)
 
 # Set colobar
 cbar = fig.colorbar(plt_map, ax=fig.axes, orientation='horizontal', pad=0.1, aspect=50)
@@ -156,7 +137,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs/evaluate/rcm'.format(path)
+path_out = '{0}/figs/evaluate'.format(path)
 name_out = 'pyplt_maps_trend_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

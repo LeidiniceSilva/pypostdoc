@@ -7,6 +7,7 @@ __description__ = "This script plot bias maps"
 
 import os
 import netCDF4
+import argparse
 import numpy as np
 import matplotlib.colors
 import matplotlib.cm as cm
@@ -18,11 +19,21 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
-var = 'pr'
-stats = 'int'
-freq = 'daily'
-domain = 'CSAM-3'
-idt, fdt = '2000', '2009'
+parser = argparse.ArgumentParser()
+parser.add_argument('--var', required=True, help='Variable name')
+parser.add_argument('--stats', required=True, help='Statistic')
+parser.add_argument('--freq', required=True, help='Frequency')
+parser.add_argument('--domain', required=True, help='Domain name')
+parser.add_argument('--idt', required=True, help='Initial year')
+parser.add_argument('--fdt', required=True, help='Final year')
+args = parser.parse_args()
+
+var = args.var
+stats = args.stats
+freq = args.freq
+domain = args.domain
+idt = args.idt
+fdt = args.fdt
 font_size = 6
 
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5'
