@@ -15,7 +15,7 @@ import cartopy.mpl.ticker as cticker
 
 from matplotlib.colors import ListedColormap, BoundaryNorm
 
-var='orog'
+var='sftlaf'
 
 
 def load_data(fname):
@@ -38,7 +38,7 @@ def load_data_urb(fname):
     return var_data, lat, lon
 
 
-outp = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/evaluate/rcm_urb" 
+outp = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/urb"
 
 var_data, lat, lon = load_data("/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/ERA5/ERA5-CSAM/CORDEX-CMIP6/DD/CSAM-3/ICTP/ERA5/evaluation/r1i1p1f1/RegCM5-0/v1-r1/fx/{0}/{0}_CSAM-3_ERA5_evaluation_r1i1p1f1_ICTP_RegCM5-0_v1-r1_fx.nc".format(var))
 
@@ -55,7 +55,7 @@ ax.add_feature(cfeature.COASTLINE, edgecolor='black')
 ax.add_feature(cfeature.BORDERS, linestyle=':')
 ax.set_title("(a) RegCM5 {0}".format(var), loc='left', fontsize=font_size, fontweight='bold')
 ax.text(-38, -38, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
-im = ax.contourf(lon, lat, var_data, levels=np.linspace(0, 3000, 20), cmap="terrain_r", transform=ccrs.PlateCarree())
+im = ax.contourf(lon, lat, var_data, cmap="gist_ncar_r", transform=ccrs.PlateCarree())
 cbar = plt.colorbar(im, ax=ax, orientation='horizontal')
 
 # Urban Fraction Plot
@@ -65,13 +65,13 @@ ax.add_feature(cfeature.COASTLINE, edgecolor='black')
 ax.add_feature(cfeature.BORDERS, linestyle=':')
 ax.set_title("(b) RegCM5 URB {0}".format(var), loc='left', fontsize=font_size, fontweight='bold')
 ax.text(-38, -38, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
-im = ax.contourf(lon, lat, var_data_urb, levels=np.linspace(0, 3000, 20), cmap="terrain_r", transform=ccrs.PlateCarree())
+im = ax.contourf(lon, lat, var_data_urb, cmap="gist_ncar_r", transform=ccrs.PlateCarree())
 cbar = plt.colorbar(im, ax=ax, orientation='horizontal')
 
 # Save and close figure
 plt.tight_layout()
 os.makedirs(outp, exist_ok=True)
 plt.savefig(os.path.join(outp, "pyplt_maps_{0}_RegCM5_CSAM-3_2000-2009.png".format(var)), dpi=400, bbox_inches='tight')
-#plt.show()
+plt.show()
 exit()
 

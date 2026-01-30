@@ -15,14 +15,14 @@ import cartopy.mpl.ticker as cticker
 
 from matplotlib.colors import ListedColormap
 
-var='hfls'
+var='sfcWind'
 city = 'São_Paulo'
+city_ = 'SP'
 
 inputs = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/urb'
 outp = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/urb'
 
 mask_ctrl = 'urmask_{0}-CSAM-03_ECMWF-ERA5_evaluation_r1i1p1f1_RegCM5_fx.nc'.format(city)
-mask_urb = 'urmask_{0}-CSAMURB-03_ECMWF-ERA5_evaluation_r1i1p1f1_RegCM5_fx.nc'.format(city)
 
 def import_dataset(fname):
 
@@ -43,19 +43,16 @@ def import_urban_mask(fname):
 
 
 # Import dataset
-rcm_ctrl, lat_ctrl, lon_ctrl = import_dataset('{0}/{1}_ctrl_sp.nc'.format(inputs, var))
+rcm_ctrl, lat_ctrl, lon_ctrl = import_dataset('{0}/{1}_{2}_CSAM-3_RegCM5_mon_2000-2000.nc'.format(inputs, var, city_))
+rcm_urb, lat_urb, lon_urb = import_dataset('{0}/{1}_{2}_CSAM-3_RegCM5-urb_mon_2000-2000.nc'.format(inputs, var, city_))
+
 mask_ctrl = import_urban_mask(os.path.join(inputs, mask_ctrl))
 rcm_ctrl_mask = np.ma.masked_where(mask_ctrl < 1, rcm_ctrl[0, :, :])
-
-rcm_urb, lat_urb, lon_urb = import_dataset('{0}/{1}_urb_sp.nc'.format(inputs, var))
-mask_urb = import_urban_mask(os.path.join(inputs, mask_urb))
-rcm_urb_mask = np.ma.masked_where(mask_urb < 1, rcm_urb[0, :, :])
+rcm_urb_mask = np.ma.masked_where(mask_ctrl < 1, rcm_urb[0, :, :])
 
 print('Ctrl shape:', rcm_ctrl.shape)
-print('Ctrl mask shape:', mask_ctrl.shape)
-
 print('Urb shape:', rcm_urb.shape)
-print('Urban mask shape:', mask_urb.shape)
+print('Urban mask shape:', mask_ctrl.shape)
 
 # Plot figure
 fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(10, 8), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -68,9 +65,9 @@ ax.set_xticks(np.arange(-47.2,-46,0.2), crs=ccrs.PlateCarree())
 ax.set_yticks(np.arange(-24,-23.2,0.2), crs=ccrs.PlateCarree())
 ax.add_feature(cfeature.COASTLINE, edgecolor='black')
 ax.add_feature(cfeature.BORDERS, linestyle=':')
-ax.set_title('(a) RegCM5 {0} (dt = 2000010101)'.format(var), loc='left', fontsize=font_size, fontweight='bold')
+ax.set_title('(a) RegCM5 {0} Jan 2000'.format(var), loc='left', fontsize=font_size, fontweight='bold')
 ax.text(-38, -38, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
-im = ax.contourf(lon_ctrl, lat_ctrl, rcm_ctrl_mask, cmap='jet', levels=np.linspace(0, 100, 10), transform=ccrs.PlateCarree())
+im = ax.contourf(lon_ctrl, lat_ctrl, rcm_ctrl_mask, cmap='jet', levels=np.linspace(0, 5, 10), transform=ccrs.PlateCarree())
 cbar = plt.colorbar(im, ax=ax, orientation='horizontal')
 ax.gridlines(draw_labels=False, linewidth=0.5, color='black', alpha=0.5, linestyle='--')
 
@@ -81,16 +78,16 @@ ax.set_xticks(np.arange(-47.2,-46,0.2), crs=ccrs.PlateCarree())
 ax.set_yticks(np.arange(-24,-23.2,0.2), crs=ccrs.PlateCarree())
 ax.add_feature(cfeature.COASTLINE, edgecolor='black')
 ax.add_feature(cfeature.BORDERS, linestyle=':')
-ax.set_title('(b) RegCM5 URB {0} (dt = 2000010101)'.format(var), loc='left', fontsize=font_size, fontweight='bold')
+ax.set_title('(b) RegCM5 URB {0} Jan 2000'.format(var), loc='left', fontsize=font_size, fontweight='bold')
 ax.text(-38, -38, u'\u25B2 \nN', color='black', fontsize=font_size, fontweight='bold')
-im = ax.contourf(lon_urb, lat_urb, rcm_urb_mask, cmap='jet', levels=np.linspace(0, 100, 10), transform=ccrs.PlateCarree())
+im = ax.contourf(lon_urb, lat_urb, rcm_urb_mask, cmap='jet', levels=np.linspace(0, 5, 10), transform=ccrs.PlateCarree())
 cbar = plt.colorbar(im, ax=ax, orientation='horizontal')
 ax.gridlines(draw_labels=False, linewidth=0.5, color='black', alpha=0.5, linestyle='--')
 
 # Save figure
 plt.tight_layout()
 os.makedirs(outp, exist_ok=True)
-plt.savefig(os.path.join(outp, "pyplt_maps_{0}_{1}_RegCM5_CSAM-3_2000010100-2000010200.png".format(var, city)), dpi=400)
+plt.savefig(os.path.join(outp, "pyplt_maps_{0}_{1}_RegCM5_CSAM-3_200001.png".format(var, city_)), dpi=400)
 plt.show()
 exit()
 
