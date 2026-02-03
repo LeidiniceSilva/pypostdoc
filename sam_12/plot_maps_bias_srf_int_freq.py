@@ -2,7 +2,7 @@
 
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
-__date__        = "Mar 12, 2024"
+__date__        = "Feb 02, 2026"
 __description__ = "This script plot bias maps"
 
 
@@ -22,21 +22,16 @@ from import_climate_tools import compute_mbe
 var = 'pr'
 obs = 'ERA5'
 stats = 'freq'
-dt = '1970-1971'
-domain = 'SAM-22'
+dt = '1971-1972'
+domain = 'SAM-12'
 latlon = [-105, -16, -57, 18]
 
-exp_i = 'ctrl_RegCM5'
-exp_i_tg = exp_i.split('_RegCM5')[0]
-exp_i_up = exp_i_tg.upper()
-
-exp_ii = 'pbl_RegCM5'
-exp_ii_tg = exp_ii.split('_RegCM5')[0]
-exp_ii_up = exp_ii_tg.upper()
+exp_i = 'RegCM5-ERA5_ICTP'
+exp_ii = 'RegCM5-Nor_USP'
 
 dict_var = {var: ['tp', 'pr']}
 
-font_size = 8
+font_size = 6
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
 
 
@@ -117,14 +112,14 @@ if stats == 'int':
 else:
 	dict_plot = {'pr': ['Frequency of daily precipitation (%)', np.arange(-70, 75, 5), cm.BrBG]}
 
-plot_data = {'Plot 1': {'data': mbe_djf_exp_i_obs[0][0], 'title': '(a) {0}-{1} DJF'.format(exp_i_up, obs)},
-'Plot 2': {'data': mbe_mam_exp_i_obs[0][0], 'title': '(b) {0}-{1} MAM'.format(exp_i_up, obs)},
-'Plot 3': {'data': mbe_jja_exp_i_obs[0][0], 'title': '(c) {0}-{1} JJA'.format(exp_i_up, obs)},
-'Plot 4': {'data': mbe_son_exp_i_obs[0][0], 'title': '(d) {0}-{1} SON'.format(exp_i_up, obs)},
-'Plot 5': {'data': mbe_djf_exp_ii_obs[0][0], 'title': '(e) {0}-{1} DJF'.format(exp_ii_up, obs)},
-'Plot 6': {'data': mbe_mam_exp_ii_obs[0][0], 'title': '(f) {0}-{1} MAM'.format(exp_ii_up, obs)},
-'Plot 7': {'data': mbe_jja_exp_ii_obs[0][0], 'title': '(g) {0}-{1} JJA'.format(exp_ii_up, obs)},
-'Plot 8': {'data': mbe_son_exp_ii_obs[0][0], 'title': '(h) {0}-{1} SON'.format(exp_ii_up, obs)}}
+plot_data = {'Plot 1': {'data': mbe_djf_exp_i_obs[0][0], 'title': '(a) {0}-{1} DJF'.format(exp_i, obs)},
+'Plot 2': {'data': mbe_mam_exp_i_obs[0][0], 'title': '(b) {0}-{1} MAM'.format(exp_i, obs)},
+'Plot 3': {'data': mbe_jja_exp_i_obs[0][0], 'title': '(c) {0}-{1} JJA'.format(exp_i, obs)},
+'Plot 4': {'data': mbe_son_exp_i_obs[0][0], 'title': '(d) {0}-{1} SON'.format(exp_i, obs)},
+'Plot 5': {'data': mbe_djf_exp_ii_obs[0][0], 'title': '(e) {0}-{1} DJF'.format(exp_ii, obs)},
+'Plot 6': {'data': mbe_mam_exp_ii_obs[0][0], 'title': '(f) {0}-{1} MAM'.format(exp_ii, obs)},
+'Plot 7': {'data': mbe_jja_exp_ii_obs[0][0], 'title': '(g) {0}-{1} JJA'.format(exp_ii, obs)},
+'Plot 8': {'data': mbe_son_exp_ii_obs[0][0], 'title': '(h) {0}-{1} SON'.format(exp_ii, obs)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
     data = value['data']
@@ -140,7 +135,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
+path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_{2}_RegCM5_{3}.png'.format(var, stats, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()

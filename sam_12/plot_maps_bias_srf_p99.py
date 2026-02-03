@@ -2,9 +2,8 @@
 
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
-__date__        = "Mar 12, 2024"
+__date__        = "Feb 02, 2026"
 __description__ = "This script plot bias maps"
-
 
 import os
 import netCDF4
@@ -21,17 +20,12 @@ from import_climate_tools import compute_mbe
 
 var = 'p99'
 obs = 'ERA5'
-dt = '1970-1971'
-domain = 'SAM-22'
+dt = '1971-1972'
+domain = 'SAM-12'
 latlon = [-105, -16, -57, 18]
 
-exp_i = 'ctrl_RegCM5'
-exp_i_tg = exp_i.split('_RegCM5')[0]
-exp_i_up = exp_i_tg.upper()
-
-exp_ii = 'pbl_RegCM5'
-exp_ii_tg = exp_ii.split('_RegCM5')[0]
-exp_ii_up = exp_ii_tg.upper()
+exp_i = 'RegCM5-ERA5_ICTP'
+exp_ii = 'RegCM5-Nor_USP'
 
 dict_var = {var: ['tp', 'pr']}
 
@@ -81,11 +75,11 @@ def configure_subplot(ax):
 	
 # Import model and obs dataset
 lat, lon, obs_ = import_obs(var, dict_var[var][0], domain, obs)
-lat, lon, exp_i = import_rcm(var, dict_var[var][1], domain, exp_i)
-lat, lon, exp_ii = import_rcm(var, dict_var[var][1], domain, exp_ii)
+lat, lon, exp_i_ = import_rcm(var, dict_var[var][1], domain, exp_i)
+lat, lon, exp_ii_ = import_rcm(var, dict_var[var][1], domain, exp_ii)
 	
-mbe_exp_i_obs = compute_mbe(exp_i, obs_)	
-mbe_exp_ii_obs = compute_mbe(exp_ii, obs_)	
+mbe_exp_i_obs = compute_mbe(exp_i_, obs_)	
+mbe_exp_ii_obs = compute_mbe(exp_ii_, obs_)	
 
 # Plot figure
 fig, axes = plt.subplots(1, 2, figsize=(6, 3), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -93,8 +87,8 @@ axes = axes.flatten()
 
 dict_plot = {'p99': ['Daily p99 (mm d$^-$$^1$)', np.arange(-50, 55, 5), cm.BrBG]}
 
-plot_data = {'Plot 1': {'data': mbe_exp_i_obs[0], 'title': '(a) {0}-{1}'.format(exp_i_up, obs)},
-'Plot 2': {'data': mbe_exp_ii_obs[0], 'title': '(b) {0}-{1}'.format(exp_ii_up, obs)}}
+plot_data = {'Plot 1': {'data': mbe_exp_i_obs[0], 'title': '(a) {0}-{1}'.format(exp_i, obs)},
+'Plot 2': {'data': mbe_exp_ii_obs[0], 'title': '(b) {0}-{1}'.format(exp_ii, obs)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
     data = value['data']
@@ -110,7 +104,7 @@ cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='
 cbar.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/figs/{1}'.format(path, exp_ii_tg)
+path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_maps_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
