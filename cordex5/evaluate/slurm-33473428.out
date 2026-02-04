@@ -1,0 +1,40 @@
+
+--------------- INIT PLOT ----------------
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/evaluate/plot_maps_trend_v3.py:400: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Processing variable: pr
+Time period: 1970-2023
+Domain: AUS-12
+Domain extent: [110, 156, -45, -9]
+--------------------------------------------------
+
+1. Importing data...
+Reading CRU: /leonardo_scratch/large/userexternal/fraffael/plots/trend/inputs/pre_CRU_year_1970-2023.nc
+  Data shape: (54, 360, 720)
+  Lon range: [-179.8, 179.8]
+  Lat range: [-89.8, 89.8]
+Reading ERA5: /leonardo_scratch/large/userexternal/fraffael/plots/trend/inputs/tp_ERA5_year_1970-2023.nc
+  Data shape: (54, 721, 1440)
+  Lon range: [0.0, 359.8]
+  Lat range: [-90.0, 90.0]
+Reading RegCM5: /leonardo_scratch/large/userexternal/fraffael/plots/trend/inputs/pr_AUS-12_RegCM5_year_1970-2023.nc
+  Found projection parameters: {'+proj': 'ob_tran', '+o_proj': 'longlat', '+o_lat_p': '-60.31', '+o_lon_p': '321.38', '+R': '6371229.'}
+  Using regular lat/lon coordinates
+
+2. Rotated pole parameters used:
+   Rotated pole latitude: -70.60
+   Rotated pole longitude: 123.94
+
+3. Masking data outside domain...
+
+4. Calculating trends...
+  CRU trend range: [-32.693, 31.184]
+  ERA5 trend range: [-1.569, 2.398]
+  RegCM trend range: [-7.579, 24.998]
+
+5. Creating plot...
+
+6. Saving figure: pyplt_maps_trend_pr_AUS-12_RegCM5_1970-2023.png
+Done!
+
+--------------- THE END PLOT ----------------

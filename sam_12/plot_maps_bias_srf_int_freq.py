@@ -5,7 +5,6 @@ __email__       = "leidinicesilva@gmail.com"
 __date__        = "Feb 02, 2026"
 __description__ = "This script plot bias maps"
 
-
 import os
 import netCDF4
 import numpy as np

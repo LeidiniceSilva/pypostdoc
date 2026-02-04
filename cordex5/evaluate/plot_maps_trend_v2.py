@@ -1,139 +1,369 @@
 # -*- coding: utf-8 -*-
+"""
+Script to plot trend maps for CRU, ERA5, and RegCM5 data.
+Handles RegCM5 rotated pole coordinate system correctly.
+"""
 
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Jan 25, 2026"
-__description__ = "This script plot trend maps"
+__description__ = "This script plot trend maps with rotated pole support"
 
 import os
-import netCDF4
-import argparse
 import numpy as np
-import matplotlib.colors
-import matplotlib.cm as cm
+import argparse
+import netCDF4
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import cartopy.crs as ccrs
 import cartopy.feature as cfeat
-from scipy.stats import linregress
-
-from cartopy import config
-from matplotlib.colors import LinearSegmentedColormap
+from scipy.stats import t as student_t
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--var', required=True, help='Variable name')
+parser = argparse.ArgumentParser(description='Plot trend maps')
+parser.add_argument('--var', required=True, help='Variable name (pr, tas, tasmax, tasmin)')
 parser.add_argument('--domain', required=True, help='Domain name')
 parser.add_argument('--idt', required=True, help='Initial year')
 parser.add_argument('--fdt', required=True, help='Final year')
 args = parser.parse_args()
 
+# Configuration
 var = args.var
 domain = args.domain
 idt = args.idt
 fdt = args.fdt
-dt = '{0}-{1}'.format(idt, fdt)
+dt = f'{idt}-{fdt}'
 font_size = 8
+path = '/leonardo_scratch/large/userexternal/fraffael/plots/trend/inputs/'
 
-path = '/leonardo_scratch/large/userexternal/user/plots/trend'
+# Domain extent for Australia
+DOMAIN_EXTENT = [110, 156, -45, -9]  # [lon_min, lon_max, lat_min, lat_max]
 
+# Variable mapping
+VAR_MAP = {
+    'pr': {'cru': 'pre', 'era5': 'tp', 'units': 'mm yr⁻¹'},
+    'tas': {'cru': 'tmp', 'era5': 't2m', 'units': '°C yr⁻¹'},
+    'tasmax': {'cru': 'tmx', 'era5': 'tasmax', 'units': '°C yr⁻¹'},
+    'tasmin': {'cru': 'tmn', 'era5': 'tasmin', 'units': '°C yr⁻¹'}
+}
 
-def import_dataset(param, dataset):
-
-	arq = "{0}/inputs/{1}_{2}_year_{3}.nc".format(path, param, dataset, dt)
-
-	data = netCDF4.Dataset(arq)
-	lat_name = "latitude" if dataset == "ERA5" else "lat"
-	lon_name = "longitude" if dataset == "ERA5" else "lon"
-	var = data.variables[param][:]
-	lat = data.variables[lat_name][:]
-	lon = data.variables[lon_name][:]
-	
-	return lat, lon, var
-
-
-def comp_trend_sig(data, min_valid=10, per_decade=False):
-	
-	nt, ny, nx = data.shape
-	t = np.arange(nt)
-	trend = np.full((ny, nx), np.nan)
-	pval  = np.full((ny, nx), np.nan)
-
-	for i in range(ny):
-		for j in range(nx):
-			y = data[:, i, j]
-			mask = np.isfinite(y)
-
-			if mask.sum() >= min_valid:
-				res = linregress(t[mask], y[mask])
-				trend[i, j] = res.slope
-				pval[i, j]  = res.pvalue
-
-	if per_decade:
-		trend = trend * 10.0
-
-	sig = np.ma.masked_where(pval >= 0.05, trend)
-
-	return trend, sig
-
-
-def configure_subplot(ax):
-
-	DOMAIN_EXTENT = [110, 156, -45, -9]
-	ax.set_extent(DOMAIN_EXTENT, crs=ccrs.PlateCarree())
-	ax.set_xticks(np.arange(DOMAIN_EXTENT[0], DOMAIN_EXTENT[1]+1, 10), crs=ccrs.PlateCarree())
-	ax.set_yticks(np.arange(DOMAIN_EXTENT[2], DOMAIN_EXTENT[3]+1, 5), crs=ccrs.PlateCarree())
-	ax.xaxis.set_major_formatter(LongitudeFormatter())
-	ax.yaxis.set_major_formatter(LatitudeFormatter())
-	ax.gridlines(draw_labels=False, linewidth=0.4, linestyle='--', color='k', alpha=0.4)
-	ax.add_feature(cfeat.BORDERS, linewidth=0.5)
-	ax.coastlines(linewidth=0.6)
+# Plot configuration
+PLOT_CONFIG = {
+    'pr': {
+        'title': 'Precipitation trend (mm yr⁻¹)',
+        'levels': np.arange(-6, 6.2, 0.2),
+        'cmap': cm.BrBG,
+        'sig_label': 'Dots: p < 0.05'
+    },
+    'tas': {
+        'title': 'Air temperature trend (°C yr⁻¹)',
+        'levels': np.arange(-0.3, 0.31, 0.01),
+        'cmap': cm.bwr,
+        'sig_label': 'Dots: p < 0.05'
+    },
+    'tasmax': {
+        'title': 'Maximum air temperature trend (°C yr⁻¹)',
+        'levels': np.arange(-0.3, 0.31, 0.01),
+        'cmap': cm.bwr,
+        'sig_label': 'Dots: p < 0.05'
+    },
+    'tasmin': {
+        'title': 'Minimum air temperature trend (°C yr⁻¹)',
+        'levels': np.arange(-0.3, 0.31, 0.01),
+        'cmap': cm.bwr,
+        'sig_label': 'Dots: p < 0.05'
+    }
+}
 
 
-# Import model and obs dataset
-dict_var = {'pr': ['pre', 'tp'],
-'tas': ['tmp', 't2m'],
-'tasmax': ['tmx', 'tasmax'],
-'tasmin': ['tmn', 'tasmin']}
-
-lat_cru, lon_cru, cru_yr = import_dataset(dict_var[var][0], 'CRU')
-lat_era5, lon_era5, era5_yr = import_dataset(dict_var[var][1], 'ERA5')
-lat_regcm, lon_regcm, regcm_yr = import_dataset(var, 'AUS-12_RegCM5')
-
-# Compute trend and significance
-cru_trend, cru_sig = comp_trend_sig(cru_yr, min_valid=10, per_decade=False)
-era5_trend, era5_sig = comp_trend_sig(era5_yr, min_valid=10, per_decade=False)
-regcm_trend, regcm_sig = comp_trend_sig(regcm_yr, min_valid=10, per_decade=False)
-
-# Plot figure
-fig, axes = plt.subplots(1, 3, figsize=(12, 6), subplot_kw={'projection': ccrs.PlateCarree()})
-
-dict_plot = {'pr': ['Precipitation trend (mm yr$^-$$^1$) p ≥ 0.05', np.arange(-60, 62, 2), cm.BrBG],
-'tas': ['Air temperature trend (°C yr$^-$$^1$) Dots: p ≥ 0.05', np.arange(-0.3, 0.31, 0.01), cm.bwr],
-'tasmax': ['Maximum air temperature trend (°C yr$^-$$^1$) Dots: p ≥ 0.05', np.arange(-0.3, 0.31, 0.01), cm.bwr],
-'tasmin': ['Minimum air temperature trend (°C yr$^-$$^1$) Dots: p ≥ 0.05', np.arange(-0.3, 0.31, 0.01), cm.bwr]}
-
-datasets = [('CRU', lon_cru, lat_cru, cru_trend, cru_sig),
-('ERA5', lon_era5, lat_era5, era5_trend, era5_sig),
-('RegCM5', lon_regcm, lat_regcm, regcm_trend, regcm_sig),]
-
-for ax, (name, lon, lat, trend, sig), lab in zip(
-        axes, datasets, ['(a)', '(b)', '(c)']):
-
-    plt_map = ax.contourf(lon, lat, trend, levels=dict_plot[var][1], cmap=dict_plot[var][2], extend='both', transform=ccrs.PlateCarree())
-    ax.contourf(lon, lat, sig, hatches=['...'], colors='none', transform=ccrs.PlateCarree())
-    ax.set_title('{} {}'.format(lab, name), loc='left', fontsize=font_size, fontweight='bold')
-    configure_subplot(ax)
-
-# Set colobar
-cbar = fig.colorbar(plt_map, ax=fig.axes, orientation='horizontal', pad=0.1, aspect=50)
-cbar.set_label('{0}'.format(dict_plot[var][0]), fontsize=font_size, fontweight='bold')
-cbar.ax.tick_params(labelsize=font_size)
-
-# Path out to save figure
-path_out = '{0}'.format(path)
-name_out = 'pyplt_maps_trend_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
-plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
-exit()
+def import_regular_dataset(param, dataset):
+    """Import CRU or ERA5 data (regular lat/lon grid)."""
+    if dataset == 'CRU':
+        var_name = VAR_MAP[param]['cru']
+        lat_name, lon_name = 'lat', 'lon'
+    elif dataset == 'ERA5':
+        var_name = VAR_MAP[param]['era5']
+        lat_name, lon_name = 'latitude', 'longitude'
+    
+    filename = f"{path}/{var_name}_{dataset}_year_{dt}.nc"
+    print(f"Reading {dataset}: {filename}")
+    
+    with netCDF4.Dataset(filename) as nc:
+        data = nc.variables[var_name][:]
+        lat = nc.variables[lat_name][:]
+        lon = nc.variables[lon_name][:]
+        
+        # Convert to 2D if 1D
+        if len(lat.shape) == 1 and len(lon.shape) == 1:
+            lon, lat = np.meshgrid(lon, lat)
+        
+        print(f"  Data shape: {data.shape}")
+        print(f"  Lon range: [{lon.min():.1f}, {lon.max():.1f}]")
+        print(f"  Lat range: [{lat.min():.1f}, {lat.max():.1f}]")
+        
+    return lat, lon, data
 
 
+def import_regcm_dataset(param):
+    """Import RegCM5 data with rotated pole coordinates."""
+    dataset = 'AUS-12_RegCM5'
+    filename = f"{path}/{param}_{dataset}_year_{dt}.nc"
+    print(f"Reading RegCM5: {filename}")
+    
+    with netCDF4.Dataset(filename) as nc:
+        data = nc.variables[param][:]
+        
+        # Try different coordinate variable names
+        if 'lat' in nc.variables and 'lon' in nc.variables:
+            lat = nc.variables['lat'][:]
+            lon = nc.variables['lon'][:]
+            print("  Using 2D lat/lon coordinates")
+        elif 'rlat' in nc.variables and 'rlon' in nc.variables:
+            # Rotated coordinates
+            rlat = nc.variables['rlat'][:]
+            rlon = nc.variables['rlon'][:]
+            lon, lat = np.meshgrid(rlon, rlat)
+            print("  Using rotated coordinates (rlat/rlon)")
+        else:
+            # Last resort: try common names
+            lat_names = ['lat', 'latitude', 'y', 'nav_lat', 'XLAT']
+            lon_names = ['lon', 'longitude', 'x', 'nav_lon', 'XLONG']
+            
+            lat_var = next((n for n in lat_names if n in nc.variables), None)
+            lon_var = next((n for n in lon_names if n in nc.variables), None)
+            
+            if lat_var and lon_var:
+                lat = nc.variables[lat_var][:]
+                lon = nc.variables[lon_var][:]
+                print(f"  Found coordinates: {lat_var}, {lon_var}")
+            else:
+                raise ValueError(f"Cannot find coordinates in {filename}")
+        
+        # Check if we need to convert rotated coordinates
+        if len(lat.shape) == 2 and len(lon.shape) == 2:
+            # Already 2D coordinates
+            print("  2D coordinates detected")
+        elif len(lat.shape) == 1 and len(lon.shape) == 1:
+            # Convert to 2D
+            lon, lat = np.meshgrid(lon, lat)
+        
+        print(f"  Data shape: {data.shape}")
+        print(f"  Lon shape: {lon.shape}, range: [{lon.min():.1f}, {lon.max():.1f}]")
+        print(f"  Lat shape: {lat.shape}, range: [{lat.min():.1f}, {lat.max():.1f}]")
+        
+        # Handle longitude wrapping if needed
+        if lon.min() < 0:
+            lon = lon % 360
+        
+        return lat, lon, data
+
+
+def convert_rotated_to_regular(lon_rot, lat_rot):
+    """
+    Convert rotated pole coordinates to regular lat/lon.
+    Based on RegCM5's rotated pole at (60.31°S, 321.38°E).
+    """
+    # Rotated pole parameters from your file
+    rot_pole_lat = -60.31    # South pole latitude
+    rot_pole_lon = 321.38    # South pole longitude
+    
+    # Convert to north pole convention for cartopy
+    north_pole_lat = -rot_pole_lat      # 60.31°N
+    north_pole_lon = rot_pole_lon - 180.0  # 141.38°E
+    
+    print(f"  Converting rotated pole: North pole at ({north_pole_lat:.2f}°N, {north_pole_lon:.2f}°E)")
+    
+    # Create coordinate systems
+    rotated_crs = ccrs.RotatedPole(pole_latitude=north_pole_lat,
+                                   pole_longitude=north_pole_lon)
+    regular_crs = ccrs.PlateCarree()
+    
+    # Transform coordinates
+    points = rotated_crs.transform_points(regular_crs, lon_rot, lat_rot)
+    lon_reg = points[..., 0]
+    lat_reg = points[..., 1]
+    
+    # Ensure longitude is in 0-360 range
+    lon_reg = lon_reg % 360
+    
+    print(f"  Converted lon range: [{lon_reg.min():.1f}, {lon_reg.max():.1f}]")
+    print(f"  Converted lat range: [{lat_reg.min():.1f}, {lat_reg.max():.1f}]")
+    
+    return lon_reg, lat_reg
+
+
+def calculate_trend(data, alpha=0.05, per_decade=False):
+    """Calculate linear trend and significance."""
+    nt, ny, nx = data.shape
+    t = np.arange(nt, dtype=float)
+    
+    trend = np.full((ny, nx), np.nan)
+    sig_mask = np.full((ny, nx), False)
+    
+    for i in range(ny):
+        for j in range(nx):
+            y = data[:, i, j]
+            valid = np.isfinite(y)
+            
+            if np.sum(valid) >= 10:  # Minimum points for trend
+                t_valid = t[valid]
+                y_valid = y[valid]
+                
+                # Linear regression
+                A = np.vstack([t_valid, np.ones_like(t_valid)]).T
+                slope, intercept = np.linalg.lstsq(A, y_valid, rcond=None)[0]
+                
+                # Calculate trend (per year by default)
+                trend_val = slope * 10.0 if per_decade else slope
+                trend[i, j] = trend_val
+                
+                # Calculate p-value
+                y_pred = slope * t_valid + intercept
+                residuals = y_valid - y_pred
+                ss_res = np.sum(residuals**2)
+                
+                if len(t_valid) > 2 and ss_res > 0:
+                    ss_tot = np.sum((y_valid - np.mean(y_valid))**2)
+                    r_squared = 1 - (ss_res / ss_tot)
+                    df = len(t_valid) - 2
+                    
+                    # t-statistic
+                    t_stat = slope / np.sqrt(ss_res / (df * np.sum((t_valid - np.mean(t_valid))**2)))
+                    p_value = 2 * (1 - student_t.cdf(np.abs(t_stat), df))
+                    
+                    if p_value < alpha:
+                        sig_mask[i, j] = True
+    
+    return trend, sig_mask
+
+
+def configure_plot(ax):
+    """Configure map plot settings."""
+    ax.set_extent(DOMAIN_EXTENT, crs=ccrs.PlateCarree())
+    
+    # Set gridlines
+    ax.set_xticks(np.arange(DOMAIN_EXTENT[0], DOMAIN_EXTENT[1]+1, 10), 
+                  crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(DOMAIN_EXTENT[2], DOMAIN_EXTENT[3]+1, 5), 
+                  crs=ccrs.PlateCarree())
+    
+    ax.xaxis.set_major_formatter(LongitudeFormatter())
+    ax.yaxis.set_major_formatter(LatitudeFormatter())
+    
+    # Add features
+    ax.add_feature(cfeat.COASTLINE, linewidth=0.6)
+    ax.add_feature(cfeat.BORDERS, linewidth=0.5, linestyle='-', alpha=0.5)
+    ax.add_feature(cfeat.LAND, facecolor='lightgray', alpha=0.2)
+    
+    # Grid
+    ax.gridlines(draw_labels=False, linewidth=0.3, 
+                 linestyle='--', color='gray', alpha=0.5)
+
+
+def main():
+    """Main processing function."""
+    print(f"Processing variable: {var}")
+    print(f"Time period: {dt}")
+    print(f"Domain: {domain}")
+    print("-" * 50)
+    
+    # Import data
+    print("\n1. Importing data...")
+    lat_cru, lon_cru, cru_data = import_regular_dataset(var, 'CRU')
+    lat_era5, lon_era5, era5_data = import_regular_dataset(var, 'ERA5')
+    lat_regcm, lon_regcm, regcm_data = import_regcm_dataset(var)
+    
+    # Convert RegCM coordinates if needed
+    print("\n2. Processing RegCM coordinates...")
+    
+    # Check if coordinates are in rotated system (large negative/positive values)
+    if (lon_regcm.min() < -100 or lon_regcm.max() > 300 or 
+        lat_regcm.min() < -100 or lat_regcm.max() > 100):
+        print("  Detected rotated coordinates, converting to regular lat/lon...")
+        lon_regcm, lat_regcm = convert_rotated_to_regular(lon_regcm, lat_regcm)
+    else:
+        print("  Regular coordinates detected")
+    
+    # Mask data outside Australia domain
+    mask = ((lon_regcm >= DOMAIN_EXTENT[0]) & (lon_regcm <= DOMAIN_EXTENT[1]) &
+            (lat_regcm >= DOMAIN_EXTENT[2]) & (lat_regcm <= DOMAIN_EXTENT[3]))
+    regcm_data = np.where(mask[None, :, :], regcm_data, np.nan)
+    
+    # Calculate trends
+    print("\n3. Calculating trends...")
+    cru_trend, cru_sig = calculate_trend(cru_data, alpha=0.05)
+    era5_trend, era5_sig = calculate_trend(era5_data, alpha=0.05)
+    regcm_trend, regcm_sig = calculate_trend(regcm_data, alpha=0.05)
+    
+    print(f"  CRU trend range: [{np.nanmin(cru_trend):.3f}, {np.nanmax(cru_trend):.3f}]")
+    print(f"  ERA5 trend range: [{np.nanmin(era5_trend):.3f}, {np.nanmax(era5_trend):.3f}]")
+    print(f"  RegCM trend range: [{np.nanmin(regcm_trend):.3f}, {np.nanmax(regcm_trend):.3f}]")
+    
+    # Create figure
+    print("\n4. Creating plot...")
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5),
+                            subplot_kw={'projection': ccrs.PlateCarree()})
+    
+    datasets = [
+        ('CRU', lon_cru, lat_cru, cru_trend, cru_sig),
+        ('ERA5', lon_era5, lat_era5, era5_trend, era5_sig),
+        ('RegCM5', lon_regcm, lat_regcm, regcm_trend, regcm_sig)
+    ]
+    
+    for idx, (ax, (name, lon, lat, trend, sig)) in enumerate(zip(axes, datasets)):
+        # Plot trend
+        if name == 'RegCM5':
+            # Use pcolormesh for irregular grids
+            im = ax.pcolormesh(lon, lat, trend,
+                              cmap=PLOT_CONFIG[var]['cmap'],
+                              vmin=PLOT_CONFIG[var]['levels'][0],
+                              vmax=PLOT_CONFIG[var]['levels'][-1],
+                              transform=ccrs.PlateCarree())
+        else:
+            # Use contourf for regular grids
+            im = ax.contourf(lon, lat, trend,
+                            levels=PLOT_CONFIG[var]['levels'],
+                            cmap=PLOT_CONFIG[var]['cmap'],
+                            extend='both',
+                            transform=ccrs.PlateCarree())
+        
+        # Plot significance dots
+        if np.any(sig):
+            sig_lon = lon[sig]
+            sig_lat = lat[sig]
+            ax.scatter(sig_lon, sig_lat,
+                      s=2, color='black', alpha=0.5,
+                      transform=ccrs.PlateCarree(),
+                      marker='.', linewidths=0)
+        
+        # Configure plot
+        configure_plot(ax)
+        
+        # Title
+        label = ['(a)', '(b)', '(c)'][idx]
+        ax.set_title(f'{label} {name}', loc='left', 
+                     fontsize=font_size+2, fontweight='bold')
+    
+    # Colorbar
+    cbar = fig.colorbar(im, ax=axes, orientation='horizontal',
+                       pad=0.05, aspect=40, shrink=0.8)
+    cbar.set_label(f"{PLOT_CONFIG[var]['title']} ({PLOT_CONFIG[var]['sig_label']})",
+                   fontsize=font_size+2, fontweight='bold')
+    cbar.ax.tick_params(labelsize=font_size)
+    
+    # Adjust layout
+    plt.suptitle(f'Trend {VAR_MAP[var]["units"]} ({dt})', 
+                 fontsize=font_size+4, fontweight='bold', y=0.95)
+    plt.tight_layout()
+    
+    # Save figure
+    output_file = f'pyplt_maps_trend_{var}_{domain}_RegCM5_{dt}.png'
+    print(f"\n5. Saving figure: {output_file}")
+    plt.savefig(output_file, dpi=400, bbox_inches='tight')
+    print("Done!")
+    
+    plt.show()
+
+
+if __name__ == '__main__':
+    main()

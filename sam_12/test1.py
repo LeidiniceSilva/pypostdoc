@@ -2,8 +2,8 @@
 
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
-__date__        = "Dec 04, 2023"
-__description__ = "This script plot bias maps"
+__date__        = "Feb 02, 2026"
+__description__ = "This script plot maps"
 
 import os
 import netCDF4
@@ -18,13 +18,16 @@ from cartopy import config
 from matplotlib.colors import LinearSegmentedColormap
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'pr'
-dt = '197001'
+var = 'tas'
+dt = '197001-02'
 domain = 'SAM-12'
 latlon = [-105, -16, -57, 18]
 
 exp_i = 'RegCM5-ERA5_ICTP'
 exp_ii = 'RegCM5-ERA5_USP'
+
+dict_var = {'pr': ['tp'],
+'tas': ['t2m']}
 
 font_size = 8
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
@@ -37,7 +40,8 @@ def import_obs(param, dataset):
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][0,:,:]
+	mean = np.nanmean(var[:][:,:,:], axis=0)
+	print(mean.shape)
 
 	return lat, lon, mean
 
@@ -49,7 +53,8 @@ def import_rcm_i(param, dataset):
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][0,:,:]
+	mean = np.nanmean(var[:][:,:,:], axis=0)
+	print(mean.shape)
 
 	return lat, lon, mean
 
@@ -61,7 +66,8 @@ def import_rcm_ii(param, dataset):
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
 	lon   = data.variables['lon'][:]
-	mean = var[:][0,:,:]
+	mean = np.nanmean(var[:][:-1,0,:,:], axis=0)
+	print(mean.shape)
 
 	return lat, lon, mean
 
@@ -83,9 +89,9 @@ def configure_subplot(ax):
 
 
 # Import model and obs dataset
-lat, lon, obs_ = import_obs('tp', 'ERA5')
-lat, lon, exp_i_ = import_rcm_i('pr', exp_i)
-lat, lon, exp_ii_ = import_rcm_ii('pr', exp_ii)
+lat, lon, obs_ = import_obs(dict_var[var][0], 'ERA5')
+lat, lon, exp_i_ = import_rcm_i(var, exp_i)
+lat, lon, exp_ii_ = import_rcm_ii(var, exp_ii)
 
 exp_i_obs = exp_i_ - obs_
 exp_ii_obs = exp_ii_ - obs_
@@ -95,45 +101,64 @@ exp_ii_exp_i = exp_ii_ - exp_i_
 fig, axes = plt.subplots(2, 3, figsize=(12, 5), subplot_kw={'projection': ccrs.PlateCarree()})
 pr_colormap=['#ffffffff','#d7f0fcff','#ade0f7ff','#86c4ebff','#60a5d6ff','#4794b3ff','#49a67cff','#55b848ff','#9ecf51ff','#ebe359ff','#f7be4aff','#f58433ff','#ed5a28ff','#de3728ff','#cc1f27ff','#b01a1fff','#911419ff']
 
+if var == 'pr':
+	legend = 'Precipitation (mm d$^-$$^1$)'
+	bmin = -10
+	bmax = 10
+	vmin = 0
+	vmax = 18
+	int = 1
+	colorc = matplotlib.colors.ListedColormap(pr_colormap)
+	colorb = cm.BrBG
+else:
+	legend = 'Air temperature (°C)'
+	bmin = -10
+	bmax = 12
+	vmin = 0
+	vmax = 40
+	int = 2
+	colorc = cm.jet
+	colorb = cm.bwr
+
 ax1 = axes[0, 0]
-plt_map1 = ax1.contourf(lon, lat, obs_, transform=ccrs.PlateCarree(), levels=np.arange(0, 18, 1), cmap=matplotlib.colors.ListedColormap(pr_colormap), extend='max') 
+plt_map1 = ax1.contourf(lon, lat, obs_, transform=ccrs.PlateCarree(), levels=np.arange(vmin, vmax, int), cmap=colorc, extend='max') 
 ax1.set_title(u'(a) ERA5 {0}'.format(dt), loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
 ax2 = axes[0, 1]
-plt_map2 = ax2.contourf(lon, lat, exp_i_, transform=ccrs.PlateCarree(), levels=np.arange(0, 18, 1), cmap=matplotlib.colors.ListedColormap(pr_colormap), extend='max') 
+plt_map2 = ax2.contourf(lon, lat, exp_i_, transform=ccrs.PlateCarree(), levels=np.arange(vmin, vmax, int), cmap=colorc, extend='max') 
 ax2.set_title(u'(b) {0} {1}'.format(exp_i, dt), loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
 ax3 = axes[0, 2] 
-plt_map3 = ax3.contourf(lon, lat, exp_ii_, transform=ccrs.PlateCarree(), levels=np.arange(0, 18, 1), cmap=matplotlib.colors.ListedColormap(pr_colormap), extend='max') 
+plt_map3 = ax3.contourf(lon, lat, exp_ii_, transform=ccrs.PlateCarree(), levels=np.arange(vmin, vmax, int), cmap=colorc, extend='max') 
 ax3.set_title(u'(c) {0} {1}'.format(exp_ii, dt), loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax3)
 
 ax4 = axes[1, 0]
-plt_map4 = ax4.contourf(lon, lat, exp_i_obs, transform=ccrs.PlateCarree(), levels=np.arange(-10, 11, 1), cmap=cm.BrBG, extend='both') 
+plt_map4 = ax4.contourf(lon, lat, exp_i_obs, transform=ccrs.PlateCarree(), levels=np.arange(bmin, bmax, int), cmap=colorb, extend='both') 
 ax4.set_title(u'(d) {0} - ERA5 {1}'.format(exp_i, dt), loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax4)
 
 ax5 = axes[1, 1]
-plt_map5 = ax5.contourf(lon, lat, exp_ii_obs, transform=ccrs.PlateCarree(), levels=np.arange(-10, 11, 1), cmap=cm.BrBG, extend='both') 
+plt_map5 = ax5.contourf(lon, lat, exp_ii_obs, transform=ccrs.PlateCarree(), levels=np.arange(bmin, bmax, int), cmap=colorb, extend='both') 
 ax5.set_title(u'(e) {0} - ERA5 {1}'.format(exp_ii, dt), loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax5)
 
 ax6 = axes[1, 2]
-plt_map6 = ax6.contourf(lon, lat, exp_ii_exp_i, transform=ccrs.PlateCarree(), levels=np.arange(-10, 11, 1), cmap=cm.BrBG, extend='both') 
+plt_map6 = ax6.contourf(lon, lat, exp_ii_exp_i, transform=ccrs.PlateCarree(), levels=np.arange(bmin, bmax, int), cmap=colorb, extend='both') 
 ax6.set_title(u'(f) {0} - {1}'.format(exp_ii, exp_i), loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax6)
 
 # Set colobar
 cbar1_ax = fig.add_axes([0.92, 0.55, 0.02, 0.35]) 
 cbar1 = fig.colorbar(plt_map1, cax=cbar1_ax, orientation='vertical')
-cbar1.set_label('Precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
+cbar1.set_label('{0}'.format(legend), fontsize=font_size, fontweight='bold')
 cbar1.ax.tick_params(labelsize=font_size)
 
 cbar2_ax = fig.add_axes([0.92, 0.1, 0.02, 0.35])  
 cbar2 = fig.colorbar(plt_map4, cax=cbar2_ax, orientation='vertical')
-cbar2.set_label('Bias of  precipitation (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
+cbar1.set_label('Bias of {0}'.format(legend), fontsize=font_size, fontweight='bold')
 cbar2.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure

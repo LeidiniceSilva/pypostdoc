@@ -143,7 +143,7 @@ cbar.ax.tick_params(labelsize=font_size)
 path_out = '{0}/figs/evaluate/rcm_urb'.format(path)
 name_out = 'pyplt_maps_diff_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-#plt.show()
+plt.show()
 exit()
 
 

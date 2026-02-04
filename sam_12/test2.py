@@ -2,8 +2,8 @@
 
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
-__date__        = "Dec 04, 2023"
-__description__ = "This script plot bias maps"
+__date__        = "Feb 02, 2026"
+__description__ = "This script plot maps"
 
 import os
 import netCDF4
@@ -19,15 +19,19 @@ from matplotlib.colors import LinearSegmentedColormap
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 var = 'p99'
-domain = 'CSAM-3'
-dt = '200001'
+dt = '197001-02'
+domain = 'SAM-12'
+latlon = [-105, -16, -57, 18]
+exp_i = 'RegCM5-ERA5_ICTP'
+exp_ii = 'RegCM5-ERA5_USP'
+
 font_size = 8
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/{0}'.format(domain)
 
-path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5'
 
-def import_obs(param, domain, dataset):
+def import_obs(param, dataset):
 
-	arq   = '{0}/postproc/evaluate/test_bin/obs/p99_{1}_{2}_day_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
+	arq   = '{0}/postproc/obs/p99_{1}_{2}_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -37,9 +41,9 @@ def import_obs(param, domain, dataset):
 	return lat, lon, mean
 
 
-def import_rcm_i(param, domain):
+def import_rcm_i(param, dataset):
 
-	arq   = '{0}/postproc/evaluate/test_bin/era5-csam-3/p99_{1}_day_{2}_lonlat.nc'.format(path, domain, dt)	
+	arq   = '{0}/postproc/rcm/p99_{1}_{2}_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -49,9 +53,9 @@ def import_rcm_i(param, domain):
 	return lat, lon, mean
 
 
-def import_rcm_ii(param, domain):
+def import_rcm_ii(param, dataset):
 
-	arq   = '{0}/postproc/evaluate/test_bin/era5-csam/p99_{1}_day_{2}_lonlat.nc'.format(path, domain, dt)	
+	arq   = '{0}/postproc/rcm/p99_{1}_{2}_{3}_lonlat.nc'.format(path, domain, dataset, dt)	
 	data  = netCDF4.Dataset(arq)
 	var   = data.variables[param][:] 
 	lat   = data.variables['lat'][:]
@@ -61,28 +65,14 @@ def import_rcm_ii(param, domain):
 	return lat, lon, mean
 
 
-# Import model and obs dataset
-lat, lon, cpc = import_obs('precip', domain, 'CPC')
-lat, lon, regcm_i = import_rcm_i('pr', domain)
-lat, lon, regcm_ii = import_rcm_ii('pr', domain)
-
-regcm_i_cpc = regcm_i - cpc
-regcm_ii_cpc = regcm_ii - cpc
-regcm_ii_regcm_i = regcm_ii - regcm_i
-
-# Plot figure   
 def configure_subplot(ax):
 
-	lon_min = np.round(np.min(lon), 1)
-	lon_max = np.round(np.max(lon), 1)
-	lat_min = np.round(np.min(lat), 1)
-	lat_max = np.round(np.max(lat), 1)
-	ax.set_extent([np.min(lon), np.max(lon), np.min(lat), np.max(lat)], crs=ccrs.PlateCarree())
-	ax.set_xticks(np.arange(lon_min,lon_max,10), crs=ccrs.PlateCarree())
-	ax.set_yticks(np.arange(lat_min,lat_max,5), crs=ccrs.PlateCarree())
+	ax.set_extent(latlon, crs=ccrs.PlateCarree())
+	ax.set_xticks(np.arange(latlon[0], latlon[1], 20), crs=ccrs.PlateCarree())
+	ax.set_yticks(np.arange(latlon[2], latlon[3], 20), crs=ccrs.PlateCarree())
 
 	for label in ax.get_xticklabels() + ax.get_yticklabels():
-		label.set_fontsize(font_size)
+		label.set_fontsize(6)
 
 	ax.xaxis.set_major_formatter(LongitudeFormatter())
 	ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -91,22 +81,31 @@ def configure_subplot(ax):
 	ax.coastlines(linewidth=0.5)
 
 
+# Import model and obs dataset
+lat, lon, obs_ = import_obs('tp', 'ERA5')
+lat, lon, exp_i_ = import_rcm_i('pr', exp_i)
+lat, lon, exp_ii_ = import_rcm_ii('pr', exp_ii)
+
+exp_i_obs = exp_i_ - obs_
+exp_ii_obs = exp_ii_ - obs_
+exp_ii_exp_i = exp_ii_ - exp_i_
+
 # Plot figure   
 fig, axes = plt.subplots(1, 3, figsize=(12, 5), subplot_kw={'projection': ccrs.PlateCarree()})
 
 ax1 = axes[0]
-plt_map1 = ax1.contourf(lon, lat, regcm_i_cpc, transform=ccrs.PlateCarree(), levels=np.arange(-100, 110, 10), cmap=cm.BrBG, extend='both') 
-ax1.set_title(u'(a) RegCM5 (old_bin) - CPC', loc='left', fontsize=font_size, fontweight='bold')
+plt_map1 = ax1.contourf(lon, lat, exp_i_obs, transform=ccrs.PlateCarree(), levels=np.arange(-100, 110, 10), cmap=cm.BrBG, extend='both') 
+ax1.set_title(u'(a) {0} - ERA5 {1}'.format(exp_i, dt), loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
 ax2 = axes[1]
-plt_map2 = ax2.contourf(lon, lat, regcm_ii_cpc, transform=ccrs.PlateCarree(), levels=np.arange(-100, 110, 10), cmap=cm.BrBG, extend='both') 
-ax2.set_title(u'(b) RegCM5 (new_bin) - CPC', loc='left', fontsize=font_size, fontweight='bold')
+plt_map2 = ax2.contourf(lon, lat, exp_ii_obs, transform=ccrs.PlateCarree(), levels=np.arange(-100, 110, 10), cmap=cm.BrBG, extend='both') 
+ax2.set_title(u'(b) {0} - ERA5 {1}'.format(exp_ii, dt), loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
 ax3 = axes[2] 
-plt_map3 = ax3.contourf(lon, lat, regcm_ii_regcm_i, transform=ccrs.PlateCarree(), levels=np.arange(-100, 110, 10), cmap=cm.BrBG, extend='both') 
-ax3.set_title(u'(c) new_bin - old_bin', loc='left', fontsize=font_size, fontweight='bold')
+plt_map3 = ax3.contourf(lon, lat, exp_ii_exp_i, transform=ccrs.PlateCarree(), levels=np.arange(-100, 110, 10), cmap=cm.BrBG, extend='both') 
+ax3.set_title(u'(c) {0} - {1}'.format(exp_ii, exp_i), loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax3)
 
 # Set colobar
@@ -116,8 +115,9 @@ cbar1.set_label('p99 (mm d$^-$$^1$)', fontsize=font_size, fontweight='bold')
 cbar1.ax.tick_params(labelsize=font_size)
 
 # Path out to save figure
-path_out = '{0}/postproc/evaluate/test_bin/figs'.format(path)
-name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
+path_out = '{0}/figs'.format(path)
+name_out = 'pyplt_maps_clim_bias_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
+exit()
 exit()
