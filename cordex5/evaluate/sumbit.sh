@@ -20,8 +20,12 @@ set -eo pipefail
 echo
 echo "--------------- INIT PLOT ----------------"
 
-python3 plot_maps_trend_v3.py --var pr --domain AUS-12 --idt 1970 --fdt 2023
-#python3 plot_maps_trend_v3.py --var pr --domain CSAM-3 --idt 2000 --fdt 2009
+#python3 plot_maps_trend_v3.py --var pr --domain AUS-12 --idt 1970 --fdt 2023
+
+python3 plot_maps_trend_v3.py --var pr --domain CSAM-3 --idt 2000 --fdt 2009
+python3 plot_maps_trend_v3.py --var tas --domain CSAM-3 --idt 2000 --fdt 2009
+python3 plot_maps_trend_v3.py --var tasmax --domain CSAM-3 --idt 2000 --fdt 2009
+python3 plot_maps_trend_v3.py --var tasmin --domain CSAM-3 --idt 2000 --fdt 2009
 
 echo
 echo "--------------- THE END PLOT ----------------"
