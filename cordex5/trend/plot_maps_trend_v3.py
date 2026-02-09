@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Script to plot trend maps for CRU, ERA5, and RegCM5 data.
-Handles RegCM5 rotated pole coordinate system correctly.
-"""
 
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Jan 25, 2026"
-__description__ = "This script plot trend maps with rotated pole support"
+__description__ = "This script plot trend maps"
 
 import os
 import numpy as np
@@ -35,19 +31,22 @@ fdt = args.fdt
 dt = f'{idt}-{fdt}'
 dataset = f'{domain}_RegCM5'
 font_size = 8
-#path = '/leonardo_scratch/large/userexternal/fraffael/plots/trend/inputs'
-path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend'
+
+# Change the path
+path = '/leonardo_scratch/large/userexternal/fraffael/plots/trend/inputs'
 
 # Domain extent
-if domain == 'AUS-12':
+if domain == 'AUS-12': # AUS-12
     DOMAIN_EXTENT = [110, 156, -45, -9]
-else:  
+else domain == 'SAM-12': # CSAM-12
+    DOMAIN_EXTENT = [-105, 16, -57, -18]
+else:  # CSAM-3
     DOMAIN_EXTENT = [-79, -35, -37, -12]
 
-# Variable mapping
+# Variable name 
 VAR_MAP = {
     'pr': {'cru': 'pre', 'era5': 'tp', 'units': 'mm yr⁻¹'},
-    'tas': {'cru': 'tmp', 'era5': 'tas', 'units': '°C yr⁻¹'},
+    'tas': {'cru': 'tmp', 'era5': 't2m', 'units': '°C yr⁻¹'},
     'tasmax': {'cru': 'tmx', 'era5': 'tasmax', 'units': '°C yr⁻¹'},
     'tasmin': {'cru': 'tmn', 'era5': 'tasmin', 'units': '°C yr⁻¹'}
 }
@@ -56,7 +55,7 @@ VAR_MAP = {
 PLOT_CONFIG = {
     'pr': {
         'title': 'Precipitation trend (mm yr⁻¹)',
-        'levels': np.arange(-60, 62, 2),
+        'levels': np.arange(-6, 6.2, 0.2),
         'cmap': cm.BrBG,
         'sig_label': 'Dots: p < 0.05'
     },
@@ -82,14 +81,15 @@ PLOT_CONFIG = {
 
 
 def import_regular_dataset(param, dataset):
-    """Import CRU or ERA5 data (regular lat/lon grid)."""
+    """Import CRU or ERA5 data: pr_CRU_year_1970-2023.nc"""
+
     if dataset == 'CRU':
         var_name = VAR_MAP[param]['cru']
         lat_name, lon_name = 'lat', 'lon'
     elif dataset == 'ERA5':
         var_name = VAR_MAP[param]['era5']
         lat_name, lon_name = 'latitude', 'longitude'
-    
+
     filename = f"{path}/{var_name}_{dataset}_year_{dt}.nc"
     print(f"Reading {dataset}: {filename}")
     
@@ -110,7 +110,7 @@ def import_regular_dataset(param, dataset):
 
 
 def import_regcm_dataset(param):
-    """Import RegCM5 data with rotated pole coordinates."""
+    """Import RegCM5 data: pr_RegCM5_year_1970-2023.nc"""
     filename = f"{path}/{param}_{dataset}_year_{dt}.nc"
     print(f"Reading RegCM5: {filename}")
     
@@ -121,13 +121,13 @@ def import_regcm_dataset(param):
         if 'lat' in nc.variables and 'lon' in nc.variables:
             lat = nc.variables['lat'][:]
             lon = nc.variables['lon'][:]
-            print("  Using 2D lat/lon coordinates")
+            print("  2D lat/lon coordinates")
         elif 'rlat' in nc.variables and 'rlon' in nc.variables:
             # Rotated coordinates
             rlat = nc.variables['rlat'][:]
             rlon = nc.variables['rlon'][:]
             lon, lat = np.meshgrid(rlon, rlat)
-            print("  Using rotated coordinates (rlat/rlon)")
+            print("  Rotated coordinates (rlat/rlon)")
         else:
             # Last resort: try common names
             lat_names = ['lat', 'latitude', 'y', 'nav_lat', 'XLAT']
@@ -175,10 +175,10 @@ def convert_rotated_to_regular(lon_rot, lat_rot):
     rot_pole_lon = 321.38    # South pole longitude
     
     # Convert to north pole convention for cartopy
-    north_pole_lat = -rot_pole_lat      # 60.31°N
+    north_pole_lat = -rot_pole_lat         # 60.31°N
     north_pole_lon = rot_pole_lon - 180.0  # 141.38°E
     
-    print(f"  Converting rotated pole: North pole at ({north_pole_lat:.2f}°N, {north_pole_lon:.2f}°E)")
+    print(f"  Converting ({north_pole_lat:.2f}°N, {north_pole_lon:.2f}°E)")
     
     # Create coordinate systems
     rotated_crs = ccrs.RotatedPole(pole_latitude=north_pole_lat,
@@ -212,7 +212,7 @@ def calculate_trend(data, alpha=0.05, per_decade=False):
             y = data[:, i, j]
             valid = np.isfinite(y)
             
-            if np.sum(valid) >= 10:  # Minimum points for trend
+            if np.sum(valid) >= 10:  
                 t_valid = t[valid]
                 y_valid = y[valid]
                 
@@ -268,7 +268,7 @@ def configure_plot(ax):
 
 
 def main():
-    """Main processing function."""
+    """Processing function."""
     print(f"Processing variable: {var}")
     print(f"Time period: {dt}")
     print(f"Domain: {domain}")
@@ -297,7 +297,7 @@ def main():
                 (lat_regcm >= DOMAIN_EXTENT[2]) & (lat_regcm <= DOMAIN_EXTENT[3]))
         regcm_data = np.where(mask[None, :, :], regcm_data, np.nan)
     else:
-        print("  CSAM-3 domain uses regular lat/lon coordinates")
+        print("  CSAM-3 and SAM-12 domain uses regular lat/lon coordinates")
     
     # Calculate trends
     print("\n3. Calculating trends...")
@@ -321,7 +321,6 @@ def main():
     ]
     
     for idx, (ax, (name, lon, lat, trend, sig)) in enumerate(zip(axes, datasets)):
-        # Plot trend
         if name == 'RegCM5':
             # Use pcolormesh for irregular grids
             im = ax.pcolormesh(lon, lat, trend,
@@ -348,7 +347,7 @@ def main():
                        hatches=['...'], 
                        colors='none', 
                        transform=ccrs.PlateCarree(),
-                       alpha=0.0)  # Set alpha to 0 to make fill transparent
+                       alpha=0.0) 
         
         # Configure plot
         configure_plot(ax)
@@ -365,7 +364,7 @@ def main():
                    fontsize=font_size+2, fontweight='bold')
     cbar.ax.tick_params(labelsize=font_size)
     
-    # Save figure
+    # Save figure (Change path)
     path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/trend'
     os.makedirs(path_out, exist_ok=True)
     output_file = f'{path_out}/pyplt_maps_trend_{var}_{domain}_RegCM5_{dt}.png'
@@ -376,3 +375,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
