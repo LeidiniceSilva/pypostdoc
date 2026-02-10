@@ -107,8 +107,8 @@ regions = ['AMZ', 'LPB', 'AND', 'NEB']
 obs_profiles = {f'obs_{region.lower()}': import_obs(dict_var[var][0], obs, region) for region in regions}
 exp_i_profiles = {f'exp_i_{region.lower()}': import_rcm(var, exp_i, region) for region in regions}
 exp_ii_profiles = {f'exp_ii_{region.lower()}': import_rcm(var, exp_ii, region) for region in regions}
-exp_iii_profiles = {f'exp_iii_{region.lower()}': import_rcm(var, exp_ii, region) for region in regions}
-exp_iv_profiles = {f'exp_iv_{region.lower()}': import_rcm(var, exp_ii, region) for region in regions}
+exp_iii_profiles = {f'exp_iii_{region.lower()}': import_rcm(var, exp_iii, region) for region in regions}
+exp_iv_profiles = {f'exp_iv_{region.lower()}': import_rcm(var, exp_iv, region) for region in regions}
 
 # Plot figure  
 fig, axes = plt.subplots(2, 2, figsize=(12, 12), sharex=True, sharey=True)
