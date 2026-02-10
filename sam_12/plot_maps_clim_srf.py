@@ -7,6 +7,7 @@ __description__ = "This script plot clim maps"
 
 import os
 import netCDF4
+import argparse
 import numpy as np
 import matplotlib.colors
 import matplotlib.cm as cm
@@ -17,14 +18,22 @@ import cartopy.feature as cfeat
 from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-var = 'tas'
+parser = argparse.ArgumentParser(description='Plot trend maps')
+parser.add_argument('--var', required=True, help='Variable name')
+parser.add_argument('--rcm_ii', required=True, help='GCM driven')
+parser.add_argument('--gcm_iii', required=True, help='GCM name')
+args = parser.parse_args()
+
+# Configuration
+var = args.var
+rcm_i = 'RegCM5-ERA5_ICTP' 
+rcm_ii = args.rcm_ii # RegCM5-ECEarth_ICTP RegCM5-MPI_ICTP RegCM5-Nor_USP
+gcm_iii = args.gcm_iii # EC-Earth3-Veg MPI-ESM1-2-HR NorESM2-MM
+
 obs = 'ERA5'
 dt = '1971-1972'
 domain = 'SAM-12'
 latlon = [-105, -16, -57, 18]
-
-exp_i = 'RegCM5-ERA5_ICTP'
-exp_ii = 'RegCM5-Nor_USP'
 
 dict_var = {'pr': ['tp'],
 'tas': ['t2m']}
@@ -73,6 +82,18 @@ def import_rcm_ii(param, dataset, season):
 	return lat, lon, mean
 
 
+def import_gcm(param, dataset, season):
+
+	arq   = '{0}/postproc/gcm/{1}_{2}_{3}_{4}_{5}_lonlat.nc'.format(path, param, domain, dataset, season, dt)	
+	data  = netCDF4.Dataset(arq)
+	var   = data.variables[param][:] 
+	lat   = data.variables['lat'][:]
+	lon   = data.variables['lon'][:]
+	mean = var[:][0,:,:]
+
+	return lat, lon, mean
+
+
 def configure_subplot(ax):
 
 	ax.set_extent(latlon, crs=ccrs.PlateCarree())
@@ -95,18 +116,23 @@ lat, lon, obs_mam = import_obs(dict_var[var][0], obs, 'MAM')
 lat, lon, obs_jja = import_obs(dict_var[var][0], obs, 'JJA')
 lat, lon, obs_son = import_obs(dict_var[var][0], obs, 'SON')
 
-lat, lon, exp_i_djf = import_rcm_i(var, exp_i, 'DJF')
-lat, lon, exp_i_mam = import_rcm_i(var, exp_i, 'MAM')
-lat, lon, exp_i_jja = import_rcm_i(var, exp_i, 'JJA')
-lat, lon, exp_i_son = import_rcm_i(var, exp_i, 'SON')
+lat, lon, rcm_i_djf = import_rcm_i(var, rcm_i, 'DJF')
+lat, lon, rcm_i_mam = import_rcm_i(var, rcm_i, 'MAM')
+lat, lon, rcm_i_jja = import_rcm_i(var, rcm_i, 'JJA')
+lat, lon, rcm_i_son = import_rcm_i(var, rcm_i, 'SON')
 
-lat, lon, exp_ii_djf = import_rcm_ii(var, exp_ii, 'DJF')
-lat, lon, exp_ii_mam = import_rcm_ii(var, exp_ii, 'MAM')
-lat, lon, exp_ii_jja = import_rcm_ii(var, exp_ii, 'JJA')
-lat, lon, exp_ii_son = import_rcm_ii(var, exp_ii, 'SON')
+lat, lon, rcm_ii_djf = import_rcm_ii(var, rcm_ii, 'DJF')
+lat, lon, rcm_ii_mam = import_rcm_ii(var, rcm_ii, 'MAM')
+lat, lon, rcm_ii_jja = import_rcm_ii(var, rcm_ii, 'JJA')
+lat, lon, rcm_ii_son = import_rcm_ii(var, rcm_ii, 'SON')
+
+lat, lon, gcm_iii_djf = import_gcm(var, gcm_iii, 'DJF')
+lat, lon, gcm_iii_mam = import_gcm(var, gcm_iii, 'MAM')
+lat, lon, gcm_iii_jja = import_gcm(var, gcm_iii, 'JJA')
+lat, lon, gcm_iii_son = import_gcm(var, gcm_iii, 'SON')
 
 # Plot figure
-fig, axes = plt.subplots(3, 4, figsize=(12, 8), subplot_kw={'projection': ccrs.PlateCarree()})
+fig, axes = plt.subplots(4, 4, figsize=(12, 10), subplot_kw={'projection': ccrs.PlateCarree()})
 axes = axes.flatten()
 font_size = 6 
 
@@ -120,14 +146,18 @@ plot_data = {'Plot 1': {'data': obs_djf, 'title': '(a) {0} DJF'.format(obs)},
 'Plot 2': {'data': obs_mam, 'title': '(b) {0} MAM'.format(obs)},
 'Plot 3': {'data': obs_jja, 'title': '(c) {0} JJA'.format(obs)},
 'Plot 4': {'data': obs_son, 'title': '(d) {0} SON'.format(obs)},
-'Plot 5': {'data': exp_i_djf, 'title': '(e) {0} DJF'.format(exp_i)},
-'Plot 6': {'data': exp_i_mam, 'title': '(f) {0} MAM'.format(exp_i)},
-'Plot 7': {'data': exp_i_jja, 'title': '(g) {0} JJA'.format(exp_i)},
-'Plot 8': {'data': exp_i_son, 'title': '(h) {0} SON'.format(exp_i)},
-'Plot 9': {'data': exp_ii_djf, 'title': '(i) {0} DJF'.format(exp_ii)},
-'Plot 10': {'data': exp_ii_mam, 'title': '(j) {0} MAM'.format(exp_ii)},
-'Plot 11': {'data': exp_ii_jja, 'title': '(k) {0} JJA'.format(exp_ii)},
-'Plot 12': {'data': exp_ii_son, 'title': '(l) {0} SON'.format(exp_ii)}}
+'Plot 5': {'data': rcm_i_djf, 'title': '(e) {0} DJF'.format(rcm_i)},
+'Plot 6': {'data': rcm_i_mam, 'title': '(f) {0} MAM'.format(rcm_i)},
+'Plot 7': {'data': rcm_i_jja, 'title': '(g) {0} JJA'.format(rcm_i)},
+'Plot 8': {'data': rcm_i_son, 'title': '(h) {0} SON'.format(rcm_i)},
+'Plot 9': {'data': rcm_ii_djf, 'title': '(i) {0} DJF'.format(rcm_ii)},
+'Plot 10': {'data': rcm_ii_mam, 'title': '(j) {0} MAM'.format(rcm_ii)},
+'Plot 11': {'data': rcm_ii_jja, 'title': '(k) {0} JJA'.format(rcm_ii)},
+'Plot 12': {'data': rcm_ii_son, 'title': '(l) {0} SON'.format(rcm_ii)},
+'Plot 13': {'data': gcm_iii_djf, 'title': '(m) {0} DJF'.format(gcm_iii)},
+'Plot 14': {'data': gcm_iii_mam, 'title': '(n) {0} MAM'.format(gcm_iii)},
+'Plot 15': {'data': gcm_iii_jja, 'title': '(o) {0} JJA'.format(gcm_iii)},
+'Plot 16': {'data': gcm_iii_son, 'title': '(p) {0} SON'.format(gcm_iii)}}
 
 for ax, (key, value) in zip(axes, plot_data.items()):
 	data = value['data']
@@ -144,9 +174,9 @@ cbar.ax.tick_params(labelsize=font_size)
 	
 # Path out to save figure
 path_out = '{0}/figs'.format(path)
-name_out = 'pyplt_maps_clim_{0}_{1}_RegCM5_{2}.png'.format(var, domain, dt)
+name_out = 'pyplt_maps_clim_{0}_{1}_{2}_{3}.png'.format(var, domain, rcm_ii, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
-plt.show()
+#plt.show()
 exit() 
 
 

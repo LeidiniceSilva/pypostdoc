@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Script to plot trend maps for CRU, ERA5, and RegCM5 data.
-Handles RegCM5 rotated pole coordinate system for AUS domain only.
-"""
 
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Jan 25, 2026"
-__description__ = "This script plot trend maps with rotated pole support for AUS domain"
+__description__ = "This script plot trend maps"
 
 import os
 import numpy as np
@@ -35,21 +31,22 @@ fdt = args.fdt
 dt = f'{idt}-{fdt}'
 dataset = f'{domain}_RegCM5'
 font_size = 8
-path = '/leonardo_scratch/large/userexternal/fraffael/plots/trend/inputs'
-#path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend'
+
+# Change the path
+path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend'
 
 # Domain extent
-if domain == 'AUS-12':
+if domain == 'AUS-12': 
     DOMAIN_EXTENT = [110, 156, -45, -9]
-elif domain == 'CSAM-3':
-    DOMAIN_EXTENT = [-79, -35, -35, -10]
-else:
-    raise ValueError(f"Unknown domain: {domain}")
+elif domain == 'SAM-12': 
+    DOMAIN_EXTENT = [-105, 16, -57, -18]
+else:  # CSAM-3
+    DOMAIN_EXTENT = [-79, -35, -37, -12]
 
-# Variable mapping
+# Variable name 
 VAR_MAP = {
     'pr': {'cru': 'pre', 'era5': 'tp', 'units': 'mm yr⁻¹'},
-    'tas': {'cru': 'tmp', 'era5': 't2m', 'units': '°C yr⁻¹'},
+    'tas': {'cru': 'tmp', 'era5': 'tas', 'units': '°C yr⁻¹'},
     'tasmax': {'cru': 'tmx', 'era5': 'tasmax', 'units': '°C yr⁻¹'},
     'tasmin': {'cru': 'tmn', 'era5': 'tasmin', 'units': '°C yr⁻¹'}
 }
@@ -58,7 +55,7 @@ VAR_MAP = {
 PLOT_CONFIG = {
     'pr': {
         'title': 'Precipitation trend (mm yr⁻¹)',
-        'levels': np.arange(-6, 6.2, 0.2),
+        'levels': np.arange(-60, 62, 2),
         'cmap': cm.BrBG,
         'sig_label': 'Dots: p < 0.05'
     },
@@ -84,14 +81,15 @@ PLOT_CONFIG = {
 
 
 def import_regular_dataset(param, dataset):
-    """Import CRU or ERA5 data (regular lat/lon grid)."""
+    """Import CRU or ERA5 data: pr_CRU_year_1970-2023.nc"""
+
     if dataset == 'CRU':
         var_name = VAR_MAP[param]['cru']
         lat_name, lon_name = 'lat', 'lon'
     elif dataset == 'ERA5':
         var_name = VAR_MAP[param]['era5']
         lat_name, lon_name = 'latitude', 'longitude'
-    
+
     filename = f"{path}/{var_name}_{dataset}_year_{dt}.nc"
     print(f"Reading {dataset}: {filename}")
     
@@ -112,7 +110,7 @@ def import_regular_dataset(param, dataset):
 
 
 def import_regcm_dataset(param):
-    """Import RegCM5 data with rotated pole coordinates."""
+    """Import RegCM5 data: pr_CSAM-3_RegCM5_year_1970-2023.nc"""
     filename = f"{path}/{param}_{dataset}_year_{dt}.nc"
     print(f"Reading RegCM5: {filename}")
     
@@ -123,13 +121,13 @@ def import_regcm_dataset(param):
         if 'lat' in nc.variables and 'lon' in nc.variables:
             lat = nc.variables['lat'][:]
             lon = nc.variables['lon'][:]
-            print("  Using 2D lat/lon coordinates")
+            print("  2D lat/lon coordinates")
         elif 'rlat' in nc.variables and 'rlon' in nc.variables:
             # Rotated coordinates
             rlat = nc.variables['rlat'][:]
             rlon = nc.variables['rlon'][:]
             lon, lat = np.meshgrid(rlon, rlat)
-            print("  Using rotated coordinates (rlat/rlon)")
+            print("  Rotated coordinates (rlat/rlon)")
         else:
             # Last resort: try common names
             lat_names = ['lat', 'latitude', 'y', 'nav_lat', 'XLAT']
@@ -156,10 +154,13 @@ def import_regcm_dataset(param):
         print(f"  Data shape: {data.shape}")
         print(f"  Lon shape: {lon.shape}, range: [{lon.min():.1f}, {lon.max():.1f}]")
         print(f"  Lat shape: {lat.shape}, range: [{lat.min():.1f}, {lat.max():.1f}]")
-        
+
         # Handle longitude wrapping if needed
-        if lon.min() < 0:
-            lon = lon % 360
+        if domain == 'AUS-12':
+            if lon.min() < 0:
+               lon = lon % 360
+        else:
+            'Not needed'
         
         return lat, lon, data
 
@@ -167,17 +168,17 @@ def import_regcm_dataset(param):
 def convert_rotated_to_regular(lon_rot, lat_rot):
     """
     Convert rotated pole coordinates to regular lat/lon.
-    Based on RegCM5's rotated pole at (60.31°S, 321.38°E) for AUS domain.
+    Based on RegCM5's rotated pole at (60.31°S, 321.38°E).
     """
-    # Rotated pole parameters for AUS-12 domain
+    # Rotated pole parameters from your file
     rot_pole_lat = -60.31    # South pole latitude
     rot_pole_lon = 321.38    # South pole longitude
     
     # Convert to north pole convention for cartopy
-    north_pole_lat = -rot_pole_lat      # 60.31°N
+    north_pole_lat = -rot_pole_lat         # 60.31°N
     north_pole_lon = rot_pole_lon - 180.0  # 141.38°E
     
-    print(f"  Converting rotated pole: North pole at ({north_pole_lat:.2f}°N, {north_pole_lon:.2f}°E)")
+    print(f"  Converting ({north_pole_lat:.2f}°N, {north_pole_lon:.2f}°E)")
     
     # Create coordinate systems
     rotated_crs = ccrs.RotatedPole(pole_latitude=north_pole_lat,
@@ -211,7 +212,7 @@ def calculate_trend(data, alpha=0.05, per_decade=False):
             y = data[:, i, j]
             valid = np.isfinite(y)
             
-            if np.sum(valid) >= 10:  # Minimum points for trend
+            if np.sum(valid) >= 10:  
                 t_valid = t[valid]
                 y_valid = y[valid]
                 
@@ -248,15 +249,10 @@ def configure_plot(ax):
     ax.set_extent(DOMAIN_EXTENT, crs=ccrs.PlateCarree())
     
     # Set gridlines
-    if domain == 'AUS-12':
-        x_ticks = np.arange(110, 157, 10)
-        y_ticks = np.arange(-45, -8, 5)
-    else:  # CSAM-3
-        x_ticks = np.arange(-80, -34, 10)
-        y_ticks = np.arange(-35, -9, 5)
-    
-    ax.set_xticks(x_ticks, crs=ccrs.PlateCarree())
-    ax.set_yticks(y_ticks, crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(DOMAIN_EXTENT[0], DOMAIN_EXTENT[1]+1, 10), 
+                  crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(DOMAIN_EXTENT[2], DOMAIN_EXTENT[3]+1, 5), 
+                  crs=ccrs.PlateCarree())
     
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -272,7 +268,7 @@ def configure_plot(ax):
 
 
 def main():
-    """Main processing function."""
+    """Processing function."""
     print(f"Processing variable: {var}")
     print(f"Time period: {dt}")
     print(f"Domain: {domain}")
@@ -284,33 +280,24 @@ def main():
     lat_era5, lon_era5, era5_data = import_regular_dataset(var, 'ERA5')
     lat_regcm, lon_regcm, regcm_data = import_regcm_dataset(var)
     
-    # Process RegCM coordinates based on domain
+    # Convert RegCM coordinates if needed
     print("\n2. Processing RegCM coordinates...")
     
     if domain == 'AUS-12':
-        # Convert rotated coordinates for AUS domain
-        print("  Converting rotated coordinates to regular lat/lon for AUS domain...")
-        lon_regcm, lat_regcm = convert_rotated_to_regular(lon_regcm, lat_regcm)
-        
-        # Adjust longitude to match domain extent [110, 156]
-        # Convert from 0-360 to domain-specific range
-        lon_regcm = np.where(lon_regcm > 180, lon_regcm - 360, lon_regcm)
+	# Check if coordinates are in rotated system (large negative/positive values)
+        if (lon_regcm.min() < -100 or lon_regcm.max() > 300 or 
+        lat_regcm.min() < -100 or lat_regcm.max() > 100):
+            print("  Detected rotated coordinates, converting to regular lat/lon...")
+            lon_regcm, lat_regcm = convert_rotated_to_regular(lon_regcm, lat_regcm)
+        else:
+            print("  Regular coordinates detected")
+    
+	# Mask data outside Australia domain
+        mask = ((lon_regcm >= DOMAIN_EXTENT[0]) & (lon_regcm <= DOMAIN_EXTENT[1]) &
+                (lat_regcm >= DOMAIN_EXTENT[2]) & (lat_regcm <= DOMAIN_EXTENT[3]))
+        regcm_data = np.where(mask[None, :, :], regcm_data, np.nan)
     else:
-        # CSAM-3: Coordinates are already regular lat/lon
-        print("  CSAM domain uses regular lat/lon coordinates (no conversion needed)")
-        
-        # Adjust longitude to [-180, 180] if needed
-        if lon_regcm.min() > 180:
-            lon_regcm = np.where(lon_regcm > 180, lon_regcm - 360, lon_regcm)
-    
-    print(f"  Final coordinates:")
-    print(f"    Lon range: [{lon_regcm.min():.2f}, {lon_regcm.max():.2f}]")
-    print(f"    Lat range: [{lat_regcm.min():.2f}, {lat_regcm.max():.2f}]")
-    
-    # Mask data outside domain
-    mask = ((lon_regcm >= DOMAIN_EXTENT[0]) & (lon_regcm <= DOMAIN_EXTENT[1]) &
-            (lat_regcm >= DOMAIN_EXTENT[2]) & (lat_regcm <= DOMAIN_EXTENT[3]))
-    regcm_data = np.where(mask[None, :, :], regcm_data, np.nan)
+        print("  CSAM-3 and SAM-12 domain uses regular lat/lon coordinates")
     
     # Calculate trends
     print("\n3. Calculating trends...")
@@ -334,22 +321,22 @@ def main():
     ]
     
     for idx, (ax, (name, lon, lat, trend, sig)) in enumerate(zip(axes, datasets)):
-        # Plot trend - always use pcolormesh for RegCM5 due to curvilinear grid
         if name == 'RegCM5':
+            # Use pcolormesh for irregular grids
             im = ax.pcolormesh(lon, lat, trend,
                               cmap=PLOT_CONFIG[var]['cmap'],
                               vmin=PLOT_CONFIG[var]['levels'][0],
                               vmax=PLOT_CONFIG[var]['levels'][-1],
                               transform=ccrs.PlateCarree())
         else:
-            # Use contourf for regular grids (CRU and ERA5)
+            # Use contourf for regular grids
             im = ax.contourf(lon, lat, trend,
                             levels=PLOT_CONFIG[var]['levels'],
                             cmap=PLOT_CONFIG[var]['cmap'],
                             extend='both',
                             transform=ccrs.PlateCarree())
         
-        # Plot significance using contour hatching
+        # Plot significance dots
         if np.any(sig):
             # Create a binary mask for significant points
             sig_binary = np.where(sig, 1.0, 0.0)
@@ -360,7 +347,7 @@ def main():
                        hatches=['...'], 
                        colors='none', 
                        transform=ccrs.PlateCarree(),
-                       alpha=0.0)  # Set alpha to 0 to make fill transparent
+                       alpha=0.0) 
         
         # Configure plot
         configure_plot(ax)
@@ -377,14 +364,15 @@ def main():
                    fontsize=font_size+2, fontweight='bold')
     cbar.ax.tick_params(labelsize=font_size)
     
-    # Save figure
+    # Save figure (Change path)
     path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/trend'
     os.makedirs(path_out, exist_ok=True)
     output_file = f'{path_out}/pyplt_maps_trend_{var}_{domain}_RegCM5_{dt}.png'
-    print(f"\n5. Saving figure: {output_file}")
+    print(f"\n4. Saving figure: {output_file}")
     plt.savefig(output_file, dpi=400, bbox_inches='tight')
     print("Done!")
     plt.show()
 
 if __name__ == '__main__':
     main()
+

@@ -20,10 +20,23 @@ set -eo pipefail
 echo
 echo "--------------- INIT PLOT ----------------"
 
-python3 plot_maps_trend_v2.py --var pr --domain CSAM-3 --idt 2000 --fdt 2009
-python3 plot_maps_trend_v2.py --var tas --domain CSAM-3 --idt 2000 --fdt 2009
-python3 plot_maps_trend_v2.py --var tasmax --domain CSAM-3 --idt 2000 --fdt 2009
-python3 plot_maps_trend_v2.py --var tasmin --domain CSAM-3 --idt 2000 --fdt 2009
+VAR_LIST=("pr" "tas")
+
+RCM_LIST=("RegCM5-ECEarth_ICTP" "RegCM5-MPI_ICTP" "RegCM5-Nor_USP")
+GCM_LIST=("EC-Earth3-Veg" "MPI-ESM1-2-HR" "NorESM2-MM")
+
+for i in "${!RCM_LIST[@]}"; do
+    RCM=${RCM_LIST[$i]}
+    GCM=${GCM_LIST[$i]}
+
+    for VAR in "${VAR_LIST[@]}"; do
+        echo "Running VAR=${VAR} RCM=${RCM} GCM=${GCM}"
+
+        python3 plot_maps_clim_srf.py --var "${VAR}" --rcm_ii "${RCM}" --gcm_iii "${GCM}"
+        python3 plot_maps_bias_srf.py --var "${VAR}" --rcm_ii "${RCM}" --gcm_iii "${GCM}"
+
+    done
+done
 
 echo
 echo "--------------- THE END PLOT ----------------"
