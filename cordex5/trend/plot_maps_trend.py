@@ -35,13 +35,13 @@ path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/tren
 
 # Domain extent
 if domain == 'AUS-12': 
-    DOMAIN_EXTENT = [110, 156, -45, -9]
+    DOMAIN_EXTENT = [110, 180, -48, 4]
 elif domain == 'EUR-12': 
     DOMAIN_EXTENT = [-42, 61, 20, 70]
-elif domain == 'SAM-12': 
-    DOMAIN_EXTENT = [-105, 16, -57, -18]
-else:  
-    DOMAIN_EXTENT = [-79, -35, -37, -12]
+elif domain == 'NAM-12': 
+    DOMAIN_EXTENT = [-171, -22, 11, 75]
+else: 
+    DOMAIN_EXTENT = [-105, -20, -57, 18]
 
 # Variable name 
 VAR_MAP = {
@@ -80,10 +80,17 @@ VAR_MAP = {
 }
 
 # Plot configuration
+PR_LEVELS = { 
+    'AUS-12': np.arange(-20,  22, 2),
+    'EUR-12': np.arange(-10,  11, 1),
+    'NAM-12': np.arange(-10,  11, 1),
+    'SAM-12': np.arange(-20,  22, 2)
+}
+
 PLOT_CONFIG = {
     'pr': {
         'title': 'Precipitation trend 1970-2014 (mm yr⁻¹) ',
-        'levels': np.arange(-20, 22, 2),
+        'levels': PR_LEVELS,
         'cmap': cm.BrBG,
         'sig_label': 'Dots: p < 0.05'
     },
@@ -113,36 +120,50 @@ def import_regular_dataset(param, dataset):
     if dataset == 'CRU':
         var_name = VAR_MAP[param]['cru']
         lat_name, lon_name = 'lat', 'lon'
+        lon_is_0360 = False
     elif dataset == 'ERA5':
         var_name = VAR_MAP[param]['era5']
         lat_name, lon_name = 'latitude', 'longitude'
+        lon_is_0360 = True
     elif dataset == 'EC-Earth3-Veg':
         var_name = VAR_MAP[param]['EC-Earth3-Veg']
         lat_name, lon_name = 'lat', 'lon'
+        lon_is_0360 = True
     elif dataset == 'MPI-ESM1-2-HR':
         var_name = VAR_MAP[param]['MPI-ESM1-2-HR']
         lat_name, lon_name = 'lat', 'lon'
+        lon_is_0360 = True
     elif dataset == 'NorESM2-MM':
         var_name = VAR_MAP[param]['NorESM2-MM']
         lat_name, lon_name = 'lat', 'lon'
+        lon_is_0360 = True
     else:
         raise ValueError(f"Unknown dataset: {dataset}")
 
     filename = f"{path}/global/{var_name}_{dataset}_year_{dt}.nc"
     print(f"Reading {dataset}: {filename}")
-    
+
     with netCDF4.Dataset(filename) as nc:
         data = nc.variables[var_name][:]
         lat = nc.variables[lat_name][:]
         lon = nc.variables[lon_name][:]
-        
-        if len(lat.shape) == 1 and len(lon.shape) == 1:
+
+        # Fix longitude if needed 
+        if lon_is_0360 and lon.max() > 180:
+            lon = ((lon + 180) % 360) - 180
+            idx = np.argsort(lon)
+            lon = lon[idx]
+
+            # Assume data is (..., lat, lon)
+            data = data[..., idx]
+
+        if lat.ndim == 1 and lon.ndim == 1:
             lon, lat = np.meshgrid(lon, lat)
-        
+
         print(f"  Data shape: {data.shape}")
         print(f"  Lon range: [{lon.min():.1f}, {lon.max():.1f}]")
         print(f"  Lat range: [{lat.min():.1f}, {lat.max():.1f}]")
-        
+
     return lat, lon, data
 
 
@@ -158,6 +179,10 @@ def import_regcm_dataset(param, driven):
         if 'lat' in nc.variables and 'lon' in nc.variables:
             lat = nc.variables['lat'][:]
             lon = nc.variables['lon'][:]
+            print("  2D lat/lon coordinates")
+        elif 'xlat' in nc.variables and 'xlon' in nc.variables:
+            lat = nc.variables['xlat'][:]
+            lon = nc.variables['xlon'][:]
             print("  2D lat/lon coordinates")
         elif 'rlat' in nc.variables and 'rlon' in nc.variables:
             rlat = nc.variables['rlat'][:]
@@ -248,7 +273,7 @@ def calculate_trend(data, alpha=0.05, per_decade=False):
                 A = np.vstack([t_valid, np.ones_like(t_valid)]).T
                 slope, intercept = np.linalg.lstsq(A, y_valid, rcond=None)[0]
                 
-                # Calculate trend (per year)
+                # Calculate trend 
                 trend_val = slope * 10.0 if per_decade else slope
                 trend[i, j] = trend_val
                 
@@ -275,10 +300,8 @@ def calculate_trend(data, alpha=0.05, per_decade=False):
 def configure_plot(ax):
 
     ax.set_extent(DOMAIN_EXTENT, crs=ccrs.PlateCarree())
-    ax.set_xticks(np.arange(DOMAIN_EXTENT[0], DOMAIN_EXTENT[1]+1, 20), 
-                  crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(DOMAIN_EXTENT[2], DOMAIN_EXTENT[3]+1, 10), 
-                  crs=ccrs.PlateCarree())
+    ax.set_xticks(np.arange(DOMAIN_EXTENT[0], DOMAIN_EXTENT[1]+1, 20), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(DOMAIN_EXTENT[2], DOMAIN_EXTENT[3]+1, 10), crs=ccrs.PlateCarree())
     
     ax.xaxis.set_major_formatter(LongitudeFormatter())
     ax.yaxis.set_major_formatter(LatitudeFormatter())
@@ -286,8 +309,7 @@ def configure_plot(ax):
     ax.add_feature(cfeat.COASTLINE, linewidth=0.6)
     ax.add_feature(cfeat.BORDERS, linewidth=0.5, linestyle='-', alpha=0.5)
     ax.add_feature(cfeat.LAND, facecolor='lightgray', alpha=0.2)
-    ax.gridlines(draw_labels=False, linewidth=0.5, 
-                 linestyle='--', color='gray', alpha=0.5)
+    ax.gridlines(draw_labels=False, linewidth=0.5, linestyle='--', color='gray', alpha=0.5)
 
 
 def main():
@@ -301,23 +323,13 @@ def main():
     print("\n1. Importing data...")
     lat_cru,   lon_cru,   cru_data   = import_regular_dataset(var, 'CRU')
     lat_era5,  lon_era5,  era5_data  = import_regular_dataset(var, 'ERA5')
-    lat_regcm, lon_regcm, regcm_data = import_regular_dataset(var, 'NorESM2-MM')
-    lat_rcm1, lon_rcm1, rcm1_data = import_regular_dataset(var, 'NorESM2-MM')
-    lat_rcm2, lon_rcm2, rcm2_data = import_regular_dataset(var, 'NorESM2-MM')
-    lat_rcm3, lon_rcm3, rcm3_data = import_regular_dataset(var, 'NorESM2-MM')
+    lat_regcm, lon_regcm, regcm_data = import_regcm_dataset(var, 'ERA5_RegCM5')
+    lat_rcm1, lon_rcm1, rcm1_data = import_regcm_dataset(var, 'EC-Earth3-Veg_RegCM5')
+    lat_rcm2, lon_rcm2, rcm2_data = import_regcm_dataset(var, 'MPI-ESM1-2-HR_RegCM5')
+    lat_rcm3, lon_rcm3, rcm3_data = import_regcm_dataset(var, 'NorESM2-MM_RegCM5')
     lat_gcm1, lon_gcm1, gcm1_data = import_regular_dataset(var, 'EC-Earth3-Veg')
     lat_gcm2, lon_gcm2, gcm2_data = import_regular_dataset(var, 'MPI-ESM1-2-HR')
     lat_gcm3, lon_gcm3, gcm3_data = import_regular_dataset(var, 'NorESM2-MM')
-
-    #lat_cru,   lon_cru,   cru_data   = import_regular_dataset(var, 'CRU')
-    #lat_era5,  lon_era5,  era5_data  = import_regular_dataset(var, 'ERA5')
-    #lat_regcm, lon_regcm, regcm_data = import_regcm_dataset(var, 'ERA5_RegCM5')
-    #lat_rcm1, lon_rcm1, rcm1_data = import_regcm_dataset(var, 'EC-Earth3-Veg_RegCM5')
-    #lat_rcm2, lon_rcm2, rcm2_data = import_regcm_dataset(var, 'MPI-ESM1-2-HR_RegCM5')
-    #lat_rcm3, lon_rcm3, rcm3_data = import_regcm_dataset(var, 'NorESM2-MM_RegCM5')
-    #lat_gcm1, lon_gcm1, gcm1_data = import_regular_dataset(var, 'EC-Earth3-Veg')
-    #lat_gcm2, lon_gcm2, gcm2_data = import_regular_dataset(var, 'MPI-ESM1-2-HR')
-    #lat_gcm3, lon_gcm3, gcm3_data = import_regular_dataset(var, 'NorESM2-MM')
     
     # Convert RegCM coordinates if needed
     print("\n2. Processing RegCM coordinates...")
@@ -357,11 +369,18 @@ def main():
     print(f"  MPI-ESM1-2-HR trend range: [{np.nanmin(gcm2_trend):.3f}, {np.nanmax(gcm2_trend):.3f}]")
     gcm3_trend, gcm3_sig = calculate_trend(gcm3_data, alpha=0.05)
     print(f"  NorESM2-MM trend range: [{np.nanmin(gcm3_trend):.3f}, {np.nanmax(gcm3_trend):.3f}]")
-   
+      
     # Create figure
     print("\n4. Creating plot...")
-    fig, axes = plt.subplots(3, 3, figsize=(14, 10),
-                            subplot_kw={'projection': ccrs.PlateCarree()})
+
+    if domain == 'AUS-12': 
+        fig, axes = plt.subplots(3, 3, figsize=(12, 13), subplot_kw={'projection': ccrs.PlateCarree()})
+    elif domain == 'EUR-12': 
+        fig, axes = plt.subplots(3, 3, figsize=(14, 10), subplot_kw={'projection': ccrs.PlateCarree()})
+    elif domain == 'NAM-12': 
+        fig, axes = plt.subplots(3, 3, figsize=(15, 10), subplot_kw={'projection': ccrs.PlateCarree()})
+    else: 
+        fig, axes = plt.subplots(3, 3, figsize=(14, 12), subplot_kw={'projection': ccrs.PlateCarree()})
     
     datasets = [('CRU', lon_cru, lat_cru, cru_trend, cru_sig),
     ('ERA5', lon_era5, lat_era5, era5_trend, era5_sig),
@@ -373,20 +392,22 @@ def main():
     ('MPI-ESM1-2-HR', lon_gcm2, lat_gcm2, gcm2_trend, gcm2_sig),
     ('NorESM2-MM', lon_gcm3, lat_gcm3, gcm3_trend, gcm3_sig)]
 
-    axes = axes.flatten()
+    axes = axes.flatten() 
     for idx, (ax, (name, lon, lat, trend, sig)) in enumerate(zip(axes, datasets)):
-        im = ax.contourf(lon, lat, trend,
-                            levels=PLOT_CONFIG[var]['levels'],
-                            cmap=PLOT_CONFIG[var]['cmap'],
-                            extend='both',
-                            transform=ccrs.PlateCarree())
+
+        levels_cfg = PLOT_CONFIG[var]['levels']
+        if var == 'pr':
+            levels = levels_cfg.get(domain)
+        else:
+            levels = levels_cfg
+
+        # Plot trend
+        im = ax.contourf(lon, lat, trend, levels=levels, cmap=PLOT_CONFIG[var]['cmap'], extend='both', transform=ccrs.PlateCarree())
         
         # Plot significance dots
         if np.any(sig):
-            # Create a binary mask for significant points
             sig_binary = np.where(sig, 1.0, 0.0)
             
-            # Use contourf with hatching to mark significant areas
             ax.contourf(lon, lat, sig_binary, 
                        levels=[0.5, 1.5], 
                        hatches=['...'], 
@@ -396,24 +417,14 @@ def main():
         
         # Configure plot
         configure_plot(ax)
-        
-        # Title
         label = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)', '(g)', '(h)', '(i)'][idx]
         ax.set_title(f'{label} {name}', loc='left', fontsize=font_size, fontweight='bold')
-        ax.text(0.01, 1.04, f'                                                           ', 
-        transform=ax.transAxes, 
-        ha='left', va='bottom', 
-        fontsize=font_size, 
-        fontweight='bold',
-        bbox=dict(facecolor='lightgrey', boxstyle='round,pad=0.3', alpha=0.75),
-        clip_on=False)
     
-    # Colorbar
     cbar = fig.colorbar(im, ax=axes, orientation='horizontal', pad=0.07, aspect=40, shrink=0.8)
     cbar.set_label(f"{PLOT_CONFIG[var]['title']} {PLOT_CONFIG[var]['sig_label']}", fontsize=font_size, fontweight='bold')
     cbar.ax.tick_params(labelsize=font_size)
     
-    # Save figure (Change path)
+    # Save figure 
     path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/trend'
     os.makedirs(path_out, exist_ok=True)
     output_file = f'{path_out}/pyplt_maps_trend_{var}_{domain}_RegCM5_{dt}.png'
