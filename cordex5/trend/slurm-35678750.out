@@ -1,4 +1,0 @@
-
---------------- INIT PLOT ----------------
-/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend.py:287: RuntimeWarning: divide by zero encountered in scalar divide
-  r_squared = 1 - (ss_res / ss_tot)

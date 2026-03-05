@@ -1,0 +1,112 @@
+
+--------------- INIT PLOT ----------------
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:223: RuntimeWarning: divide by zero encountered in scalar divide
+  r_squared = 1 - (ss_res / ss_tot)
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:323: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Processing variable: pr
+Time period: 2000-2009
+Domain: EURR-3
+--------------------------------------------------
+
+1. Importing data...
+Reading CRU: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/pre_CRU_year_2000-2009.nc
+  Data shape: (10, 360, 720)
+  Lon range: [-179.8, 179.8]
+  Lat range: [-89.8, 89.8]
+Reading ERA5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tp_ERA5_year_2000-2009.nc
+  Data shape: (10, 721, 1440)
+  Lon range: [-180.0, 179.8]
+  Lat range: [-90.0, 90.0]
+Reading RegCM5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/EURR-3/pr_EURR-3_ERA5_RegCM5_year_2000-2009.nc
+  2D lat/lon coordinates
+  2D coordinates detected
+  Data shape: (11, 1000, 1000)
+  Lon shape: (1000, 1000), range: [-25.3, 38.4]
+  Lat shape: (1000, 1000), range: [33.3, 65.0]
+
+2. Processing RegCM coordinates...
+
+3. Calculating trends...
+  CRU trend range: [-222.764, 292.938]
+  ERA5 trend range: [-753.826, 450.985]
+  RegCM-ERA5 trend range: [-212.659, 228.863]
+
+4. Creating plot...
+
+4. Saving figure: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/trend/pyplt_maps_trend_pr_EURR-3_RegCM5_2000-2009.png
+Done!
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:223: RuntimeWarning: divide by zero encountered in scalar divide
+  r_squared = 1 - (ss_res / ss_tot)
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:323: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Processing variable: tas
+Time period: 2000-2009
+Domain: EURR-3
+--------------------------------------------------
+
+1. Importing data...
+Reading CRU: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tmp_CRU_year_2000-2009.nc
+  Data shape: (10, 360, 720)
+  Lon range: [-179.8, 179.8]
+  Lat range: [-89.8, 89.8]
+Reading ERA5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tas_ERA5_year_2000-2009.nc
+  Data shape: (10, 721, 1440)
+  Lon range: [-180.0, 179.8]
+  Lat range: [-90.0, 90.0]
+Reading RegCM5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/EURR-3/tas_EURR-3_ERA5_RegCM5_year_2000-2009.nc
+  2D lat/lon coordinates
+  2D coordinates detected
+  Data shape: (11, 1000, 1000)
+  Lon shape: (1000, 1000), range: [-25.3, 38.4]
+  Lat shape: (1000, 1000), range: [33.3, 65.0]
+
+2. Processing RegCM coordinates...
+
+3. Calculating trends...
+  CRU trend range: [-0.320, 0.267]
+  ERA5 trend range: [-0.337, 0.480]
+  RegCM-ERA5 trend range: [-0.105, 0.159]
+
+4. Creating plot...
+
+4. Saving figure: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/trend/pyplt_maps_trend_tas_EURR-3_RegCM5_2000-2009.png
+Done!
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:223: RuntimeWarning: divide by zero encountered in scalar divide
+  r_squared = 1 - (ss_res / ss_tot)
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:323: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Processing variable: tasmax
+Time period: 2000-2009
+Domain: EURR-3
+--------------------------------------------------
+
+1. Importing data...
+Reading CRU: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tmx_CRU_year_2000-2009.nc
+  Data shape: (10, 360, 720)
+  Lon range: [-179.8, 179.8]
+  Lat range: [-89.8, 89.8]
+Reading ERA5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tasmax_ERA5_year_2000-2009.nc
+  Data shape: (10, 721, 1440)
+  Lon range: [-180.0, 179.8]
+  Lat range: [-90.0, 90.0]
+Reading RegCM5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/EURR-3/tasmax_EURR-3_ERA5_RegCM5_year_2000-2009.nc
+  2D lat/lon coordinates
+  2D coordinates detected
+  Data shape: (11, 1000, 1000)
+  Lon shape: (1000, 1000), range: [-25.3, 38.4]
+  Lat shape: (1000, 1000), range: [33.3, 65.0]
+
+2. Processing RegCM coordinates...
+
+3. Calculating trends...
+  CRU trend range: [-0.336, 0.367]
+  ERA5 trend range: [-0.296, 0.483]
+  RegCM-ERA5 trend range: [-0.164, 0.147]
+
+4. Creating plot...
+
+4. Saving figure: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/trend/pyplt_maps_trend_tasmax_EURR-3_RegCM5_2000-2009.png
+Done!
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:223: RuntimeWarning: divide by zero encountered in scalar divide
+  r_squared = 1 - (ss_res / ss_tot)

@@ -55,7 +55,7 @@ VAR_MAP = {
     },
     'tas': {
         'cru': 'tmp',
-        'era5': 'tas',
+        'era5': 't2m',
         'NorESM2-MM': 'tas',
         'MPI-ESM1-2-HR': 'tas',
         'EC-Earth3-Veg': 'tas',
