@@ -35,7 +35,7 @@ path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/tren
 
 # Domain extent
 if domain == 'EURR-3': 
-    DOMAIN_EXTENT = [-25, 38, 33, 64]
+    DOMAIN_EXTENT = [-25, 38, 33, 65]
 else: 
     DOMAIN_EXTENT = [-79, -35, -37, -12]
 
@@ -83,26 +83,26 @@ PR_LEVELS = {
 
 PLOT_CONFIG = {
     'pr': {
-        'title': 'Precipitation trend 1970-2014 (mm yr⁻¹) ',
+        'title': 'Precipitation trend 2000-2009 (mm yr⁻¹) ',
         'levels': PR_LEVELS,
         'cmap': cm.BrBG,
         'sig_label': 'Dots: p < 0.05'
     },
     'tas': {
-        'title': 'Air temperature trend 1970-2014 (°C yr⁻¹)',
-        'levels': np.arange(-0.3, 0.31, 0.01),
+        'title': 'Air temperature trend 2000-2009 (°C yr⁻¹)',
+        'levels': np.arange(-0.2, 0.21, 0.01),
         'cmap': cm.bwr,
         'sig_label': 'Dots: p < 0.05'
     },
     'tasmax': {
-        'title': 'Maximum air temperature trend 1970-2014 (°C yr⁻¹)',
-        'levels': np.arange(-0.3, 0.31, 0.01),
+        'title': 'Maximum air temperature trend 2000-2009 (°C yr⁻¹)',
+        'levels': np.arange(-0.2, 0.21, 0.01),
         'cmap': cm.bwr,
         'sig_label': 'Dots: p < 0.05'
     },
     'tasmin': {
-        'title': 'Minimum air temperature trend 1970-2014 (°C yr⁻¹)',
-        'levels': np.arange(-0.3, 0.31, 0.01),
+        'title': 'Minimum air temperature trend 2000-2009 (°C yr⁻¹)',
+        'levels': np.arange(-0.2, 0.21, 0.01),
         'cmap': cm.bwr,
         'sig_label': 'Dots: p < 0.05'
     }

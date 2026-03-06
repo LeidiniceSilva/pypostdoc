@@ -41,7 +41,7 @@ elif domain == 'EUR-12':
 elif domain == 'NAM-12': 
     DOMAIN_EXTENT = [-171, -22, 11, 75]
 else: 
-    DOMAIN_EXTENT = [-105, -20, -57, 18]
+    DOMAIN_EXTENT = [-105, -15, -57, 18]
 
 # Variable name 
 VAR_MAP = {
@@ -96,19 +96,19 @@ PLOT_CONFIG = {
     },
     'tas': {
         'title': 'Air temperature trend 1970-2014 (°C yr⁻¹)',
-        'levels': np.arange(-0.3, 0.31, 0.01),
+        'levels': np.arange(-0.2, 0.21, 0.01),
         'cmap': cm.bwr,
         'sig_label': 'Dots: p < 0.05'
     },
     'tasmax': {
         'title': 'Maximum air temperature trend 1970-2014 (°C yr⁻¹)',
-        'levels': np.arange(-0.3, 0.31, 0.01),
+        'levels': np.arange(-0.2, 0.21, 0.01),
         'cmap': cm.bwr,
         'sig_label': 'Dots: p < 0.05'
     },
     'tasmin': {
         'title': 'Minimum air temperature trend 1970-2014 (°C yr⁻¹)',
-        'levels': np.arange(-0.3, 0.31, 0.01),
+        'levels': np.arange(-0.2, 0.21, 0.01),
         'cmap': cm.bwr,
         'sig_label': 'Dots: p < 0.05'
     }
@@ -175,6 +175,9 @@ def import_regcm_dataset(param, driven):
     
     with netCDF4.Dataset(filename) as nc:
         data = nc.variables[param][:]
+
+        if data.ndim == 4 and data.shape[1] == 1:
+            data = data[:, 0, :, :]
         
         if 'lat' in nc.variables and 'lon' in nc.variables:
             lat = nc.variables['lat'][:]
@@ -324,9 +327,9 @@ def main():
     lat_cru,   lon_cru,   cru_data   = import_regular_dataset(var, 'CRU')
     lat_era5,  lon_era5,  era5_data  = import_regular_dataset(var, 'ERA5')
     lat_regcm, lon_regcm, regcm_data = import_regcm_dataset(var, 'ERA5_RegCM5')
-    lat_rcm1, lon_rcm1, rcm1_data = import_regcm_dataset(var, 'EC-Earth3-Veg_RegCM5')
-    lat_rcm2, lon_rcm2, rcm2_data = import_regcm_dataset(var, 'MPI-ESM1-2-HR_RegCM5')
-    lat_rcm3, lon_rcm3, rcm3_data = import_regcm_dataset(var, 'NorESM2-MM_RegCM5')
+    lat_rcm1, lon_rcm1, rcm1_data = import_regular_dataset(var, 'CRU')
+    lat_rcm2, lon_rcm2, rcm2_data = import_regular_dataset(var, 'CRU')
+    lat_rcm3, lon_rcm3, rcm3_data = import_regular_dataset(var, 'CRU')
     lat_gcm1, lon_gcm1, gcm1_data = import_regular_dataset(var, 'EC-Earth3-Veg')
     lat_gcm2, lon_gcm2, gcm2_data = import_regular_dataset(var, 'MPI-ESM1-2-HR')
     lat_gcm3, lon_gcm3, gcm3_data = import_regular_dataset(var, 'NorESM2-MM')
