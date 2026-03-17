@@ -1,0 +1,156 @@
+
+--------------- INIT PLOT ----------------
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:226: RuntimeWarning: divide by zero encountered in scalar divide
+  r_squared = 1 - (ss_res / ss_tot)
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:277: RuntimeWarning: All-NaN slice encountered
+  print(f"  RegCM-ERA5 trend range: [{np.nanmin(regcm_trend):.3f}, {np.nanmax(regcm_trend):.3f}]")
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:326: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Processing variable: pr
+Time period: 2000-2009
+Domain: CAR-4
+--------------------------------------------------
+
+1. Importing data...
+Reading CRU: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/pre_CRU_year_2000-2009.nc
+  Data shape: (10, 360, 720)
+  Lon range: [-179.8, 179.8]
+  Lat range: [-89.8, 89.8]
+Reading ERA5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tp_ERA5_year_2000-2009.nc
+  Data shape: (10, 721, 1440)
+  Lon range: [-180.0, 179.8]
+  Lat range: [-90.0, 90.0]
+Reading RegCM5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/CAR-4/pr_CAR-4_ERA5_RegCM5_year_2000-2009.nc
+  2D lat/lon coordinates
+  2D coordinates detected
+  Data shape: (7, 747, 1697)
+  Lon shape: (747, 1697), range: [-119.0, -58.0]
+  Lat shape: (747, 1697), range: [9.1, 35.9]
+
+2. Processing RegCM coordinates...
+
+3. Calculating trends...
+  CRU trend range: [-222.764, 292.938]
+  ERA5 trend range: [-753.826, 450.985]
+  RegCM-ERA5 trend range: [nan, nan]
+
+4. Creating plot...
+
+4. Saving figure: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/trend/pyplt_maps_trend_pr_CAR-4_RegCM5_2000-2009.png
+Done!
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:226: RuntimeWarning: divide by zero encountered in scalar divide
+  r_squared = 1 - (ss_res / ss_tot)
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:277: RuntimeWarning: All-NaN slice encountered
+  print(f"  RegCM-ERA5 trend range: [{np.nanmin(regcm_trend):.3f}, {np.nanmax(regcm_trend):.3f}]")
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:326: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Processing variable: tas
+Time period: 2000-2009
+Domain: CAR-4
+--------------------------------------------------
+
+1. Importing data...
+Reading CRU: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tmp_CRU_year_2000-2009.nc
+  Data shape: (10, 360, 720)
+  Lon range: [-179.8, 179.8]
+  Lat range: [-89.8, 89.8]
+Reading ERA5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tas_ERA5_year_2000-2009.nc
+  Data shape: (10, 721, 1440)
+  Lon range: [-180.0, 179.8]
+  Lat range: [-90.0, 90.0]
+Reading RegCM5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/CAR-4/tas_CAR-4_ERA5_RegCM5_year_2000-2009.nc
+  2D lat/lon coordinates
+  2D coordinates detected
+  Data shape: (7, 747, 1697)
+  Lon shape: (747, 1697), range: [-119.0, -58.0]
+  Lat shape: (747, 1697), range: [9.1, 35.9]
+
+2. Processing RegCM coordinates...
+
+3. Calculating trends...
+  CRU trend range: [-0.320, 0.267]
+  ERA5 trend range: [-0.337, 0.480]
+  RegCM-ERA5 trend range: [nan, nan]
+
+4. Creating plot...
+
+4. Saving figure: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/trend/pyplt_maps_trend_tas_CAR-4_RegCM5_2000-2009.png
+Done!
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:226: RuntimeWarning: divide by zero encountered in scalar divide
+  r_squared = 1 - (ss_res / ss_tot)
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:277: RuntimeWarning: All-NaN slice encountered
+  print(f"  RegCM-ERA5 trend range: [{np.nanmin(regcm_trend):.3f}, {np.nanmax(regcm_trend):.3f}]")
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:326: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Processing variable: tasmax
+Time period: 2000-2009
+Domain: CAR-4
+--------------------------------------------------
+
+1. Importing data...
+Reading CRU: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tmx_CRU_year_2000-2009.nc
+  Data shape: (10, 360, 720)
+  Lon range: [-179.8, 179.8]
+  Lat range: [-89.8, 89.8]
+Reading ERA5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tasmax_ERA5_year_2000-2009.nc
+  Data shape: (10, 721, 1440)
+  Lon range: [-180.0, 179.8]
+  Lat range: [-90.0, 90.0]
+Reading RegCM5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/CAR-4/tasmax_CAR-4_ERA5_RegCM5_year_2000-2009.nc
+  2D lat/lon coordinates
+  2D coordinates detected
+  Data shape: (7, 747, 1697)
+  Lon shape: (747, 1697), range: [-119.0, -58.0]
+  Lat shape: (747, 1697), range: [9.1, 35.9]
+
+2. Processing RegCM coordinates...
+
+3. Calculating trends...
+  CRU trend range: [-0.336, 0.367]
+  ERA5 trend range: [-0.296, 0.483]
+  RegCM-ERA5 trend range: [nan, nan]
+
+4. Creating plot...
+
+4. Saving figure: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/trend/pyplt_maps_trend_tasmax_CAR-4_RegCM5_2000-2009.png
+Done!
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:226: RuntimeWarning: divide by zero encountered in scalar divide
+  r_squared = 1 - (ss_res / ss_tot)
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:277: RuntimeWarning: All-NaN slice encountered
+  print(f"  RegCM-ERA5 trend range: [{np.nanmin(regcm_trend):.3f}, {np.nanmax(regcm_trend):.3f}]")
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/cordex5/trend/plot_maps_trend_cp.py:326: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Processing variable: tasmin
+Time period: 2000-2009
+Domain: CAR-4
+--------------------------------------------------
+
+1. Importing data...
+Reading CRU: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tmn_CRU_year_2000-2009.nc
+  Data shape: (10, 360, 720)
+  Lon range: [-179.8, 179.8]
+  Lat range: [-89.8, 89.8]
+Reading ERA5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/global/tasmin_ERA5_year_2000-2009.nc
+  Data shape: (10, 721, 1440)
+  Lon range: [-180.0, 179.8]
+  Lat range: [-90.0, 90.0]
+Reading RegCM5: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/trend/CAR-4/tasmin_CAR-4_ERA5_RegCM5_year_2000-2009.nc
+  2D lat/lon coordinates
+  2D coordinates detected
+  Data shape: (7, 747, 1697)
+  Lon shape: (747, 1697), range: [-119.0, -58.0]
+  Lat shape: (747, 1697), range: [9.1, 35.9]
+
+2. Processing RegCM coordinates...
+
+3. Calculating trends...
+  CRU trend range: [-0.324, 0.270]
+  ERA5 trend range: [-0.400, 0.517]
+  RegCM-ERA5 trend range: [nan, nan]
+
+4. Creating plot...
+
+4. Saving figure: /leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/trend/pyplt_maps_trend_tasmin_CAR-4_RegCM5_2000-2009.png
+Done!
+
+--------------- THE END PLOT ----------------

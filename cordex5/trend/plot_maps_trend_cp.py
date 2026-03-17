@@ -36,6 +36,8 @@ path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/tren
 # Domain extent
 if domain == 'EURR-3': 
     DOMAIN_EXTENT = [-25, 38, 33, 65]
+elif domain == 'CAR-4':
+    DOMAIN_EXTENT = [-119, -58, 9, 36]
 else: 
     DOMAIN_EXTENT = [-79, -35, -37, -12]
 
@@ -78,8 +80,9 @@ VAR_MAP = {
 # Plot configuration
 PR_LEVELS = { 
     'EURR-3': np.arange(-30,  33, 3),
-    'CSAM-3': np.arange(-60,  66, 6),
-}
+    'CAR-4': np.arange(-40,  44, 4),
+    'CSAM-3': np.arange(-60,  66, 6)
+    }
 
 PLOT_CONFIG = {
     'pr': {
@@ -195,13 +198,13 @@ def calculate_trend(data, alpha=0.05, per_decade=False):
     
     trend = np.full((ny, nx), np.nan)
     sig_mask = np.full((ny, nx), False)
-    
+   
     for i in range(ny):
         for j in range(nx):
             y = data[:, i, j]
             valid = np.isfinite(y)
             
-            if np.sum(valid) >= 10:  
+            if np.sum(valid) >= 7:  
                 t_valid = t[valid]
                 y_valid = y[valid]
                 
@@ -260,6 +263,7 @@ def main():
     lat_cru,   lon_cru,   cru_data   = import_regular_dataset(var, 'CRU')
     lat_era5,  lon_era5,  era5_data  = import_regular_dataset(var, 'ERA5')
     lat_regcm, lon_regcm, regcm_data = import_regcm_dataset(var, 'ERA5_RegCM5')
+    print(f"  RegCM-ERA5 trend range: [{np.nanmin(regcm_data):.3f}, {np.nanmax(regcm_data):.3f}]")
     
     # Convert RegCM coordinates if needed
     print("\n2. Processing RegCM coordinates...")

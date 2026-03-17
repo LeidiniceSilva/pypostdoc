@@ -327,6 +327,10 @@ def main():
     lat_cru,   lon_cru,   cru_data   = import_regular_dataset(var, 'CRU')
     lat_era5,  lon_era5,  era5_data  = import_regular_dataset(var, 'ERA5')
     lat_regcm, lon_regcm, regcm_data = import_regcm_dataset(var, 'ERA5_RegCM5')
+    lat_rcm1, lon_rcm1, rcm1_data = import_regular_dataset(var, 'EC-Earth3-Veg')
+    lat_rcm2, lon_rcm2, rcm2_data = import_regular_dataset(var, 'MPI-ESM1-2-HR')
+    lat_rcm3, lon_rcm3, rcm3_data = import_regular_dataset(var, 'NorESM2-MM')
+
     lat_rcm1, lon_rcm1, rcm1_data = import_regcm_dataset(var, 'EC-Earth3-Veg_RegCM5')
     lat_rcm2, lon_rcm2, rcm2_data = import_regcm_dataset(var, 'MPI-ESM1-2-HR_RegCM5')
     lat_rcm3, lon_rcm3, rcm3_data = import_regcm_dataset(var, 'NorESM2-MM_RegCM5')
