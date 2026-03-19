@@ -80,7 +80,7 @@ VAR_MAP = {
 # Plot configuration
 PR_LEVELS = { 
     'EURR-3': np.arange(-30,  33, 3),
-    'CAR-4': np.arange(-40,  44, 4),
+    'CAR-4': np.arange(-60,  66, 6),
     'CSAM-3': np.arange(-60,  66, 6)
     }
 

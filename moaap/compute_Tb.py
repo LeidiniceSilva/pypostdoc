@@ -14,20 +14,22 @@ import metpy.xarray
 from metpy.units import units
 
 # Domain name
-domain = 'CSAM-3'
+domain = 'EURR-3'
 
-if domain == 'CSAM-3':
+if domain == 'CAR-4':
+    path_in = '/leonardo_work/ICT26_ESP/CORDEX-CMIP6/DD/CAR-4/ICTP/ERA5/evaluation/r1i1p1f1/RegCM5-0/v1-r1/1hr/rlut'
+elif domain == 'CSAM-3':
     path_in = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/ERA5/ERA5-CSAM-3/CORDEX-CMIP6/DD/CSAM-3/ICTP/ERA5/evaluation/r1i1p1f1/RegCM5-0/v1-r1/1hr/rlut'
 elif domain == 'EURR-3':
-    path_in = '/leonardo_work/ICT26_ESP/CORDEX-CMIP6/DD/CAR-4/ICTP/ERA5/evaluation/r1i1p1f1/RegCM5-0/v1-r1/1hr/rlut'
+    path_in = '/leonardo_work/ICT26_ESP/jdeleeuw/EURR-3/ERA5/high_soil_moisture/ERA5/EURR-3/postproc/CORDEX-CMIP6/DD/EURR-3/ICTP/ERA5/evaluation/r1i1p1f1/RegCM5-0/v1-r1/1hr/rlut'
 else:
-    path_in = '/leonardo_work/ICT26_ESP/CORDEX-CMIP6/DD/CAR-4/ICTP/ERA5/evaluation/r1i1p1f1/RegCM5-0/v1-r1/1hr/rlut'
+    raise ValueError('Unknown domain: {0}'.format(domain))
 
 # Output path
 path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/{0}/input/Tb'.format(domain)
 
 # File list
-files = sorted(glob.glob(path_in + "/rlut_*.nc"))
+files = sorted(glob.glob(path_in + '/rlut_*.nc'))
 
 # Constants
 sigma = 5.670374419e-8 * units('W / m^2 / K^4')
@@ -55,7 +57,7 @@ for f in files:
 
 	# Save Tb
 	fname = os.path.basename(f) 
-	out = os.path.join(path_out, fname.replace("rlut", "Tb"))
+	out = os.path.join(path_out, fname.replace('rlut', 'Tb'))
 	ds[['Tb']].to_netcdf(out)
 
 
