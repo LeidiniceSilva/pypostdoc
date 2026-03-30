@@ -6,14 +6,15 @@ __date__        = "March 02, 2026"
 __description__ = "This script plot trend maps"
 
 import os
-import numpy as np
-import argparse
 import netCDF4
+import argparse
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import cartopy.crs as ccrs
 import cartopy.feature as cfeat
-from scipy.stats import t as student_t
+
+from function_trend import calculate_trend
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 parser = argparse.ArgumentParser(description='Plot trend maps')
@@ -63,7 +64,7 @@ VAR_MAP = {
     },
     'tasmax': {
         'cru': 'tmx',
-        'era5': 'tasmax',
+        'era5': 'mx2t',
         'NorESM2-MM': 'tasmax',
         'MPI-ESM1-2-HR': 'tasmax',
         'EC-Earth3-Veg': 'tasmax',
@@ -71,7 +72,7 @@ VAR_MAP = {
     },
     'tasmin': {
         'cru': 'tmn',
-        'era5': 'tasmin',
+        'era5': 'mn2t',
         'NorESM2-MM': 'tasmin',
         'MPI-ESM1-2-HR': 'tasmin',
         'EC-Earth3-Veg': 'tasmin',
@@ -255,51 +256,6 @@ def convert_rotated_to_regular(lon_rot, lat_rot):
     return lon_reg, lat_reg
 
 
-def calculate_trend(data, alpha=0.05, per_decade=False):
-
-    nt, ny, nx = data.shape
-    t = np.arange(nt, dtype=float)
-    
-    trend = np.full((ny, nx), np.nan)
-    sig_mask = np.full((ny, nx), False)
-    
-    for i in range(ny):
-        for j in range(nx):
-            y = data[:, i, j]
-            valid = np.isfinite(y)
-            
-            if np.sum(valid) >= 10:  
-                t_valid = t[valid]
-                y_valid = y[valid]
-                
-                # Linear regression
-                A = np.vstack([t_valid, np.ones_like(t_valid)]).T
-                slope, intercept = np.linalg.lstsq(A, y_valid, rcond=None)[0]
-                
-                # Calculate trend 
-                trend_val = slope * 10.0 if per_decade else slope
-                trend[i, j] = trend_val
-                
-                # Calculate p-value
-                y_pred = slope * t_valid + intercept
-                residuals = y_valid - y_pred
-                ss_res = np.sum(residuals**2)
-                
-                if len(t_valid) > 2 and ss_res > 0:
-                    ss_tot = np.sum((y_valid - np.mean(y_valid))**2)
-                    r_squared = 1 - (ss_res / ss_tot)
-                    df = len(t_valid) - 2
-                    
-                    # t-statistic
-                    t_stat = slope / np.sqrt(ss_res / (df * np.sum((t_valid - np.mean(t_valid))**2)))
-                    p_value = 2 * (1 - student_t.cdf(np.abs(t_stat), df))
-                    
-                    if p_value < alpha:
-                        sig_mask[i, j] = True
-    
-    return trend, sig_mask
-
-
 def configure_plot(ax):
 
     ax.set_extent(DOMAIN_EXTENT, crs=ccrs.PlateCarree())
@@ -330,10 +286,6 @@ def main():
     lat_rcm1, lon_rcm1, rcm1_data = import_regular_dataset(var, 'EC-Earth3-Veg')
     lat_rcm2, lon_rcm2, rcm2_data = import_regular_dataset(var, 'MPI-ESM1-2-HR')
     lat_rcm3, lon_rcm3, rcm3_data = import_regular_dataset(var, 'NorESM2-MM')
-
-    lat_rcm1, lon_rcm1, rcm1_data = import_regcm_dataset(var, 'EC-Earth3-Veg_RegCM5')
-    lat_rcm2, lon_rcm2, rcm2_data = import_regcm_dataset(var, 'MPI-ESM1-2-HR_RegCM5')
-    lat_rcm3, lon_rcm3, rcm3_data = import_regcm_dataset(var, 'NorESM2-MM_RegCM5')
     lat_gcm1, lon_gcm1, gcm1_data = import_regular_dataset(var, 'EC-Earth3-Veg')
     lat_gcm2, lon_gcm2, gcm2_data = import_regular_dataset(var, 'MPI-ESM1-2-HR')
     lat_gcm3, lon_gcm3, gcm3_data = import_regular_dataset(var, 'NorESM2-MM')
@@ -414,13 +366,7 @@ def main():
         # Plot significance dots
         if np.any(sig):
             sig_binary = np.where(sig, 1.0, 0.0)
-            
-            ax.contourf(lon, lat, sig_binary, 
-                       levels=[0.5, 1.5], 
-                       hatches=['...'], 
-                       colors='none', 
-                       transform=ccrs.PlateCarree(),
-                       alpha=0.0) 
+            ax.contourf(lon, lat, sig_binary, levels=[0.5, 1.5], hatches=['...'], colors='none', transform=ccrs.PlateCarree(), alpha=0.0) 
         
         # Configure plot
         configure_plot(ax)

@@ -6,14 +6,15 @@ __date__        = "March 02, 2026"
 __description__ = "This script plot trend maps"
 
 import os
-import numpy as np
-import argparse
 import netCDF4
+import argparse
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import cartopy.crs as ccrs
 import cartopy.feature as cfeat
-from scipy.stats import t as student_t
+
+from function_trend import calculate_trend
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 parser = argparse.ArgumentParser(description='Plot trend maps')
@@ -191,51 +192,6 @@ def import_regcm_dataset(param, driven):
         return lat, lon, data
 
 
-def calculate_trend(data, alpha=0.05, per_decade=False):
-
-    nt, ny, nx = data.shape
-    t = np.arange(nt, dtype=float)
-    
-    trend = np.full((ny, nx), np.nan)
-    sig_mask = np.full((ny, nx), False)
-   
-    for i in range(ny):
-        for j in range(nx):
-            y = data[:, i, j]
-            valid = np.isfinite(y)
-            
-            if np.sum(valid) >= 7:  
-                t_valid = t[valid]
-                y_valid = y[valid]
-                
-                # Linear regression
-                A = np.vstack([t_valid, np.ones_like(t_valid)]).T
-                slope, intercept = np.linalg.lstsq(A, y_valid, rcond=None)[0]
-                
-                # Calculate trend 
-                trend_val = slope * 10.0 if per_decade else slope
-                trend[i, j] = trend_val
-                
-                # Calculate p-value
-                y_pred = slope * t_valid + intercept
-                residuals = y_valid - y_pred
-                ss_res = np.sum(residuals**2)
-                
-                if len(t_valid) > 2 and ss_res > 0:
-                    ss_tot = np.sum((y_valid - np.mean(y_valid))**2)
-                    r_squared = 1 - (ss_res / ss_tot)
-                    df = len(t_valid) - 2
-                    
-                    # t-statistic
-                    t_stat = slope / np.sqrt(ss_res / (df * np.sum((t_valid - np.mean(t_valid))**2)))
-                    p_value = 2 * (1 - student_t.cdf(np.abs(t_stat), df))
-                    
-                    if p_value < alpha:
-                        sig_mask[i, j] = True
-    
-    return trend, sig_mask
-
-
 def configure_plot(ax):
 
     ax.set_extent(DOMAIN_EXTENT, crs=ccrs.PlateCarree())
@@ -300,13 +256,7 @@ def main():
         # Plot significance dots
         if np.any(sig):
             sig_binary = np.where(sig, 1.0, 0.0)
-            
-            ax.contourf(lon, lat, sig_binary, 
-                       levels=[0.5, 1.5], 
-                       hatches=['...'], 
-                       colors='none', 
-                       transform=ccrs.PlateCarree(),
-                       alpha=0.0) 
+            ax.contourf(lon, lat, sig_binary, levels=[0.5, 1.5], hatches=['...'], colors='none', transform=ccrs.PlateCarree(), alpha=0.0) 
         
         # Configure plot
         configure_plot(ax)
