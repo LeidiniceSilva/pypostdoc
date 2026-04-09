@@ -14,14 +14,14 @@ import metpy.xarray
 from metpy.units import units
 
 # Domain name
-domain = 'EURR-3'
+domain = 'CSAM-3'
 
 # Paths
-path_in = '/leonardo/home/userexternal/mdasilva/leonardo_work/OBS/ERA5/1hr'
-path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/OBS/ERA5/1hr'.format(domain)
+path_in = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/ERA5'
+path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/ERA5/{0}'.format(domain)
 
 # File list
-files = sorted(glob.glob(path_in + '/avg_tnlwrf_*.nc'))
+files = sorted(glob.glob(path_in + '/avg_tnlwrf_{0}_ERA5_reanalysis_1hr_2000-2009.nc'.format(domain)))
 
 # Constants
 sigma = 5.670374419e-8 * units('W / m^2 / K^4')
