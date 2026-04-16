@@ -1,6 +1,12 @@
 # %%
+
+__author__      = "Leidinice Silva"
+__email__       = "leidinicesilva@gmail.com"
+__date__        = "March 17, 2026"
+__description__ = "This plot Otis hurricane maps"
+
 import os
-os.chdir("/mnt/shared/teamx/otis_exp")
+os.chdir("/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp")
 import glob
 import xarray as xr
 import numpy as np
@@ -17,19 +23,16 @@ from PIL import Image
 import io
 from tqdm import tqdm
 
+domain='large'
+
 COLORS = [
     "#33a02c", "#005B72","#905dc7", "#692510", 
     "#fdbf6f", "b", "#fb9a99", "#b2df8a",  "#a6cee3", "#ff7f00",  "#cab2d6", 
 ]
-OUTPUT_PATH = "output/"
+OUTPUT_PATH = "/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/"
 
 # %%
-
-##########################################################################################
-##########################################################################################
-##############################    CYCLONE CENTER DETECTION    ##########################
-##########################################################################################
-##########################################################################################
+# CYCLONE CENTER DETECTION
 def haversine_distance(lat1, lon1, lat2, lon2):
     """Compute great-circle distance (km) between two lat/lon points."""
     R = 6371.0
@@ -75,7 +78,7 @@ class CycloneTracker:
         
         # Load ERA5 data
         try:
-            era_dir = "data/data/ERA5"
+            era_dir = "/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/era5"
             self.ds_era = load_era5(era_dir)
             self.ds_era = self.ds_era.rename({
             "valid_time": "time",
@@ -84,7 +87,6 @@ class CycloneTracker:
             "pressure_level": "plev",
             "msl": "psl",
             "t": "ta",
-            "tp": "pr",
             "u10": "uas",
             "u": "ua",
             "v10": "vas",
@@ -300,12 +302,7 @@ class CycloneTracker:
         return pd.concat(all_data, ignore_index=True)
     
     
-##########################################################################################
-##########################################################################################
-##############################    PLOTTING FUNCTIONS    ################################
-##########################################################################################
-##########################################################################################
-
+# PLOTTING FUNCTIONS  
 def plot_time_series_comparison(tracker, var_name, experiments=None, nhc_data=None, 
                                era5_included=True, ax=None, **kwargs):
     """
@@ -492,7 +489,7 @@ def plot_max_sfc_wind(tracker, nhc_data=None):
 
     # Fill colors for intervals
     fill_colors = {
-        "TS": "lightgreen",        # under TS
+    "TS": "lightgreen",   # under TS
     "Cat1": "#FFFF00",    # Yellow
     "Cat2": "#FFD700",    # Gold / light orange
     "Cat3": "#FFA500",    # Orange
@@ -503,7 +500,7 @@ def plot_max_sfc_wind(tracker, nhc_data=None):
 
     # Line colors for horizontal lines
     line_colors = {
-        "TS": "#FFFF00",     # Yellow
+    "TS": "#FFFF00",     # Yellow
     "Cat1": "#FFD700",   # Light Orange / Gold
     "Cat2": "#FFA500",   # Orange
     "Cat3": "#FF4500",   # Orange-Red
@@ -685,7 +682,7 @@ def plot_var(da, extent):
     return fig, ax
 
 # %%
-############## Plot Vertical Thermal Structure #############
+# Plot Vertical Thermal Structure 
 def plot_vts(tracker, figname=None):
     minimum_datetime = tracker.minimum_datetime
     for exp_name, ds in tracker.ds_models.items():
@@ -722,7 +719,7 @@ def plot_cross_section(cs):
     z = cs[var_name].values
 
     # filled contour
-    cf = ax.contourf(X, Y, z, levels=30, cmap="inferno")
+    cf = ax.contourf(X, Y, z, levels=30, cmap="jet")
 
     # colorbar with label
     cbar = fig.colorbar(cf, ax=ax, orientation='vertical',)
@@ -738,7 +735,7 @@ def plot_cross_section(cs):
 # %%
 
 
-############## Dataset loader #####################
+# Dataset loader 
 # %%
 def load_era5(era_dir, verbose=False):
     nc_files = sorted(glob.glob(os.path.join(era_dir, '*6hr*.nc')))
@@ -833,7 +830,7 @@ if __name__ == "__main__":
     # Configuration
     experiments = ["ctrl", "holt_r2", "holt_r3", "uw_r2", "uw_r3"]
     map_extent = [-103, -92.5, 5, 17]
-    data_dir = "data/domain_large_regridded/"
+    data_dir = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps_v2/domain_{domain}_regridded/"
     
     # Initialize tracker
     tracker = CycloneTracker(data_dir, experiments, map_extent)
@@ -846,10 +843,10 @@ if __name__ == "__main__":
     
     # Load NHC data
     nhc_data = load_nhc_data()
-    # %%
+
     # Plot tracks
     fig, ax = plot_cyclone_tracks(tracker, experiments, nhc_data, era5_included=True)
-    plt.savefig(OUTPUT_PATH + "track_large.png", dpi=300)
+    plt.savefig(OUTPUT_PATH + f"track_{domain}.png", dpi=300)
     plt.show()
 
     # %%
@@ -863,26 +860,19 @@ if __name__ == "__main__":
     })
     fig, ax = plt.subplots(figsize=(7, 6))
     
-    # # Minimum pressure
-    plot_time_series_comparison(tracker, 'min_pressure', experiments, 
-                              nhc_data, ax=ax)
+    # Minimum pressure
+    plot_time_series_comparison(tracker, 'min_pressure', experiments, nhc_data, ax=ax)
     ax.set_title('Minimum Sea Level Pressure')
     ax.set_ylabel('Pressure (hPa)')
-    plt.savefig(OUTPUT_PATH + "msl_large.png", dpi=300)
+    plt.savefig(OUTPUT_PATH + f"msl_{domain}.png", dpi=300)
     plt.show()
 
     # %%
     plot_max_sfc_wind(tracker, nhc_data)
-    plt.savefig(OUTPUT_PATH + "wind_large.png", dpi=300)
+    plt.savefig(OUTPUT_PATH + f"wind_{domain}.png", dpi=300)
     plt.show()
-    
-    # %%
+
     # Vertical Thermal structure
-    plot_vts(tracker, figname="vts_large")
-
-
-
-
-
+    plot_vts(tracker, figname=f"vts_{domain}")
 
 # %%
