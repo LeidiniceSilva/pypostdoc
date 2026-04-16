@@ -23,7 +23,7 @@ from PIL import Image
 import io
 from tqdm import tqdm
 
-domain='large'
+domain='small'
 
 COLORS = [
     "#33a02c", "#005B72","#905dc7", "#692510", 
