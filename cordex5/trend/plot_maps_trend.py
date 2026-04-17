@@ -37,6 +37,8 @@ path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/tren
 # Domain extent
 if domain == 'AUS-12': 
     DOMAIN_EXTENT = [110, 180, -48, 4]
+elif domain == 'EAS-12': 
+    DOMAIN_EXTENT = [75, 155, -9, 71]
 elif domain == 'EUR-12': 
     DOMAIN_EXTENT = [-42, 61, 20, 70]
 elif domain == 'NAM-12': 
@@ -83,6 +85,7 @@ VAR_MAP = {
 # Plot configuration
 PR_LEVELS = { 
     'AUS-12': np.arange(-20,  22, 2),
+    'EAS-12': np.arange(-20,  22, 2),
     'EUR-12': np.arange(-10,  11, 1),
     'NAM-12': np.arange(-10,  11, 1),
     'SAM-12': np.arange(-20,  22, 2)
@@ -183,7 +186,7 @@ def import_regcm_dataset(param, driven):
         if 'lat' in nc.variables and 'lon' in nc.variables:
             lat = nc.variables['lat'][:]
             lon = nc.variables['lon'][:]
-            print("  2D lat/lon coordinates")
+            print("  1D lat/lon coordinates")
         elif 'xlat' in nc.variables and 'xlon' in nc.variables:
             lat = nc.variables['xlat'][:]
             lon = nc.variables['xlon'][:]
@@ -217,6 +220,9 @@ def import_regcm_dataset(param, driven):
         print(f"  Lat shape: {lat.shape}, range: [{lat.min():.1f}, {lat.max():.1f}]")
 
         if domain == 'AUS-12':
+            if lon.min() < 0:
+               lon = lon % 360
+        elif domain == 'EAS-12':
             if lon.min() < 0:
                lon = lon % 360
         else:
