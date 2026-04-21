@@ -307,7 +307,7 @@ def plot_time_series_comparison(tracker, var_name, experiments=None, nhc_data=No
     
     ax.set_ylabel(var_name)
     ax.legend(loc=3)
-    ax.grid(True, linestyle='--', alpha=0.5)
+    ax.grid(True, linestyle='--')
     ax.tick_params(axis='x', rotation=45)
     
     return ax
@@ -332,7 +332,7 @@ def plot_cyclone_tracks(tracker, experiments=None, nhc_data=None, era5_included=
     plot_extent = map_extent_plot if map_extent_plot is not None else tracker.map_extent
     
     # Base map
-    ax.add_feature(cfeature.COASTLINE, linewidth=0.7)
+    ax.add_feature(cfeature.COASTLINE, linewidth=0.75)
     ax.add_feature(cfeature.BORDERS, linewidth=0.5, linestyle=":")
     ax.add_feature(cfeature.LAND, facecolor="lightgray")
     ax.add_feature(cfeature.OCEAN, facecolor="lightblue")
@@ -349,11 +349,11 @@ def plot_cyclone_tracks(tracker, experiments=None, nhc_data=None, era5_included=
             
             # Plot track
             ax.plot(df['lon'], df['lat'], 'o-', color=color, 
-                   linewidth=2, markersize=4, label=exp, alpha=0.8)
+                   linewidth=1, markersize=4, label=exp, alpha=0.8)
             
             # Mark start point
             ax.scatter(df['lon'].iloc[0], df['lat'].iloc[0], 
-                      marker='*', s=150, color=color, 
+                      marker='*', s=75, color=color, 
                       edgecolor='black', zorder=5)
     
     # Plot ERA5 track
@@ -362,21 +362,21 @@ def plot_cyclone_tracks(tracker, experiments=None, nhc_data=None, era5_included=
         df_era5 = df_era5.drop(index=range(23, 28), errors="ignore")
         
         ax.plot(df_era5['lon'], df_era5['lat'], 's-', color='blue',
-               linewidth=2, label='ERA5', alpha=0.8)
+               linewidth=1, markersize=4, label='ERA5', alpha=0.8)
         ax.scatter(df_era5['lon'].iloc[0], df_era5['lat'].iloc[0],
-                  marker='*', s=120, color='blue', edgecolor='black', zorder=5)
+                  marker='*', s=75, color='blue', edgecolor='black', zorder=5)
     
     # Plot NHC track
     if nhc_data is not None:
         ax.plot(nhc_data['lon'], nhc_data['lat'], 's-', color="r",
-               linewidth=3, label='NHC', alpha=0.9)
+               linewidth=1, markersize=4, label='NHC', alpha=0.8)
         ax.scatter(nhc_data['lon'].iloc[0], nhc_data['lat'].iloc[0],
-                  marker='*', s=120, color="r", edgecolor='black', zorder=5)
+                  marker='*', s=75, color="r", edgecolor='black', zorder=5)
     
     # Add reference point (Acapulco)
     acapulco_lon, acapulco_lat = -99.91, 16.85
     ax.plot(acapulco_lon, acapulco_lat, marker="*", color="black",
-           markersize=12, zorder=10, label="Acapulco")
+           markersize=10, zorder=10, label="Acapulco")
     
     # Add x and y labels (Longitude and Latitude)
     ax.set_xlabel('Longitude')
@@ -389,9 +389,9 @@ def plot_cyclone_tracks(tracker, experiments=None, nhc_data=None, era5_included=
     ax.yaxis.set_major_formatter(lat_formatter)
     
     # Add gridlines with labels
-    gl = ax.gridlines(draw_labels=True, linestyle='--', alpha=0.5, 
-                     xlocs=range(-110, -90, 3), 
-                     ylocs=range(0, 25, 3))
+    gl = ax.gridlines(draw_labels=True, linestyle='--', 
+                     xlocs=range(-114, -90, 4), 
+                     ylocs=range(4, 20, 2))
     gl.top_labels = False
     gl.right_labels = False
 
@@ -553,7 +553,7 @@ if __name__ == "__main__":
     # Configuration
     experiments = ["ctrl", "holt_r2", "holt_r3", "uw_r2", "uw_r3"]
     map_extent = [-103, -92.5, 5, 17]    # Used for track detection
-    map_extent_new = [-110, -90, 2, 22]  # New map extent for plot (a)
+    map_extent_new = [-114, -90, 4, 20]  # New map extent for plot (a)
     data_dir = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps_v3/domain_{domain}_regridded/"
     
     # Initialize tracker with original map_extent for detection
@@ -578,13 +578,16 @@ if __name__ == "__main__":
         "ytick.labelsize": font_size
     })
     
-    fig = plt.figure(figsize=(14, 6))
+    fig = plt.figure(figsize=(14, 4))
     
     # Subplot (a) - Cyclone tracks (using new map extent for display only)
     ax1 = fig.add_subplot(1, 3, 1, projection=ccrs.PlateCarree())
     plot_cyclone_tracks(tracker, experiments, nhc_data, era5_included=True, 
                        map_extent_plot=map_extent_new, ax=ax1)
-    
+    # Add x and y labels (Longitude and Latitude)
+    ax1.set_xlabel('Longitude')
+    ax1.set_ylabel('Latitude')
+
     # Subplot (b) - Minimum Sea Level Pressure
     ax2 = fig.add_subplot(1, 3, 2)
     plot_time_series_comparison(tracker, 'min_pressure', experiments, nhc_data, ax=ax2)

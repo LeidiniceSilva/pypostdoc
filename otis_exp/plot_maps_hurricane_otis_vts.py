@@ -263,7 +263,7 @@ def plot_all_vts_subplots(all_vts_data, output_file=None):
     axes = axes.flatten()
     
     # Common contour levels
-    levels = np.arange(314, 410, 2)
+    levels = np.arange(314, 390, 2)
     
     # List of labels for each subplot
     labels = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)']
@@ -281,7 +281,7 @@ def plot_all_vts_subplots(all_vts_data, output_file=None):
         X, Y = np.meshgrid(r_coords, plev_coords)
         
         # Create filled contour plot
-        cf = ax.contourf(X, Y, Z, levels=levels, cmap='jet', extend='neither')
+        cf = ax.contourf(X, Y, Z, levels=levels, cmap='jet', extend='max')
         
         # Add contour lines
         cs = ax.contour(X, Y, Z, levels=levels[::3], colors='black', linewidths=0.5, alpha=0.5)
