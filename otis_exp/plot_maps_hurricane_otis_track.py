@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "March 17, 2026"
-__description__ = "This plot Otis hurricane maps"
+__description__ = "This script plot Otis hurricane maps"
 
 import os
 os.chdir("/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp")
@@ -15,15 +17,13 @@ import cartopy.feature as cfeature
 from datetime import datetime
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-domain='small'
+domain = 'large'
+font_size = 10
 
-COLORS = [
-    "#33a02c", "#005B72","#905dc7", "#692510", 
-    "#fdbf6f", "b", "#fb9a99", "#b2df8a",  "#a6cee3", "#ff7f00",  "#cab2d6", 
-]
+COLORS = ["#33a02c", "#005B72","#905dc7", "#692510","#fdbf6f", "b", "#fb9a99", "#b2df8a",  "#a6cee3", "#ff7f00",  "#cab2d6"]
+
 OUTPUT_PATH = "/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/"
 
-# %%
 # CYCLONE CENTER DETECTION
 def haversine_distance(lat1, lon1, lat2, lon2):
     """Compute great-circle distance (km) between two lat/lon points."""
@@ -121,11 +121,8 @@ class CycloneTracker:
             last_lat, last_lon = None, None
 
             for time_val in ds[time_name].values:
-                ds_sel = ds.sel(
-                    **{lat_name: slice(self.map_extent[3], self.map_extent[2]) if exp_name == "ERA5" else slice(self.map_extent[2], self.map_extent[3]),
-                    lon_name: slice(self.map_extent[0], self.map_extent[1]),
-                    time_name: time_val}
-                )
+                ds_sel = ds.sel(**{lat_name: slice(self.map_extent[3], self.map_extent[2]) if exp_name == "ERA5" else slice(self.map_extent[2], self.map_extent[3]),
+                    lon_name: slice(self.map_extent[0], self.map_extent[1]), time_name: time_val})
 
                 # Pressure in hPa
                 pressure = ds_sel['psl']
@@ -141,7 +138,7 @@ class CycloneTracker:
                 lat_center = min_point[lat_name].values.flatten()[0]
                 lon_center = min_point[lon_name].values.flatten()[0]
 
-                # --- Filters ---
+                # Filters
                 valid = True
                 if min_pressure > psl_threshold:
                     valid = False
@@ -166,7 +163,7 @@ class CycloneTracker:
 
             df = pd.DataFrame(centers)
 
-            # --- Optional smoothing ---
+            # Optional smoothing 
             if smooth_window is not None and smooth_window > 1:
                 df['lat'] = df['lat'].rolling(window=smooth_window, min_periods=1, center=True).mean()
                 df['lon'] = df['lon'].rolling(window=smooth_window, min_periods=1, center=True).mean()
@@ -181,6 +178,22 @@ class CycloneTracker:
             centers = process_dataset(ds, 'lat', 'lon', 'time', exp_name, max_jump_km=300)
             self.cyclone_centers[exp_name] = centers
             self.minimum_datetime[exp_name] = centers.iloc[centers["min_pressure"].idxmin()]
+            
+            # Print ERA5 tracking information
+            if exp_name == "ERA5":
+                print("\n" + "="*60)
+                print("ERA5 CYCLONE TRACKING INFORMATION")
+                print("="*60)
+                print(f"\nNumber of tracked positions: {len(centers.dropna())}")
+                print(f"\nMinimum pressure: {centers['min_pressure'].min():.1f} hPa at {centers.loc[centers['min_pressure'].idxmin(), 'time']}")
+                print(f"  Latitude: {centers.loc[centers['min_pressure'].idxmin(), 'lat']:.2f}°")
+                print(f"  Longitude: {centers.loc[centers['min_pressure'].idxmin(), 'lon']:.2f}°")
+                
+                print("\nTrack details (time, lat, lon, pressure):")
+                print("-"*60)
+                for idx, row in centers.dropna().iterrows():
+                    print(f"{row['time'].strftime('%Y-%m-%d %H:%M')} | Lat: {row['lat']:6.2f} | Lon: {row['lon']:7.2f} | Pressure: {row['min_pressure']:6.1f} hPa")
+                print("="*60 + "\n")
 
     
     def compute_area_statistics(self, var_name, stat_type='max', radius_deg=2.0):
@@ -259,7 +272,7 @@ def plot_time_series_comparison(tracker, var_name, experiments=None, nhc_data=No
     """
     
     if ax is None:
-        fig, ax = plt.subplots(figsize=(12, 8))
+        fig, ax = plt.subplots()
     
     if experiments is None:
         experiments = list(tracker.cyclone_centers.keys())
@@ -293,27 +306,37 @@ def plot_time_series_comparison(tracker, var_name, experiments=None, nhc_data=No
                label='NHC', color="r", linewidth=2)
     
     ax.set_ylabel(var_name)
-    ax.legend()
-    ax.grid(True, alpha=0.3)
+    ax.legend(loc=3)
+    ax.grid(True, linestyle='--', alpha=0.5)
     ax.tick_params(axis='x', rotation=45)
     
     return ax
 
-def plot_cyclone_tracks(tracker, experiments=None, nhc_data=None, era5_included=True, ax=None):
+def plot_cyclone_tracks(tracker, experiments=None, nhc_data=None, era5_included=True, 
+                        map_extent_plot=None, ax=None):
     """
     Plot cyclone tracks on a map.
+    
+    Parameters:
+    -----------
+    map_extent_plot : list or None
+        [lon_min, lon_max, lat_min, lat_max] for map extent in the plot.
+        If None, uses tracker.map_extent.
     """
     
     if ax is None:
-        fig = plt.figure(figsize=(12, 10))
+        fig = plt.figure()
         ax = plt.axes(projection=ccrs.PlateCarree())
+    
+    # Use plot-specific map extent or fall back to tracker's map_extent
+    plot_extent = map_extent_plot if map_extent_plot is not None else tracker.map_extent
     
     # Base map
     ax.add_feature(cfeature.COASTLINE, linewidth=0.7)
     ax.add_feature(cfeature.BORDERS, linewidth=0.5, linestyle=":")
     ax.add_feature(cfeature.LAND, facecolor="lightgray")
     ax.add_feature(cfeature.OCEAN, facecolor="lightblue")
-    ax.set_extent(tracker.map_extent, crs=ccrs.PlateCarree())
+    ax.set_extent(plot_extent, crs=ccrs.PlateCarree())
     
     if experiments is None:
         experiments = [exp for exp in tracker.cyclone_centers.keys() if exp != 'ERA5']
@@ -341,31 +364,46 @@ def plot_cyclone_tracks(tracker, experiments=None, nhc_data=None, era5_included=
         ax.plot(df_era5['lon'], df_era5['lat'], 's-', color='blue',
                linewidth=2, label='ERA5', alpha=0.8)
         ax.scatter(df_era5['lon'].iloc[0], df_era5['lat'].iloc[0],
-                  marker='*', s=150, color='blue', edgecolor='black', zorder=5)
+                  marker='*', s=120, color='blue', edgecolor='black', zorder=5)
     
     # Plot NHC track
     if nhc_data is not None:
         ax.plot(nhc_data['lon'], nhc_data['lat'], 's-', color="r",
                linewidth=3, label='NHC', alpha=0.9)
         ax.scatter(nhc_data['lon'].iloc[0], nhc_data['lat'].iloc[0],
-                  marker='*', s=150, color="r", edgecolor='black', zorder=5)
+                  marker='*', s=120, color="r", edgecolor='black', zorder=5)
     
     # Add reference point (Acapulco)
     acapulco_lon, acapulco_lat = -99.91, 16.85
-    ax.plot(acapulco_lon, acapulco_lat, marker="*", color="red",
+    ax.plot(acapulco_lon, acapulco_lat, marker="*", color="black",
            markersize=12, zorder=10, label="Acapulco")
     
-    # Formatting
-    ax.gridlines(draw_labels=True, alpha=0.3)
-    ax.legend(loc='best', fontsize=8)
-    ax.set_title('(a) Cyclone Tracks', loc='left', fontsize=10, fontweight='bold')
+    # Add x and y labels (Longitude and Latitude)
+    ax.set_xlabel('Longitude')
+    ax.set_ylabel('Latitude')
+    
+    # Formatting with longitude/latitude formatters
+    lon_formatter = LongitudeFormatter(zero_direction_label=True)
+    lat_formatter = LatitudeFormatter()
+    ax.xaxis.set_major_formatter(lon_formatter)
+    ax.yaxis.set_major_formatter(lat_formatter)
+    
+    # Add gridlines with labels
+    gl = ax.gridlines(draw_labels=True, linestyle='--', alpha=0.5, 
+                     xlocs=range(-110, -90, 3), 
+                     ylocs=range(0, 25, 3))
+    gl.top_labels = False
+    gl.right_labels = False
+
+    ax.legend(loc=3, fontsize=font_size)
+    ax.set_title('(a)', loc='left', fontsize=font_size, fontweight='bold')
     
     return ax
 
 def plot_max_sfc_wind(tracker, nhc_data=None, ax=None):
     """Plot maximum surface wind speed."""
     if ax is None:
-        fig, ax = plt.subplots(figsize=(7, 4))
+        fig, ax = plt.subplots()
     
     for i, var in enumerate(tracker.variable_data.keys()):
         expname = var.split("-")[0]
@@ -422,13 +460,13 @@ def plot_max_sfc_wind(tracker, nhc_data=None, ax=None):
             else:
                 y_text = y1 + (y_top - y1)/2
             x_text = pd.to_datetime(tracker.variable_data['ERA5-max-sfcWind']["time"].max()) + pd.Timedelta(days=-0.5)
-            ax.text(x_text, y_text, label, va='center', ha='left', fontsize=10, color='k')
+            ax.text(x_text, y_text, label, va='center', ha='left', fontsize=font_size, color='k')
 
     ax.set_ylim(0, y_top)
-    ax.set_ylabel("Max wind speed (m/s)")
-    ax.set_title("(c)", loc='left', fontsize=10, fontweight='bold')
+    ax.set_ylabel("Max wind speed (m/s)", fontsize=font_size, fontweight='bold')
+    ax.set_title("(c)", loc='left', fontsize=font_size, fontweight='bold')
     ax.margins(x=0)
-    ax.legend(fontsize=8)
+    ax.legend(fontsize=font_size)
     ax.tick_params(axis='x', rotation=45)
         
     return ax
@@ -510,14 +548,15 @@ def load_regcm5_multi_file(data_dir, verbose=False):
     
     return ds_merged
 
-# %%
+
 if __name__ == "__main__":
     # Configuration
     experiments = ["ctrl", "holt_r2", "holt_r3", "uw_r2", "uw_r3"]
-    map_extent = [-103, -92.5, 5, 17]
-    data_dir = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps_v2/domain_{domain}_regridded/"
+    map_extent = [-103, -92.5, 5, 17]    # Used for track detection
+    map_extent_new = [-110, -90, 2, 22]  # New map extent for plot (a)
+    data_dir = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps_v3/domain_{domain}_regridded/"
     
-    # Initialize tracker
+    # Initialize tracker with original map_extent for detection
     tracker = CycloneTracker(data_dir, experiments, map_extent)
     
     # Find cyclone centers
@@ -531,25 +570,26 @@ if __name__ == "__main__":
     
     # Create figure with 1 row and 3 columns
     plt.rcParams.update({
-        "font.size": 10,
-        "axes.labelsize": 10,
-        "axes.titlesize": 10,
-        "legend.fontsize": 10,
-        "xtick.labelsize": 10,
-        "ytick.labelsize": 10
+        "font.size": font_size,
+        "axes.labelsize": font_size,
+        "axes.titlesize": font_size,
+        "legend.fontsize": font_size,
+        "xtick.labelsize": font_size,
+        "ytick.labelsize": font_size
     })
     
-    fig = plt.figure(figsize=(16, 6))
+    fig = plt.figure(figsize=(14, 6))
     
-    # Subplot (a) - Cyclone tracks
+    # Subplot (a) - Cyclone tracks (using new map extent for display only)
     ax1 = fig.add_subplot(1, 3, 1, projection=ccrs.PlateCarree())
-    plot_cyclone_tracks(tracker, experiments, nhc_data, era5_included=True, ax=ax1)
+    plot_cyclone_tracks(tracker, experiments, nhc_data, era5_included=True, 
+                       map_extent_plot=map_extent_new, ax=ax1)
     
     # Subplot (b) - Minimum Sea Level Pressure
     ax2 = fig.add_subplot(1, 3, 2)
     plot_time_series_comparison(tracker, 'min_pressure', experiments, nhc_data, ax=ax2)
-    ax2.set_title('(b)', loc='left', fontsize=10, fontweight='bold')
-    ax2.set_ylabel('Pressure (hPa)')
+    ax2.set_title('(b)', loc='left', fontsize=font_size, fontweight='bold')
+    ax2.set_ylabel('Mean sea level pressure (hPa)', fontsize=font_size, fontweight='bold')
     
     # Subplot (c) - Maximum Wind Speed
     ax3 = fig.add_subplot(1, 3, 3)

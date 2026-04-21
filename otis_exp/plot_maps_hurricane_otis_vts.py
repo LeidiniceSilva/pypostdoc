@@ -1,458 +1,399 @@
-#!/usr/bin/env python3
-# %%
+# -*- coding: utf-8 -*-
+
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "March 17, 2026"
-__description__ = "Plot Otis hurricane VTS (Vertical Thermal Structure) - Combined figure with ERA5"
+__description__ = "This script plot Otis hurricane VTS"
 
 import os
 import glob
-import xarray as xr
 import numpy as np
+import xarray as xr
 import pandas as pd
 import matplotlib.pyplot as plt
-from datetime import datetime
-from metpy.units import units
 import metpy.calc as mpcalc
+from metpy.units import units
+import warnings
+warnings.filterwarnings('ignore')
 
-domain = 'small'
+
+# Domain type
+DOMAIN = "large"
+MAP_EXTENT = [-103, -92.5, 5, 17]  
+
+# Experiment names
+EXPERIMENTS = ["ctrl", "holt_r2", "holt_r3", "uw_r2", "uw_r3"]
+HURRICANE_NAME = "Otis"
+
+START_DATE = "2023-10-21"
+END_DATE = "2023-10-25"
+
+# Paths
+DATA_DIR_MODELS = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps_v3/domain_{DOMAIN}_regridded/"
+DATA_DIR_ERA5 = "/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/era5"
 OUTPUT_PATH = "/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/"
+os.makedirs(OUTPUT_PATH, exist_ok=True)
 
-# %%
-# FUNCTIONS NECESSARY FOR VTS
 
-def load_regcm5_multi_file(data_dir):
-    """Load RegCM5 data from separate variable files and merge."""
+# Data loading function
+def load_era5_data(data_dir, start_date=None, end_date=None):
+    """Load ERA5 data from NetCDF files"""
     nc_files = sorted(glob.glob(os.path.join(data_dir, '*.nc')))
+    
     if not nc_files:
         raise ValueError(f"No NetCDF files found in {data_dir}")
     
+    print(f"Found {len(nc_files)} ERA5 files")
+    
+    # Load and merge all files
     datasets = [xr.open_dataset(file) for file in nc_files]
-    time_coords = [set(ds.time.values) for ds in datasets]
-    common_times = sorted(time_coords[0].intersection(*time_coords[1:]))
-    datasets_aligned = [ds.sel(time=common_times) for ds in datasets]
-    ds_merged = xr.merge(datasets_aligned, compat='override')
+    ds_merged = xr.merge(datasets, compat='override')
+    
+    # Rename coordinates to standard names
+    rename_dict = {
+        "valid_time": "time",
+        "latitude": "lat",
+        "longitude": "lon",
+        "pressure_level": "plev",
+        "msl": "psl",
+        "t": "ta",
+        "q": "hus",
+        "r": "rh"
+    }
+    
+    for old_name, new_name in rename_dict.items():
+        if old_name in ds_merged.variables:
+            ds_merged = ds_merged.rename({old_name: new_name})
+    
+    # Fix longitude to [-180, 180] range
+    if np.any(ds_merged.lon > 180):
+        ds_merged.coords['lon'] = (ds_merged.lon + 180) % 360 - 180
+        ds_merged = ds_merged.sortby('lon')
+    
+    # Select time range
+    if start_date and end_date:
+        ds_merged = ds_merged.sel(time=slice(start_date, end_date))
+        print(f"Selected time range: {start_date} to {end_date}")
     
     return ds_merged
 
-def load_era5_vts(era5_dir, map_extent):
-    """Load ERA5 temperature and specific humidity and crop to hurricane domain."""
-    # Load temperature
-    t_file = os.path.join(era5_dir, 't_ERA5_Otis_6hr_Oct2023.nc')
-    q_file = os.path.join(era5_dir, 'q_ERA5_Otis_6hr_Oct2023.nc')
+
+def load_regcm5_data(data_dir, experiment):
+    """Load RegCM5 model data for a specific experiment"""
+    data_path = os.path.join(data_dir, experiment)
+    nc_files = sorted(glob.glob(os.path.join(data_path, '*.nc')))
     
-    ds_t = xr.open_dataset(t_file)
-    ds_q = xr.open_dataset(q_file)
+    if not nc_files:
+        raise ValueError(f"No NetCDF files found in {data_path}")
     
-    # Rename coordinates
-    ds_t = ds_t.rename({
-        'longitude': 'lon',
-        'latitude': 'lat',
-        'valid_time': 'time'
-    })
-    ds_q = ds_q.rename({
-        'longitude': 'lon',
-        'latitude': 'lat',
-        'valid_time': 'time'
-    })
+    # Load all datasets
+    datasets = [xr.open_dataset(file) for file in nc_files]
     
-    # Fix longitude to [-180, 180]
-    if np.any(ds_t.lon > 180):
-        ds_t.coords['lon'] = (ds_t.coords['lon'] + 180) % 360 - 180
-        ds_t = ds_t.sortby(ds_t.lon)
-    if np.any(ds_q.lon > 180):
-        ds_q.coords['lon'] = (ds_q.coords['lon'] + 180) % 360 - 180
-        ds_q = ds_q.sortby(ds_q.lon)
+    # Find intersection of time coordinates
+    time_coords = [set(ds.time.values) for ds in datasets]
+    common_times = sorted(time_coords[0].intersection(*time_coords[1:]))
     
-    # Crop to hurricane domain (add some margin)
+    # Select only common time steps
+    datasets_aligned = [ds.sel(time=common_times) for ds in datasets]
+    
+    # Merge datasets
+    ds_merged = xr.merge(datasets_aligned, compat='override')
+    
+    # Fix longitude
+    if np.any(ds_merged.lon > 180):
+        ds_merged.coords['lon'] = (ds_merged.lon + 180) % 360 - 180
+        ds_merged = ds_merged.sortby('lon')
+    
+    # Select time range
+    ds_merged = ds_merged.sel(time=slice(START_DATE, END_DATE))
+    
+    return ds_merged
+
+
+# Cyclone tracking function
+def find_cyclone_center(ds_time, map_extent, is_era5=False):
+    """Find cyclone center based on minimum sea level pressure"""
     lon_min, lon_max, lat_min, lat_max = map_extent
-    # Add 5 degrees margin for safety
-    lon_min_crop = lon_min - 5
-    lon_max_crop = lon_max + 5
-    lat_min_crop = lat_min - 5
-    lat_max_crop = lat_max + 5
     
-    ds_t = ds_t.sel(
-        lat=slice(lat_min_crop, lat_max_crop),
-        lon=slice(lon_min_crop, lon_max_crop)
-    )
-    ds_q = ds_q.sel(
-        lat=slice(lat_min_crop, lat_max_crop),
-        lon=slice(lon_min_crop, lon_max_crop)
-    )
+    # Handle latitude order
+    if is_era5:
+        # ERA5 latitude is descending (90 to -90)
+        lat_slice = slice(lat_max, lat_min)
+    else:
+        # Model latitude is ascending
+        lat_slice = slice(lat_min, lat_max)
     
-    # Merge temperature and specific humidity
-    ds_era = xr.merge([ds_t, ds_q])
+    try:
+        ds_domain = ds_time.sel(lat=lat_slice, lon=slice(lon_min, lon_max))
+    except:
+        return None
     
-    print(f"ERA5 cropped to domain: lon=[{lon_min_crop:.1f}, {lon_max_crop:.1f}], lat=[{lat_min_crop:.1f}, {lat_max_crop:.1f}]")
-    print(f"ERA5 shape: time={len(ds_era.time)}, pressure_level={len(ds_era.pressure_level)}, lat={len(ds_era.lat)}, lon={len(ds_era.lon)}")
+    if ds_domain.lat.size == 0 or ds_domain.lon.size == 0:
+        return None
     
-    return ds_era
+    # Get sea level pressure (convert from Pa to hPa if necessary)
+    psl = ds_domain['psl']
+    if hasattr(psl, 'units') and psl.units.lower() == 'pa':
+        psl = psl / 100.0
+    
+    # Find minimum pressure location
+    min_pressure = float(psl.min())
+    
+    if min_pressure > 1010:  # Threshold for cyclone
+        return None
+    
+    min_point = psl.where(psl == psl.min(), drop=True)
+    
+    if min_point.lat.size == 0 or min_point.lon.size == 0:
+        return None
+    
+    lat_center = float(min_point.lat.values[0])
+    lon_center = float(min_point.lon.values[0])
+    
+    return {
+        'lat': lat_center,
+        'lon': lon_center,
+        'min_pressure': min_pressure
+    }
 
-def haversine_distance(lat1, lon1, lat2, lon2):
-    """Compute great-circle distance (km) between two lat/lon points."""
-    R = 6371.0
-    phi1, phi2 = np.radians(lat1), np.radians(lat2)
-    dphi = np.radians(lat2 - lat1)
-    dlambda = np.radians(lon2 - lon1)
-    a = np.sin(dphi/2)**2 + np.cos(phi1)*np.cos(phi2)*np.sin(dlambda/2)**2
-    return 2 * R * np.arcsin(np.sqrt(a))
 
-def find_cyclone_centers(ds_models, map_extent, psl_threshold=1010.0, max_jump_km=300):
-    """Find cyclone centers for each experiment (including ERA5)."""
-    cyclone_centers = {}
-    minimum_datetime = {}
+def track_cyclone(ds, map_extent, exp_name):
+    """Track cyclone to find peak intensity"""
+    track_data = []
+    is_era5 = (exp_name == "ERA5")
     
-    for exp_name, ds in ds_models.items():
-        print(f"Processing: {exp_name}")
+    for t in ds.time.values:
+        ds_time = ds.sel(time=t)
+        center = find_cyclone_center(ds_time, map_extent, is_era5)
         
-        # Fix longitude if needed
-        if np.any(ds.lon > 180):
-            ds.coords['lon'] = (ds.coords['lon'] + 180) % 360 - 180
-            ds = ds.sortby(ds.lon)
-        
-        centers = []
-        last_lat, last_lon = None, None
-        
-        for time_val in ds.time.values:
-            try:
-                ds_sel = ds.sel(
-                    lat=slice(map_extent[2], map_extent[3]),
-                    lon=slice(map_extent[0], map_extent[1]),
-                    time=time_val
-                )
-            except Exception as e:
-                print(f"  Warning: Could not select data for time {time_val}: {e}")
-                continue
-            
-            # Get pressure variable
-            if 'psl' in ds_sel:
-                pressure = ds_sel['psl']
-                if hasattr(pressure, 'attrs') and pressure.attrs.get('units', '').lower() == 'pa':
-                    pressure = pressure / 100.0
-                use_pressure = True
-            elif 'msl' in ds_sel:
-                pressure = ds_sel['msl']
-                if hasattr(pressure, 'attrs') and pressure.attrs.get('units', '').lower() == 'pa':
-                    pressure = pressure / 100.0
-                use_pressure = True
-            else:
-                # For ERA5 without msl/psl, use temperature at 850hPa as proxy
-                if 't' in ds_sel:
-                    # Select temperature at 850hPa
-                    if 'pressure_level' in ds_sel.dims:
-                        t_850 = ds_sel['t'].sel(pressure_level=850, method='nearest')
-                        pressure = t_850
-                        use_pressure = False
-                    else:
-                        print(f"  Warning: No pressure_level dimension for {exp_name}")
-                        continue
-                else:
-                    print(f"  Warning: No pressure variable found for {exp_name}")
-                    continue
-            
-            if np.all(np.isnan(pressure.values)):
-                continue
-            
-            # Find minimum pressure (or minimum temperature for ERA5 proxy)
-            min_value = pressure.min().item()
-            min_point = pressure.where(pressure == min_value, drop=True)
-            
-            if min_point.lat.size == 0 or min_point.lon.size == 0:
-                continue
-                
-            lat_center = float(min_point.lat.values.flatten()[0])
-            lon_center = float(min_point.lon.values.flatten()[0])
-            
-            valid = True
-            if use_pressure:
-                if min_value > psl_threshold:
-                    valid = False
-            if valid and last_lat is not None and last_lon is not None:
-                dist = haversine_distance(last_lat, last_lon, lat_center, lon_center)
-                if dist > max_jump_km:
-                    valid = False
-            
-            if not valid:
-                lat_center, lon_center, min_value = np.nan, np.nan, np.nan
-            
-            centers.append({
-                'time': pd.to_datetime(time_val),
-                'lat': lat_center,
-                'lon': lon_center,
-                'min_pressure': min_value if use_pressure else np.nan
+        if center is not None:
+            track_data.append({
+                'time': pd.to_datetime(t),
+                'lat': center['lat'],
+                'lon': center['lon'],
+                'min_pressure': center['min_pressure']
             })
-            
-            if valid and not np.isnan(lat_center):
-                last_lat, last_lon = lat_center, lon_center
-        
-        if len(centers) == 0:
-            print(f"  Warning: No cyclone centers found for {exp_name}")
-            cyclone_centers[exp_name] = pd.DataFrame()
-            minimum_datetime[exp_name] = {'time': None, 'lat': np.nan, 'lon': np.nan, 'min_pressure': np.nan}
-            continue
-        
-        df = pd.DataFrame(centers)
-        cyclone_centers[exp_name] = df
-        
-        # Find index of minimum pressure (or minimum temperature for ERA5)
-        if 'min_pressure' in df.columns and not df['min_pressure'].isna().all():
-            # Filter out NaN values before finding idxmin
-            valid_df = df[df['min_pressure'].notna()]
-            if len(valid_df) > 0:
-                min_idx = valid_df["min_pressure"].idxmin()
-                minimum_datetime[exp_name] = df.iloc[min_idx]
-            else:
-                # Use the first valid center
-                valid_df = df[df['lat'].notna()]
-                if len(valid_df) > 0:
-                    minimum_datetime[exp_name] = valid_df.iloc[len(valid_df)//2]
-                else:
-                    minimum_datetime[exp_name] = {'time': None, 'lat': np.nan, 'lon': np.nan, 'min_pressure': np.nan}
-        else:
-            # Use the middle point
-            valid_df = df[df['lat'].notna()]
-            if len(valid_df) > 0:
-                min_idx = len(valid_df) // 2
-                minimum_datetime[exp_name] = valid_df.iloc[min_idx]
-            else:
-                minimum_datetime[exp_name] = {'time': None, 'lat': np.nan, 'lon': np.nan, 'min_pressure': np.nan}
     
-    return cyclone_centers, minimum_datetime
+    if not track_data:
+        print(f"Warning: No cyclone centers found for {exp_name}")
+        return None
+    
+    df_track = pd.DataFrame(track_data)
+    
+    # Find peak intensity (minimum pressure)
+    min_idx = df_track['min_pressure'].idxmin()
+    peak = df_track.loc[min_idx]
+    
+    print(f"{exp_name:10} - Time: {peak['time']}, Lat: {peak['lat']:.2f}°N, Lon: {peak['lon']:.2f}°W, Pressure: {peak['min_pressure']:.1f} hPa")
+    
+    return peak
 
-def compute_equiv_potential_temp_regcm5(da):
-    """Compute equivalent potential temperature for RegCM5."""
-    T = da['ta']  # K
-    q = da['hus']  # RegCM5 specific humidity
-    p = da['plev']
-    p_broadcasted = p.broadcast_like(T)
+
+# Vertical thermal structure function
+def compute_equivalent_potential_temperature(ds_slice, is_era5=False):
+    """Compute equivalent potential temperature (theta_e)"""
+    T = ds_slice['ta']  # Temperature in K
+    p = ds_slice['plev']  # Pressure levels in hPa
     
-    dpt = mpcalc.dewpoint_from_specific_humidity(p_broadcasted * units.hPa, q * units("kg/kg"))
-    theta_e = mpcalc.equivalent_potential_temperature(p_broadcasted * units.hPa, T * units.K, dpt)
+    if is_era5:
+        # ERA5 uses relative humidity
+        rh = ds_slice['rh'].clip(min=0.0, max=100)
+        T_units = T * units.kelvin
+        p_units = p.broadcast_like(T) * units.hPa
+        rh_units = rh * units.percent
+        
+        dewpoint = mpcalc.dewpoint_from_relative_humidity(T_units, rh_units)
+    else:
+        # Models use specific humidity
+        q = ds_slice['hus']  # Specific humidity in kg/kg
+        p_broadcasted = p.broadcast_like(T)
+        
+        T_units = T * units.kelvin
+        p_units = p_broadcasted * units.hPa
+        q_units = q * units('kg/kg')
+        
+        dewpoint = mpcalc.dewpoint_from_specific_humidity(p_units, T_units, q_units)
+    
+    # Compute equivalent potential temperature
+    theta_e = mpcalc.equivalent_potential_temperature(p_units, T_units, dewpoint)
+    
     return theta_e
 
-def compute_equiv_potential_temp_era5(da):
-    """Compute equivalent potential temperature for ERA5."""
-    T = da['t']  # K
-    q = da['q']  # ERA5 specific humidity (kg/kg)
-    p = da['pressure_level']  # ERA5 pressure level
-    p_broadcasted = p.broadcast_like(T)
+def extract_cross_section(ds, center_time, center_lat, center_lon, is_era5=False, radius_deg=5):
+    """Extract a zonal cross-section through the cyclone center"""
+    # Select time
+    ds_time = ds.sel(time=center_time, method='nearest')
     
-    dpt = mpcalc.dewpoint_from_specific_humidity(p_broadcasted * units.hPa, q * units("kg/kg"))
-    theta_e = mpcalc.equivalent_potential_temperature(p_broadcasted * units.hPa, T * units.K, dpt)
-    return theta_e
-
-def haversine_signed_1d_from_center(lat, lon):
-    """Compute signed distance (km) from central point along a cross-section."""
+    # Select longitude range around center
+    lon_min = center_lon - radius_deg
+    lon_max = center_lon + radius_deg
+    
+    # Select the closest latitude to center
+    lat_closest = ds_time.lat.sel(lat=center_lat, method='nearest')
+    
+    # Extract the cross-section
+    ds_cross = ds_time.sel(
+        lon=slice(lon_min, lon_max),
+        lat=lat_closest
+    )
+    
+    # Compute signed distance from center (km)
     R = 6371.0
-    idx_c = len(lat) // 2
-    lat_c = lat[idx_c]
-    lon_c = lon[idx_c]
+    center_lon_rad = np.radians(center_lon)
+    center_lat_rad = np.radians(center_lat)
+    lon_rad = np.radians(ds_cross.lon.values)
     
-    lat_rad = np.radians(lat)
-    lon_rad = np.radians(lon)
-    lat_c_rad = np.radians(lat_c)
-    lon_c_rad = np.radians(lon_c)
+    # Haversine formula for east-west distance
+    distances = R * np.cos(center_lat_rad) * (lon_rad - center_lon_rad)
     
-    delta_lat = lat_rad - lat_c_rad
-    delta_lon = lon_rad - lon_c_rad
+    # Add distance as coordinate
+    ds_cross = ds_cross.assign_coords(r=("lon", distances))
     
-    dy = R * delta_lat
-    dx = R * np.cos((lat_rad + lat_c_rad) / 2) * delta_lon
-    signs = np.sign(dy + dx)
-    radius_km = signs * np.sqrt(dx**2 + dy**2)
+    # Remove any singleton dimensions
+    ds_cross = ds_cross.squeeze()
     
-    return radius_km
+    return ds_cross
 
-def plot_vts_combined(ds_models, minimum_datetime, experiments, figname=None):
-    """Plot VTS for all experiments in a single figure with subplots."""
+# Plot function
+def plot_all_vts_subplots(all_vts_data, output_file=None):
+    """Create a single figure with subplots for all experiments"""
     
-    # Create list with all datasets (ERA5 first, then experiments)
-    all_datasets = []
-    
-    # Add ERA5 if available
-    if 'ERA5' in ds_models and 'ERA5' in minimum_datetime:
-        center = minimum_datetime['ERA5']
-        if center['time'] is not None and not np.isnan(center['lat']):
-            all_datasets.append(('ERA5', ds_models['ERA5'], center))
-    
-    # Add experiments
-    for exp in experiments:
-        if exp in ds_models and exp in minimum_datetime:
-            center = minimum_datetime[exp]
-            if center['time'] is not None and not np.isnan(center['lat']):
-                all_datasets.append((exp, ds_models[exp], center))
-    
-    n_exps = len(all_datasets)
-    if n_exps == 0:
-        print("No valid experiments found")
-        return None, None
-    
-    # Subplot grid (2 rows, 3 columns for up to 6 subplots)
-    n_cols = min(3, n_exps)
-    n_rows = (n_exps + n_cols - 1) // n_cols
-    
-    plt.rcParams.update({
-        "font.size": 12,
-        "axes.labelsize": 14,
-        "axes.titlesize": 12,
-        "xtick.labelsize": 10,
-        "ytick.labelsize": 10
-    })
-    
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 5*n_rows))
-    if n_rows == 1 and n_cols == 1:
-        axes = np.array([axes])
+    # Define subplot layout (2 rows, 3 columns)
+    fig, axes = plt.subplots(2, 3, figsize=(14, 10))
     axes = axes.flatten()
     
-    # First pass: compute global min/max for colorbar
-    vmin_all, vmax_all = float('inf'), float('-inf')
-    theta_e_data = {}
+    # Common contour levels
+    levels = np.arange(314, 410, 2)
     
-    for idx, (exp_name, ds, center) in enumerate(all_datasets):
-        mtime = center['time']
-        mlat = center['lat']
-        mlon = center['lon']
-        
-        if np.isnan(mlat) or np.isnan(mlon) or mtime is None:
-            print(f"Warning: Invalid center for {exp_name}")
-            continue
-        
-        print(f"Processing VTS for {exp_name}: time={mtime}, lat={mlat:.2f}, lon={mlon:.2f}")
-        
-        # Fix longitude if needed
-        if np.any(ds.lon > 180):
-            ds.coords['lon'] = (ds.coords['lon'] + 180) % 360 - 180
-            ds = ds.sortby(ds.lon)
-        
-        # Extract cross-section
-        lons = ds.lon.values
-        lon_mask = (lons > mlon - 3) & (lons < mlon + 3)
-        
-        try:
-            cs = ds.sel(time=mtime, lat=mlat, lon=lon_mask, method="nearest")
-            
-            # Compute distance
-            r = haversine_signed_1d_from_center(
-                np.array([cs.lat.values.item()] * len(cs.lon.values)), 
-                cs.lon.values
-            )
-            
-            # Add distance coordinate
-            if exp_name == 'ERA5':
-                cs = cs.assign_coords(r=("lon", r))
-                # Compute theta_e for ERA5
-                cs["theta_e"] = compute_equiv_potential_temp_era5(cs)
-                # Rename pressure_level to plev for consistency in plotting
-                cs = cs.rename({'pressure_level': 'plev'})
-            else:
-                cs = cs.assign_coords(r=("lon", r))
-                # Compute theta_e for RegCM5
-                cs["theta_e"] = compute_equiv_potential_temp_regcm5(cs)
-            
-            theta_e_data[exp_name] = cs
-            
-            vmin_all = min(vmin_all, cs["theta_e"].min().values)
-            vmax_all = max(vmax_all, cs["theta_e"].max().values)
-            
-        except Exception as e:
-            print(f"Warning: Could not process {exp_name}: {e}")
-            continue
+    # List of labels for each subplot
+    labels = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)']
     
-    # Second pass: plot
-    subplot_labels = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)', '(g)', '(h)', '(i)', '(j)']
+    # Plot each experiment
+    for idx, (exp_name, data) in enumerate(all_vts_data.items()):
+        ax = axes[idx]
+        
+        # Get data
+        Z = np.squeeze(data['theta_e'].values)
+        r_coords = data['theta_e'].r.values
+        plev_coords = data['theta_e'].plev.values
+        
+        # Create meshgrid
+        X, Y = np.meshgrid(r_coords, plev_coords)
+        
+        # Create filled contour plot
+        cf = ax.contourf(X, Y, Z, levels=levels, cmap='jet', extend='neither')
+        
+        # Add contour lines
+        cs = ax.contour(X, Y, Z, levels=levels[::3], colors='black', linewidths=0.5, alpha=0.5)
+        ax.clabel(cs, inline=True, fontsize=7, fmt='%d')
+        
+        # Formatting
+        ax.set_xlabel('Distance from Center (km)', fontsize=10, fontweight='bold')
+        ax.set_ylabel('Pressure (hPa)', fontsize=10, fontweight='bold')
+        ax.set_ylim(1000, 100)
+        ax.axvline(x=0, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
+        ax.grid(True, alpha=0.5, linestyle='--')
+        
+        # Title with experiment info and label
+        time_str = pd.to_datetime(data['time']).strftime('%Y-%m-%d %H:%M')
+        ax.set_title(f'{labels[idx]} {exp_name.upper()} ({data["lat"]:.1f}°N, {abs(data["lon"]):.1f}°W) {time_str}', 
+                    fontsize=10, fontweight='bold')
     
-    plot_idx = 0
-    for idx, (exp_name, ds, center) in enumerate(all_datasets):
-        if exp_name not in theta_e_data:
-            continue
-            
-        ax = axes[plot_idx]
-        cs = theta_e_data[exp_name]
-        mtime = center['time']
-        mlat = center['lat']
-        mlon = center['lon']
-        
-        X, Y = np.meshgrid(cs.r.values, cs.plev.values)
-        z = cs["theta_e"].values
-        
-        # Plot filled contour
-        cf = ax.contourf(X, Y, z, levels=30, cmap="jet", vmin=vmin_all, vmax=vmax_all)
-        
-        # Add contour lines on top
-        contour_levels = np.linspace(vmin_all, vmax_all, 15)
-        ax.contour(X, Y, z, levels=contour_levels, colors='black', linewidths=0.5, alpha=0.5)
-        
-        # Add subplot label
-        ax.text(0.02, 0.98, subplot_labels[plot_idx], transform=ax.transAxes, 
-                fontsize=14, fontweight='bold', va='top', ha='left',
-                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
-        
-        # Title with experiment name and coordinates
-        time_str = pd.to_datetime(mtime).strftime('%d/%m %H:%M')
-        ax.set_title(f"{exp_name}\n({mlat:.2f}°, {mlon:.2f}°) {time_str}")
-        ax.set_xlabel("R [km]")
-        ax.set_ylabel("Pressure (hPa)")
-        ax.yaxis.set_inverted(True)
-        ax.grid(True, alpha=0.3, linestyle='--')
-        
-        plot_idx += 1
-    
-    # Hide unused subplots
-    for idx in range(plot_idx, len(axes)):
+    # Hide unused subplot (if any)
+    for idx in range(len(all_vts_data), len(axes)):
         axes[idx].set_visible(False)
     
-    # Colorbar
-    if plot_idx > 0:
-        cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
-        cbar = fig.colorbar(cf, cax=cbar_ax)
-        cbar.set_label('Equivalent Potential Temperature (K)', labelpad=15, fontsize=12)
-    
-    plt.tight_layout(rect=[0, 0, 0.9, 1])
-    
-    if figname:
-        os.makedirs(OUTPUT_PATH, exist_ok=True)
-        plt.savefig(OUTPUT_PATH + figname, dpi=300, bbox_inches='tight')
-        print(f"Saved: {OUTPUT_PATH + figname}")
-    
-    return fig, axes
+    # Add colorbar
+    cbar_ax = fig.add_axes([0.999, 0.15, 0.02, 0.7])
+    cbar = fig.colorbar(cf, cbar_ax)
+    cbar.set_label('Equivalent Potential Temperature (K)', fontsize=10, fontweight='bold')
 
-# %%
-# MAIN
-if __name__ == "__main__":
-    # Configuration
-    experiments = ["ctrl", "holt_r2", "holt_r3", "uw_r2", "uw_r3"]
-    map_extent = [-103, -92.5, 5, 17]  # [lon_min, lon_max, lat_min, lat_max]
-    data_dir = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps_v2/domain_{domain}_regridded/"
-    era5_dir = "/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/era5"
+    plt.tight_layout()    
+    if output_file:
+        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        print(f"\nVTS comparison plot saved to {output_file}")
     
-    # Load ERA5 data (cropped to hurricane domain)
-    print("Loading ERA5 data...")
-    ds_era = load_era5_vts(era5_dir, map_extent)
-    
-    # Load RegCM5 models
-    print("Loading RegCM5 models...")
-    ds_models = {}
-    ds_models['ERA5'] = ds_era  # Add ERA5 to models dictionary
-    for exp in experiments:
-        print(f"Loading {exp}...")
-        ds_models[exp] = load_regcm5_multi_file(data_dir + exp)
-    
-    # Find cyclone centers for ALL datasets (including ERA5) using same function
-    print("Finding cyclone centers for all datasets...")
-    cyclone_centers, minimum_datetime = find_cyclone_centers(ds_models, map_extent)
-    
-    # Print centers for verification
-    print("\nCyclone centers found:")
-    for exp_name, center in minimum_datetime.items():
-        if center['time'] is not None:
-            print(f"  {exp_name}: time={center['time']}, lat={center['lat']:.2f}, lon={center['lon']:.2f}")
-        else:
-            print(f"  {exp_name}: No valid center found")
-    
-    # Plot VTS (ERA5 + 5 experiments = 6 subplots)
-    print("\nPlotting VTS...")
-    plot_vts_combined(ds_models, minimum_datetime, experiments, figname="pyplt_Hurricane_Otis_vts.png")
     plt.show()
+    return fig
+
+
+# Main code
+def main():
+    """Main function to compute and plot VTS for all experiments in one figure"""
     
-    print("Done!")
+    print("=" * 80)
+    print(f"Computing Vertical Thermal Structure for Hurricane {HURRICANE_NAME}")
+    print(f"Experiments: {EXPERIMENTS + ['ERA5']}")
+    print("=" * 80)
+    
+    # Dictionary to store all results
+    all_vts_data = {}
+    
+    # 1. Process ERA5
+    print("\nLoading ERA5 data...")
+    ds_era5 = load_era5_data(DATA_DIR_ERA5, START_DATE, END_DATE)
+    
+    print("Tracking ERA5 cyclone...")
+    peak_era5 = track_cyclone(ds_era5, MAP_EXTENT, "ERA5")
+    
+    if peak_era5 is not None:
+        print("Extracting ERA5 cross-section...")
+        ds_cross_era5 = extract_cross_section(ds_era5, peak_era5['time'], peak_era5['lat'], 
+                                              peak_era5['lon'], is_era5=True, radius_deg=5)
+        
+        print("Computing ERA5 theta_e...")
+        theta_e_era5 = compute_equivalent_potential_temperature(ds_cross_era5, is_era5=True)
+        
+        all_vts_data["ERA5"] = {
+            'theta_e': theta_e_era5,
+            'lat': peak_era5['lat'],
+            'lon': peak_era5['lon'],
+            'time': peak_era5['time']
+        }
+    
+    # 2. Process each model experiment
+    for exp in EXPERIMENTS:
+        print(f"\nLoading {exp} data...")
+        ds_model = load_regcm5_data(DATA_DIR_MODELS, exp)
+        
+        print(f"Tracking {exp} cyclone...")
+        peak_model = track_cyclone(ds_model, MAP_EXTENT, exp)
+        
+        if peak_model is not None:
+            print(f"Extracting {exp} cross-section...")
+            ds_cross_model = extract_cross_section(ds_model, peak_model['time'], peak_model['lat'],
+                                                   peak_model['lon'], is_era5=False, radius_deg=5)
+            
+            print(f"Computing {exp} theta_e...")
+            theta_e_model = compute_equivalent_potential_temperature(ds_cross_model, is_era5=False)
+            
+            all_vts_data[exp] = {
+                'theta_e': theta_e_model,
+                'lat': peak_model['lat'],
+                'lon': peak_model['lon'],
+                'time': peak_model['time']
+            }
+    
+    # 3. Create single figure with all subplots
+    if len(all_vts_data) > 0:
+        print("\n" + "="*40)
+        print("Creating single figure with all VTS subplots")
+        print("="*40)
+        
+        output_file = os.path.join(OUTPUT_PATH, f'pyplt_Hurricane_Otis_{HURRICANE_NAME.lower()}_vts.png')
+        plot_all_vts_subplots(all_vts_data, output_file)
+        
+        # Summary
+        print("\n" + "="*80)
+        print("VTS Analysis Complete!")
+        print("="*80)
+        print("\nPeak Intensity Summary:")
+        for exp, data in all_vts_data.items():
+            print(f"  {exp.upper():10} - {data['time']} - ({data['lat']:.2f}°N, {data['lon']:.2f}°W)")
+        print(f"\nFigure saved to: {output_file}")
+        print("="*80)
+    else:
+        print("Error: No data was successfully processed!")
+
+if __name__ == "__main__":
+    main()
