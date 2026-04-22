@@ -1,4 +1,4 @@
-# %% ONE FIGURE - All hourly precipitation comparisons
+# %% ONE FIGURE - All hourly precipitation comparisons (BAR PLOT)
 import os
 import xarray as xr
 import pandas as pd
@@ -70,42 +70,56 @@ for exp in experiments:
 
 print(f"Plotting {len(common_times)} common time steps")
 
-# %% PLOT - ONE FIGURE with all datasets
-fig, ax = plt.subplots(figsize=(14, 6))
+# %% PLOT - ONE FIGURE with BARS (grouped bar chart)
+fig, ax = plt.subplots(figsize=(16, 6))
 
+# Define bar width and positions
+n_datasets = len(experiments) + 1  # +1 for station
+bar_width = 0.12
+x_positions = np.arange(len(common_times))
+
+# Colors for each dataset
 colors = {
-    'noto': '#33a02c',
-    'wsm5': '#005B72', 
-    'wsm7': '#905dc7',
-    'wdm7': '#692510',
-    'ERA5': '#fdbf6f',
-    'CMORPH': '#fb9a99'
+    'noto': 'magenta',
+    'wsm5': 'brown', 
+    'wsm7': 'gray',
+    'wdm7': 'green',
+    'ERA5': 'red',
+    'CMORPH': 'blue',
+    'station': 'black'
 }
 
-# Plot each model
-for exp in experiments:
+# Plot each model as bars
+for i, exp in enumerate(experiments):
     # Align to common times
     mask = np.isin(times_series[exp][0], common_times)
-    times = times_series[exp][0][mask]
     values = times_series[exp][1][mask]
-    ax.plot(times, values, label=exp.upper(), color=colors[exp], linewidth=1.5, alpha=0.7)
+    
+    # Offset position for this dataset
+    offset = (i - n_datasets/2) * bar_width
+    ax.bar(x_positions + offset, values, width=bar_width, 
+           label=exp.upper(), color=colors[exp], alpha=0.8, edgecolor='black', linewidth=0.5)
 
-# Plot station
+# Plot station as bars
 station_aligned = station.loc[common_times]
-ax.plot(station_aligned.index, station_aligned['pr'], 
-        label='Station', color='black', linewidth=2, marker='o', markersize=2, alpha=0.8)
+offset_station = (len(experiments) - n_datasets/2) * bar_width
+ax.bar(x_positions + offset_station, station_aligned['pr'], 
+       width=bar_width, label='Station', color=colors['station'], 
+       alpha=0.8, edgecolor='black', linewidth=0.5)
 
 # Formatting
-ax.set_xlabel('Time', fontsize=12)
-ax.set_ylabel('Precipitation [mm/hr]', fontsize=12)
-ax.set_title(f'Hourly Precipitation at Acapulco ({acapulco_lat:.2f}°, {acapulco_lon:.2f}°)\nHurricane Otis (Oct 19-27, 2023)', fontsize=14)
-ax.legend(loc='upper right', fontsize=10, ncol=2)
-ax.grid(True, alpha=0.3, linestyle='--')
+ax.set_xlabel('Time', fontsize=10)
+ax.set_ylabel('Precipitation (mm/hr)', fontsize=10)
+ax.set_title(f'(a) Hourly Precipitation at Acapulco ({acapulco_lat:.2f}°, {acapulco_lon:.2}°)', ftsize=10)
+ax.set_xticks(x_positions[::12])  # Show every 12th hour to avoid crowding
+ax.set_xticklabels(pd.to_datetime(common_times[::12]).strftime('%m/%d %H:00'), rotation=45, ha='right')
+ax.legend(loc='upper right', fontsize=10, ncol=7)
+ax.grid(True, linestyle='--', axis='y')
 ax.set_ylim(bottom=0)
-plt.xticks(rotation=45)
+
 plt.tight_layout()
 
 # Save
-plt.savefig(OUTPUT_PATH + "pyplt_Hurricane_Otis_otis_prec.png", dpi=400, bbox_inches='tight')
+plt.savefig(OUTPUT_PATH + "precipitation_all_comparison_bars.png", dpi=400, bbox_inches='tight')
 plt.show()
-print(f"Saved to {OUTPUT_PATH}precipitation_all_comparison.png")
+print(f"Saved to {OUTPUT_PATH}precipitation_all_comparison_bars.png")
