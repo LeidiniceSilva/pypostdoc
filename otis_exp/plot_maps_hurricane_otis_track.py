@@ -534,6 +534,8 @@ def load_regcm5_multi_file(data_dir, verbose=False):
     
     if not nc_files:
         raise ValueError(f"No NetCDF files found in {data_dir}")
+
+    print(nc_files)
     
     datasets = []
     for file in nc_files:
