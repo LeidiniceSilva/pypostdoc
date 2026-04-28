@@ -1,0 +1,5 @@
+
+--------------- INIT PLOT ----------------
+slurmstepd: error: *** JOB 40227997 ON lrdn3579 CANCELLED AT 2026-04-28T12:47:44 DUE TO NODE FAILURE, SEE SLURMCTLD LOG FOR DETAILS ***
+slurmstepd: error: *** JOB 40227997 STEPD TERMINATED ON lrdn3579 AT 2026-04-28T12:52:44 DUE TO JOB NOT ENDING WITH SIGNALS ***
+slurmstepd: error: Container 363744 in cgroup plugin has 1 processes, giving up after 319 sec
