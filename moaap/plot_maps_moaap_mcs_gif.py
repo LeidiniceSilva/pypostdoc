@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import cartopy.crs as ccrs
+import imageio.v2 as imageio
 import matplotlib.pyplot as plt
 
 from tqdm import tqdm
@@ -25,42 +26,23 @@ from IPython.display import Image
 warnings.filterwarnings("ignore")
 
 
-def make_gif(frame_folder):
-    frames = [Image.open(image) for image in np.sort(glob.glob(f"{frame_folder}/*.jpg"))]
-    frame_one = frames[0]
-    frame_one.save("phenomenon_mcs.gif", format="GIF", append_images=frames,
-               save_all=True, duration=100, loop=0)
-
-
 # Import data
 data_vars = xr.open_dataset('/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/ERA5/CAR-4/input/CAR-4_ERA5_reanalysis_1hr_2000010100.nc')
 time_datetime = pd.to_datetime(np.array(data_vars['time'].values, dtype='datetime64'))
-
-# load MCS characteristics
-data_moaap = xr.open_dataset('/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/ERA5/CAR-4/output/20000101_ERA5_evaluation_ObjectMasks__dt-1h_MOAAP-masks.nc')
 
 object_names = [['MCS', '#33a02c', '-', 2]]
 
 for tt in tqdm(range(len(time_datetime))):
 
     # Create a figure and axis with a PlateCarree projection (latitude and longitude)
-    fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()},
-                          figsize=(14,6))
-
-    # Add coastlines and gridlines for reference
-    ax.coastlines(color='#969696')
-    ax.gridlines()
+    fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()}, figsize=(14,6))
 
     # MCSs
-    sc = plt.contour(data_moaap['lon'],
-                        data_moaap['lat'],
-                        np.array(data_moaap['MCS_Tb_Objects'][tt,:,:]),
-                        colors = '#33a02c')   
-
-    ax.set_extent([-180, 180, -90, 90], crs=ccrs.PlateCarree())
-
-    # Set the title of the plot
+    sc = plt.contour(data_moaap['lon'], data_moaap['lat'], np.array(data_moaap['MCS_Tb_Objects'][tt,:,:]), colors = '#33a02c')   
     plt.title('Objects identied by MOAAP at '+str(time_datetime[tt])[:16])
+    ax.set_extent([-180, 180, -90, 90], crs=ccrs.PlateCarree())
+    ax.coastlines(color='#969696')
+    ax.gridlines()
 
     # create legend
     for ob in range(len(object_names)):
@@ -76,12 +58,22 @@ for tt in tqdm(range(len(time_datetime))):
     fig.savefig('/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/figs/'+str(tt).zfill(3)+'_CausesOfExtreme_100_daily-extremes.jpg', bbox_inches='tight', dpi=100)
     plt.close()
 
-# Make gif
-make_gif("/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/figs/")
+# Define input/output paths
+img_dir = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/figs/images'
+output_gif = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/figs/pyplt_maps_moaap_mcs_phenomenon.gif'.format(var)
 
-with open("phenomenon_mcs.gif",'rb') as f:
-    display.Image(data=f.read(), format='jpg')
+images = sorted([img for img in os.listdir(img_dir) if img.endswith('.jpg')])
 
-fname = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/figs/phenomenon_mcs.gif'
-Image(open(fname, 'rb').read())
+# Create gif
+frames = []
+for img_name in images:
+    img_path = os.path.join(img_dir, img_name)
+    image = imageio.imread(img_path)
+    frames.append(image)
+
+# Save as gif 
+imageio.mimsave(output_gif, frames, duration=1, loop=0)
+print(f"GIF saved to: {output_gif}")
+
+exit()
 
