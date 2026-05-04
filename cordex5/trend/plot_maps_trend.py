@@ -38,7 +38,7 @@ path = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/tren
 if domain == 'AUS-12': 
     DOMAIN_EXTENT = [110, 180, -48, 4]
 elif domain == 'EAS-12': 
-    DOMAIN_EXTENT = [50, 178, -9, 75]
+    DOMAIN_EXTENT = [45, 180, -9, 71]
 elif domain == 'EUR-12': 
     DOMAIN_EXTENT = [-42, 61, 20, 70]
 elif domain == 'NAM-12': 
@@ -341,7 +341,7 @@ def main():
     if domain == 'AUS-12': 
         fig, axes = plt.subplots(3, 3, figsize=(12, 13), subplot_kw={'projection': ccrs.PlateCarree()})
     elif domain == 'EAS-12': 
-        fig, axes = plt.subplots(3, 3, figsize=(13, 12), subplot_kw={'projection': ccrs.PlateCarree()})
+        fig, axes = plt.subplots(3, 3, figsize=(14, 12), subplot_kw={'projection': ccrs.PlateCarree()})
     elif domain == 'EUR-12': 
         fig, axes = plt.subplots(3, 3, figsize=(14, 10), subplot_kw={'projection': ccrs.PlateCarree()})
     elif domain == 'NAM-12': 

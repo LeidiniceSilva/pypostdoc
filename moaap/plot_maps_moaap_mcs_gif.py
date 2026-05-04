@@ -30,6 +30,9 @@ warnings.filterwarnings("ignore")
 data_vars = xr.open_dataset('/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/ERA5/CAR-4/input/CAR-4_ERA5_reanalysis_1hr_2000010100.nc')
 time_datetime = pd.to_datetime(np.array(data_vars['time'].values, dtype='datetime64'))
 
+# load MCS characteristics
+data_moaap = xr.open_dataset('/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/ERA5/CAR-4/output/20000101_ERA5_evaluation_ObjectMasks__dt-1h_MOAAP-masks.nc')
+
 object_names = [['MCS', '#33a02c', '-', 2]]
 
 for tt in tqdm(range(len(time_datetime))):

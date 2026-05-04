@@ -69,7 +69,7 @@ plt.text(-56, -50, u'CSAM-3', color='grey', fontsize=font_size, fontweight='bold
 plt.text(-55, 35, u'EURR-3', color='grey', fontsize=font_size, fontweight='bold')
 
 # Add gridlines 
-gridlines = ax.gridlines(draw_labels=True, color='k', linestyle='--', alpha=0.5)
+gridlines = ax.gridlines(draw_labels=True, color='gray', linestyle='--', alpha=0.75)
 gridlines.right_labels = False
 gridlines.bottom_labels = True
 gridlines.left_labels = True
