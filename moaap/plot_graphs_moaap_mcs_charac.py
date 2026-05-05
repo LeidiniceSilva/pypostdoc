@@ -11,6 +11,8 @@ import warnings
 import numpy as np
 import pandas as pd
 import xarray as xr
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
@@ -77,6 +79,45 @@ def comp_diurnal_cycle(mcs_charac):
     return size_clim, tot_clim, max_clim
 
 
+
+def plot_domain_inset(ax, domain):
+
+    domains = {
+        'CAR-4':  [-119.0, -58.25, 9.25, 35.75],
+        'CSAM-3': [-78.75, -35.5, -36.5, -12.25],
+        'EURR-3': [-25.25, 38.25, 33.5, 64.75]
+    }
+
+    lon_min, lon_max, lat_min, lat_max = domains[domain]
+
+    if domain == 'CAR-4':
+        inset_ax = ax.inset_axes([0.3, 0.5, 0.4, 0.5], projection=ccrs.PlateCarree())
+    elif domain == 'CSAM-3':
+        inset_ax = ax.inset_axes([0.1, 0.5, 0.4, 0.5], projection=ccrs.PlateCarree())
+    else:
+        inset_ax = ax.inset_axes([0.55, 0.5, 0.4, 0.5], projection=ccrs.PlateCarree())
+
+    inset_ax.set_extent([lon_min, lon_max,
+                         lat_min, lat_max],
+                         crs=ccrs.PlateCarree())
+
+    inset_ax.add_feature(cfeature.OCEAN, facecolor='#a6cbe3')
+    inset_ax.add_feature(cfeature.LAND, facecolor='#e6d2b5')
+
+    inset_ax.coastlines(linewidth=0.5)
+    inset_ax.add_feature(cfeature.BORDERS, linewidth=0.25)
+
+    inset_ax.plot(
+        [lon_min, lon_max, lon_max, lon_min, lon_min],
+        [lat_min, lat_min, lat_max, lat_max, lat_min],
+        color='black', linewidth=0.5,
+        transform=ccrs.PlateCarree()
+    )
+
+    inset_ax.set_xticks([])
+    inset_ax.set_yticks([])
+
+
 # load data
 mcs_charac_car = open_mcs_era5('CAR-4')
 mcs_charac_csam = open_mcs_era5('CSAM-3')
@@ -87,12 +128,13 @@ size_clim_csam, tot_clim_csam, max_clim_csam = comp_diurnal_cycle(mcs_charac_csa
 size_clim_eurr, tot_clim_eurr, max_clim_eurr = comp_diurnal_cycle(mcs_charac_eurr)
 
 # plot
-fig = plt.figure(figsize=(17, 14))
+fig = plt.figure(figsize=(18, 12))
 time = np.arange(0, 24)
 font_size = 10
 
 ax = fig.add_subplot(3, 3, 1)
 plt.plot(time, size_clim_car, marker='.', linewidth=1, color='red', label='ERA5')
+plot_domain_inset(ax, 'CAR-4')
 plt.title('(a)', loc='left', fontsize=font_size, fontweight='bold')
 plt.title('CAR-4', fontsize=font_size, fontweight='bold')
 plt.ylabel('MCS anvil size (km$^2$)', fontsize=font_size, fontweight='bold')
@@ -102,6 +144,7 @@ plt.legend(fontsize=font_size)
 
 ax = fig.add_subplot(3, 3, 2)
 plt.plot(time, size_clim_csam, marker='.', linewidth=1, color='red', label='ERA5')
+plot_domain_inset(ax, 'CSAM-3')
 plt.title('(b)', loc='left', fontsize=font_size, fontweight='bold')
 plt.title('CSAM-3', fontsize=font_size, fontweight='bold')
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
@@ -109,6 +152,7 @@ plt.grid(True, linestyle='--', linewidth=1)
 
 ax = fig.add_subplot(3, 3, 3)
 plt.plot(time, size_clim_eurr, marker='.', linewidth=1, color='red', label='ERA5')
+plot_domain_inset(ax, 'EURR-3')
 plt.title('(c)', loc='left', fontsize=font_size, fontweight='bold')
 plt.title('EURR-3', fontsize=font_size, fontweight='bold')
 plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)

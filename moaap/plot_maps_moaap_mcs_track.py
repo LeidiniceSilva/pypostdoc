@@ -64,9 +64,7 @@ mcs_moaap_car = open_mcs_era5('CAR-4')
 # plot
 fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()}, figsize=(14,6))
 
-# =========================
-# PLOT ALL MONTHS TRACKS (NEW)
-# =========================
+# plot all months
 for month in mcs_moaap_car.keys():
 
     mcs_charac = mcs_moaap_car[month]
