@@ -20,8 +20,8 @@ set -eo pipefail
 echo
 echo "--------------- INIT PLOT ----------------"
 
-python3 plot_maps_moaap_mcs_peak.py
 python3 plot_maps_moaap_mcs_clim.py
+python3 plot_maps_moaap_mcs_peak.py
 python3 plot_maps_moaap_mcs_frac.py
 
 echo
