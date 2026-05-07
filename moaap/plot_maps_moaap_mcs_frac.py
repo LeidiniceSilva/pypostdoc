@@ -165,7 +165,7 @@ cf = ax6.contourf(lon_eurr_cpm, lat_eurr_cpm, mcs_eurr_cpm, levels=tp_levels, cm
 plt.title('(f)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax6, lon_eurr_cpm, lat_eurr_cpm)
 
-cbar_ax = fig.add_axes([0.25, 0.08, 0.5, 0.02])  # [left, bottom, width, height]
+cbar_ax = fig.add_axes([0.25, 0.05, 0.5, 0.02])  # [left, bottom, width, height]
 cbar = fig.colorbar(cf, cax=cbar_ax, orientation='horizontal')
 cbar.set_label('Precipitation fraction (%)', fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)

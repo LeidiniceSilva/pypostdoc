@@ -12,6 +12,7 @@ import xarray as xr
 import cartopy.crs as ccrs
 import cartopy.feature as cfeat
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
 from tqdm import tqdm
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
@@ -35,7 +36,7 @@ def load_era5(domain, pattern="*_MOAAP-masks.nc"):
             lon = ds["lon"].values 
 
         # climatological occurrence
-        mcs_sum += np.nansum(mcs, axis=0) / 10
+        mcs_sum += np.nansum(mcs, axis=0) / 100
 
         ds.close()
 
@@ -44,7 +45,7 @@ def load_era5(domain, pattern="*_MOAAP-masks.nc"):
 
 def load_cpm(domain, pattern="*_MOAAP-masks.nc"):
 
-    data_path = f"/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/ERA5/{domain}/output/"
+    data_path = f"/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/CPMs/{domain}/output/"
     file_list = sorted(glob.glob(os.path.join(data_path, pattern)))
 
     mcs_sum = None
@@ -61,7 +62,7 @@ def load_cpm(domain, pattern="*_MOAAP-masks.nc"):
             lon = ds["lon"].values 
 
         # climatological occurrence
-        mcs_sum += np.nansum(mcs, axis=0) / 10
+        mcs_sum += np.nansum(mcs, axis=0) / 100
 
         ds.close()
 
@@ -108,40 +109,46 @@ mcs_eurr_cpm, lat_eurr_cpm, lon_eurr_cpm = load_cpm('EURR-3')
 fig = plt.figure(figsize=(10, 8))
 font_size = 10
 
+orig_cmap = plt.cm.get_cmap('RdYlBu_r', 256)
+colors = orig_cmap(np.linspace(0, 1, 256))
+colors[0] = [1, 1, 1, 1]
+cmap = mcolors.ListedColormap(colors)
+mcs_levels = 20 # np.arange(1, 105, 5)
+
 # CAR-4
 ax1 = fig.add_subplot(3, 2, 1, projection=ccrs.PlateCarree())
-cf = ax1.contourf(lon_car_era5, lat_car_era5, mcs_car_era5, levels=20, cmap="RdYlBu_r", transform=ccrs.PlateCarree())
+cf = ax1.contourf(lon_car_era5, lat_car_era5, mcs_car_era5, levels=mcs_levels, cmap=cmap, extend='min', transform=ccrs.PlateCarree())
 plt.title('(a)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax1, lon_car_era5, lat_car_era5)
 
 ax2 = fig.add_subplot(3, 2, 2, projection=ccrs.PlateCarree())
-cf = ax2.contourf(lon_car_cpm, lat_car_cpm, mcs_car_cpm, levels=20, cmap="RdYlBu_r", transform=ccrs.PlateCarree())
+cf = ax2.contourf(lon_car_cpm, lat_car_cpm, mcs_car_cpm, levels=mcs_levels, cmap=cmap, extend='min', transform=ccrs.PlateCarree())
 plt.title('(b)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax2, lon_car_cpm, lat_car_cpm)
 
 # CSAM-3
 ax3 = fig.add_subplot(3, 2, 3, projection=ccrs.PlateCarree())
-cf = ax3.contourf(lon_csam_era5, lat_csam_era5, mcs_csam_era5, levels=20, cmap="RdYlBu_r", transform=ccrs.PlateCarree())
+cf = ax3.contourf(lon_csam_era5, lat_csam_era5, mcs_csam_era5, levels=mcs_levels, cmap=cmap, extend='min', transform=ccrs.PlateCarree())
 plt.title('(c)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax3, lon_csam_era5, lat_csam_era5)
 
 ax4 = fig.add_subplot(3, 2, 4, projection=ccrs.PlateCarree())
-cf = ax4.contourf(lon_csam_cpm, lat_csam_cpm, mcs_csam_cpm, levels=20, cmap="RdYlBu_r", transform=ccrs.PlateCarree())
+cf = ax4.contourf(lon_csam_cpm, lat_csam_cpm, mcs_csam_cpm, levels=mcs_levels, cmap=cmap, extend='min', transform=ccrs.PlateCarree())
 plt.title('(d)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax4, lon_csam_cpm, lat_csam_cpm)
 
 # EURR-3 
 ax5 = fig.add_subplot(3, 2, 5, projection=ccrs.PlateCarree())
-cf = ax5.contourf(lon_eurr_era5, lat_eurr_era5, mcs_eurr_era5, levels=20, cmap="RdYlBu_r", transform=ccrs.PlateCarree())
+cf = ax5.contourf(lon_eurr_era5, lat_eurr_era5, mcs_eurr_era5, levels=mcs_levels, cmap=cmap, extend='min', transform=ccrs.PlateCarree())
 plt.title('(e)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax5, lon_eurr_era5, lat_eurr_era5)
 
 ax6 = fig.add_subplot(3, 2, 6, projection=ccrs.PlateCarree())
-cf = ax6.contourf(lon_eurr_cpm, lat_eurr_cpm, mcs_eurr_cpm, levels=20, cmap="RdYlBu_r", transform=ccrs.PlateCarree())
+cf = ax6.contourf(lon_eurr_cpm, lat_eurr_cpm, mcs_eurr_cpm, levels=mcs_levels, cmap=cmap, extend='min', transform=ccrs.PlateCarree())
 plt.title('(f)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax6, lon_eurr_cpm, lat_eurr_cpm)
 
-cbar_ax = fig.add_axes([0.25, 0.08, 0.5, 0.02])  # [left, bottom, width, height]
+cbar_ax = fig.add_axes([0.25, 0.05, 0.5, 0.02])  # [left, bottom, width, height]
 cbar = fig.colorbar(cf, cax=cbar_ax, orientation='horizontal')
 cbar.set_label('MCS frequency (days/year)', fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)

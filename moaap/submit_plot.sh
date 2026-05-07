@@ -20,9 +20,15 @@ set -eo pipefail
 echo
 echo "--------------- INIT PLOT ----------------"
 
-python3 plot_maps_moaap_mcs_clim.py
-python3 plot_maps_moaap_mcs_peak.py
-python3 plot_maps_moaap_mcs_frac.py
+
+python3 plot_graphs_moaap_mcs_ac_charac.py
+python3 plot_graphs_moaap_mcs_ac_number.py
+python3 plot_graphs_moaap_mcs_lifetime_charac.py
+python3 plot_graphs_moaap_mcs_lifetime_domains.py
+
+#python3 plot_maps_moaap_mcs_clim.py
+#python3 plot_maps_moaap_mcs_peak.py
+#python3 plot_maps_moaap_mcs_frac.py
 
 echo
 echo "--------------- THE END PLOT ----------------"

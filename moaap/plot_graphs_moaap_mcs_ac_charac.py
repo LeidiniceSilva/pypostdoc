@@ -55,7 +55,7 @@ def open_mcs_cpm(domain, start='2000-01', end='2009-12'):
     return mcs
 
 
-def comp_diurnal_cycle(mcs_charac):
+def comp_annual_cycle(mcs_charac):
 
     all_size, all_tot, all_max, all_hours = [], [], [], []
 
@@ -81,11 +81,11 @@ def comp_diurnal_cycle(mcs_charac):
     all_max  = np.concatenate(all_max)
     all_hours = np.concatenate(all_hours)
 
-    size_clim = np.full(24, np.nan)
-    tot_clim  = np.full(24, np.nan)
-    max_clim  = np.full(24, np.nan)
+    size_clim = np.full(12, np.nan)
+    tot_clim  = np.full(12, np.nan)
+    max_clim  = np.full(12, np.nan)
 
-    for h in range(24):
+    for h in range(12):
 
         sel = all_hours == h
 
@@ -109,11 +109,11 @@ def plot_domain_inset(ax, domain):
     lon_min, lon_max, lat_min, lat_max = domains[domain]
 
     if domain == 'CAR-4':
-        inset_ax = ax.inset_axes([0.3, 0.5, 0.4, 0.5], projection=ccrs.PlateCarree())
+        inset_ax = ax.inset_axes([0.05, 0.7, 0.4, 0.5], projection=ccrs.PlateCarree())
     elif domain == 'CSAM-3':
-        inset_ax = ax.inset_axes([0.1, 0.5, 0.4, 0.5], projection=ccrs.PlateCarree())
+        inset_ax = ax.inset_axes([0.05, 0.7, 0.4, 0.5], projection=ccrs.PlateCarree())
     else:
-        inset_ax = ax.inset_axes([0.55, 0.5, 0.4, 0.5], projection=ccrs.PlateCarree())
+        inset_ax = ax.inset_axes([0.05, 0.7, 0.4, 0.5], projection=ccrs.PlateCarree())
 
     inset_ax.set_extent([lon_min, lon_max,
                          lat_min, lat_max],
@@ -145,98 +145,117 @@ mcs_car_cpm = open_mcs_cpm('CAR-4')
 mcs_csam_cpm = open_mcs_cpm('CSAM-3')
 mcs_eurr_cpm = open_mcs_cpm('EURR-3')
 
-size_mcs_car_era5, tot_mcs_car_era5, max_mcs_car_era5 = comp_diurnal_cycle(mcs_car_era5)
-size_mcs_csam_era5, tot_mcs_csam_era5, max_mcs_csam_era5 = comp_diurnal_cycle(mcs_csam_era5)
-size_mcs_eurr_era5, tot_mcs_eurr_era5, max_mcs_eurr_era5 = comp_diurnal_cycle(mcs_eurr_era5)
+size_mcs_car_era5, tot_mcs_car_era5, max_mcs_car_era5 = comp_annual_cycle(mcs_car_era5)
+size_mcs_csam_era5, tot_mcs_csam_era5, max_mcs_csam_era5 = comp_annual_cycle(mcs_csam_era5)
+size_mcs_eurr_era5, tot_mcs_eurr_era5, max_mcs_eurr_era5 = comp_annual_cycle(mcs_eurr_era5)
 
-size_mcs_car_cpm, tot_mcs_car_cpm, max_mcs_car_cpm = comp_diurnal_cycle(mcs_car_cpm)
-size_mcs_csam_cpm, tot_mcs_csam_cpm, max_mcs_csam_cpm = comp_diurnal_cycle(mcs_csam_cpm)
-size_mcs_eurr_cpm, tot_mcs_eurr_cpm, max_mcs_eurr_cpm = comp_diurnal_cycle(mcs_eurr_cpm)
+size_mcs_car_cpm, tot_mcs_car_cpm, max_mcs_car_cpm = comp_annual_cycle(mcs_car_cpm)
+size_mcs_csam_cpm, tot_mcs_csam_cpm, max_mcs_csam_cpm = comp_annual_cycle(mcs_csam_cpm)
+size_mcs_eurr_cpm, tot_mcs_eurr_cpm, max_mcs_eurr_cpm = comp_annual_cycle(mcs_eurr_cpm)
 
 # plot
 fig = plt.figure(figsize=(18, 12))
-time = np.arange(0, 24)
 font_size = 10
 
+width = 0.35
+time = np.arange(0, 12)
+xtick = ('J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D')
+
 ax = fig.add_subplot(3, 3, 1)
-plt.plot(time, size_mcs_car_era5, marker='.', linewidth=1, color='red', label='ERA5')
-plt.plot(time, size_mcs_car_cpm, marker='.', linewidth=1, color='blue', label='RegCM5')
+ax.bar(time - width/2, size_mcs_car_era5, width=width, color='red', alpha=0.75, edgecolor='red', label='ERA5')
+ax.bar(time + width/2, size_mcs_car_cpm, width=width, color='blue', alpha=0.75, edgecolor='blue', label='RegCM5')
 plot_domain_inset(ax, 'CAR-4')
 plt.title('(a)', loc='left', fontsize=font_size, fontweight='bold')
-plt.title('CAR-4', fontsize=font_size, fontweight='bold')
 plt.ylabel('MCS anvil size (km$^2$)', fontsize=font_size, fontweight='bold')
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(True, linestyle='--', linewidth=1)
-plt.legend(fontsize=font_size)
+plt.yticks(np.arange(0, 550000, 50000), fontsize=font_size)
+plt.xticks(time, xtick, fontsize=font_size)
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+plt.legend(loc=1, ncol=2, frameon=False, fontsize=font_size)
 
 ax = fig.add_subplot(3, 3, 2)
-plt.plot(time, size_mcs_csam_era5, marker='.', linewidth=1, color='red', label='ERA5')
-plt.plot(time, size_mcs_csam_cpm, marker='.', linewidth=1, color='blue', label='RegCM5')
+ax.bar(time - width/2, size_mcs_csam_era5, width=width, color='red', alpha=0.75, edgecolor='red', label='ERA5')
+ax.bar(time + width/2, size_mcs_csam_cpm, width=width, color='blue', alpha=0.75, edgecolor='blue', label='RegCM5')
 plot_domain_inset(ax, 'CSAM-3')
 plt.title('(b)', loc='left', fontsize=font_size, fontweight='bold')
-plt.title('CSAM-3', fontsize=font_size, fontweight='bold')
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(True, linestyle='--', linewidth=1)
+plt.yticks(np.arange(0, 550000, 50000), fontsize=font_size)
+plt.xticks(time, xtick, fontsize=font_size)
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 
 ax = fig.add_subplot(3, 3, 3)
-plt.plot(time, size_mcs_eurr_era5, marker='.', linewidth=1, color='red', label='ERA5')
-plt.plot(time, size_mcs_eurr_cpm, marker='.', linewidth=1, color='blue', label='RegCM5')
+ax.bar(time - width/2, size_mcs_eurr_era5, width=width, color='red', alpha=0.75, edgecolor='red', label='ERA5')
+ax.bar(time + width/2, size_mcs_eurr_cpm, width=width, color='blue', alpha=0.75, edgecolor='blue', label='RegCM5')
 plot_domain_inset(ax, 'EURR-3')
 plt.title('(c)', loc='left', fontsize=font_size, fontweight='bold')
-plt.title('EURR-3', fontsize=font_size, fontweight='bold')
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(True, linestyle='--', linewidth=1)
+plt.yticks(np.arange(0, 550000, 50000), fontsize=font_size)
+plt.xticks(time, xtick, fontsize=font_size)
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 
 ax = fig.add_subplot(3, 3, 4)
-plt.plot(time, tot_mcs_car_era5, marker='.', linewidth=1, color='red', label='ERA5')
-plt.plot(time, tot_mcs_car_cpm, marker='.', linewidth=1, color='blue', label='RegCM5')
+ax.bar(time - width/2, tot_mcs_car_era5, width=width, color='red', alpha=0.75, edgecolor='red', label='ERA5')
+ax.bar(time + width/2, tot_mcs_car_cpm, width=width, color='blue', alpha=0.75, edgecolor='blue', label='RegCM5')
 plt.title('(d)', loc='left', fontsize=font_size, fontweight='bold')
 plt.ylabel('Precipitation volume (km$^{3}$ h$^{-1}$)', fontsize=font_size, fontweight='bold')
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(True, linestyle='--', linewidth=1)
+plt.yticks(np.arange(0, 800, 100), fontsize=font_size)
+plt.xticks(time, xtick, fontsize=font_size)
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 
 ax = fig.add_subplot(3, 3, 5)
-plt.plot(time, tot_mcs_csam_era5, marker='.', linewidth=1, color='red', label='ERA5')
-plt.plot(time, tot_mcs_csam_cpm, marker='.', linewidth=1, color='blue', label='RegCM5')
+ax.bar(time - width/2, tot_mcs_csam_era5, width=width, color='red', alpha=0.75, edgecolor='red', label='ERA5')
+ax.bar(time + width/2, tot_mcs_csam_cpm, width=width, color='blue', alpha=0.75, edgecolor='blue', label='RegCM5')
 plt.title('(e)', loc='left', fontsize=font_size, fontweight='bold')
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(True, linestyle='--', linewidth=1)
+plt.yticks(np.arange(0, 800, 100), fontsize=font_size)
+plt.xticks(time, xtick, fontsize=font_size)
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 
 ax = fig.add_subplot(3, 3, 6)
-plt.plot(time, tot_mcs_eurr_era5, marker='.', linewidth=1, color='red', label='ERA5')
-plt.plot(time, tot_mcs_eurr_cpm, marker='.', linewidth=1, color='blue', label='RegCM5')
+ax.bar(time - width/2, tot_mcs_eurr_era5, width=width, color='red', alpha=0.75, edgecolor='red', label='ERA5')
+ax.bar(time + width/2, tot_mcs_eurr_cpm, width=width, color='blue', alpha=0.75, edgecolor='blue', label='RegCM5')
 plt.title('(f)', loc='left', fontsize=font_size, fontweight='bold')
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(True, linestyle='--', linewidth=1)
+plt.yticks(np.arange(0, 800, 100), fontsize=font_size)
+plt.xticks(time, xtick, fontsize=font_size)
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 
 ax = fig.add_subplot(3, 3, 7)
-plt.plot(time, max_mcs_car_era5, marker='.', linewidth=1, color='red', label='ERA5')
-plt.plot(time, max_mcs_car_cpm, marker='.', linewidth=1, color='blue', label='RegCM5')
+ax.bar(time - width/2, max_mcs_car_era5, width=width, color='red', alpha=0.75, edgecolor='red', label='ERA5')
+ax.bar(time + width/2, max_mcs_car_cpm, width=width, color='blue', alpha=0.75, edgecolor='blue', label='RegCM5')
 plt.title('(g)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('time', fontsize=font_size, fontweight='bold')
 plt.ylabel('Max. precipitation (mm h$^{-1}$)', fontsize=font_size, fontweight='bold')
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(True, linestyle='--', linewidth=1)
+plt.yticks(np.arange(0, 30, 5), fontsize=font_size)
+plt.xticks(time, xtick, fontsize=font_size)
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 
 ax = fig.add_subplot(3, 3, 8)
-plt.plot(time, max_mcs_csam_era5, marker='.', linewidth=1, color='red', label='ERA5')
-plt.plot(time, max_mcs_csam_cpm, marker='.', linewidth=1, color='blue', label='RegCM5')
+ax.bar(time - width/2, max_mcs_csam_era5, width=width, color='red', alpha=0.75, edgecolor='red', label='ERA5')
+ax.bar(time + width/2, max_mcs_csam_cpm, width=width, color='blue', alpha=0.75, edgecolor='blue', label='RegCM5')
 plt.title('(h)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('time', fontsize=font_size, fontweight='bold')
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(True, linestyle='--', linewidth=1)
+plt.ylim(0, 25)
+plt.yticks(np.arange(0, 30, 5), fontsize=font_size)
+plt.xticks(time, xtick, fontsize=font_size)
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 
 ax = fig.add_subplot(3, 3, 9)
-plt.plot(time, max_mcs_eurr_era5, marker='.', linewidth=1, color='red', label='ERA5')
-plt.plot(time, max_mcs_eurr_cpm, marker='.', linewidth=1, color='blue', label='RegCM5')
+ax.bar(time - width/2, max_mcs_eurr_era5, width=width, color='red', alpha=0.75, edgecolor='red', label='ERA5')
+ax.bar(time + width/2, max_mcs_eurr_cpm, width=width, color='blue', alpha=0.75, edgecolor='blue', label='RegCM5')
 plt.title('(i)', loc='left', fontsize=font_size, fontweight='bold')
 plt.xlabel('time', fontsize=font_size, fontweight='bold')
-plt.xticks(time, ('00', '', '02', '', '04', '', '06', '', '08', '', '10', '', '12', '', '14', '', '16', '', '18', '', '20', '', '22', ''), fontsize=font_size)
-plt.grid(True, linestyle='--', linewidth=1)
+plt.yticks(np.arange(0, 30, 5), fontsize=font_size)
+plt.xticks(time, xtick, fontsize=font_size)
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 
 # Path out to save figure
 path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/figs'
-name_out = f'pyplt_maps_moaap_mcs_charac_domains_2000-2009.png'
+name_out = f'pyplt_graphs_moaap_mcs_charac_ac_domains_2000-2009.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
