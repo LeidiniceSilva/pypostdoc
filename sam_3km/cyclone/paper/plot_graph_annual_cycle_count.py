@@ -151,8 +151,9 @@ list_number_era5 = cyclone_number(list_era5_i)
 list_number_regcm5 = cyclone_number(list_regcm5_i)
 list_number_wrf415 = cyclone_number(list_wrf415_i)
 
-print(pearsonr(list_number_era5, list_number_regcm5))
-print(pearsonr(list_number_era5, list_number_wrf415))
+print(list_number_era5)
+print(list_number_regcm5)
+print(list_number_wrf415)
 exit()
 
 list_lifetime_era5 = cyclone_lifetime(list_era5_ii)
