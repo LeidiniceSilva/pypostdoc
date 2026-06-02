@@ -18,8 +18,12 @@ from cartopy import config
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--dt', required=True, help='Years')
+args = parser.parse_args()
+dt = args.dt
+
 var = 'p99'
-dt = '2000-2009'
 domain = 'EUR-11'
 dataset = 'EOBS'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'

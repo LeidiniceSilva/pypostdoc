@@ -22,14 +22,15 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 parser = argparse.ArgumentParser()
 parser.add_argument('--var', choices=['uv', 'q'], required=True)
 parser.add_argument('--level', choices=['850hPa', '500hPa', '200hPa'], required=True)
+parser.add_argument('--dt', required=True, help='Years')
 args = parser.parse_args()
 var = args.var
 level = args.level
+dt = args.dt
 
 dict_var = {var: ['u', 'v', 'q', 'ua', 'va', 'hus']}
 
 domain = 'EUR-11'
-dt = '2000-2009'
 dataset = 'ERA5'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 

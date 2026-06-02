@@ -21,11 +21,12 @@ from import_climate_tools import compute_mbe
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--stats', choices=['int', 'freq'], required=True)
+parser.add_argument('--dt', required=True, help='Years')
 args = parser.parse_args()
 stats = args.stats
+dt = args.dt
 
 var = 'pr'
-dt = '2000-2009'
 domain = 'EUR-11'
 dataset = 'EOBS'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'

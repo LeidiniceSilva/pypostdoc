@@ -6,16 +6,21 @@ __date__        = "Mar 12, 2024"
 __description__ = "This script plot pdf"
 
 import os
+import argparse
 import netCDF4
 import numpy as np
 import matplotlib.colors
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--dt', required=True, help='Years')
+args = parser.parse_args()
+dt = args.dt
+
 var = 'pr'
 freq = 'day'
 domain = 'EUR-11'
-dt = '2000-2009'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 

@@ -15,11 +15,12 @@ import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--var', choices=['cl', 'clw', 'cli'], required=True)
+parser.add_argument('--dt', required=True, help='Years')
 args = parser.parse_args()
 var = args.var
+dt = args.dt
 
 domain = 'EUR-11'
-dt = '2000-2009'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 
 

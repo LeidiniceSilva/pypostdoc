@@ -20,12 +20,13 @@ from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from import_climate_tools import compute_mbe
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--var', choices=['pr', 'tas', 'clt'], required=True)
+parser.add_argument('--var', required=True, help='Variable name')
+parser.add_argument('--dt', required=True, help='Years')
 args = parser.parse_args()
 var = args.var
+dt = args.dt
 
 domain = 'EUR-11'
-dt = '2000-2009'
 path = '/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11'
 	
 if var == 'pr':
