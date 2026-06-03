@@ -6,6 +6,7 @@ __date__        = "Mar 12, 2024"
 __description__ = "This script plot bias maps"
 
 import os
+import argparse
 import netCDF4
 import numpy as np
 import matplotlib.colors

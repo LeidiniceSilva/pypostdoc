@@ -62,7 +62,7 @@ def compute_pdf(data):
 		rain_hist += hist
 
 	total = np.sum(rain_hist)
-	rain_hist[rain_hist < 1] = np.nan  
+	rain_hist[rain_hist < 0.1] = np.nan  
 	pdf = rain_hist / (total * step)
 
 	bin_centers = (bins[:-1] + bins[1:]) / 2
@@ -107,7 +107,10 @@ plt.legend(loc=1, ncol=2, fontsize=font_size, shadow=True)
 path_out = '{0}/figs'.format(path)
 name_out = 'pyplt_graph_pdf_{0}_{1}_RegCM5_{2}_{3}.png'.format(var, domain, freq, dt)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
+plt.show()
 exit()
+
+
 
 
 

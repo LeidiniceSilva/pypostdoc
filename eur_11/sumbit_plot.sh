@@ -29,7 +29,7 @@ for var in pr tas clt; do
     python3 plot_maps_bias_srf.py --var "$var" --dt "$years"
 done
 
-python3 plot_maps_bias_srf_int_p99.py  --dt "$years"
+python3 plot_maps_bias_srf_p99.py  --dt "$years"
 python3 plot_maps_bias_srf_int_freq.py --stats int  --dt "$years"
 python3 plot_maps_bias_srf_int_freq.py --stats freq  --dt "$years"
 
@@ -51,8 +51,8 @@ for var in cl clw cli; do
     python3 plot_graph_vertical_profile.py --var "$var" --dt "$years"
 done
 
-python3 plot_graph_vertical_profile_wdm7.py --dt "$years"
 python3 plot_graph_vertical_profile_wdm7-wsm7.py --dt "$years"
+python3 plot_graph_vertical_profile_wdm7.py --dt "$years"
 
 echo
 echo "--------------- THE END PLOT ----------------"
