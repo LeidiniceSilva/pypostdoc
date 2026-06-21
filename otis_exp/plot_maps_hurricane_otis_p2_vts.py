@@ -16,9 +16,15 @@ from metpy.units import units
 import warnings
 warnings.filterwarnings('ignore')
 
-# Domain type
-DOMAIN = "large"
-EXPS_ = 'exps_v3'
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--domain", default="large")
+parser.add_argument("--experiment", default="exps_v1")
+args = parser.parse_args()
+domain=args.domain
+experiment=args.experiment
+
 MAP_EXTENT = [-103, -92.5, 5, 17]  
 
 # Experiment names
@@ -29,9 +35,9 @@ START_DATE = "2023-10-21"
 END_DATE = "2023-10-25"
 
 # Paths
-DATA_DIR_MODELS = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/{EXPS_}/domain_{DOMAIN}_regridded/"
+DATA_DIR_MODELS = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/{experiment}/domain_{domain}_regridded/"
 DATA_DIR_ERA5 = "/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/era5"
-OUTPUT_PATH = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/{EXPS_}/"
+OUTPUT_PATH = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/{experiment}/"
 os.makedirs(OUTPUT_PATH, exist_ok=True)
 
 
@@ -379,7 +385,7 @@ def main():
         print("Creating single figure with all VTS subplots")
         print("="*40)
         
-        output_file = os.path.join(OUTPUT_PATH, f'pyplt_Hurricane_Otis_{HURRICANE_NAME.lower()}_vts_{DOMAIN}.png')
+        output_file = os.path.join(OUTPUT_PATH, f'pyplt_Hurricane_Otis_{HURRICANE_NAME.lower()}_vts_{domain}.png')
         plot_all_vts_subplots(all_vts_data, output_file)
         
         # Summary

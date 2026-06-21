@@ -17,8 +17,15 @@ import cartopy.feature as cfeature
 from datetime import datetime
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-domain = 'small'
-experiment = 'exps_v3'
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--domain", default="large")
+parser.add_argument("--experiment", default="exps_v1")
+args = parser.parse_args()
+domain=args.domain
+experiment=args.experiment
+
 font_size = 10
 
 COLORS = ["#33a02c", "#005B72","#905dc7", "#692510","#fdbf6f", "b", "#fb9a99", "#b2df8a",  "#a6cee3", "#ff7f00",  "#cab2d6"]
