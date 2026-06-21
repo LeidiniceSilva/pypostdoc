@@ -16,9 +16,9 @@ from metpy.units import units
 import warnings
 warnings.filterwarnings('ignore')
 
-
 # Domain type
 DOMAIN = "large"
+EXPS_ = 'exps_v3'
 MAP_EXTENT = [-103, -92.5, 5, 17]  
 
 # Experiment names
@@ -29,9 +29,9 @@ START_DATE = "2023-10-21"
 END_DATE = "2023-10-25"
 
 # Paths
-DATA_DIR_MODELS = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps_v3/domain_{DOMAIN}_regridded/"
+DATA_DIR_MODELS = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/{EXPS_}/domain_{DOMAIN}_regridded/"
 DATA_DIR_ERA5 = "/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/era5"
-OUTPUT_PATH = "/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/"
+OUTPUT_PATH = f"/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/{EXPS_}/"
 os.makedirs(OUTPUT_PATH, exist_ok=True)
 
 
@@ -296,8 +296,7 @@ def plot_all_vts_subplots(all_vts_data, output_file=None):
         
         # Title with experiment info and label
         time_str = pd.to_datetime(data['time']).strftime('%Y-%m-%d %H:%M')
-        ax.set_title(f'{labels[idx]} {exp_name.upper()} ({data["lat"]:.1f}°N, {abs(data["lon"]):.1f}°W) {time_str}', 
-                    fontsize=10, fontweight='bold')
+        ax.set_title(f'{labels[idx]} {exp_name.upper()} ({data["lat"]:.1f}°N, {abs(data["lon"]):.1f}°W) {time_str}', fontsize=10, fontweight='bold')
     
     # Hide unused subplot (if any)
     for idx in range(len(all_vts_data), len(axes)):
@@ -310,7 +309,7 @@ def plot_all_vts_subplots(all_vts_data, output_file=None):
 
     plt.tight_layout()    
     if output_file:
-        plt.savefig(output_file, dpi=300, bbox_inches='tight')
+        plt.savefig(output_file, dpi=400, bbox_inches='tight')
         print(f"\nVTS comparison plot saved to {output_file}")
     
     plt.show()
@@ -380,7 +379,7 @@ def main():
         print("Creating single figure with all VTS subplots")
         print("="*40)
         
-        output_file = os.path.join(OUTPUT_PATH, f'pyplt_Hurricane_Otis_{HURRICANE_NAME.lower()}_vts.png')
+        output_file = os.path.join(OUTPUT_PATH, f'pyplt_Hurricane_Otis_{HURRICANE_NAME.lower()}_vts_{DOMAIN}.png')
         plot_all_vts_subplots(all_vts_data, output_file)
         
         # Summary
