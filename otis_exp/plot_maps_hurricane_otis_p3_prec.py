@@ -33,8 +33,11 @@ MAP_EXTENT = [-110, -90, 5, 25]
 
 EXPERIMENTS = ["ctrl", "holt_r2", "holt_r3", "uw_r2", "uw_r3"]
 
-START_DATE = "2023-10-24 15:00:00"
-END_DATE   = "2023-10-25 13:00:00"
+START_DATE = "2023-10-24 00:00:00"
+END_DATE   = "2023-10-25 23:00:00"
+
+TS_START_DATE = "2023-10-24 15:00:00"
+TS_END_DATE   = "2023-10-25 13:00:00"
 
 ACAPULCO_LON = -99.91
 ACAPULCO_LAT = 16.85
@@ -116,7 +119,7 @@ all_precip["CMORPH"], cmorph_ts = load_cmorph()
 station = pd.read_csv("/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/extracted_timeseries/station_acapulco_timeseries.csv")
 station['time'] = pd.to_datetime(station['time'])
 station = station.set_index('time')
-station = station.loc[START_DATE:END_DATE]
+station = station.loc[TS_START_DATE:TS_END_DATE]
 station = station['pr']
 station_value = station.sum()
 print(f"Loaded station: {len(station)} hours")
@@ -160,24 +163,26 @@ for i, name in enumerate(titles):
     gl.right_labels = False
 
     # Inset time series
-    axins = inset_axes(ax, width="40%", height="30%", loc='upper right')
+    axins = inset_axes(ax, width="40%", height="30%", loc='upper left', bbox_transform=ax.transAxes)
+    axins.patch.set_facecolor('lightgray')
+    axins.patch.set_alpha(1.0)
 
     if name == 'CMORPH':
         axins.plot(station.index, station.values, color='black', linewidth=1.5, label='Station')
         axins.plot(cmorph_ts.time, cmorph_ts, color='blue', linewidth=1.5, label='CMORPH')
-        axins.legend(fontsize=5, frameon=False)
+        axins.legend(fontsize=6, frameon=False)
     else:
         axins.plot(all_ts[name].time, all_ts[name], color='red', linewidth=1.5)
 
-    axins.set_facecolor('lightgray')
-    axins.tick_params(axis='both', labelsize=5)
+    axins.set_ylim(0, 35)
+    axins.yaxis.set_label_position("right")
+    axins.tick_params(axis='both', labelsize=6)
+    axins.tick_params(axis='x', rotation=90)
+    axins.tick_params(axis='y', left=False, labelleft=False, right=True, labelright=True)
     axins.set_xticks(axins.get_xticks())
-    axins.tick_params(axis='x', rotation=45)
-    axins.set_ylabel('mm h$^{-1}$', fontsize=5)
+    axins.set_ylabel('mm h$^{-1}$', fontsize=6)
 
-    ax.set_title(f"{labels[i]} {name}", fontsize=10, fontweight='bold')
-    ax.set_xlabel('Longitude')
-    ax.set_ylabel('Latitude')
+    ax.set_title(f"{labels[i]} {name}", loc='left', fontsize=10, fontweight='bold')
 
 # Colorbar
 cax = fig.add_axes([0.999, 0.15, 0.02, 0.7])

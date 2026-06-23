@@ -302,7 +302,7 @@ def plot_all_vts_subplots(all_vts_data, output_file=None):
         
         # Title with experiment info and label
         time_str = pd.to_datetime(data['time']).strftime('%Y-%m-%d %H:%M')
-        ax.set_title(f'{labels[idx]} {exp_name.upper()} ({data["lat"]:.1f}°N, {abs(data["lon"]):.1f}°W) {time_str}', fontsize=10, fontweight='bold')
+        ax.set_title(f'{labels[idx]} {exp_name.upper()} ({data["lat"]:.1f}°N, {abs(data["lon"]):.1f}°W) {time_str}', loc='left', fontsize=10, fontweight='bold')
     
     # Hide unused subplot (if any)
     for idx in range(len(all_vts_data), len(axes)):
