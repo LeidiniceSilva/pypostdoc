@@ -20,13 +20,13 @@ set -eo pipefail
 echo
 echo "--------------- INIT PLOT ----------------"
 
+python3 plot_maps_hurricane_otis_p1_track.py --domain large --experiment exps_v1
+python3 plot_maps_hurricane_otis_p2_vts.py --domain large --experiment exps_v1
+python3 plot_maps_hurricane_otis_p3_prec.py --domain large --experiment exps_v1 --date 2023101900
+
 python3 plot_maps_hurricane_otis_p1_track.py --domain small --experiment exps_v1
 python3 plot_maps_hurricane_otis_p2_vts.py --domain small --experiment exps_v1
 python3 plot_maps_hurricane_otis_p3_prec.py --domain small --experiment exps_v1 --date 2023101900
-
-#python3 plot_maps_hurricane_otis_p1_track.py --domain large --experiment exps_v1
-#python3 plot_maps_hurricane_otis_p2_vts.py --domain large --experiment exps_v1
-#python3 plot_maps_hurricane_otis_p3_prec.py --domain large --experiment exps_v1 --date 2023101900
 
 python3 plot_maps_hurricane_otis_p1_track.py --domain large --experiment exps_v2
 python3 plot_maps_hurricane_otis_p2_vts.py --domain large --experiment exps_v2

@@ -116,7 +116,7 @@ print("Loading CMORPH...")
 all_precip["CMORPH"], cmorph_ts = load_cmorph()
 
 # Station
-station = pd.read_csv("/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/extracted_timeseries/station_acapulco_timeseries.csv")
+station = pd.read_csv("/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/ws/station_acapulco_timeseries.csv")
 station['time'] = pd.to_datetime(station['time'])
 station = station.set_index('time')
 station = station.loc[TS_START_DATE:TS_END_DATE]

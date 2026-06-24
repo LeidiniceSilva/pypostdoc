@@ -1,0 +1,1068 @@
+
+--------------- INIT PLOT ----------------
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/otis_exp/plot_maps_hurricane_otis_p1_track.py:613: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/hus_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/pr_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/psl_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/sfcWind_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/ta_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/ua_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/uas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/va_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/vas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/wa_ctrl_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/hus_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/pr_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/psl_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/sfcWind_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/ta_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/ua_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/uas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/va_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/vas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/wa_holt_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/hus_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/pr_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/psl_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/sfcWind_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/ta_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/ua_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/uas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/va_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/vas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/wa_holt_r3_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/hus_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/pr_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/psl_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/sfcWind_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/ta_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/ua_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/uas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/va_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/vas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/wa_uw_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/hus_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/pr_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/psl_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/sfcWind_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/ta_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/ua_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/uas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/va_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/vas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/wa_uw_r3_2023101900.nc']
+Finding cyclone centers...
+Processing experiment: ctrl
+Processing experiment: holt_r2
+Processing experiment: holt_r3
+Processing experiment: uw_r2
+Processing experiment: uw_r3
+Processing experiment: ERA5
+
+============================================================
+ERA5 CYCLONE TRACKING INFORMATION
+============================================================
+
+Number of tracked positions: 24
+
+Minimum pressure: 996.9 hPa at 2023-10-25 00:00:00
+  Latitude: 15.50°
+  Longitude: -99.50°
+
+Track details (time, lat, lon, pressure):
+------------------------------------------------------------
+2023-10-20 00:00 | Lat:   9.25 | Lon:  -94.25 | Pressure: 1007.9 hPa
+2023-10-20 06:00 | Lat:   8.25 | Lon:  -94.75 | Pressure: 1009.4 hPa
+2023-10-20 12:00 | Lat:   8.50 | Lon:  -95.75 | Pressure: 1008.4 hPa
+2023-10-20 18:00 | Lat:   9.00 | Lon:  -95.00 | Pressure: 1008.7 hPa
+2023-10-21 00:00 | Lat:   9.50 | Lon:  -95.50 | Pressure: 1007.2 hPa
+2023-10-21 06:00 | Lat:   9.50 | Lon:  -96.00 | Pressure: 1008.8 hPa
+2023-10-21 12:00 | Lat:   9.50 | Lon:  -96.50 | Pressure: 1007.1 hPa
+2023-10-21 18:00 | Lat:   9.25 | Lon:  -96.75 | Pressure: 1007.6 hPa
+2023-10-22 00:00 | Lat:   9.50 | Lon:  -96.75 | Pressure: 1006.7 hPa
+2023-10-22 06:00 | Lat:   9.75 | Lon:  -97.25 | Pressure: 1007.8 hPa
+2023-10-22 12:00 | Lat:  10.00 | Lon:  -97.25 | Pressure: 1006.0 hPa
+2023-10-22 18:00 | Lat:  10.50 | Lon:  -97.75 | Pressure: 1005.6 hPa
+2023-10-23 00:00 | Lat:  10.50 | Lon:  -97.25 | Pressure: 1002.5 hPa
+2023-10-23 06:00 | Lat:  11.50 | Lon:  -97.00 | Pressure: 1004.6 hPa
+2023-10-23 12:00 | Lat:  12.25 | Lon:  -97.50 | Pressure: 1004.6 hPa
+2023-10-23 18:00 | Lat:  12.75 | Lon:  -97.75 | Pressure: 1005.4 hPa
+2023-10-24 00:00 | Lat:  13.25 | Lon:  -98.25 | Pressure: 1003.2 hPa
+2023-10-24 06:00 | Lat:  13.75 | Lon:  -98.25 | Pressure: 1003.7 hPa
+2023-10-24 12:00 | Lat:  14.50 | Lon:  -99.00 | Pressure:  999.8 hPa
+2023-10-24 18:00 | Lat:  15.00 | Lon:  -99.50 | Pressure: 1000.6 hPa
+2023-10-25 00:00 | Lat:  15.50 | Lon:  -99.50 | Pressure:  996.9 hPa
+2023-10-25 06:00 | Lat:  16.25 | Lon:  -99.50 | Pressure: 1002.9 hPa
+2023-10-25 12:00 | Lat:  17.00 | Lon: -100.50 | Pressure: 1007.4 hPa
+2023-10-26 00:00 | Lat:  17.00 | Lon: -102.00 | Pressure: 1007.8 hPa
+============================================================
+
+Computing max sfcWind around cyclone centers...
+================================================================================
+Computing Vertical Thermal Structure for Hurricane Otis
+Experiments: ['ctrl', 'holt_r2', 'holt_r3', 'uw_r2', 'uw_r3', 'ERA5']
+================================================================================
+
+Loading ERA5 data...
+Found 10 ERA5 files
+Selected time range: 2023-10-21 to 2023-10-25
+Tracking ERA5 cyclone...
+ERA5       - Time: 2023-10-25 00:00:00, Lat: 15.50°N, Lon: -99.50°W, Pressure: 996.9 hPa
+Extracting ERA5 cross-section...
+Computing ERA5 theta_e...
+
+Loading ctrl data...
+Tracking ctrl cyclone...
+ctrl       - Time: 2023-10-25 18:00:00, Lat: 14.26°N, Lon: -102.96°W, Pressure: 984.0 hPa
+Extracting ctrl cross-section...
+Computing ctrl theta_e...
+
+Loading holt_r2 data...
+Tracking holt_r2 cyclone...
+holt_r2    - Time: 2023-10-24 12:00:00, Lat: 12.94°N, Lon: -102.96°W, Pressure: 996.5 hPa
+Extracting holt_r2 cross-section...
+Computing holt_r2 theta_e...
+
+Loading holt_r3 data...
+Tracking holt_r3 cyclone...
+holt_r3    - Time: 2023-10-23 00:00:00, Lat: 9.18°N, Lon: -100.84°W, Pressure: 1000.4 hPa
+Extracting holt_r3 cross-section...
+Computing holt_r3 theta_e...
+
+Loading uw_r2 data...
+Tracking uw_r2 cyclone...
+uw_r2      - Time: 2023-10-24 18:00:00, Lat: 16.14°N, Lon: -102.84°W, Pressure: 949.2 hPa
+Extracting uw_r2 cross-section...
+Computing uw_r2 theta_e...
+
+Loading uw_r3 data...
+Tracking uw_r3 cyclone...
+uw_r3      - Time: 2023-10-24 12:00:00, Lat: 14.98°N, Lon: -102.68°W, Pressure: 950.4 hPa
+Extracting uw_r3 cross-section...
+Computing uw_r3 theta_e...
+
+========================================
+Creating single figure with all VTS subplots
+========================================
+
+VTS comparison plot saved to /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v1/pyplt_Hurricane_Otis_otis_vts_large.png
+
+================================================================================
+VTS Analysis Complete!
+================================================================================
+
+Peak Intensity Summary:
+  ERA5       - 2023-10-25 00:00:00 - (15.50°N, -99.50°W)
+  CTRL       - 2023-10-25 18:00:00 - (14.26°N, -102.96°W)
+  HOLT_R2    - 2023-10-24 12:00:00 - (12.94°N, -102.96°W)
+  HOLT_R3    - 2023-10-23 00:00:00 - (9.18°N, -100.84°W)
+  UW_R2      - 2023-10-24 18:00:00 - (16.14°N, -102.84°W)
+  UW_R3      - 2023-10-24 12:00:00 - (14.98°N, -102.68°W)
+
+Figure saved to: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v1/pyplt_Hurricane_Otis_otis_vts_large.png
+================================================================================
+Loading CMORPH...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/cmorph/CMORPH_cut_domain_20251022_20251025.nc
+Loaded station: 23 hours
+Loading ctrl...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/ctrl/pr_ctrl_2023101900.nc
+Loading holt_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r2/pr_holt_r2_2023101900.nc
+Loading holt_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/holt_r3/pr_holt_r3_2023101900.nc
+Loading uw_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r2/pr_uw_r2_2023101900.nc
+Loading uw_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_large_regridded/uw_r3/pr_uw_r3_2023101900.nc
+Plotting
+Save figure
+Figure saved: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v1/pyplt_Hurricane_Otis_precip_accum_large.png
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/otis_exp/plot_maps_hurricane_otis_p1_track.py:613: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/hus_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/pr_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/psl_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/sfcWind_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/ta_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/ua_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/uas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/va_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/vas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/wa_ctrl_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/hus_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/pr_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/psl_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/sfcWind_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/ta_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/ua_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/uas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/va_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/vas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/wa_holt_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/hus_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/pr_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/psl_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/sfcWind_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/ta_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/ua_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/uas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/va_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/vas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/wa_holt_r3_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/hus_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/pr_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/psl_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/sfcWind_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/ta_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/ua_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/uas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/va_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/vas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/wa_uw_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/hus_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/pr_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/psl_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/sfcWind_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/ta_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/ua_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/uas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/va_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/vas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/wa_uw_r3_2023101900.nc']
+Finding cyclone centers...
+Processing experiment: ctrl
+Processing experiment: holt_r2
+Processing experiment: holt_r3
+Processing experiment: uw_r2
+Processing experiment: uw_r3
+Processing experiment: ERA5
+
+============================================================
+ERA5 CYCLONE TRACKING INFORMATION
+============================================================
+
+Number of tracked positions: 24
+
+Minimum pressure: 996.9 hPa at 2023-10-25 00:00:00
+  Latitude: 15.50°
+  Longitude: -99.50°
+
+Track details (time, lat, lon, pressure):
+------------------------------------------------------------
+2023-10-20 00:00 | Lat:   9.25 | Lon:  -94.25 | Pressure: 1007.9 hPa
+2023-10-20 06:00 | Lat:   8.25 | Lon:  -94.75 | Pressure: 1009.4 hPa
+2023-10-20 12:00 | Lat:   8.50 | Lon:  -95.75 | Pressure: 1008.4 hPa
+2023-10-20 18:00 | Lat:   9.00 | Lon:  -95.00 | Pressure: 1008.7 hPa
+2023-10-21 00:00 | Lat:   9.50 | Lon:  -95.50 | Pressure: 1007.2 hPa
+2023-10-21 06:00 | Lat:   9.50 | Lon:  -96.00 | Pressure: 1008.8 hPa
+2023-10-21 12:00 | Lat:   9.50 | Lon:  -96.50 | Pressure: 1007.1 hPa
+2023-10-21 18:00 | Lat:   9.25 | Lon:  -96.75 | Pressure: 1007.6 hPa
+2023-10-22 00:00 | Lat:   9.50 | Lon:  -96.75 | Pressure: 1006.7 hPa
+2023-10-22 06:00 | Lat:   9.75 | Lon:  -97.25 | Pressure: 1007.8 hPa
+2023-10-22 12:00 | Lat:  10.00 | Lon:  -97.25 | Pressure: 1006.0 hPa
+2023-10-22 18:00 | Lat:  10.50 | Lon:  -97.75 | Pressure: 1005.6 hPa
+2023-10-23 00:00 | Lat:  10.50 | Lon:  -97.25 | Pressure: 1002.5 hPa
+2023-10-23 06:00 | Lat:  11.50 | Lon:  -97.00 | Pressure: 1004.6 hPa
+2023-10-23 12:00 | Lat:  12.25 | Lon:  -97.50 | Pressure: 1004.6 hPa
+2023-10-23 18:00 | Lat:  12.75 | Lon:  -97.75 | Pressure: 1005.4 hPa
+2023-10-24 00:00 | Lat:  13.25 | Lon:  -98.25 | Pressure: 1003.2 hPa
+2023-10-24 06:00 | Lat:  13.75 | Lon:  -98.25 | Pressure: 1003.7 hPa
+2023-10-24 12:00 | Lat:  14.50 | Lon:  -99.00 | Pressure:  999.8 hPa
+2023-10-24 18:00 | Lat:  15.00 | Lon:  -99.50 | Pressure: 1000.6 hPa
+2023-10-25 00:00 | Lat:  15.50 | Lon:  -99.50 | Pressure:  996.9 hPa
+2023-10-25 06:00 | Lat:  16.25 | Lon:  -99.50 | Pressure: 1002.9 hPa
+2023-10-25 12:00 | Lat:  17.00 | Lon: -100.50 | Pressure: 1007.4 hPa
+2023-10-26 00:00 | Lat:  17.00 | Lon: -102.00 | Pressure: 1007.8 hPa
+============================================================
+
+Computing max sfcWind around cyclone centers...
+================================================================================
+Computing Vertical Thermal Structure for Hurricane Otis
+Experiments: ['ctrl', 'holt_r2', 'holt_r3', 'uw_r2', 'uw_r3', 'ERA5']
+================================================================================
+
+Loading ERA5 data...
+Found 10 ERA5 files
+Selected time range: 2023-10-21 to 2023-10-25
+Tracking ERA5 cyclone...
+ERA5       - Time: 2023-10-25 00:00:00, Lat: 15.50°N, Lon: -99.50°W, Pressure: 996.9 hPa
+Extracting ERA5 cross-section...
+Computing ERA5 theta_e...
+
+Loading ctrl data...
+Tracking ctrl cyclone...
+ctrl       - Time: 2023-10-23 00:00:00, Lat: 9.42°N, Lon: -96.73°W, Pressure: 1003.1 hPa
+Extracting ctrl cross-section...
+Computing ctrl theta_e...
+
+Loading holt_r2 data...
+Tracking holt_r2 cyclone...
+holt_r2    - Time: 2023-10-21 12:00:00, Lat: 9.14°N, Lon: -96.37°W, Pressure: 1000.9 hPa
+Extracting holt_r2 cross-section...
+Computing holt_r2 theta_e...
+
+Loading holt_r3 data...
+Tracking holt_r3 cyclone...
+holt_r3    - Time: 2023-10-23 00:00:00, Lat: 10.22°N, Lon: -96.37°W, Pressure: 1002.7 hPa
+Extracting holt_r3 cross-section...
+Computing holt_r3 theta_e...
+
+Loading uw_r2 data...
+Tracking uw_r2 cyclone...
+uw_r2      - Time: 2023-10-21 00:00:00, Lat: 8.74°N, Lon: -95.21°W, Pressure: 1004.1 hPa
+Extracting uw_r2 cross-section...
+Computing uw_r2 theta_e...
+
+Loading uw_r3 data...
+Tracking uw_r3 cyclone...
+uw_r3      - Time: 2023-10-21 12:00:00, Lat: 9.14°N, Lon: -96.33°W, Pressure: 1003.8 hPa
+Extracting uw_r3 cross-section...
+Computing uw_r3 theta_e...
+
+========================================
+Creating single figure with all VTS subplots
+========================================
+
+VTS comparison plot saved to /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v1/pyplt_Hurricane_Otis_otis_vts_small.png
+
+================================================================================
+VTS Analysis Complete!
+================================================================================
+
+Peak Intensity Summary:
+  ERA5       - 2023-10-25 00:00:00 - (15.50°N, -99.50°W)
+  CTRL       - 2023-10-23 00:00:00 - (9.42°N, -96.73°W)
+  HOLT_R2    - 2023-10-21 12:00:00 - (9.14°N, -96.37°W)
+  HOLT_R3    - 2023-10-23 00:00:00 - (10.22°N, -96.37°W)
+  UW_R2      - 2023-10-21 00:00:00 - (8.74°N, -95.21°W)
+  UW_R3      - 2023-10-21 12:00:00 - (9.14°N, -96.33°W)
+
+Figure saved to: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v1/pyplt_Hurricane_Otis_otis_vts_small.png
+================================================================================
+Loading CMORPH...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/cmorph/CMORPH_cut_domain_20251022_20251025.nc
+Loaded station: 23 hours
+Loading ctrl...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/ctrl/pr_ctrl_2023101900.nc
+Loading holt_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r2/pr_holt_r2_2023101900.nc
+Loading holt_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/holt_r3/pr_holt_r3_2023101900.nc
+Loading uw_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r2/pr_uw_r2_2023101900.nc
+Loading uw_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v1/domain_small_regridded/uw_r3/pr_uw_r3_2023101900.nc
+Plotting
+Save figure
+Figure saved: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v1/pyplt_Hurricane_Otis_precip_accum_small.png
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/otis_exp/plot_maps_hurricane_otis_p1_track.py:613: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/hus_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/pr_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/psl_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/sfcWind_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/ta_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/ua_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/uas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/va_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/vas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/wa_ctrl_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/hus_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/pr_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/psl_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/sfcWind_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/ta_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/ua_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/uas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/va_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/vas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/wa_holt_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/hus_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/pr_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/psl_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/sfcWind_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/ta_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/ua_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/uas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/va_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/vas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/wa_holt_r3_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/hus_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/pr_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/psl_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/sfcWind_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/ta_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/ua_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/uas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/va_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/vas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/wa_uw_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/hus_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/pr_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/psl_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/sfcWind_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/ta_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/ua_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/uas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/va_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/vas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/wa_uw_r3_2023101900.nc']
+Finding cyclone centers...
+Processing experiment: ctrl
+Processing experiment: holt_r2
+Processing experiment: holt_r3
+Processing experiment: uw_r2
+Processing experiment: uw_r3
+Processing experiment: ERA5
+
+============================================================
+ERA5 CYCLONE TRACKING INFORMATION
+============================================================
+
+Number of tracked positions: 24
+
+Minimum pressure: 996.9 hPa at 2023-10-25 00:00:00
+  Latitude: 15.50°
+  Longitude: -99.50°
+
+Track details (time, lat, lon, pressure):
+------------------------------------------------------------
+2023-10-20 00:00 | Lat:   9.25 | Lon:  -94.25 | Pressure: 1007.9 hPa
+2023-10-20 06:00 | Lat:   8.25 | Lon:  -94.75 | Pressure: 1009.4 hPa
+2023-10-20 12:00 | Lat:   8.50 | Lon:  -95.75 | Pressure: 1008.4 hPa
+2023-10-20 18:00 | Lat:   9.00 | Lon:  -95.00 | Pressure: 1008.7 hPa
+2023-10-21 00:00 | Lat:   9.50 | Lon:  -95.50 | Pressure: 1007.2 hPa
+2023-10-21 06:00 | Lat:   9.50 | Lon:  -96.00 | Pressure: 1008.8 hPa
+2023-10-21 12:00 | Lat:   9.50 | Lon:  -96.50 | Pressure: 1007.1 hPa
+2023-10-21 18:00 | Lat:   9.25 | Lon:  -96.75 | Pressure: 1007.6 hPa
+2023-10-22 00:00 | Lat:   9.50 | Lon:  -96.75 | Pressure: 1006.7 hPa
+2023-10-22 06:00 | Lat:   9.75 | Lon:  -97.25 | Pressure: 1007.8 hPa
+2023-10-22 12:00 | Lat:  10.00 | Lon:  -97.25 | Pressure: 1006.0 hPa
+2023-10-22 18:00 | Lat:  10.50 | Lon:  -97.75 | Pressure: 1005.6 hPa
+2023-10-23 00:00 | Lat:  10.50 | Lon:  -97.25 | Pressure: 1002.5 hPa
+2023-10-23 06:00 | Lat:  11.50 | Lon:  -97.00 | Pressure: 1004.6 hPa
+2023-10-23 12:00 | Lat:  12.25 | Lon:  -97.50 | Pressure: 1004.6 hPa
+2023-10-23 18:00 | Lat:  12.75 | Lon:  -97.75 | Pressure: 1005.4 hPa
+2023-10-24 00:00 | Lat:  13.25 | Lon:  -98.25 | Pressure: 1003.2 hPa
+2023-10-24 06:00 | Lat:  13.75 | Lon:  -98.25 | Pressure: 1003.7 hPa
+2023-10-24 12:00 | Lat:  14.50 | Lon:  -99.00 | Pressure:  999.8 hPa
+2023-10-24 18:00 | Lat:  15.00 | Lon:  -99.50 | Pressure: 1000.6 hPa
+2023-10-25 00:00 | Lat:  15.50 | Lon:  -99.50 | Pressure:  996.9 hPa
+2023-10-25 06:00 | Lat:  16.25 | Lon:  -99.50 | Pressure: 1002.9 hPa
+2023-10-25 12:00 | Lat:  17.00 | Lon: -100.50 | Pressure: 1007.4 hPa
+2023-10-26 00:00 | Lat:  17.00 | Lon: -102.00 | Pressure: 1007.8 hPa
+============================================================
+
+Computing max sfcWind around cyclone centers...
+================================================================================
+Computing Vertical Thermal Structure for Hurricane Otis
+Experiments: ['ctrl', 'holt_r2', 'holt_r3', 'uw_r2', 'uw_r3', 'ERA5']
+================================================================================
+
+Loading ERA5 data...
+Found 10 ERA5 files
+Selected time range: 2023-10-21 to 2023-10-25
+Tracking ERA5 cyclone...
+ERA5       - Time: 2023-10-25 00:00:00, Lat: 15.50°N, Lon: -99.50°W, Pressure: 996.9 hPa
+Extracting ERA5 cross-section...
+Computing ERA5 theta_e...
+
+Loading ctrl data...
+Tracking ctrl cyclone...
+ctrl       - Time: 2023-10-21 06:00:00, Lat: 8.35°N, Lon: -98.22°W, Pressure: 999.9 hPa
+Extracting ctrl cross-section...
+Computing ctrl theta_e...
+
+Loading holt_r2 data...
+Tracking holt_r2 cyclone...
+holt_r2    - Time: 2023-10-21 12:00:00, Lat: 8.67°N, Lon: -99.18°W, Pressure: 1002.4 hPa
+Extracting holt_r2 cross-section...
+Computing holt_r2 theta_e...
+
+Loading holt_r3 data...
+Tracking holt_r3 cyclone...
+holt_r3    - Time: 2023-10-25 18:00:00, Lat: 14.23°N, Lon: -102.50°W, Pressure: 999.6 hPa
+Extracting holt_r3 cross-section...
+Computing holt_r3 theta_e...
+
+Loading uw_r2 data...
+Tracking uw_r2 cyclone...
+uw_r2      - Time: 2023-10-25 00:00:00, Lat: 14.91°N, Lon: -101.50°W, Pressure: 970.8 hPa
+Extracting uw_r2 cross-section...
+Computing uw_r2 theta_e...
+
+Loading uw_r3 data...
+Tracking uw_r3 cyclone...
+uw_r3      - Time: 2023-10-25 00:00:00, Lat: 15.47°N, Lon: -102.22°W, Pressure: 960.3 hPa
+Extracting uw_r3 cross-section...
+Computing uw_r3 theta_e...
+
+========================================
+Creating single figure with all VTS subplots
+========================================
+
+VTS comparison plot saved to /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v2/pyplt_Hurricane_Otis_otis_vts_large.png
+
+================================================================================
+VTS Analysis Complete!
+================================================================================
+
+Peak Intensity Summary:
+  ERA5       - 2023-10-25 00:00:00 - (15.50°N, -99.50°W)
+  CTRL       - 2023-10-21 06:00:00 - (8.35°N, -98.22°W)
+  HOLT_R2    - 2023-10-21 12:00:00 - (8.67°N, -99.18°W)
+  HOLT_R3    - 2023-10-25 18:00:00 - (14.23°N, -102.50°W)
+  UW_R2      - 2023-10-25 00:00:00 - (14.91°N, -101.50°W)
+  UW_R3      - 2023-10-25 00:00:00 - (15.47°N, -102.22°W)
+
+Figure saved to: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v2/pyplt_Hurricane_Otis_otis_vts_large.png
+================================================================================
+Loading CMORPH...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/cmorph/CMORPH_cut_domain_20251022_20251025.nc
+Loaded station: 23 hours
+Loading ctrl...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/ctrl/pr_ctrl_2023101900.nc
+Loading holt_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r2/pr_holt_r2_2023101900.nc
+Loading holt_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/holt_r3/pr_holt_r3_2023101900.nc
+Loading uw_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r2/pr_uw_r2_2023101900.nc
+Loading uw_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_large_regridded/uw_r3/pr_uw_r3_2023101900.nc
+Plotting
+Save figure
+Figure saved: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v2/pyplt_Hurricane_Otis_precip_accum_large.png
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/otis_exp/plot_maps_hurricane_otis_p1_track.py:613: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/hus_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/pr_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/psl_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/sfcWind_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/ta_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/ua_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/uas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/va_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/vas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/wa_ctrl_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/hus_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/pr_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/psl_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/sfcWind_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/ta_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/ua_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/uas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/va_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/vas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/wa_holt_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/hus_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/pr_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/psl_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/sfcWind_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/ta_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/ua_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/uas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/va_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/vas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/wa_holt_r3_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/hus_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/pr_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/psl_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/sfcWind_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/ta_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/ua_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/uas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/va_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/vas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/wa_uw_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/hus_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/pr_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/psl_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/sfcWind_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/ta_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/ua_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/uas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/va_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/vas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/wa_uw_r3_2023101900.nc']
+Finding cyclone centers...
+Processing experiment: ctrl
+Processing experiment: holt_r2
+Processing experiment: holt_r3
+Processing experiment: uw_r2
+Processing experiment: uw_r3
+Processing experiment: ERA5
+
+============================================================
+ERA5 CYCLONE TRACKING INFORMATION
+============================================================
+
+Number of tracked positions: 24
+
+Minimum pressure: 996.9 hPa at 2023-10-25 00:00:00
+  Latitude: 15.50°
+  Longitude: -99.50°
+
+Track details (time, lat, lon, pressure):
+------------------------------------------------------------
+2023-10-20 00:00 | Lat:   9.25 | Lon:  -94.25 | Pressure: 1007.9 hPa
+2023-10-20 06:00 | Lat:   8.25 | Lon:  -94.75 | Pressure: 1009.4 hPa
+2023-10-20 12:00 | Lat:   8.50 | Lon:  -95.75 | Pressure: 1008.4 hPa
+2023-10-20 18:00 | Lat:   9.00 | Lon:  -95.00 | Pressure: 1008.7 hPa
+2023-10-21 00:00 | Lat:   9.50 | Lon:  -95.50 | Pressure: 1007.2 hPa
+2023-10-21 06:00 | Lat:   9.50 | Lon:  -96.00 | Pressure: 1008.8 hPa
+2023-10-21 12:00 | Lat:   9.50 | Lon:  -96.50 | Pressure: 1007.1 hPa
+2023-10-21 18:00 | Lat:   9.25 | Lon:  -96.75 | Pressure: 1007.6 hPa
+2023-10-22 00:00 | Lat:   9.50 | Lon:  -96.75 | Pressure: 1006.7 hPa
+2023-10-22 06:00 | Lat:   9.75 | Lon:  -97.25 | Pressure: 1007.8 hPa
+2023-10-22 12:00 | Lat:  10.00 | Lon:  -97.25 | Pressure: 1006.0 hPa
+2023-10-22 18:00 | Lat:  10.50 | Lon:  -97.75 | Pressure: 1005.6 hPa
+2023-10-23 00:00 | Lat:  10.50 | Lon:  -97.25 | Pressure: 1002.5 hPa
+2023-10-23 06:00 | Lat:  11.50 | Lon:  -97.00 | Pressure: 1004.6 hPa
+2023-10-23 12:00 | Lat:  12.25 | Lon:  -97.50 | Pressure: 1004.6 hPa
+2023-10-23 18:00 | Lat:  12.75 | Lon:  -97.75 | Pressure: 1005.4 hPa
+2023-10-24 00:00 | Lat:  13.25 | Lon:  -98.25 | Pressure: 1003.2 hPa
+2023-10-24 06:00 | Lat:  13.75 | Lon:  -98.25 | Pressure: 1003.7 hPa
+2023-10-24 12:00 | Lat:  14.50 | Lon:  -99.00 | Pressure:  999.8 hPa
+2023-10-24 18:00 | Lat:  15.00 | Lon:  -99.50 | Pressure: 1000.6 hPa
+2023-10-25 00:00 | Lat:  15.50 | Lon:  -99.50 | Pressure:  996.9 hPa
+2023-10-25 06:00 | Lat:  16.25 | Lon:  -99.50 | Pressure: 1002.9 hPa
+2023-10-25 12:00 | Lat:  17.00 | Lon: -100.50 | Pressure: 1007.4 hPa
+2023-10-26 00:00 | Lat:  17.00 | Lon: -102.00 | Pressure: 1007.8 hPa
+============================================================
+
+Computing max sfcWind around cyclone centers...
+================================================================================
+Computing Vertical Thermal Structure for Hurricane Otis
+Experiments: ['ctrl', 'holt_r2', 'holt_r3', 'uw_r2', 'uw_r3', 'ERA5']
+================================================================================
+
+Loading ERA5 data...
+Found 10 ERA5 files
+Selected time range: 2023-10-21 to 2023-10-25
+Tracking ERA5 cyclone...
+ERA5       - Time: 2023-10-25 00:00:00, Lat: 15.50°N, Lon: -99.50°W, Pressure: 996.9 hPa
+Extracting ERA5 cross-section...
+Computing ERA5 theta_e...
+
+Loading ctrl data...
+Tracking ctrl cyclone...
+ctrl       - Time: 2023-10-24 00:00:00, Lat: 10.89°N, Lon: -98.99°W, Pressure: 1004.1 hPa
+Extracting ctrl cross-section...
+Computing ctrl theta_e...
+
+Loading holt_r2 data...
+Tracking holt_r2 cyclone...
+holt_r2    - Time: 2023-10-23 00:00:00, Lat: 9.85°N, Lon: -97.87°W, Pressure: 1004.8 hPa
+Extracting holt_r2 cross-section...
+Computing holt_r2 theta_e...
+
+Loading holt_r3 data...
+Tracking holt_r3 cyclone...
+holt_r3    - Time: 2023-10-23 00:00:00, Lat: 9.41°N, Lon: -98.59°W, Pressure: 1001.8 hPa
+Extracting holt_r3 cross-section...
+Computing holt_r3 theta_e...
+
+Loading uw_r2 data...
+Tracking uw_r2 cyclone...
+uw_r2      - Time: 2023-10-25 12:00:00, Lat: 15.37°N, Lon: -100.07°W, Pressure: 982.6 hPa
+Extracting uw_r2 cross-section...
+Computing uw_r2 theta_e...
+
+Loading uw_r3 data...
+Tracking uw_r3 cyclone...
+uw_r3      - Time: 2023-10-21 00:00:00, Lat: 8.21°N, Lon: -97.27°W, Pressure: 998.0 hPa
+Extracting uw_r3 cross-section...
+Computing uw_r3 theta_e...
+
+========================================
+Creating single figure with all VTS subplots
+========================================
+
+VTS comparison plot saved to /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v2/pyplt_Hurricane_Otis_otis_vts_small.png
+
+================================================================================
+VTS Analysis Complete!
+================================================================================
+
+Peak Intensity Summary:
+  ERA5       - 2023-10-25 00:00:00 - (15.50°N, -99.50°W)
+  CTRL       - 2023-10-24 00:00:00 - (10.89°N, -98.99°W)
+  HOLT_R2    - 2023-10-23 00:00:00 - (9.85°N, -97.87°W)
+  HOLT_R3    - 2023-10-23 00:00:00 - (9.41°N, -98.59°W)
+  UW_R2      - 2023-10-25 12:00:00 - (15.37°N, -100.07°W)
+  UW_R3      - 2023-10-21 00:00:00 - (8.21°N, -97.27°W)
+
+Figure saved to: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v2/pyplt_Hurricane_Otis_otis_vts_small.png
+================================================================================
+Loading CMORPH...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/cmorph/CMORPH_cut_domain_20251022_20251025.nc
+Loaded station: 23 hours
+Loading ctrl...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/ctrl/pr_ctrl_2023101900.nc
+Loading holt_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r2/pr_holt_r2_2023101900.nc
+Loading holt_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/holt_r3/pr_holt_r3_2023101900.nc
+Loading uw_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r2/pr_uw_r2_2023101900.nc
+Loading uw_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v2/domain_small_regridded/uw_r3/pr_uw_r3_2023101900.nc
+Plotting
+Save figure
+Figure saved: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v2/pyplt_Hurricane_Otis_precip_accum_small.png
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/otis_exp/plot_maps_hurricane_otis_p1_track.py:613: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/hus_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/pr_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/psl_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/sfcWind_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/ta_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/ua_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/uas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/va_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/vas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/wa_ctrl_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/hus_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/pr_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/psl_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/sfcWind_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/ta_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/ua_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/uas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/va_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/vas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/wa_holt_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/hus_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/pr_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/psl_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/sfcWind_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/ta_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/ua_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/uas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/va_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/vas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/wa_holt_r3_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/hus_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/pr_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/psl_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/sfcWind_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/ta_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/ua_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/uas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/va_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/vas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/wa_uw_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/hus_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/pr_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/psl_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/sfcWind_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/ta_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/ua_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/uas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/va_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/vas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/wa_uw_r3_2023101900.nc']
+Finding cyclone centers...
+Processing experiment: ctrl
+Processing experiment: holt_r2
+Processing experiment: holt_r3
+Processing experiment: uw_r2
+Processing experiment: uw_r3
+Processing experiment: ERA5
+
+============================================================
+ERA5 CYCLONE TRACKING INFORMATION
+============================================================
+
+Number of tracked positions: 24
+
+Minimum pressure: 996.9 hPa at 2023-10-25 00:00:00
+  Latitude: 15.50°
+  Longitude: -99.50°
+
+Track details (time, lat, lon, pressure):
+------------------------------------------------------------
+2023-10-20 00:00 | Lat:   9.25 | Lon:  -94.25 | Pressure: 1007.9 hPa
+2023-10-20 06:00 | Lat:   8.25 | Lon:  -94.75 | Pressure: 1009.4 hPa
+2023-10-20 12:00 | Lat:   8.50 | Lon:  -95.75 | Pressure: 1008.4 hPa
+2023-10-20 18:00 | Lat:   9.00 | Lon:  -95.00 | Pressure: 1008.7 hPa
+2023-10-21 00:00 | Lat:   9.50 | Lon:  -95.50 | Pressure: 1007.2 hPa
+2023-10-21 06:00 | Lat:   9.50 | Lon:  -96.00 | Pressure: 1008.8 hPa
+2023-10-21 12:00 | Lat:   9.50 | Lon:  -96.50 | Pressure: 1007.1 hPa
+2023-10-21 18:00 | Lat:   9.25 | Lon:  -96.75 | Pressure: 1007.6 hPa
+2023-10-22 00:00 | Lat:   9.50 | Lon:  -96.75 | Pressure: 1006.7 hPa
+2023-10-22 06:00 | Lat:   9.75 | Lon:  -97.25 | Pressure: 1007.8 hPa
+2023-10-22 12:00 | Lat:  10.00 | Lon:  -97.25 | Pressure: 1006.0 hPa
+2023-10-22 18:00 | Lat:  10.50 | Lon:  -97.75 | Pressure: 1005.6 hPa
+2023-10-23 00:00 | Lat:  10.50 | Lon:  -97.25 | Pressure: 1002.5 hPa
+2023-10-23 06:00 | Lat:  11.50 | Lon:  -97.00 | Pressure: 1004.6 hPa
+2023-10-23 12:00 | Lat:  12.25 | Lon:  -97.50 | Pressure: 1004.6 hPa
+2023-10-23 18:00 | Lat:  12.75 | Lon:  -97.75 | Pressure: 1005.4 hPa
+2023-10-24 00:00 | Lat:  13.25 | Lon:  -98.25 | Pressure: 1003.2 hPa
+2023-10-24 06:00 | Lat:  13.75 | Lon:  -98.25 | Pressure: 1003.7 hPa
+2023-10-24 12:00 | Lat:  14.50 | Lon:  -99.00 | Pressure:  999.8 hPa
+2023-10-24 18:00 | Lat:  15.00 | Lon:  -99.50 | Pressure: 1000.6 hPa
+2023-10-25 00:00 | Lat:  15.50 | Lon:  -99.50 | Pressure:  996.9 hPa
+2023-10-25 06:00 | Lat:  16.25 | Lon:  -99.50 | Pressure: 1002.9 hPa
+2023-10-25 12:00 | Lat:  17.00 | Lon: -100.50 | Pressure: 1007.4 hPa
+2023-10-26 00:00 | Lat:  17.00 | Lon: -102.00 | Pressure: 1007.8 hPa
+============================================================
+
+Computing max sfcWind around cyclone centers...
+================================================================================
+Computing Vertical Thermal Structure for Hurricane Otis
+Experiments: ['ctrl', 'holt_r2', 'holt_r3', 'uw_r2', 'uw_r3', 'ERA5']
+================================================================================
+
+Loading ERA5 data...
+Found 10 ERA5 files
+Selected time range: 2023-10-21 to 2023-10-25
+Tracking ERA5 cyclone...
+ERA5       - Time: 2023-10-25 00:00:00, Lat: 15.50°N, Lon: -99.50°W, Pressure: 996.9 hPa
+Extracting ERA5 cross-section...
+Computing ERA5 theta_e...
+
+Loading ctrl data...
+Tracking ctrl cyclone...
+ctrl       - Time: 2023-10-24 18:00:00, Lat: 13.45°N, Lon: -102.37°W, Pressure: 994.7 hPa
+Extracting ctrl cross-section...
+Computing ctrl theta_e...
+
+Loading holt_r2 data...
+Tracking holt_r2 cyclone...
+holt_r2    - Time: 2023-10-25 18:00:00, Lat: 15.01°N, Lon: -102.49°W, Pressure: 995.4 hPa
+Extracting holt_r2 cross-section...
+Computing holt_r2 theta_e...
+
+Loading holt_r3 data...
+Tracking holt_r3 cyclone...
+holt_r3    - Time: 2023-10-25 12:00:00, Lat: 15.37°N, Lon: -102.61°W, Pressure: 987.7 hPa
+Extracting holt_r3 cross-section...
+Computing holt_r3 theta_e...
+
+Loading uw_r2 data...
+Tracking uw_r2 cyclone...
+uw_r2      - Time: 2023-10-25 00:00:00, Lat: 16.33°N, Lon: -102.69°W, Pressure: 962.5 hPa
+Extracting uw_r2 cross-section...
+Computing uw_r2 theta_e...
+
+Loading uw_r3 data...
+Tracking uw_r3 cyclone...
+uw_r3      - Time: 2023-10-25 00:00:00, Lat: 15.13°N, Lon: -101.41°W, Pressure: 963.4 hPa
+Extracting uw_r3 cross-section...
+Computing uw_r3 theta_e...
+
+========================================
+Creating single figure with all VTS subplots
+========================================
+
+VTS comparison plot saved to /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v3/pyplt_Hurricane_Otis_otis_vts_large.png
+
+================================================================================
+VTS Analysis Complete!
+================================================================================
+
+Peak Intensity Summary:
+  ERA5       - 2023-10-25 00:00:00 - (15.50°N, -99.50°W)
+  CTRL       - 2023-10-24 18:00:00 - (13.45°N, -102.37°W)
+  HOLT_R2    - 2023-10-25 18:00:00 - (15.01°N, -102.49°W)
+  HOLT_R3    - 2023-10-25 12:00:00 - (15.37°N, -102.61°W)
+  UW_R2      - 2023-10-25 00:00:00 - (16.33°N, -102.69°W)
+  UW_R3      - 2023-10-25 00:00:00 - (15.13°N, -101.41°W)
+
+Figure saved to: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v3/pyplt_Hurricane_Otis_otis_vts_large.png
+================================================================================
+Loading CMORPH...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/cmorph/CMORPH_cut_domain_20251022_20251025.nc
+Loaded station: 23 hours
+Loading ctrl...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/ctrl/pr_ctrl_2023101900.nc
+Loading holt_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r2/pr_holt_r2_2023101900.nc
+Loading holt_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/holt_r3/pr_holt_r3_2023101900.nc
+Loading uw_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r2/pr_uw_r2_2023101900.nc
+Loading uw_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_large_regridded/uw_r3/pr_uw_r3_2023101900.nc
+Plotting
+Save figure
+Figure saved: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v3/pyplt_Hurricane_Otis_precip_accum_large.png
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/otis_exp/plot_maps_hurricane_otis_p1_track.py:613: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/hus_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/pr_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/psl_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/sfcWind_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/ta_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/ua_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/uas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/va_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/vas_ctrl_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/wa_ctrl_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/hus_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/pr_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/psl_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/sfcWind_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/ta_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/ua_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/uas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/va_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/vas_holt_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/wa_holt_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/hus_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/pr_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/psl_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/sfcWind_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/ta_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/ua_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/uas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/va_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/vas_holt_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/wa_holt_r3_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/hus_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/pr_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/psl_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/sfcWind_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/ta_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/ua_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/uas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/va_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/vas_uw_r2_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/wa_uw_r2_2023101900.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/hus_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/pr_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/psl_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/sfcWind_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/ta_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/ua_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/uas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/va_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/vas_uw_r3_2023101900.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/wa_uw_r3_2023101900.nc']
+Finding cyclone centers...
+Processing experiment: ctrl
+Processing experiment: holt_r2
+Processing experiment: holt_r3
+Processing experiment: uw_r2
+Processing experiment: uw_r3
+Processing experiment: ERA5
+
+============================================================
+ERA5 CYCLONE TRACKING INFORMATION
+============================================================
+
+Number of tracked positions: 24
+
+Minimum pressure: 996.9 hPa at 2023-10-25 00:00:00
+  Latitude: 15.50°
+  Longitude: -99.50°
+
+Track details (time, lat, lon, pressure):
+------------------------------------------------------------
+2023-10-20 00:00 | Lat:   9.25 | Lon:  -94.25 | Pressure: 1007.9 hPa
+2023-10-20 06:00 | Lat:   8.25 | Lon:  -94.75 | Pressure: 1009.4 hPa
+2023-10-20 12:00 | Lat:   8.50 | Lon:  -95.75 | Pressure: 1008.4 hPa
+2023-10-20 18:00 | Lat:   9.00 | Lon:  -95.00 | Pressure: 1008.7 hPa
+2023-10-21 00:00 | Lat:   9.50 | Lon:  -95.50 | Pressure: 1007.2 hPa
+2023-10-21 06:00 | Lat:   9.50 | Lon:  -96.00 | Pressure: 1008.8 hPa
+2023-10-21 12:00 | Lat:   9.50 | Lon:  -96.50 | Pressure: 1007.1 hPa
+2023-10-21 18:00 | Lat:   9.25 | Lon:  -96.75 | Pressure: 1007.6 hPa
+2023-10-22 00:00 | Lat:   9.50 | Lon:  -96.75 | Pressure: 1006.7 hPa
+2023-10-22 06:00 | Lat:   9.75 | Lon:  -97.25 | Pressure: 1007.8 hPa
+2023-10-22 12:00 | Lat:  10.00 | Lon:  -97.25 | Pressure: 1006.0 hPa
+2023-10-22 18:00 | Lat:  10.50 | Lon:  -97.75 | Pressure: 1005.6 hPa
+2023-10-23 00:00 | Lat:  10.50 | Lon:  -97.25 | Pressure: 1002.5 hPa
+2023-10-23 06:00 | Lat:  11.50 | Lon:  -97.00 | Pressure: 1004.6 hPa
+2023-10-23 12:00 | Lat:  12.25 | Lon:  -97.50 | Pressure: 1004.6 hPa
+2023-10-23 18:00 | Lat:  12.75 | Lon:  -97.75 | Pressure: 1005.4 hPa
+2023-10-24 00:00 | Lat:  13.25 | Lon:  -98.25 | Pressure: 1003.2 hPa
+2023-10-24 06:00 | Lat:  13.75 | Lon:  -98.25 | Pressure: 1003.7 hPa
+2023-10-24 12:00 | Lat:  14.50 | Lon:  -99.00 | Pressure:  999.8 hPa
+2023-10-24 18:00 | Lat:  15.00 | Lon:  -99.50 | Pressure: 1000.6 hPa
+2023-10-25 00:00 | Lat:  15.50 | Lon:  -99.50 | Pressure:  996.9 hPa
+2023-10-25 06:00 | Lat:  16.25 | Lon:  -99.50 | Pressure: 1002.9 hPa
+2023-10-25 12:00 | Lat:  17.00 | Lon: -100.50 | Pressure: 1007.4 hPa
+2023-10-26 00:00 | Lat:  17.00 | Lon: -102.00 | Pressure: 1007.8 hPa
+============================================================
+
+Computing max sfcWind around cyclone centers...
+================================================================================
+Computing Vertical Thermal Structure for Hurricane Otis
+Experiments: ['ctrl', 'holt_r2', 'holt_r3', 'uw_r2', 'uw_r3', 'ERA5']
+================================================================================
+
+Loading ERA5 data...
+Found 10 ERA5 files
+Selected time range: 2023-10-21 to 2023-10-25
+Tracking ERA5 cyclone...
+ERA5       - Time: 2023-10-25 00:00:00, Lat: 15.50°N, Lon: -99.50°W, Pressure: 996.9 hPa
+Extracting ERA5 cross-section...
+Computing ERA5 theta_e...
+
+Loading ctrl data...
+Tracking ctrl cyclone...
+ctrl       - Time: 2023-10-25 12:00:00, Lat: 13.84°N, Lon: -101.10°W, Pressure: 1002.4 hPa
+Extracting ctrl cross-section...
+Computing ctrl theta_e...
+
+Loading holt_r2 data...
+Tracking holt_r2 cyclone...
+holt_r2    - Time: 2023-10-25 12:00:00, Lat: 13.96°N, Lon: -101.30°W, Pressure: 989.1 hPa
+Extracting holt_r2 cross-section...
+Computing holt_r2 theta_e...
+
+Loading holt_r3 data...
+Tracking holt_r3 cyclone...
+holt_r3    - Time: 2023-10-25 18:00:00, Lat: 13.32°N, Lon: -101.42°W, Pressure: 1000.3 hPa
+Extracting holt_r3 cross-section...
+Computing holt_r3 theta_e...
+
+Loading uw_r2 data...
+Tracking uw_r2 cyclone...
+uw_r2      - Time: 2023-10-25 00:00:00, Lat: 13.88°N, Lon: -100.54°W, Pressure: 968.0 hPa
+Extracting uw_r2 cross-section...
+Computing uw_r2 theta_e...
+
+Loading uw_r3 data...
+Tracking uw_r3 cyclone...
+uw_r3      - Time: 2023-10-25 12:00:00, Lat: 13.36°N, Lon: -100.78°W, Pressure: 979.1 hPa
+Extracting uw_r3 cross-section...
+Computing uw_r3 theta_e...
+
+========================================
+Creating single figure with all VTS subplots
+========================================
+
+VTS comparison plot saved to /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v3/pyplt_Hurricane_Otis_otis_vts_small.png
+
+================================================================================
+VTS Analysis Complete!
+================================================================================
+
+Peak Intensity Summary:
+  ERA5       - 2023-10-25 00:00:00 - (15.50°N, -99.50°W)
+  CTRL       - 2023-10-25 12:00:00 - (13.84°N, -101.10°W)
+  HOLT_R2    - 2023-10-25 12:00:00 - (13.96°N, -101.30°W)
+  HOLT_R3    - 2023-10-25 18:00:00 - (13.32°N, -101.42°W)
+  UW_R2      - 2023-10-25 00:00:00 - (13.88°N, -100.54°W)
+  UW_R3      - 2023-10-25 12:00:00 - (13.36°N, -100.78°W)
+
+Figure saved to: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v3/pyplt_Hurricane_Otis_otis_vts_small.png
+================================================================================
+Loading CMORPH...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/cmorph/CMORPH_cut_domain_20251022_20251025.nc
+Loaded station: 23 hours
+Loading ctrl...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/ctrl/pr_ctrl_2023101900.nc
+Loading holt_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r2/pr_holt_r2_2023101900.nc
+Loading holt_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/holt_r3/pr_holt_r3_2023101900.nc
+Loading uw_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r2/pr_uw_r2_2023101900.nc
+Loading uw_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v3/domain_small_regridded/uw_r3/pr_uw_r3_2023101900.nc
+Plotting
+Save figure
+Figure saved: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v3/pyplt_Hurricane_Otis_precip_accum_small.png
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/otis_exp/plot_maps_hurricane_otis_p1_track.py:613: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/hus_ctrl_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/pr_ctrl_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/psl_ctrl_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/sfcWind_ctrl_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/ta_ctrl_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/ua_ctrl_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/uas_ctrl_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/va_ctrl_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/vas_ctrl_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/wa_ctrl_2023101200.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/hus_holt_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/pr_holt_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/psl_holt_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/sfcWind_holt_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/ta_holt_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/ua_holt_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/uas_holt_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/va_holt_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/vas_holt_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/wa_holt_r2_2023101200.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/hus_holt_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/pr_holt_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/psl_holt_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/sfcWind_holt_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/ta_holt_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/ua_holt_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/uas_holt_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/va_holt_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/vas_holt_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/wa_holt_r3_2023101200.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/hus_uw_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/pr_uw_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/psl_uw_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/sfcWind_uw_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/ta_uw_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/ua_uw_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/uas_uw_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/va_uw_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/vas_uw_r2_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/wa_uw_r2_2023101200.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/hus_uw_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/pr_uw_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/psl_uw_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/sfcWind_uw_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/ta_uw_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/ua_uw_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/uas_uw_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/va_uw_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/vas_uw_r3_2023101200.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/wa_uw_r3_2023101200.nc']
+Finding cyclone centers...
+Processing experiment: ctrl
+Processing experiment: holt_r2
+Processing experiment: holt_r3
+Processing experiment: uw_r2
+Processing experiment: uw_r3
+Processing experiment: ERA5
+
+============================================================
+ERA5 CYCLONE TRACKING INFORMATION
+============================================================
+
+Number of tracked positions: 24
+
+Minimum pressure: 996.9 hPa at 2023-10-25 00:00:00
+  Latitude: 15.50°
+  Longitude: -99.50°
+
+Track details (time, lat, lon, pressure):
+------------------------------------------------------------
+2023-10-20 00:00 | Lat:   9.25 | Lon:  -94.25 | Pressure: 1007.9 hPa
+2023-10-20 06:00 | Lat:   8.25 | Lon:  -94.75 | Pressure: 1009.4 hPa
+2023-10-20 12:00 | Lat:   8.50 | Lon:  -95.75 | Pressure: 1008.4 hPa
+2023-10-20 18:00 | Lat:   9.00 | Lon:  -95.00 | Pressure: 1008.7 hPa
+2023-10-21 00:00 | Lat:   9.50 | Lon:  -95.50 | Pressure: 1007.2 hPa
+2023-10-21 06:00 | Lat:   9.50 | Lon:  -96.00 | Pressure: 1008.8 hPa
+2023-10-21 12:00 | Lat:   9.50 | Lon:  -96.50 | Pressure: 1007.1 hPa
+2023-10-21 18:00 | Lat:   9.25 | Lon:  -96.75 | Pressure: 1007.6 hPa
+2023-10-22 00:00 | Lat:   9.50 | Lon:  -96.75 | Pressure: 1006.7 hPa
+2023-10-22 06:00 | Lat:   9.75 | Lon:  -97.25 | Pressure: 1007.8 hPa
+2023-10-22 12:00 | Lat:  10.00 | Lon:  -97.25 | Pressure: 1006.0 hPa
+2023-10-22 18:00 | Lat:  10.50 | Lon:  -97.75 | Pressure: 1005.6 hPa
+2023-10-23 00:00 | Lat:  10.50 | Lon:  -97.25 | Pressure: 1002.5 hPa
+2023-10-23 06:00 | Lat:  11.50 | Lon:  -97.00 | Pressure: 1004.6 hPa
+2023-10-23 12:00 | Lat:  12.25 | Lon:  -97.50 | Pressure: 1004.6 hPa
+2023-10-23 18:00 | Lat:  12.75 | Lon:  -97.75 | Pressure: 1005.4 hPa
+2023-10-24 00:00 | Lat:  13.25 | Lon:  -98.25 | Pressure: 1003.2 hPa
+2023-10-24 06:00 | Lat:  13.75 | Lon:  -98.25 | Pressure: 1003.7 hPa
+2023-10-24 12:00 | Lat:  14.50 | Lon:  -99.00 | Pressure:  999.8 hPa
+2023-10-24 18:00 | Lat:  15.00 | Lon:  -99.50 | Pressure: 1000.6 hPa
+2023-10-25 00:00 | Lat:  15.50 | Lon:  -99.50 | Pressure:  996.9 hPa
+2023-10-25 06:00 | Lat:  16.25 | Lon:  -99.50 | Pressure: 1002.9 hPa
+2023-10-25 12:00 | Lat:  17.00 | Lon: -100.50 | Pressure: 1007.4 hPa
+2023-10-26 00:00 | Lat:  17.00 | Lon: -102.00 | Pressure: 1007.8 hPa
+============================================================
+
+Computing max sfcWind around cyclone centers...
+================================================================================
+Computing Vertical Thermal Structure for Hurricane Otis
+Experiments: ['ctrl', 'holt_r2', 'holt_r3', 'uw_r2', 'uw_r3', 'ERA5']
+================================================================================
+
+Loading ERA5 data...
+Found 10 ERA5 files
+Selected time range: 2023-10-21 to 2023-10-25
+Tracking ERA5 cyclone...
+ERA5       - Time: 2023-10-25 00:00:00, Lat: 15.50°N, Lon: -99.50°W, Pressure: 996.9 hPa
+Extracting ERA5 cross-section...
+Computing ERA5 theta_e...
+
+Loading ctrl data...
+Tracking ctrl cyclone...
+ctrl       - Time: 2023-10-23 00:00:00, Lat: 8.65°N, Lon: -92.68°W, Pressure: 1007.0 hPa
+Extracting ctrl cross-section...
+Computing ctrl theta_e...
+
+Loading holt_r2 data...
+Tracking holt_r2 cyclone...
+holt_r2    - Time: 2023-10-23 00:00:00, Lat: 8.09°N, Lon: -92.52°W, Pressure: 1008.6 hPa
+Extracting holt_r2 cross-section...
+Computing holt_r2 theta_e...
+
+Loading holt_r3 data...
+Tracking holt_r3 cyclone...
+holt_r3    - Time: 2023-10-23 00:00:00, Lat: 11.85°N, Lon: -93.20°W, Pressure: 1008.7 hPa
+Extracting holt_r3 cross-section...
+Computing holt_r3 theta_e...
+
+Loading uw_r2 data...
+Tracking uw_r2 cyclone...
+uw_r2      - Time: 2023-10-25 00:00:00, Lat: 8.45°N, Lon: -99.64°W, Pressure: 1008.7 hPa
+Extracting uw_r2 cross-section...
+Computing uw_r2 theta_e...
+
+Loading uw_r3 data...
+Tracking uw_r3 cyclone...
+uw_r3      - Time: 2023-10-23 00:00:00, Lat: 6.93°N, Lon: -93.28°W, Pressure: 1008.5 hPa
+Extracting uw_r3 cross-section...
+Computing uw_r3 theta_e...
+
+========================================
+Creating single figure with all VTS subplots
+========================================
+
+VTS comparison plot saved to /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v4/pyplt_Hurricane_Otis_otis_vts_large.png
+
+================================================================================
+VTS Analysis Complete!
+================================================================================
+
+Peak Intensity Summary:
+  ERA5       - 2023-10-25 00:00:00 - (15.50°N, -99.50°W)
+  CTRL       - 2023-10-23 00:00:00 - (8.65°N, -92.68°W)
+  HOLT_R2    - 2023-10-23 00:00:00 - (8.09°N, -92.52°W)
+  HOLT_R3    - 2023-10-23 00:00:00 - (11.85°N, -93.20°W)
+  UW_R2      - 2023-10-25 00:00:00 - (8.45°N, -99.64°W)
+  UW_R3      - 2023-10-23 00:00:00 - (6.93°N, -93.28°W)
+
+Figure saved to: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v4/pyplt_Hurricane_Otis_otis_vts_large.png
+================================================================================
+Loading CMORPH...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/cmorph/CMORPH_cut_domain_20251022_20251025.nc
+Loaded station: 23 hours
+Loading ctrl...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/ctrl/pr_ctrl_2023101200.nc
+Loading holt_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r2/pr_holt_r2_2023101200.nc
+Loading holt_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/holt_r3/pr_holt_r3_2023101200.nc
+Loading uw_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r2/pr_uw_r2_2023101200.nc
+Loading uw_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v4/domain_large_regridded/uw_r3/pr_uw_r3_2023101200.nc
+Plotting
+Save figure
+Figure saved: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v4/pyplt_Hurricane_Otis_precip_accum_large.png
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/otis_exp/plot_maps_hurricane_otis_p1_track.py:613: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/hus_ctrl_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/pr_ctrl_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/psl_ctrl_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/sfcWind_ctrl_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/ta_ctrl_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/ua_ctrl_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/uas_ctrl_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/va_ctrl_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/vas_ctrl_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/wa_ctrl_2023102000.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/hus_holt_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/pr_holt_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/psl_holt_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/sfcWind_holt_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/ta_holt_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/ua_holt_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/uas_holt_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/va_holt_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/vas_holt_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/wa_holt_r2_2023102000.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/hus_holt_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/pr_holt_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/psl_holt_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/sfcWind_holt_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/ta_holt_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/ua_holt_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/uas_holt_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/va_holt_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/vas_holt_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/wa_holt_r3_2023102000.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/hus_uw_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/pr_uw_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/psl_uw_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/sfcWind_uw_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/ta_uw_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/ua_uw_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/uas_uw_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/va_uw_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/vas_uw_r2_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/wa_uw_r2_2023102000.nc']
+['/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/hus_uw_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/pr_uw_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/psl_uw_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/sfcWind_uw_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/ta_uw_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/ua_uw_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/uas_uw_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/va_uw_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/vas_uw_r3_2023102000.nc', '/leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/wa_uw_r3_2023102000.nc']
+Finding cyclone centers...
+Processing experiment: ctrl
+Processing experiment: holt_r2
+Processing experiment: holt_r3
+Processing experiment: uw_r2
+Processing experiment: uw_r3
+Processing experiment: ERA5
+
+============================================================
+ERA5 CYCLONE TRACKING INFORMATION
+============================================================
+
+Number of tracked positions: 24
+
+Minimum pressure: 996.9 hPa at 2023-10-25 00:00:00
+  Latitude: 15.50°
+  Longitude: -99.50°
+
+Track details (time, lat, lon, pressure):
+------------------------------------------------------------
+2023-10-20 00:00 | Lat:   9.25 | Lon:  -94.25 | Pressure: 1007.9 hPa
+2023-10-20 06:00 | Lat:   8.25 | Lon:  -94.75 | Pressure: 1009.4 hPa
+2023-10-20 12:00 | Lat:   8.50 | Lon:  -95.75 | Pressure: 1008.4 hPa
+2023-10-20 18:00 | Lat:   9.00 | Lon:  -95.00 | Pressure: 1008.7 hPa
+2023-10-21 00:00 | Lat:   9.50 | Lon:  -95.50 | Pressure: 1007.2 hPa
+2023-10-21 06:00 | Lat:   9.50 | Lon:  -96.00 | Pressure: 1008.8 hPa
+2023-10-21 12:00 | Lat:   9.50 | Lon:  -96.50 | Pressure: 1007.1 hPa
+2023-10-21 18:00 | Lat:   9.25 | Lon:  -96.75 | Pressure: 1007.6 hPa
+2023-10-22 00:00 | Lat:   9.50 | Lon:  -96.75 | Pressure: 1006.7 hPa
+2023-10-22 06:00 | Lat:   9.75 | Lon:  -97.25 | Pressure: 1007.8 hPa
+2023-10-22 12:00 | Lat:  10.00 | Lon:  -97.25 | Pressure: 1006.0 hPa
+2023-10-22 18:00 | Lat:  10.50 | Lon:  -97.75 | Pressure: 1005.6 hPa
+2023-10-23 00:00 | Lat:  10.50 | Lon:  -97.25 | Pressure: 1002.5 hPa
+2023-10-23 06:00 | Lat:  11.50 | Lon:  -97.00 | Pressure: 1004.6 hPa
+2023-10-23 12:00 | Lat:  12.25 | Lon:  -97.50 | Pressure: 1004.6 hPa
+2023-10-23 18:00 | Lat:  12.75 | Lon:  -97.75 | Pressure: 1005.4 hPa
+2023-10-24 00:00 | Lat:  13.25 | Lon:  -98.25 | Pressure: 1003.2 hPa
+2023-10-24 06:00 | Lat:  13.75 | Lon:  -98.25 | Pressure: 1003.7 hPa
+2023-10-24 12:00 | Lat:  14.50 | Lon:  -99.00 | Pressure:  999.8 hPa
+2023-10-24 18:00 | Lat:  15.00 | Lon:  -99.50 | Pressure: 1000.6 hPa
+2023-10-25 00:00 | Lat:  15.50 | Lon:  -99.50 | Pressure:  996.9 hPa
+2023-10-25 06:00 | Lat:  16.25 | Lon:  -99.50 | Pressure: 1002.9 hPa
+2023-10-25 12:00 | Lat:  17.00 | Lon: -100.50 | Pressure: 1007.4 hPa
+2023-10-26 00:00 | Lat:  17.00 | Lon: -102.00 | Pressure: 1007.8 hPa
+============================================================
+
+Computing max sfcWind around cyclone centers...
+================================================================================
+Computing Vertical Thermal Structure for Hurricane Otis
+Experiments: ['ctrl', 'holt_r2', 'holt_r3', 'uw_r2', 'uw_r3', 'ERA5']
+================================================================================
+
+Loading ERA5 data...
+Found 10 ERA5 files
+Selected time range: 2023-10-21 to 2023-10-25
+Tracking ERA5 cyclone...
+ERA5       - Time: 2023-10-25 00:00:00, Lat: 15.50°N, Lon: -99.50°W, Pressure: 996.9 hPa
+Extracting ERA5 cross-section...
+Computing ERA5 theta_e...
+
+Loading ctrl data...
+Tracking ctrl cyclone...
+ctrl       - Time: 2023-10-25 18:00:00, Lat: 13.85°N, Lon: -101.20°W, Pressure: 989.3 hPa
+Extracting ctrl cross-section...
+Computing ctrl theta_e...
+
+Loading holt_r2 data...
+Tracking holt_r2 cyclone...
+holt_r2    - Time: 2023-10-23 12:00:00, Lat: 10.13°N, Lon: -99.80°W, Pressure: 1004.8 hPa
+Extracting holt_r2 cross-section...
+Computing holt_r2 theta_e...
+
+Loading holt_r3 data...
+Tracking holt_r3 cyclone...
+holt_r3    - Time: 2023-10-22 00:00:00, Lat: 9.41°N, Lon: -98.44°W, Pressure: 1005.6 hPa
+Extracting holt_r3 cross-section...
+Computing holt_r3 theta_e...
+
+Loading uw_r2 data...
+Tracking uw_r2 cyclone...
+uw_r2      - Time: 2023-10-25 18:00:00, Lat: 15.37°N, Lon: -101.40°W, Pressure: 980.5 hPa
+Extracting uw_r2 cross-section...
+Computing uw_r2 theta_e...
+
+Loading uw_r3 data...
+Tracking uw_r3 cyclone...
+uw_r3      - Time: 2023-10-25 12:00:00, Lat: 15.13°N, Lon: -101.00°W, Pressure: 989.5 hPa
+Extracting uw_r3 cross-section...
+Computing uw_r3 theta_e...
+
+========================================
+Creating single figure with all VTS subplots
+========================================
+
+VTS comparison plot saved to /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v5/pyplt_Hurricane_Otis_otis_vts_large.png
+
+================================================================================
+VTS Analysis Complete!
+================================================================================
+
+Peak Intensity Summary:
+  ERA5       - 2023-10-25 00:00:00 - (15.50°N, -99.50°W)
+  CTRL       - 2023-10-25 18:00:00 - (13.85°N, -101.20°W)
+  HOLT_R2    - 2023-10-23 12:00:00 - (10.13°N, -99.80°W)
+  HOLT_R3    - 2023-10-22 00:00:00 - (9.41°N, -98.44°W)
+  UW_R2      - 2023-10-25 18:00:00 - (15.37°N, -101.40°W)
+  UW_R3      - 2023-10-25 12:00:00 - (15.13°N, -101.00°W)
+
+Figure saved to: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v5/pyplt_Hurricane_Otis_otis_vts_large.png
+================================================================================
+Loading CMORPH...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/cmorph/CMORPH_cut_domain_20251022_20251025.nc
+Loaded station: 23 hours
+Loading ctrl...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/ctrl/pr_ctrl_2023102000.nc
+Loading holt_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r2/pr_holt_r2_2023102000.nc
+Loading holt_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/holt_r3/pr_holt_r3_2023102000.nc
+Loading uw_r2...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r2/pr_uw_r2_2023102000.nc
+Loading uw_r3...
+Opening /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/exps/exps_v5/domain_large_regridded/uw_r3/pr_uw_r3_2023102000.nc
+Plotting
+Save figure
+Figure saved: /leonardo/home/userexternal/mdasilva/leonardo_work/Otis_exp/figs/exps_v5/pyplt_Hurricane_Otis_precip_accum_large.png
+
+--------------- THE END PLOT ----------------
