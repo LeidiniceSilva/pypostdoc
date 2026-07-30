@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-__author__      = "Leidinice Silva"
-__email__       = "leidinicesilva@gmail.com"
-__date__        = "Jul 28, 2026"
-__description__ = "This script plot Taylor diagram"
+# author      = "Leidinice Silva"
+# email       = "leidinicesilva@gmail.com"
+# date        = "Jul 28, 2026"
+# description = "This script plots Taylor diagrams with multiple experiments"
 
 import os
 import gc
@@ -16,16 +16,8 @@ import mpl_toolkits.axisartist.floating_axes as FA
 import mpl_toolkits.axisartist.grid_finder as GF
 
 
-def plot_taylor_diagram(stds, ccoefs, labels, fig=None, rect=111, title=""):
-    """
-    Plots a Taylor Diagram using native Matplotlib floating axes.
-    stds: list of normalized standard deviations [mod_1, mod_2, ...]
-    ccoefs: list of correlation coefficients [mod_1, mod_2, ...]
-    labels: list of labels ['CPC', 'DJF', 'MAM', 'JJA', 'SON']
-    """
-    if fig is None:
-        fig = plt.gcf()
-
+def setup_taylor_diagram(fig, rect, title="", max_std_val=1.5, ref_label='CPC'):
+    """Sets up the Taylor Diagram coordinate system, grid, reference point, and RMSD contours."""
     ref_std = 1.0  # Reference normalized std for observations
     tr = PolarAxes.PolarTransform()
 
@@ -35,9 +27,8 @@ def plot_taylor_diagram(stds, ccoefs, labels, fig=None, rect=111, title=""):
     gl1 = GF.FixedLocator(tlocs)
     tf1 = GF.DictFormatter(dict(zip(tlocs, map(str, rlocs))))
 
-    # Define standard deviation scale range
-    max_std = max(ref_std, max(stds)) if len(stds) > 0 else ref_std
-    smax = 1.5 * max_std
+    # Define standard deviation scale range dynamically
+    smax = 1.25 * max(ref_std, max_std_val)
 
     ghelper = FA.GridHelperCurveLinear(
         tr,
@@ -67,127 +58,144 @@ def plot_taylor_diagram(stds, ccoefs, labels, fig=None, rect=111, title=""):
 
     polar_ax = ax.get_aux_axes(tr)
 
+    # Enable grid lines
+    ax.grid(True, linestyle=':', color='gray', alpha=0.5)
+
     # Plot reference observation point
-    polar_ax.plot([0], [ref_std], 'k*', markersize=12, label=labels[0])
+    polar_ax.plot([0], [ref_std], 'k*', markersize=12, label=ref_label)
 
     # Reference STD arc
     t = np.linspace(0, np.pi / 2, 100)
     polar_ax.plot(t, np.full_like(t, ref_std), 'k--', linewidth=1.0)
 
-    # RMSD contours
+    # RMSD contours (Centered RMSE)
     rs, ts = np.meshgrid(
-        np.linspace(0, smax, 100),
-        np.linspace(0, np.pi / 2, 100)
+        np.linspace(0, smax, 200),
+        np.linspace(0, np.pi / 2, 200)
     )
-    rms = np.sqrt(ref_std**2 + rs**2 - 2 * ref_std * rs * np.cos(ts))
-    contours = polar_ax.contour(ts, rs, rms, colors='0.5', linestyles=':', linewidths=0.8)
-    polar_ax.clabel(contours, inline=1, fontsize=7, fmt='%.1f')
 
-    # Plot model markers per season
-    colors = ['tab:blue', 'tab:blue', 'tab:blue', 'tab:blue']
+    rms = np.sqrt(ref_std**2 + rs**2 - 2 * ref_std * rs * np.cos(ts))
+
+    contours = polar_ax.contour(
+        ts,
+        rs,
+        rms,
+        levels=5,
+        colors='gray',
+        linestyles='--',
+        linewidths=0.8
+    )
+
+    polar_ax.clabel(contours, inline=1, fontsize=8, fmt='%.1f')
+
+    if title:
+        ax.set_title(title, loc='left', pad=25, fontweight='bold')
+
+    return ax, polar_ax
+
+
+def add_experiment_points(polar_ax, stds, ccoefs, labels, exp_color='tab:blue'):
+    """Plots model markers for a specific experiment on an existing Taylor diagram axis."""
     markers = ['o', 's', '^', 'D']
 
-    for i, (std, cc, label) in enumerate(zip(stds, ccoefs, labels[1:])):
+    for i, (std, cc, label) in enumerate(zip(stds, ccoefs, labels)):
         theta = np.arccos(np.clip(cc, -1.0, 1.0))
+
         polar_ax.plot(
-            theta, std,
+            theta,
+            std,
             marker=markers[i % len(markers)],
-            color=colors[i % len(colors)],
+            color=exp_color,
             markersize=8,
             ls='',
             label=label
         )
 
-    if title:
-        ax.set_title(title, pad=25, fontweight='bold')
-
-    polar_ax.legend(loc='upper right', bbox_to_anchor=(1.30, 1.15), frameon=True)
-    return ax
-
 
 # Input path
-path_data = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/urban/paper"
+path_data = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/urban/paper/txt_files"
 
-# Variables dictionary
-variables = {
-    'pr': {
-        'obs': 'precip',
-        'mod': 'pr'
-    },
-    'tasmax': {
-        'obs': 'tmax',
-        'mod': 'tasmax'
-    },
-    'tasmin': {
-        'obs': 'tmin',
-        'mod': 'tasmin'
-    }
-}
-
+# Variables and seasons
+variables = ["pr", "tasmax", "tasmin"]
 seasons = ['DJF', 'MAM', 'JJA', 'SON']
 
-# Create figure 
+# Create figure
 fig = plt.figure(figsize=(18, 6))
 
+handles_list = []
+labels_list = []
+
 for ivar, var in enumerate(variables):
+    print(f"Taylor statistics: {var}")
 
-    std_norm = []
-    ccoef = []
+    # Read URBAN txt files
+    prefix_urban = f"{var}_RegCM5-ERA5_URBAN_CPC_CSAM-3_2000-2009"
+    ccoef_urban = np.atleast_1d(np.loadtxt(os.path.join(path_data, f"{prefix_urban}_cc.txt"))).flatten()
+    std_norm_urban = np.atleast_1d(np.loadtxt(os.path.join(path_data, f"{prefix_urban}_ratio.txt"))).flatten()
 
-    for season in seasons:
+    # Read CTRL txt files
+    prefix_ctrl = f"{var}_RegCM5-ERA5_CTRL_CPC_CSAM-3_2000-2009"
+    ccoef_ctrl = np.atleast_1d(np.loadtxt(os.path.join(path_data, f"{prefix_ctrl}_cc.txt"))).flatten()
+    std_norm_ctrl = np.atleast_1d(np.loadtxt(os.path.join(path_data, f"{prefix_ctrl}_ratio.txt"))).flatten()
 
-        # File names
-        file_mod = os.path.join(path_data, f'{var}_CSAM-3_RegCM5-ERA5_URBAN_{season}_2000-2009_0.25_box.nc')
-        file_obs = os.path.join(path_data, f"{variables[var]['obs']}_CSAM-3_CPC_{season}_2000-2009_0.25_box.nc")
-        print(f"Mod: {file_mod}")
-        print(f"Obs: {file_obs}")
-
-        # Read data 
-        with xr.open_dataset(file_obs) as ds_obs:
-            obs = ds_obs[variables[var]['obs']].squeeze().values.astype(np.float32)
-
-        with xr.open_dataset(file_mod) as ds_mod:
-            mod = ds_mod[variables[var]['mod']].squeeze().values.astype(np.float32)
-
-        # Spatial pattern 
-        obs = obs.ravel()
-        mod = mod.ravel()
-
-        mask = np.isfinite(obs) & np.isfinite(mod)
-
-        obs = obs[mask]
-        mod = mod[mask]
-
-        # Calculate statistics
-        std_obs = np.std(obs, ddof=1)
-        std_mod = np.std(mod, ddof=1)
-
-        # Normalized standard deviation relative to observations
-        std_norm.append(std_mod / std_obs)
-        ccoef.append(np.corrcoef(obs, mod)[0, 1])
-
-        del obs, mod, mask
-        gc.collect()
-
-    # Subplot placement 
     rect = 131 + ivar
+    subplot_title = f"({chr(97 + ivar)}) {var.upper()}"
 
-    # Plot Taylor Diagram for the current variable
-    plot_taylor_diagram(
-        stds=std_norm,
-        ccoefs=ccoef,
-        labels=['CPC'] + seasons,
+    # Calculate overall max std to ensure outer limits fit both URBAN and CTRL
+    max_std_val = max(np.max(std_norm_urban), np.max(std_norm_ctrl))
+
+    # 1. Setup Taylor base plot ONCE for this variable
+    ax, polar_ax = setup_taylor_diagram(
         fig=fig,
         rect=rect,
-        title=var.upper()
+        title=subplot_title,
+        max_std_val=max_std_val,
+        ref_label='CPC'
     )
 
+    # 2. Add URBAN experiment points
+    add_experiment_points(
+        polar_ax=polar_ax,
+        stds=std_norm_urban,
+        ccoefs=ccoef_urban,
+        labels=[f"URBAN_{s}" for s in seasons],
+        exp_color='tab:red'
+    )
+
+    # 3. Add CTRL experiment points onto the SAME polar_ax
+    add_experiment_points(
+        polar_ax=polar_ax,
+        stds=std_norm_ctrl,
+        ccoefs=ccoef_ctrl,
+        labels=[f"CTRL_{s}" for s in seasons],
+        exp_color='blue'
+    )
+
+    # Collect legend entries from the first subplot only
+    if ivar == 0:
+        handles_list, labels_list = polar_ax.get_legend_handles_labels()
+
+# Single shared legend box below subplots
+fig.legend(
+    handles_list,
+    labels_list,
+    loc='lower center',
+    bbox_to_anchor=(0.5, -0.1),
+    ncol=len(labels_list),
+    frameon=True,
+    fontsize=10
+)
+
 # Save figure
-path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/urb/paper'
+path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/urban/paper'
 os.makedirs(path_out, exist_ok=True)
 name_out = 'pyplt_taylor_diagram_RegCM5_CSAM-3_2000-2009.png'
 
 plt.tight_layout()
-plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
+plt.savefig(
+    os.path.join(path_out, name_out),
+    dpi=400,
+    bbox_inches='tight'
+)
+
 plt.show()
-exit()
