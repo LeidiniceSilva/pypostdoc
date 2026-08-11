@@ -132,7 +132,7 @@ def main():
     output_dir = pathlib.Path(path) / "txt_files"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    seasons = ["DJF", "MAM", "JJA", "SON"]
+    seasons = ["ANN", "DJF", "MAM", "JJA", "SON"]
 
     variables = ["pr", "tasmax", "tasmin"]
 
@@ -141,7 +141,7 @@ def main():
     res = "0.25"
 
     model = "RegCM5-ERA5"
-    exp = "CTRL"
+    exp = "URBAN"
     obs_name = "CPC"
 
     for param in variables:

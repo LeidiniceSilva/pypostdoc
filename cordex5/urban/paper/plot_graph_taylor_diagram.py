@@ -96,7 +96,7 @@ def setup_taylor_diagram(fig, rect, title="", max_std_val=1.5, ref_label='CPC'):
 
 def add_experiment_points(polar_ax, stds, ccoefs, labels, exp_color='tab:blue'):
     """Plots model markers for a specific experiment on an existing Taylor diagram axis."""
-    markers = ['o', 's', '^', 'D']
+    markers = ['+', 'o', 's', '^', 'D']
 
     for i, (std, cc, label) in enumerate(zip(stds, ccoefs, labels)):
         theta = np.arccos(np.clip(cc, -1.0, 1.0))
@@ -117,7 +117,7 @@ path_data = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc
 
 # Variables and seasons
 variables = ["pr", "tasmax", "tasmin"]
-seasons = ['DJF', 'MAM', 'JJA', 'SON']
+seasons = ['ANN', 'DJF', 'MAM', 'JJA', 'SON']
 
 # Create figure
 fig = plt.figure(figsize=(18, 6))
