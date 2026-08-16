@@ -51,7 +51,7 @@ lat_bounds = [np.min(lat), np.max(lat)]
 fig, ax = plt.subplots(subplot_kw={'projection': ccrs.PlateCarree()})
 font_size = 10
 
-ct=ax.contourf(lon, lat, topo, np.arange(0, 3030, 30), cmap='terrain', extend='max')
+ct=ax.contourf(lon, lat, topo, np.arange(0, 3100, 100), cmap='terrain', extend='max')
 ax.contourf(lon, lat, border_mask, cmap='gray', levels=[0, 1])
 ax.text(-42, -33, u'\u25B2 \nN', color='white', fontsize=font_size, fontweight='bold')
 ax.plot(-46.6396, -23.5558, 'o', ms=5, markeredgewidth=0.75, color='white', mec='black') # Sao Paulo
@@ -82,7 +82,7 @@ cbar = plt.colorbar(ct, ax=ax, orientation='vertical', shrink=0.7, pad=0.05)
 cbar.set_label('Topography (m)', fontweight='bold')
 
 # Path out to save figure
-path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/urb/paper'
+path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/urban/paper'
 name_out = 'pyplt_maps_study_area_RegCM5_CSAM-3_2000-2009.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
