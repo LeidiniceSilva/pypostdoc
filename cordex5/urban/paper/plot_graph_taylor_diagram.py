@@ -62,7 +62,7 @@ def setup_taylor_diagram(fig, rect, title="", max_std_val=1.5, ref_label='CPC'):
     ax.grid(True, linestyle=':', color='gray', alpha=0.5)
 
     # Plot reference observation point
-    polar_ax.plot([0], [ref_std], 'k*', markersize=12, label=ref_label)
+    polar_ax.plot([0], [ref_std], 'k*', markersize=12, label='OBS')
 
     # Reference STD arc
     t = np.linspace(0, np.pi / 2, 100)
@@ -96,7 +96,7 @@ def setup_taylor_diagram(fig, rect, title="", max_std_val=1.5, ref_label='CPC'):
 
 def add_experiment_points(polar_ax, stds, ccoefs, labels, exp_color='tab:blue'):
     """Plots model markers for a specific experiment on an existing Taylor diagram axis."""
-    markers = ['+', 'o', 's', '^', 'D']
+    markers = ['o', 's', '^', 'D', '+']
 
     for i, (std, cc, label) in enumerate(zip(stds, ccoefs, labels)):
         theta = np.arccos(np.clip(cc, -1.0, 1.0))
@@ -116,11 +116,11 @@ def add_experiment_points(polar_ax, stds, ccoefs, labels, exp_color='tab:blue'):
 path_data = "/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/postproc/urban/paper/txt_files"
 
 # Variables and seasons
-variables = ["pr", "tasmax", "tasmin"]
-seasons = ['ANN', 'DJF', 'MAM', 'JJA', 'SON']
+variables = ["pr", "tasmax", "tasmin", "huss", "sfcWind"]
+seasons = ['DJF', 'MAM', 'JJA', 'SON', 'ANN']
 
 # Create figure
-fig = plt.figure(figsize=(18, 6))
+fig = plt.figure(figsize=(18, 12))
 
 handles_list = []
 labels_list = []
@@ -128,17 +128,24 @@ labels_list = []
 for ivar, var in enumerate(variables):
     print(f"Taylor statistics: {var}")
 
+    # Define observational dataset
+    if var in ["pr", "tasmax", "tasmin"]:
+        obs_name = "CPC"
+    elif var in ["huss", "sfcWind"]:
+        obs_name = "ERA5"
+
     # Read URBAN txt files
-    prefix_urban = f"{var}_RegCM5-ERA5_URBAN_CPC_CSAM-3_2000-2009"
+    prefix_urban = f"{var}_RegCM5-ERA5_URBAN_{obs_name}_CSAM-3_2000-2009"
     ccoef_urban = np.atleast_1d(np.loadtxt(os.path.join(path_data, f"{prefix_urban}_cc.txt"))).flatten()
     std_norm_urban = np.atleast_1d(np.loadtxt(os.path.join(path_data, f"{prefix_urban}_ratio.txt"))).flatten()
 
     # Read CTRL txt files
-    prefix_ctrl = f"{var}_RegCM5-ERA5_CTRL_CPC_CSAM-3_2000-2009"
+    prefix_ctrl = f"{var}_RegCM5-ERA5_CTRL_{obs_name}_CSAM-3_2000-2009"
     ccoef_ctrl = np.atleast_1d(np.loadtxt(os.path.join(path_data, f"{prefix_ctrl}_cc.txt"))).flatten()
     std_norm_ctrl = np.atleast_1d(np.loadtxt(os.path.join(path_data, f"{prefix_ctrl}_ratio.txt"))).flatten()
 
-    rect = 131 + ivar
+    # 2 x 3 subplot
+    rect = 231 + ivar
     subplot_title = f"({chr(97 + ivar)}) {var.upper()}"
 
     # Calculate overall max std to ensure outer limits fit both URBAN and CTRL
@@ -150,7 +157,7 @@ for ivar, var in enumerate(variables):
         rect=rect,
         title=subplot_title,
         max_std_val=max_std_val,
-        ref_label='CPC'
+        ref_label=obs_name
     )
 
     # 2. Add URBAN experiment points
@@ -176,15 +183,7 @@ for ivar, var in enumerate(variables):
         handles_list, labels_list = polar_ax.get_legend_handles_labels()
 
 # Single shared legend box below subplots
-fig.legend(
-    handles_list,
-    labels_list,
-    loc='lower center',
-    bbox_to_anchor=(0.5, -0.1),
-    ncol=len(labels_list),
-    frameon=True,
-    fontsize=10
-)
+fig.legend(handles_list, labels_list, loc='center', bbox_to_anchor=(0.84, 0.25), ncol=1, frameon=True, fontsize=10)
 
 # Save figure
 path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/CORDEX5/figs/urban/paper'
@@ -192,10 +191,6 @@ os.makedirs(path_out, exist_ok=True)
 name_out = 'pyplt_taylor_diagram_RegCM5_CSAM-3_2000-2009.png'
 
 plt.tight_layout()
-plt.savefig(
-    os.path.join(path_out, name_out),
-    dpi=400,
-    bbox_inches='tight'
-)
+plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
+plt.close()
 
-plt.show()
