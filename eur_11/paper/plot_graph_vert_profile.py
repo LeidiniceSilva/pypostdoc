@@ -117,3 +117,5 @@ name_out = f'pyplt_vert_profile_RegCM5_EUR-11_{yr}.png'
 plt.tight_layout()
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
+
+
