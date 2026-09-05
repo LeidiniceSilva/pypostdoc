@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# author        = "Leidinice Silva"
-# email         = "leidinicesilva@gmail.com"
-# date          = "Jul 28, 2026"
-# description   = "This script plots vertical profile"
+# author       = "Leidinice Silva"
+# email        = "leidinicesilva@gmail.com"
+# date         = "Jul 28, 2026"
+# description  = "This script plots vertical profile"
 
 import os
 import glob
@@ -12,26 +12,40 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def import_obs(path, param, obs_name, dt, tag):
-
-    arq = f"{path}/{param}_{obs_name}_{dt}_{tag}.nc"
+def import_obs(path, obs_var, obs_name, dt, tag):
+    # Fixed to use obs_var (e.g., 'clwc') instead of param
+    arq = f"{path}/{obs_var}_{obs_name}_{dt}_{tag}.nc"
     files = glob.glob(arq)
+    if not files:
+        raise FileNotFoundError(f"Missing OBS file: {arq}")
+    
     data = netCDF4.Dataset(files[0])
-    var = data.variables[param][:]
-    value = var[:][:,::-1,:,:]
-    mean = np.nanmean(np.nanmean(value, axis=2), axis=2)[0]
+    var = data.variables[obs_var][:]
+    
+    # Check dimensions before slicing
+    if var.ndim == 4:
+        value = var[:, ::-1, :, :]
+        mean = np.nanmean(np.nanmean(value, axis=2), axis=2)[0]
+    else:
+        mean = np.nanmean(var, axis=0) if var.ndim > 1 else var
 
     return mean
 
 
 def import_rcm(path, param, exp_name, dt, tag):
-
     arq = f"{path}/{param}_RegCM5_{exp_name}_{dt}_{tag}.nc"
     files = glob.glob(arq)
+    if not files:
+        raise FileNotFoundError(f"Missing RCM file: {arq}")
+        
     data = netCDF4.Dataset(files[0])
     var = data.variables[param][:]
-    value = var[:][:,:,:,:]
-    mean = np.nanmean(np.nanmean(value, axis=2), axis=2)[0]
+    
+    if var.ndim == 4:
+        value = var[:, :, :, :]
+        mean = np.nanmean(np.nanmean(value, axis=2), axis=2)[0]
+    else:
+        mean = np.nanmean(var, axis=0) if var.ndim > 1 else var
 
     return mean
 
@@ -50,14 +64,14 @@ exps = [('NoTo-EUR', 'red', 'NoTo'), ('WSM5-EUR', 'blue', 'WSM5'),
 
 vars_info = [
     ('cl',  'cc',   100,  '(a)', '(b)', '(c)', '(d)', '(e)'),
-    ('cl', 'cc', 1e6,  '(f)', '(g)', '(h)', '(i)', '(j)'),
-    ('cl', 'cc', 1e6,  '(k)', '(l)', '(m)', '(n)', '(o)')
+    ('cli', 'ciwc', 1e6,  '(f)', '(g)', '(h)', '(i)', '(j)'),
+    ('clw', 'clwc', 1e6,  '(k)', '(l)', '(m)', '(n)', '(o)')
 ]
 
 dict_plot = {
     'cl':  ['Cloud fraction (%)', 0, 30, np.arange(0, 33, 3)],
-    'cl': ['Cloud liquid ice (mg kg$^-$$^1$)', 0, 20, np.arange(0, 22, 2)],
-    'cl': ['Cloud liquid water (mg kg$^-$$^1$)', 0, 50, np.arange(0, 55, 5)]
+    'cli': ['Cloud liquid ice (mg kg$^-$$^1$)', 0, 10, np.arange(0, 11, 1)],
+    'clw': ['Cloud liquid water (mg kg$^-$$^1$)', 0, 75, np.arange(0, 80, 5)]
 }
 
 levels_i = (1000,975,950,925,900,875,850,825,800,775,750,700,650,600,550,500,450,400,350,300,250,225,200,175,150,125,100,70,50,30,20,10,7,5,3,2,1)
@@ -103,4 +117,3 @@ name_out = f'pyplt_vert_profile_RegCM5_EUR-11_{yr}.png'
 plt.tight_layout()
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
-exit()

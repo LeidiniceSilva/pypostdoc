@@ -133,6 +133,9 @@ for var in variables:
 
     # Create figure with 2 rows and 3 columns
     fig = plt.figure(figsize=(15, 10))
+    fig.patch.set_facecolor('#E0E0E0')
+    fig.patch.set_alpha(0.75)
+
     handles_list, labels_list = [], []
 
     for isea, sea in enumerate(seasons):

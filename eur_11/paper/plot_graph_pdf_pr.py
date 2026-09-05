@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# author       = "Leidinice Silva"
-# email        = "leidinicesilva@gmail.com"
-# date         = "Jul 28, 2026"
-# description  = "This script plots 2x2 PDFs including hourly and daily precipitation"
+# author        = "Leidinice Silva"
+# email         = "leidinicesilva@gmail.com"
+# date          = "Jul 28, 2026"
+# description   = "This script plots hour/day PDFs"
 
 import os
 import glob
@@ -36,7 +36,7 @@ def compute_pdf(data):
 
 def compute_pdf_(data):
     step = 0.1
-    rain_min = 0
+    rain_min = 0.1
     rain_max = 500.0
     bins = np.arange(rain_min, rain_max + step, step)
     rain_hist = np.zeros(len(bins) - 1)
@@ -129,11 +129,26 @@ x_exp4_d, pdf_exp4_d = compute_pdf(data_exp4_d)
 data_era5_h, _, _ = import_obs(path_data, "tp", "ERA5", f"1hr_{yr}", "land_box")
 x_era5_h, pdf_era5_h = compute_pdf_(data_era5_h)
 
+data_exp1_h, _, _ = import_rcm(path_data, "pr", "NoTo-EUR", f"1hr_{yr}", "land_box")
+x_exp1_h, pdf_exp1_h = compute_pdf_(data_exp1_h)
+
+data_exp2_h, _, _ = import_rcm(path_data, "pr", "WSM5-EUR", f"1hr_{yr}", "land_box")
+x_exp2_h, pdf_exp2_h = compute_pdf_(data_exp2_h)
+
+data_exp3_h, _, _ = import_rcm(path_data, "pr", "WSM7-EUR", f"1hr_{yr}", "land_box")
+x_exp3_h, pdf_exp3_h = compute_pdf_(data_exp3_h)
+
+data_exp4_h, _, _ = import_rcm(path_data, "pr", "WDM7-EUR", f"1hr_{yr}", "land_box")
+x_exp4_h, pdf_exp4_h = compute_pdf_(data_exp4_h)
+
 # Plotting 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+fig, ax1 = plt.subplots(figsize=(7, 6))
+fig.patch.set_facecolor('#E0E0E0')
+fig.patch.set_alpha(0.75)
+
 font_size = 8
 
-# Daily Precipitation
+# Daily Precipitation (Main Plot)
 ax1.plot(x_cpc_d, pdf_cpc_d, marker='o', markersize=4, mfc='black', mec='black', alpha=0.70, linestyle='None', label='CPC')
 ax1.plot(x_era5_d, pdf_era5_d, marker='o', markersize=4, mfc='gray', mec='gray', alpha=0.70, linestyle='None', label='ERA5')
 ax1.plot(x_exp1_d, pdf_exp1_d, marker='o', markersize=4, mfc='red', mec='red', alpha=0.70, linestyle='None', label='NoTo')
@@ -144,17 +159,20 @@ ax1.set_yscale('log')
 ax1.set_xlabel("Precipitation (mm/day)", fontsize=font_size)
 ax1.set_ylabel("PDF", fontsize=font_size)
 ax1.set_title("(a)", loc='left', fontsize=font_size, fontweight='bold')
-ax1.grid(True, which="both", ls="--", alpha=0.5)
 ax1.legend()
 
-# Hourly Precipitation
+# Hourly Precipitation (Inset Plot inside ax1)
+# Parameters for inset position: [x0, y0, width, height] relative to ax1 (0 to 1)
+ax2 = ax1.inset_axes([0.45, 0.45, 0.48, 0.45])
 ax2.plot(x_era5_h, pdf_era5_h, marker='o', markersize=4, mfc='gray', mec='gray', alpha=0.70, linestyle='None', label='ERA5')
+ax2.plot(x_exp1_h, pdf_exp1_h, marker='o', markersize=4, mfc='red', mec='red', alpha=0.70, linestyle='None', label='NoTo')
+ax2.plot(x_exp2_h, pdf_exp2_h, marker='o', markersize=4, mfc='blue', mec='blue', alpha=0.70, linestyle='None', label='WSM5')
+ax2.plot(x_exp3_h, pdf_exp3_h, marker='o', markersize=4, mfc='green', mec='green', alpha=0.70, linestyle='None', label='WSM7')
+ax2.plot(x_exp4_h, pdf_exp4_h, marker='o', markersize=4, mfc='orange', mec='orange', alpha=0.70, linestyle='None', label='WDM7')
 ax2.set_yscale('log')
 ax2.set_xlabel("Precipitation (mm/hr)", fontsize=font_size)
 ax2.set_ylabel("PDF", fontsize=font_size)
 ax2.set_title("(b)", loc='left', fontsize=font_size, fontweight='bold')
-ax2.grid(True, which="both", ls="--", alpha=0.5)
-ax2.legend()
 
 # Save
 name_out = f'pyplt_pdf_{var}_RegCM5_EUR-11_{yr}.png'
