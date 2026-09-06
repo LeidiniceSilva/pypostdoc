@@ -71,7 +71,7 @@ vars_info = [
 dict_plot = {
     'cl':  ['Cloud fraction (%)', 0, 30, np.arange(0, 33, 3)],
     'cli': ['Cloud liquid ice (mg kg$^-$$^1$)', 0, 10, np.arange(0, 11, 1)],
-    'clw': ['Cloud liquid water (mg kg$^-$$^1$)', 0, 75, np.arange(0, 80, 5)]
+    'clw': ['Cloud liquid water (mg kg$^-$$^1$)', 0, 75, np.arange(0, 90, 10)]
 }
 
 levels_i = (1000,975,950,925,900,875,850,825,800,775,750,700,650,600,550,500,450,400,350,300,250,225,200,175,150,125,100,70,50,30,20,10,7,5,3,2,1)
@@ -98,8 +98,8 @@ for var_name, obs_var, scale, *tags in vars_info:
             plt.plot(rcm, levels_ii, color=color, label=label, linewidth=1)
             
         plt.title(f"{tags[s_idx]} {season}", loc='left', fontsize=font_size, fontweight='bold')
-        plt.xlabel(dict_plot[var_name][0], fontsize=font_size, fontweight='bold')
-        plt.ylabel('Level pressure (hPa)', fontsize=font_size, fontweight='bold')
+        plt.xlabel(dict_plot[var_name][0], fontsize=font_size)
+        plt.ylabel('Level pressure (hPa)', fontsize=font_size)
         plt.xlim(dict_plot[var_name][1], dict_plot[var_name][2])
         plt.ylim(0, 1000)
         plt.yticks(fontsize=font_size)

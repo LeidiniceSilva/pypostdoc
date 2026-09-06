@@ -3,7 +3,7 @@
 __author__      = "Leidinice Silva"
 __email__       = "leidinicesilva@gmail.com"
 __date__        = "Jul 28, 2026"
-__description__ = "This script plot the cyclone track"
+__description__ = "This script plots the cyclone track"
 
 import pathlib
 import glob
@@ -20,7 +20,7 @@ import cartopy.feature as cfeature
 def import_regcm5_track(path, exp, lon_min, lon_max, lat_min, lat_max):
 
     # Import psl for tracking position
-    arq_psl = f"{path}/RegCM5/psl_{exp}_1hr_2006sep26.nc"
+    arq_psl = f"{path}/RegCM5/psl_{exp}_1hr_2006sep25-27.nc"
     files_psl = glob.glob(arq_psl)
     if len(files_psl) == 0:
         raise FileNotFoundError(f"No file found: {arq_psl}")
@@ -63,7 +63,7 @@ def import_regcm5_track(path, exp, lon_min, lon_max, lat_min, lat_max):
 def import_obs_track(path, obs_name, lon_min, lon_max, lat_min, lat_max):
 
     # Import msl for tracking position
-    arq_msl = f"{path}/ERA5/msl_{obs_name}_1hr_2006sep26.nc"
+    arq_msl = f"{path}/ERA5/msl_{obs_name}_1hr_2006sep25-27.nc"
     files_msl = glob.glob(arq_msl)
     if len(files_msl) == 0:
         raise FileNotFoundError(f"No file found: {arq_msl}")
@@ -115,7 +115,7 @@ def main():
     path = pathlib.Path("/leonardo/home/userexternal/mdasilva/leonardo_work/EUR-11/postproc/paper/cyc")
 
     obs_name = "ERA5"
-    dt = "2006sep26"
+    dt = "2006sep25-26"
 
     # Get spatial limits
     lon_min, lon_max = -10, 20
@@ -127,6 +127,14 @@ def main():
     trk_lon_exp_2, trk_lat_exp_2, mslp_exp_2 = import_regcm5_track(path, "WSM5-EUR", lon_min, lon_max, lat_min, lat_max)
     trk_lon_exp_3, trk_lat_exp_3, mslp_exp_3 = import_regcm5_track(path, "WSM7-EUR", lon_min, lon_max, lat_min, lat_max)
     trk_lon_exp_4, trk_lat_exp_4, mslp_exp_4 = import_regcm5_track(path, "WDM7-EUR", lon_min, lon_max, lat_min, lat_max)
+
+    # Slice data to keep only Sep 25 and Sep 26 (48 hours)
+    hour, n_hours = 12, 48
+    trk_lon_obs, trk_lat_obs, mslp_obs = trk_lon_obs[hour:n_hours], trk_lat_obs[hour:n_hours], mslp_obs[hour:n_hours]
+    trk_lon_exp_1, trk_lat_exp_1, mslp_exp_1 = trk_lon_exp_1[hour:n_hours], trk_lat_exp_1[hour:n_hours], mslp_exp_1[hour:n_hours]
+    trk_lon_exp_2, trk_lat_exp_2, mslp_exp_2 = trk_lon_exp_2[hour:n_hours], trk_lat_exp_2[hour:n_hours], mslp_exp_2[hour:n_hours]
+    trk_lon_exp_3, trk_lat_exp_3, mslp_exp_3 = trk_lon_exp_3[hour:n_hours], trk_lat_exp_3[hour:n_hours], mslp_exp_3[hour:n_hours]
+    trk_lon_exp_4, trk_lat_exp_4, mslp_exp_4 = trk_lon_exp_4[hour:n_hours], trk_lat_exp_4[hour:n_hours], mslp_exp_4[hour:n_hours]
 
     hours = np.arange(len(mslp_obs))
 
@@ -144,19 +152,19 @@ def main():
     ax_map.add_feature(cfeature.COASTLINE, linewidth=0.8)
     ax_map.add_feature(cfeature.BORDERS, linewidth=0.5, linestyle=':')
 
-    # Plot tracks with slighter/slimmer line widths
+    # Plot tracks
     ax_map.plot(trk_lon_obs, trk_lat_obs, color='black', linewidth=1.0, marker='o', markersize=2, label='ERA5', transform=ccrs.PlateCarree())
     ax_map.plot(trk_lon_exp_1, trk_lat_exp_1, color='red', linewidth=1.0, marker='o', markersize=2, label='NoTo', transform=ccrs.PlateCarree())
     ax_map.plot(trk_lon_exp_2, trk_lat_exp_2, color='blue', linewidth=1.0, marker='o', markersize=2, label='WSM5', transform=ccrs.PlateCarree())
     ax_map.plot(trk_lon_exp_3, trk_lat_exp_3, color='green', linewidth=1.0, marker='o', markersize=2, label='WSM7', transform=ccrs.PlateCarree())
-    ax_map.plot(trk_lon_exp_4, trk_lat_exp_4, color='purple', linewidth=1.0, marker='o', markersize=2, label='WDM7', transform=ccrs.PlateCarree())
+    ax_map.plot(trk_lon_exp_4, trk_lat_exp_4, color='orange', linewidth=1.0, marker='o', markersize=2, label='WDM7', transform=ccrs.PlateCarree())
 
-    # Start point markers
+    # Start point markers (00:00 25-Sep)
     ax_map.plot(trk_lon_obs[0], trk_lat_obs[0], color='black', marker='*', markersize=4, transform=ccrs.PlateCarree())
     ax_map.plot(trk_lon_exp_1[0], trk_lat_exp_1[0], color='red', marker='*', markersize=4, transform=ccrs.PlateCarree())
     ax_map.plot(trk_lon_exp_2[0], trk_lat_exp_2[0], color='blue', marker='*', markersize=4, transform=ccrs.PlateCarree())
     ax_map.plot(trk_lon_exp_3[0], trk_lat_exp_3[0], color='green', marker='*', markersize=4, transform=ccrs.PlateCarree())
-    ax_map.plot(trk_lon_exp_4[0], trk_lat_exp_4[0], color='purple', marker='*', markersize=4, transform=ccrs.PlateCarree())
+    ax_map.plot(trk_lon_exp_4[0], trk_lat_exp_4[0], color='orange', marker='*', markersize=4, transform=ccrs.PlateCarree())
 
     ax_map.set_title("(a)", loc='left', fontsize=font_size, fontweight='bold')
     ax_map.legend(loc='upper right', fontsize=font_size, framealpha=0.9)
@@ -168,7 +176,7 @@ def main():
     # Inset Plot (b)
     ax_inset = fig.add_axes([0.25, 0.5, 0.35, 0.28])
 
-    # Plot MSLP time series with slimmer line widths
+    # Plot MSLP time series
     ax_inset.plot(hours, mslp_obs, color='black', linewidth=1.0, marker='o', markersize=2)
     ax_inset.plot(hours, mslp_exp_1, color='red', linewidth=1.0, marker='o', markersize=2)
     ax_inset.plot(hours, mslp_exp_2, color='blue', linewidth=1.0, marker='o', markersize=2)
@@ -176,8 +184,9 @@ def main():
     ax_inset.plot(hours, mslp_exp_4, color='orange', linewidth=1.0, marker='o', markersize=2)
 
     ax_inset.set_title("(b)", loc='left', fontsize=font_size, fontweight='bold')
-    ax_inset.set_xlabel("Hours of the day", fontsize=font_size-1)
+    ax_inset.set_xlabel("Hours", fontsize=font_size-1)
     ax_inset.set_ylabel("MSLP (hPa)", fontsize=font_size-1)
+    ax_inset.set_xlim([0, 35])
     ax_inset.tick_params(axis='both', labelsize=font_size-2)
     ax_inset.grid(True, linestyle='--', alpha=0.75, color='gray')
 
@@ -189,3 +198,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
