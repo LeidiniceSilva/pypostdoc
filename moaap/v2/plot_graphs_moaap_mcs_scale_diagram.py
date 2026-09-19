@@ -134,7 +134,7 @@ ax_main.set_xlim(20, 10000)
 ax_main.set_ylim(3, 300)
 
 # Add Inset Domain Map on Top-Left
-ax_inset = inset_axes(ax_main, width="25%", height="25%", loc="upper left", bbox_to_anchor=(0.03, -0.03, 1, 1), bbox_transform=ax_main.transAxes, axes_class=GeoAxes, axes_kwargs=dict(projection=ccrs.PlateCarree()))
+ax_inset = inset_axes(ax_main, width="30%", height="30%", loc="upper left", bbox_to_anchor=(0.03, -0.03, 1, 1), bbox_transform=ax_main.transAxes, axes_class=GeoAxes, axes_kwargs=dict(projection=ccrs.PlateCarree()))
 
 # Set EURR-3 Domain: Lat (-17, 36), Lon (36, 58)
 ax_inset.set_extent([-17, 36, 36, 58], crs=ccrs.PlateCarree())
@@ -221,7 +221,7 @@ ax_bottom.text(4000, -0.6, "Macro\nalpha", ha="center", va="center", fontsize=10
 
 # Save figure 
 path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/paper/figs/v2'
-name_out = 'pyplt_graphs_moaap_mcs_scale_diagram_2000-2009.png'
+name_out = 'pyplt_graphs_moaap_mcs_scale_diagram_EUR_2000-2009.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight', facecolor='white', edgecolor='none')
 plt.show()
 exit()

@@ -17,51 +17,9 @@ from tqdm import tqdm
 from matplotlib.colors import ListedColormap, BoundaryNorm
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-def load_era5(domain, pattern="*_MOAAP-masks.nc"):
+def load_dataset(path_, pattern="*_MOAAP-masks.nc"):
 
-    data_path = f"/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/ERA5/{domain}/output/"
-    file_list = sorted(glob.glob(os.path.join(data_path, pattern)))
-
-    monthly_sum = None
-    lat, lon = None, None
-
-    for f in tqdm(file_list):
-
-        ds = xr.open_dataset(f)
-
-        mcs = ds["MCS_Tb_Objects"]  # (time, lat, lon)
-        time = ds["time"]
-
-        if monthly_sum is None:
-            monthly_sum = np.zeros((12, mcs.shape[1], mcs.shape[2]))
-            lat = ds["lat"].values
-            lon = ds["lon"].values
-
-        # group by month
-        for m in range(1, 13):
-            mask = time.dt.month == m
-            if mask.sum() > 0:
-                monthly_sum[m-1] += np.nansum(mcs[mask, :, :].values, axis=0)
-
-        ds.close()
-
-    # find peak 
-    peak_month = np.argmax(monthly_sum, axis=0) + 1
-    
-    # Create mask for where there is NO data (NaN or zero in all months)
-    total_mcs = np.nansum(monthly_sum, axis=0)
-    no_data_mask = total_mcs == 0  # Where no MCS detected
-    
-    # Set peak_month to NaN where there is no data
-    peak_month = peak_month.astype(float)
-    peak_month[no_data_mask] = np.nan
-
-    return peak_month, lat, lon
-
-
-def load_cpm(domain, pattern="*_MOAAP-masks.nc"):
-
-    data_path = f"/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/CPMs/{domain}/output/"
+    data_path = f"/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/paper/dataset/{path_}"
     file_list = sorted(glob.glob(os.path.join(data_path, pattern)))
 
     monthly_sum = None
@@ -103,9 +61,9 @@ def load_cpm(domain, pattern="*_MOAAP-masks.nc"):
 
 def configure_subplot(ax, lon, lat):
 
-	ax.set_extent([float(lon.min()), float(lon.max()), float(lat.min()), float(lat.max())], crs=ccrs.PlateCarree())
-	xticks = np.linspace(float(lon.min()), float(lon.max()), 5)
-	yticks = np.linspace(float(lat.min()), float(lat.max()), 5)
+	ax.set_extent([-12, 26, 36, 58], crs=ccrs.PlateCarree())
+	xticks = np.linspace(-12, 26, 4)
+	yticks = np.linspace(36, 58, 4)
 
 	ax.set_xticks(xticks, crs=ccrs.PlateCarree())
 	ax.set_yticks(yticks, crs=ccrs.PlateCarree())
@@ -120,29 +78,22 @@ def configure_subplot(ax, lon, lat):
 		label.set_fontsize(8)
 
 
-# Import vars
-mcs_car_era5, lat_car_era5, lon_car_era5 = load_era5('CAR-4')
-lon_car_era5 = ((lon_car_era5 + 180) % 360) - 180
+# domain
+domain = 'EUR'
 
-mcs_csam_era5, lat_csam_era5, lon_csam_era5 = load_era5('CSAM-3')
-lon_csam_era5 = ((lon_csam_era5 + 180) % 360) - 180
+# Import datasets
+mcs_eur_gpm, lat_eur_gpm, lon_eur_gpm = load_dataset('/GPM/EURR-3/output')
+mcs_eur_cpm_eval, lat_eur_cpm_eval, lon_eur_cpm_eval = load_dataset('/CPMs/ICTP/EURR-3/evaluation/ERA5/output')
+mcs_eur_cpm_hist, lat_eur_cpm_hist, lon_eur_cpm_hist = load_dataset('/CPMs/ICTP/EURR-3/historical/ECEarth/output')
+mcs_eur_rcm_eval, lat_eur_rcm_eval, lon_eur_rcm_eval = load_dataset('/RCMs/ICTP/EUR-12/evaluation/ERA5/output')
+mcs_eur_rcm_hist, lat_eur_rcm_hist, lon_eur_rcm_hist = load_dataset('/RCMs/ICTP/EUR-12/historical/ECEarth/output')
 
-mcs_eurr_era5, lat_eurr_era5, lon_eurr_era5 = load_era5('EURR-3')
-
-mcs_car_cpm, lat_car_cpm, lon_car_cpm = load_cpm('CAR-4')
-lon_car_cpm = ((lon_car_cpm + 180) % 360) - 180
-
-mcs_csam_cpm, lat_csam_cpm, lon_csam_cpm = load_cpm('CSAM-3')
-lon_csam_cpm = ((lon_csam_cpm + 180) % 360) - 180
-
-mcs_eurr_cpm, lat_eurr_cpm, lon_eurr_cpm = load_cpm('EURR-3')
-
-print (mcs_csam_era5)
+print (mcs_eur_gpm)
 print ()
-print (mcs_csam_cpm)
+print (mcs_eur_cpm_eval)
 
 # Plot figure
-fig = plt.figure(figsize=(10, 8))
+fig = plt.figure(figsize=(12, 6))
 font_size = 10
 
 colors = ["#6a3d9a",  
@@ -162,49 +113,46 @@ levels = np.arange(1, 14)
 cmap = ListedColormap(colors)
 norm = BoundaryNorm(levels, cmap.N)
 
-# CAR-4
-ax1 = fig.add_subplot(3, 2, 1, projection=ccrs.PlateCarree())
-cf1 = ax1.contourf(lon_car_era5, lat_car_era5, mcs_car_era5, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
-plt.title('(a)', loc='left', fontsize=font_size, fontweight='bold')
-configure_subplot(ax1, lon_car_era5, lat_car_era5)
+# GPM
+ax1 = fig.add_subplot(2, 3, 1, projection=ccrs.PlateCarree())
+cf = ax1.contourf(lon_eur_gpm, lat_eur_gpm, mcs_eur_gpm, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
+plt.title('(a) GPM', loc='left', fontsize=font_size, fontweight='bold')
+configure_subplot(ax1, lon_eur_gpm, lat_eur_gpm)
 
-ax2 = fig.add_subplot(3, 2, 2, projection=ccrs.PlateCarree())
-cf2 = ax2.contourf(lon_car_cpm, lat_car_cpm, mcs_car_cpm, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
-plt.title('(b)', loc='left', fontsize=font_size, fontweight='bold')
-configure_subplot(ax2, lon_car_cpm, lat_car_cpm)
+# CPM eval
+ax2 = fig.add_subplot(2, 3, 2, projection=ccrs.PlateCarree())
+cf = ax2.contourf(lon_eur_cpm_eval, lat_eur_cpm_eval, mcs_eur_cpm_eval, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
+plt.title('(b) EURR-3 Eval', loc='left', fontsize=font_size, fontweight='bold')
+configure_subplot(ax2, lon_eur_gpm, lat_eur_gpm)
 
-# CSAM-3
-ax3 = fig.add_subplot(3, 2, 3, projection=ccrs.PlateCarree())
-cf3 = ax3.contourf(lon_csam_era5, lat_csam_era5, mcs_csam_era5, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
-plt.title('(c)', loc='left', fontsize=font_size, fontweight='bold')
-configure_subplot(ax3, lon_csam_era5, lat_csam_era5)
+# CPM hist
+ax3 = fig.add_subplot(2, 3, 3, projection=ccrs.PlateCarree())
+cf = ax3.contourf(lon_eur_cpm_hist, lat_eur_cpm_hist, mcs_eur_cpm_hist, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
+plt.title('(c) EURR-3 Hist', loc='left', fontsize=font_size, fontweight='bold')
+configure_subplot(ax3, lon_eur_gpm, lat_eur_gpm)
 
-ax4 = fig.add_subplot(3, 2, 4, projection=ccrs.PlateCarree())
-cf4 = ax4.contourf(lon_csam_cpm, lat_csam_cpm, mcs_csam_cpm, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
-plt.title('(d)', loc='left', fontsize=font_size, fontweight='bold')
-configure_subplot(ax4, lon_csam_cpm, lat_csam_cpm)
+# RCM eval
+ax4 = fig.add_subplot(2, 3, 5, projection=ccrs.PlateCarree())
+cf = ax4.contourf(lon_eur_rcm_eval, lat_eur_rcm_eval, mcs_eur_rcm_eval, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
+plt.title('(d) EUR-12 Eval', loc='left', fontsize=font_size, fontweight='bold')
+configure_subplot(ax4, lon_eur_gpm, lat_eur_gpm)
 
-# EURR-3 
-ax5 = fig.add_subplot(3, 2, 5, projection=ccrs.PlateCarree())
-cf5 = ax5.contourf(lon_eurr_era5, lat_eurr_era5, mcs_eurr_era5, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
-plt.title('(e)', loc='left', fontsize=font_size, fontweight='bold')
-configure_subplot(ax5, lon_eurr_era5, lat_eurr_era5)
-
-ax6 = fig.add_subplot(3, 2, 6, projection=ccrs.PlateCarree())
-cf6 = ax6.contourf(lon_eurr_cpm, lat_eurr_cpm, mcs_eurr_cpm, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
-plt.title('(f)', loc='left', fontsize=font_size, fontweight='bold')
-configure_subplot(ax6, lon_eurr_cpm, lat_eurr_cpm)
+# RCM hist
+ax5 = fig.add_subplot(2, 3, 6, projection=ccrs.PlateCarree())
+cf = ax5.contourf(lon_eur_rcm_hist, lat_eur_rcm_hist, mcs_eur_rcm_hist, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree())
+plt.title('(e) EUR-12 Hist', loc='left', fontsize=font_size, fontweight='bold')
+configure_subplot(ax5, lon_eur_gpm, lat_eur_gpm)
 
 cbar_ax = fig.add_axes([0.25, 0.05, 0.5, 0.02])  # [left, bottom, width, height]
 cbar = fig.colorbar(cf6, cax=cbar_ax, orientation='horizontal')
 cbar.set_ticks(np.arange(1.5, 13.5))
 cbar.set_ticklabels(['J','F','M','A','M','J','J','A','S','O','N','D'])
-cbar.set_label('Peak month of MCS occurrence', fontsize=font_size, fontweight='bold')
+cbar.set_label('Peak month of MCSs occurrence', fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 
 # Save figure
 path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/figs'
-name_out = f'pyplt_maps_moaap_mcs_peak_domains_2000-2009.png'
+name_out = f'pyplt_maps_moaap_mcs_peak_{path_}_2000-2009.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
