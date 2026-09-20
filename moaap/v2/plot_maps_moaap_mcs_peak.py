@@ -62,8 +62,8 @@ def load_dataset(path_, pattern="*_MOAAP-masks.nc"):
 def configure_subplot(ax, lon, lat):
 
 	ax.set_extent([-12, 26, 36, 58], crs=ccrs.PlateCarree())
-	xticks = np.linspace(-12, 26, 4)
-	yticks = np.linspace(36, 58, 4)
+	xticks = np.linspace(-12, 26, 2)
+	yticks = np.linspace(36, 58, 2)
 
 	ax.set_xticks(xticks, crs=ccrs.PlateCarree())
 	ax.set_yticks(yticks, crs=ccrs.PlateCarree())
@@ -93,7 +93,7 @@ print ()
 print (mcs_eur_cpm_eval)
 
 # Plot figure
-fig = plt.figure(figsize=(12, 6))
+fig = plt.figure(figsize=(12, 5))
 font_size = 10
 
 colors = ["#6a3d9a",  
@@ -144,15 +144,15 @@ plt.title('(e) EUR-12 Hist', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax5, lon_eur_gpm, lat_eur_gpm)
 
 cbar_ax = fig.add_axes([0.25, 0.05, 0.5, 0.02])  # [left, bottom, width, height]
-cbar = fig.colorbar(cf6, cax=cbar_ax, orientation='horizontal')
+cbar = fig.colorbar(cf, cax=cbar_ax, orientation='horizontal')
 cbar.set_ticks(np.arange(1.5, 13.5))
 cbar.set_ticklabels(['J','F','M','A','M','J','J','A','S','O','N','D'])
 cbar.set_label('Peak month of MCSs occurrence', fontsize=font_size, fontweight='bold')
 cbar.ax.tick_params(labelsize=font_size)
 
 # Save figure
-path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/figs'
-name_out = f'pyplt_maps_moaap_mcs_peak_{path_}_2000-2009.png'
+path_out = '/leonardo/home/userexternal/mdasilva/leonardo_work/MOAAP/paper/figs/v2'
+name_out = f'pyplt_maps_moaap_mcs_peak_{domain}_2000-2009.png'
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()
