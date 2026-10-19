@@ -123,15 +123,14 @@ def configure_subplot(ax):
 	ax.set_yticks(np.arange(-36,-14,4), crs=ccrs.PlateCarree())
 	ax.xaxis.set_major_formatter(LongitudeFormatter())
 	ax.yaxis.set_major_formatter(LatitudeFormatter())
-	ax.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
-	ax.set_ylabel('Latitude',  fontsize=font_size, fontweight='bold')
+	ax.text(-41, -34, u'\u25B2 \nN', color='black', fontsize=8, fontweight='bold')
 	ax.grid(c='k', ls='--', alpha=0.5)
 	ax.add_feature(cfeat.BORDERS, linewidth=1, color='gray')
 	ax.coastlines(linewidth=1, color='gray')	
 
 
 # Plot figure
-fig, axes = plt.subplots(1,3, figsize=(14, 8), subplot_kw={"projection": ccrs.PlateCarree()})
+fig, axes = plt.subplots(2,2, figsize=(10, 8), subplot_kw={"projection": ccrs.PlateCarree()})
 (ax1, ax2), (ax3, ax4) = axes
 levels_pr = np.arange(0, 180, 10)
 
@@ -141,20 +140,24 @@ cmap = matplotlib.colors.ListedColormap(color)
 cf1 = ax1.contourf(lon_i, lat_i, pr_era5, levels=levels_pr, cmap=cmap, extend='max')
 sc1 = ax1.scatter(xx_ws, yy_ws, 12, ws, cmap=cmap, edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=100) 
 sc2 = ax1.scatter(xx_ws_ii, yy_ws_ii, 12, ws_ii, cmap=cmap, edgecolors='black', linewidth=0.5, marker='o', vmin=0, vmax=100)
-ax1.set_title(u'(a) ERA5 (INMET+SMN)', loc='left', fontsize=font_size, fontweight='bold')
+ax1.set_ylabel('Latitude',  fontsize=font_size, fontweight='bold')
+ax1.set_title(u'(a) Reanalysis (25 km) + weather stations', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax1)
 
-#cf2 = ax2.contourf(lon_ii, lat_ii, pr_cmorph, levels=levels_pr, cmap=cmap, extend='max')
-#ax2.set_title(u'(b) CMORPH', loc='left', fontsize=font_size, fontweight='bold')
-#configure_subplot(ax2)
-
-cf2 = ax2.contourf(lon_iii, lat_iii, pr_regcm5, levels=levels_pr, cmap=cmap, extend='max')
-ax2.set_title(u'(c) CP-RegCM5 3km', loc='left', fontsize=font_size, fontweight='bold')
+cf2 = ax2.contourf(lon_ii, lat_ii, pr_cmorph, levels=levels_pr, cmap=cmap, extend='max')
+ax2.set_title(u'(b) Satellite estimation (10 km)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax2)
 
-cf3 = ax4.contourf(lon_iv, lat_iv, pr_wrf415, levels=levels_pr, cmap=cmap, extend='max')
-ax3.set_title(u'(d) RegCM5 12km', loc='left', fontsize=font_size, fontweight='bold')
+cf3 = ax3.contourf(lon_iii, lat_iii, pr_regcm5, levels=levels_pr, cmap=cmap, extend='max')
+ax3.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
+ax3.set_ylabel('Latitude',  fontsize=font_size, fontweight='bold')
+ax3.set_title(u'(c) CPRCM (3 km)', loc='left', fontsize=font_size, fontweight='bold')
 configure_subplot(ax3)
+
+cf4 = ax4.contourf(lon_iv, lat_iv, pr_wrf415, levels=levels_pr, cmap=cmap, extend='max')
+ax4.set_xlabel('Longitude', fontsize=font_size, fontweight='bold')
+ax4.set_title(u'(d) RCM (12 km)', loc='left', fontsize=font_size, fontweight='bold')
+configure_subplot(ax4)
 
 cbar = plt.colorbar(cf3, cax=fig.add_axes([0.91, 0.33, 0.015, 0.33]))
 cbar.set_label('Precipitation (mm/d)', fontsize=font_size, fontweight='bold')
@@ -162,7 +165,7 @@ cbar.ax.tick_params(labelsize=font_size)
 
 # Save figura
 path_out = '{0}/figs/'.format(path)
-name_out = 'pyplt_maps_Subtropical_cyclone_29Jan2009.png'.format(day)
+name_out = 'pyplt_maps_CSAM-3_cyclone_20090129.png'.format(day)
 plt.savefig(os.path.join(path_out, name_out), dpi=400, bbox_inches='tight')
 plt.show()
 exit()

@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/track_cyclone/CPRCM-TF/plot_maps_added_value_dc.py", line 72, in <module>
+    lat_rcm,   lon_rcm,   amp_rcm,   peak_hr_rcm  = import_diurnal_data('pr', 'SAM-12_ERA5_evaluation_RegCM5')
+                                                    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/track_cyclone/CPRCM-TF/plot_maps_added_value_dc.py", line 61, in import_diurnal_data
+    lon_2d = xr.DataArray(np.broadcast_to(lon[np.newaxis, :], (len(lat), len(lon))), dims=diurnal_cycle.dims[1:])
+                          ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/leonardo/pub/userexternal/ggiulian/intel/lib/python3.13/site-packages/numpy/lib/_stride_tricks_impl.py", line 517, in broadcast_to
+    return _broadcast_to(array, shape, subok=subok, readonly=True)
+  File "/leonardo/pub/userexternal/ggiulian/intel/lib/python3.13/site-packages/numpy/lib/_stride_tricks_impl.py", line 456, in _broadcast_to
+    it = np.nditer(
+        (array,), flags=['multi_index', 'refs_ok', 'zerosize_ok'] + extras,
+        op_flags=['readonly'], itershape=shape, order='C')
+ValueError: input operand has more dimensions than allowed by the axis remapping

@@ -1,0 +1,23 @@
+/leonardo/pub/userexternal/ggiulian/intel/lib/python3.13/site-packages/cartopy/mpl/feature_artist.py:142: UserWarning: facecolor will have no effect as it has been defined as "never".
+  warnings.warn('facecolor will have no effect as it has been '
+/leonardo/pub/userexternal/ggiulian/intel/lib/python3.13/site-packages/cartopy/mpl/feature_artist.py:142: UserWarning: facecolor will have no effect as it has been defined as "never".
+  warnings.warn('facecolor will have no effect as it has been '
+/leonardo/pub/userexternal/ggiulian/intel/lib/python3.13/site-packages/cartopy/mpl/feature_artist.py:142: UserWarning: facecolor will have no effect as it has been defined as "never".
+  warnings.warn('facecolor will have no effect as it has been '
+/leonardo/pub/userexternal/ggiulian/intel/lib/python3.13/site-packages/cartopy/mpl/feature_artist.py:142: UserWarning: facecolor will have no effect as it has been defined as "never".
+  warnings.warn('facecolor will have no effect as it has been '
+/leonardo/pub/userexternal/ggiulian/intel/lib/python3.13/site-packages/cartopy/mpl/feature_artist.py:142: UserWarning: facecolor will have no effect as it has been defined as "never".
+  warnings.warn('facecolor will have no effect as it has been '
+/leonardo/pub/userexternal/ggiulian/intel/lib/python3.13/site-packages/cartopy/mpl/feature_artist.py:142: UserWarning: facecolor will have no effect as it has been defined as "never".
+  warnings.warn('facecolor will have no effect as it has been '
+/leonardo/pub/userexternal/ggiulian/intel/lib/python3.13/site-packages/cartopy/mpl/feature_artist.py:142: UserWarning: facecolor will have no effect as it has been defined as "never".
+  warnings.warn('facecolor will have no effect as it has been '
+/leonardo/pub/userexternal/ggiulian/intel/lib/python3.13/site-packages/cartopy/mpl/feature_artist.py:142: UserWarning: facecolor will have no effect as it has been defined as "never".
+  warnings.warn('facecolor will have no effect as it has been '
+/leonardo/home/userexternal/mdasilva/github_projects/pypostdoc/track_cyclone/CPRCM-TF/plot_maps_added_value_dc.py:163: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+(98, 174)
+2.6949477482260784e-05 0.7748515509518379
+
+(98, 174)
+0.00255662816170954 23.997701052509008
