@@ -2,7 +2,7 @@
 
 #SBATCH -A ICT26_ESP
 #SBATCH -p dcgp_usr_prod
-#SBATCH -N 1
+#SBATCH -N 4
 #SBATCH --ntasks-per-node=112
 #SBATCH -t 1-00:00:00
 #SBATCH -J Plot
@@ -17,6 +17,6 @@
 {
 set -eo pipefail
 
-python3 plot_maps_added_value_dc.py
+python3 plot_pdf_added_value_dc.py
 
 }

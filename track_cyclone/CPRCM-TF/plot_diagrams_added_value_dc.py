@@ -13,7 +13,7 @@ import matplotlib.colors as mcolors
 
 path = "/leonardo/home/userexternal/mdasilva/leonardo_work/TRACK-CYCLONE/CPRCM-TF"
 font_size = 9
-seas = 'DJF_2000-2009'
+seas = '2000-2009'
 
 
 def fmt_lon(x):
