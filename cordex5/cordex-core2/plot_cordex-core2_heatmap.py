@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-__author__ = "Leidinice Silva"
-__email__ = "leidinicesilva@gmail.com"
-__date__ = "March 02, 2026"
+__author__      = "Leidinice Silva"
+__email__       = "leidinicesilva@gmail.com"
+__date__        = "March 02, 2026"
 __description__ = "This script plot trend heatmap"
 
 import glob
@@ -17,24 +17,21 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from scipy.stats import linregress
 
 # Indices
-idx = "RX1day"
-idx_ = "RX1DAY"
+idx = "RX1day" # RX1day RR1 TXx TN20
+idx_ = "RX1DAY" # RX1DAY RR1 TXx TN20
 
 # Path setup
 obs_dir = f"/home/netapp-clima-scratch/mda_silv/CORDEX-CORE2/OBS/CPC/{idx}_ts"
 
 # CMIP5 GCMs
-cmip5_dir = f"/home/clima-archive4-b/nzazulie/trendsCORDEX/CMIP5/{idx_}_ts"
-cmip5_m2 = "MPI-M-MPI-ESM-MR_r1"
+cmip5_dir = f"/home/mda_silv/scratch/CORDEX-CORE2/CMIP5/{idx}_ts"
+cmip5_m1 = "ICHEC-EC-EARTH_r1"
+cmip5_m2 = "MPI-M-MPI-ESM-LR_r1"
 cmip5_m3 = "NCC-NorESM1-M_r1"
 
 # CMIP6 GCMs
-cmip6_m1_dir = (
-    f"/home/mda_silv/scratch/CORDEX-CORE2/CMIP6/EC-Earth3-Veg/{idx}_ts"
-)
-cmip6_m2_dir = (
-    f"/home/mda_silv/scratch/CORDEX-CORE2/CMIP6/MPI-ESM1-2-HR/{idx}_ts"
-)
+cmip6_m1_dir = f"/home/mda_silv/scratch/CORDEX-CORE2/CMIP6/EC-Earth3-Veg/{idx}_ts"
+cmip6_m2_dir = f"/home/mda_silv/scratch/CORDEX-CORE2/CMIP6/MPI-ESM1-2-HR/{idx}_ts"
 cmip6_m3_dir = f"/home/mda_silv/scratch/CORDEX-CORE2/CMIP6/NorESM2-MM/{idx}_ts"
 
 # CORDEX-CORE 1 base directory
@@ -44,8 +41,11 @@ cordex_core1_base = "/home/clima-archive4-b/nzazulie/trendsCORDEX"
 cordex_core2_base = "/home/clima-archive4-b/nzazulie/trendsCORDEX/CORDEX-CORE2"
 
 # Base model tag prefixes for CORDEX-CORE 1
-rcm4_tag_m1 = "MPI-M-MPI-ESM-MR_r1_ICTP-RegCM4"
-rcm4_tag_m2 = "NCC-NorESM1-M_r1_ICTP-RegCM4"
+rcm4_tag_m1 = "MOHC-HadGEM2-ES_r1_ICTP-RegCM4"
+rcm4_tag_m2 = "MPI-M-MPI-ESM-MR_r1_ICTP-RegCM4"
+rcm4_tag_m3 = "NCC-NorESM1-M_r1_ICTP-RegCM4"
+remo_tag_m1 = "NCC-NorESM1-M_r1_GERICS-REMO2015"
+remo_tag_m2 = "MPI-M-MPI-ESM-LR_r1_GERICS-REMO2015"
 
 # CORDEX-CORE 2 GCM tags for RegCM5
 rcm5_gcm1 = "EC-Earth3-Veg"
@@ -54,25 +54,15 @@ rcm5_gcm3 = "NorESM2-MM"
 
 # Mapping to CORDEX domains
 domain_dict = {
-    "NAM-22": ["NWN", "NEN", "WNA", "CNA", "ENA"],
-    "CAM-22": ["NCA", "SCA", "CAR"],
+    "NAM-22": ["ALA", "ANA", "NWN", "NEN", "CWN", "WSN", "CNA", "CEN", "SEN", "ESN", "WSN"],
+    "CAM-22": ["CAM", "CAR"],
     "SAM-22": ["NWS", "NSA", "SAM", "NES", "SES", "SWS", "SSA"],
-    "AFR-22": [
-        "SAH",
-        "WAF",
-        "CAF",
-        "NEAF",
-        "SEAF",
-        "ARP",
-        "WSAF",
-        "ESAF",
-        "MDG",
-    ],
-    "WAS-22": ["WCA", "ECA", "SAS"],
+    "AFR-22": ["NWSH", "NCSH", "NESH", "SWSH", "SCSH", "SESH", "WAF", "NCAF", "NEAF", "SEAF", "ARP", "SCAF", "WSAF", "ESAF", "MDG"],
+    "WAS-22": ["WCA", "SAS"],
     "EAS-22": ["ESB", "RFE", "ECA", "TIB", "EAS"],
-    "SEA-22": ["SEA"],
-    "AUS-22": ["NAU", "CAU", "EAU", "SAU", "NZ"],
-    "EUR-11": ["MED", "NEU", "WCE"],
+    "SEA-22": ["NWSEA", "NESEA", "SSEA"],
+    "AUS-22": ["NAU", "CAU", "EAU", "WSAU", "ESAU", "NZE"],
+    "EUR-11": ["SMED", "NMED", "NEU", "WCE"],
 }
 
 # Domain mapping lookup table from 22/11 km to 12 km (CORDEX-CORE 2)
@@ -160,6 +150,7 @@ def get_stats(file_path, start_year=1970, end_year=2024):
 # Data extraction containers
 obs_means, obs_trends = [], []
 
+cmip5_m1_means, cmip5_m1_trends = [], []
 cmip5_m2_means, cmip5_m2_trends = [], []
 cmip5_m3_means, cmip5_m3_trends = [], []
 
@@ -169,6 +160,10 @@ cmip6_m3_means, cmip6_m3_trends = [], []
 
 rcm4_m1_means, rcm4_m1_trends = [], []
 rcm4_m2_means, rcm4_m2_trends = [], []
+rcm4_m3_means, rcm4_m3_trends = [], []
+
+remo_m1_means, remo_m1_trends = [], []
+remo_m2_means, remo_m2_trends = [], []
 
 rcm5_m1_means, rcm5_m1_trends = [], []
 rcm5_m2_means, rcm5_m2_trends = [], []
@@ -183,15 +178,15 @@ for reg in ordered_subregs:
   obs_trends.append(t_obs)
 
   # CMIP5
-  m_c5_2, t_c5_2 = get_stats(
-      os.path.join(cmip5_dir, f"{idx_}_{cmip5_m2}_{reg}_ts.nc")
-  )
+  m_c5_1, t_c5_1 = get_stats(os.path.join(cmip5_dir, f"{idx}_{cmip5_m1}_{reg}_ts.nc"))
+  cmip5_m1_means.append(m_c5_1)
+  cmip5_m1_trends.append(t_c5_1)
+  
+  m_c5_2, t_c5_2 = get_stats(os.path.join(cmip5_dir, f"{idx}_{cmip5_m2}_{reg}_ts.nc"))
   cmip5_m2_means.append(m_c5_2)
   cmip5_m2_trends.append(t_c5_2)
 
-  m_c5_3, t_c5_3 = get_stats(
-      os.path.join(cmip5_dir, f"{idx_}_{cmip5_m3}_{reg}_ts.nc")
-  )
+  m_c5_3, t_c5_3 = get_stats(os.path.join(cmip5_dir, f"{idx}_{cmip5_m3}_{reg}_ts.nc"))
   cmip5_m3_means.append(m_c5_3)
   cmip5_m3_trends.append(t_c5_3)
 
@@ -208,8 +203,8 @@ for reg in ordered_subregs:
   cmip6_m3_means.append(m_c6_3)
   cmip6_m3_trends.append(t_c6_3)
 
-  # CORDEX-CORE 1 (RegCM4)
-  core1_dir = os.path.join(cordex_core1_base, dom, f"{idx_}_ts")
+  # CORDEX-CORE 1 (RegCM4 & REMO2015)
+  core1_dir = os.path.join(cordex_core1_base, dom, f"{idx_}_ts_AR7")
 
   rcm4_m1_path = resolve_rcm4_path(core1_dir, idx_, rcm4_tag_m1, reg)
   m_rcm4_1, t_rcm4_1 = get_stats(rcm4_m1_path)
@@ -221,21 +216,30 @@ for reg in ordered_subregs:
   rcm4_m2_means.append(m_rcm4_2)
   rcm4_m2_trends.append(t_rcm4_2)
 
+  rcm4_m3_path = resolve_rcm4_path(core1_dir, idx_, rcm4_tag_m3, reg)
+  m_rcm4_3, t_rcm4_3 = get_stats(rcm4_m3_path)
+  rcm4_m3_means.append(m_rcm4_3)
+  rcm4_m3_trends.append(t_rcm4_3)
+
+  p_remo_1 = find_rcm_file(core1_dir, f"{idx_}_{remo_tag_m1}_{reg}_ts.nc")
+  m_remo_1, t_remo_1 = get_stats(p_remo_1, start_year=1970, end_year=2024)
+  remo_m1_means.append(m_remo_1)
+  remo_m1_trends.append(t_remo_1)
+
+  p_remo_2 = find_rcm_file(core1_dir, f"{idx_}_{remo_tag_m2}_{reg}_ts.nc")
+  m_remo_2, t_remo_2 = get_stats(p_remo_2, start_year=1970, end_year=2024)
+  remo_m2_means.append(m_remo_2)
+  remo_m2_trends.append(t_remo_2)
+
   # CORDEX-CORE 2 (RegCM5 - 12km)
   dom12 = dom_22_to_12.get(dom, None)
   if dom12:
     core2_dir = os.path.join(cordex_core2_base, dom12, f"{idx_}_ts")
 
     # Locate exact RegCM5 files dynamically using wildcard matching
-    p_rcm5_1 = find_rcm_file(
-        core2_dir, f"{idx_}_{dom12}_{rcm5_gcm1}_*_{reg}_ts.nc"
-    )
-    p_rcm5_2 = find_rcm_file(
-        core2_dir, f"{idx_}_{dom12}_{rcm5_gcm2}_*_{reg}_ts.nc"
-    )
-    p_rcm5_3 = find_rcm_file(
-        core2_dir, f"{idx_}_{dom12}_{rcm5_gcm3}_*_{reg}_ts.nc"
-    )
+    p_rcm5_1 = find_rcm_file(core2_dir, f"{idx_}_{dom12}_{rcm5_gcm1}_*_{reg}_ts.nc")
+    p_rcm5_2 = find_rcm_file(core2_dir, f"{idx_}_{dom12}_{rcm5_gcm2}_*_{reg}_ts.nc")
+    p_rcm5_3 = find_rcm_file(core2_dir, f"{idx_}_{dom12}_{rcm5_gcm3}_*_{reg}_ts.nc")
 
     m_rcm5_1, t_rcm5_1 = get_stats(p_rcm5_1, start_year=1970, end_year=2024)
     m_rcm5_2, t_rcm5_2 = get_stats(p_rcm5_2, start_year=1970, end_year=2024)
@@ -255,6 +259,7 @@ for reg in ordered_subregs:
 # Combine matrices
 means_matrix = np.column_stack([
     obs_means,
+    cmip5_m1_means,
     cmip5_m2_means,
     cmip5_m3_means,
     cmip6_m1_means,
@@ -262,6 +267,9 @@ means_matrix = np.column_stack([
     cmip6_m3_means,
     rcm4_m1_means,
     rcm4_m2_means,
+    rcm4_m3_means,
+    remo_m1_means,
+    remo_m2_means,
     rcm5_m1_means,
     rcm5_m2_means,
     rcm5_m3_means,
@@ -269,6 +277,7 @@ means_matrix = np.column_stack([
 
 trends_matrix = np.column_stack([
     obs_trends,
+    cmip5_m1_trends,
     cmip5_m2_trends,
     cmip5_m3_trends,
     cmip6_m1_trends,
@@ -276,30 +285,37 @@ trends_matrix = np.column_stack([
     cmip6_m3_trends,
     rcm4_m1_trends,
     rcm4_m2_trends,
+    rcm4_m3_trends,
+    remo_m1_trends,
+    remo_m2_trends,
     rcm5_m1_trends,
     rcm5_m2_trends,
     rcm5_m3_trends,
 ])
 
 n_domains = len(ordered_subregs)
-n_cols = 11
+n_cols = 15
 cols = [
     "OBS",
+    "EC-Earth",
     "MPI-ESM-MR",
     "NorESM1-M",
     "EC-Earth3-Veg",
     "MPI-ESM1-2-HR",
     "NorESM2-MM",
+    "RegCM4-HadGEM2-ES",
     "RegCM4-MPI",
     "RegCM4-Nor",
+    "REMO2015-Nor",
+    "REMO2015-MPI",
     "RegCM5-EC-Earth3",
     "RegCM5-MPI",
     "RegCM5-Nor",
 ]
 
 # Discrete levels for Mean and Trend
-levels_mean = np.linspace(0, 100, 11)
-levels_trend = np.linspace(-2, 2, 11)
+levels_mean = np.linspace(0, 100, 21)
+levels_trend = np.linspace(-2, 2, 21)
 
 if idx == "RX1day":
   cmap_mean = plt.colormaps["Blues"].resampled(len(levels_mean) - 1)
@@ -312,7 +328,7 @@ norm_mean = BoundaryNorm(levels_mean, ncolors=cmap_mean.N, clip=True)
 norm_trend = BoundaryNorm(levels_trend, ncolors=cmap_trend.N, clip=True)
 
 # Plot heatmap
-fig, ax = plt.subplots(figsize=(12, 14))
+fig, ax = plt.subplots(figsize=(15, 14))
 ax.set_facecolor("white")
 pad = 0.08
 
@@ -327,17 +343,13 @@ for row in range(n_domains):
     # Mean triangle (upper-left split)
     if not np.isnan(m_val):
       p1 = Path([(x_min, y_min), (x_max, y_min), (x_min, y_max), (x_min, y_min)])
-      patch1 = PathPatch(
-          p1, facecolor=cmap_mean(norm_mean(m_val)), edgecolor="none"
-      )
+      patch1 = PathPatch(p1, facecolor=cmap_mean(norm_mean(m_val)), edgecolor="none")
       ax.add_patch(patch1)
 
     # Trend triangle (lower-right split)
     if not np.isnan(t_val):
       p2 = Path([(x_max, y_min), (x_max, y_max), (x_min, y_max), (x_max, y_min)])
-      patch2 = PathPatch(
-          p2, facecolor=cmap_trend(norm_trend(t_val)), edgecolor="none"
-      )
+      patch2 = PathPatch(p2, facecolor=cmap_trend(norm_trend(t_val)), edgecolor="none")
       ax.add_patch(patch2)
 
 # Configure axes
@@ -357,35 +369,17 @@ for spine in ax.spines.values():
 sm_mean = plt.cm.ScalarMappable(cmap=cmap_mean, norm=norm_mean)
 sm_trend = plt.cm.ScalarMappable(cmap=cmap_trend, norm=norm_trend)
 
-cax_mean = inset_axes(
-    ax,
-    width="4%",
-    height="42%",
-    loc="upper right",
-    bbox_to_anchor=(0.22, 0.0, 1.0, 1.0),
-    bbox_transform=ax.transAxes,
-)
-cbar_mean = plt.colorbar(
-    sm_mean, cax=cax_mean, orientation="vertical", ticks=levels_mean
-)
+cax_mean = inset_axes(ax, width="4%", height="42%", loc="upper right", bbox_to_anchor=(0.22, 0.0, 1.0, 1.0), bbox_transform=ax.transAxes,)
+cbar_mean = plt.colorbar(sm_mean, cax=cax_mean, orientation="vertical", ticks=levels_mean)
 cbar_mean.set_label("Mean", fontsize=10)
 
-cax_trend = inset_axes(
-    ax,
-    width="4%",
-    height="42%",
-    loc="lower right",
-    bbox_to_anchor=(0.22, 0.0, 1.0, 1.0),
-    bbox_transform=ax.transAxes,
-)
-cbar_trend = plt.colorbar(
-    sm_trend, cax=cax_trend, orientation="vertical", ticks=levels_trend
-)
+cax_trend = inset_axes(ax, width="4%", height="42%", loc="lower right", bbox_to_anchor=(0.22, 0.0, 1.0, 1.0),bbox_transform=ax.transAxes,)
+cbar_trend = plt.colorbar(sm_trend, cax=cax_trend, orientation="vertical", ticks=levels_trend)
 cbar_trend.set_label("Trend", fontsize=10)
 
 # Save figure
 plt.tight_layout()
 out_dir = "/home/mda_silv/scratch/CORDEX-CORE2/figs"
 os.makedirs(out_dir, exist_ok=True)
-plt.savefig(f"{out_dir}/{idx}_CORDEX-CORE2_heatmap.png", dpi=400, bbox_inches='tight')
+plt.savefig(f"{out_dir}/{idx}_CORDEX-CORE2_heatmap_AR7.png", dpi=400, bbox_inches='tight')
 plt.show()
