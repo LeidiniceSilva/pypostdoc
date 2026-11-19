@@ -1,13 +1,14 @@
 #!/bin/bash
 
-#SBATCH -A ICT26_ESP
+#SBATCH --account CMPNS_ictpclim
 #SBATCH -p dcgp_usr_prod
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=112
-#SBATCH -t 1-00:00:00
+#SBATCH -t 12:00:00
 #SBATCH -J Plot
 #SBATCH --mail-type=FAIL,END
 #SBATCH --mail-user=mda_silv@ictp.it
+#SBATCH --qos=qos_lowprio
 
 #__author__      = 'Leidinice Silva'
 #__email__       = 'leidinicesilva@gmail.com'
@@ -20,11 +21,8 @@ set -eo pipefail
 echo
 echo "--------------- INIT PLOT ----------------"
 
-
-python3 plot_maps_trend.py --var pr --domain EAS-12 --idt 1970 --fdt 2014
-python3 plot_maps_trend.py --var tas --domain EAS-12 --idt 1970 --fdt 2014
-python3 plot_maps_trend.py --var tasmax --domain EAS-12 --idt 1970 --fdt 2014
-python3 plot_maps_trend.py --var tasmin --domain EAS-12 --idt 1970 --fdt 2014
+python3 plot_maps_trend.py --var tasmax --domain SAM-12 --idt 1970 --fdt 2014
+python3 plot_maps_trend.py --var tasmin --domain SAM-12 --idt 1970 --fdt 2014
 
 exit
 
@@ -32,6 +30,11 @@ python3 plot_maps_trend.py --var pr --domain AUS-12 --idt 1970 --fdt 2014
 python3 plot_maps_trend.py --var tas --domain AUS-12 --idt 1970 --fdt 2014
 python3 plot_maps_trend.py --var tasmax --domain AUS-12 --idt 1970 --fdt 2014
 python3 plot_maps_trend.py --var tasmin --domain AUS-12 --idt 1970 --fdt 2014
+
+python3 plot_maps_trend.py --var pr --domain EAS-12 --idt 1970 --fdt 2014
+python3 plot_maps_trend.py --var tas --domain EAS-12 --idt 1970 --fdt 2014
+python3 plot_maps_trend.py --var tasmax --domain EAS-12 --idt 1970 --fdt 2014
+python3 plot_maps_trend.py --var tasmin --domain EAS-12 --idt 1970 --fdt 2014
 
 python3 plot_maps_trend.py --var pr --domain EUR-12 --idt 1970 --fdt 2014
 python3 plot_maps_trend.py --var tas --domain EUR-12 --idt 1970 --fdt 2014
